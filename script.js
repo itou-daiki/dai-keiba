@@ -6,13 +6,6 @@ let selectedRace = {
     name: null,
 };
 
-// CORSプロキシ設定 (信頼性の高いものを優先)
-const CORS_PROXIES = [
-    'https://api.cors.lol/?url=',
-    'https://api.codetabs.com/v1/proxy?quest=',
-    'https://api.allorigins.win/raw?url=',
-];
-
 // ==================== 初期化 ====================
 document.addEventListener('DOMContentLoaded', initializeApp);
 
@@ -60,25 +53,12 @@ function setupEventListeners() {
 async function fetchTodaysRaces() {
     const url = 'https://netkeiba.com/';
     showStatus('今日のレース情報を取得中...', 'info');
-    console.log('fetchTodaysRaces: 開始');
     try {
-        const html = await fetchViaNetlifyProxy(url); // 新しい関数を使用
-
-        // --- デバッグ用ログ ---
-        if (html) {
-            console.log('fetchTodaysRaces: HTML取得成功。解析を開始します。');
-            // console.log(html); // 必要に応じてHTML全体をログに出す
-        } else {
-            console.error('fetchTodaysRaces: HTMLの取得に失敗しました。返り値が空です。');
-            throw new Error('プロキシ経由でのHTML取得に失敗しました。');
-        }
-        // --- デバッグ用ログここまで ---
-
+        const html = await fetchViaNetlifyProxy(url);
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
         const raceList = [];
-        // netkeibaのトップページは動的に変化するため、より広範なセレクタを試す
         const raceElements = doc.querySelectorAll('.RaceList_MajorRace, .RaceList_OtherRace, .Main_Race_RaceList');
 
         raceElements.forEach(raceBlock => {
@@ -91,7 +71,6 @@ async function fetchTodaysRaces() {
                     const raceName = link.querySelector('.Race_Name')?.textContent.trim();
                     const raceNumber = link.querySelector('.Race_Num')?.textContent.trim();
                     const href = link.href;
-                    // hrefからrace_idを抽出する正規表現を改善
                     const raceIdMatch = href.match(/race_id=([0-9a-zA-Z_]+)/);
                     if (raceIdMatch && raceName && raceNumber) {
                         raceList.push({
@@ -109,12 +88,10 @@ async function fetchTodaysRaces() {
         if (raceList.length > 0) {
             showStatus('レースを選択してください。', 'info');
         } else {
-            console.log('fetchTodaysRaces: レースリストの解析結果が0件でした。HTML構造を確認してください。');
             showStatus('今日の開催レース情報が見つかりませんでした。サイトの構造が変更された可能性があります。', 'error');
         }
 
     } catch (error) {
-        console.error('fetchTodaysRaces: 全体的なエラー', error);
         showStatus(`レース情報の取得に失敗しました: ${error.message}`, 'error');
         displayTodaysRaces([]); // Show disabled button on error
     }
@@ -440,8 +417,6 @@ async function fetchViaNetlifyProxy(targetUrl) {
     }
 }
 
-// 古いfetchWithProxyとCORS_PROXIESは削除
-
 async function fetchNetkeiba(url) {
     const html = await fetchViaNetlifyProxy(url); // 新しい関数を使用
     const parser = new DOMParser();
@@ -475,7 +450,6 @@ async function fetchNetkeiba(url) {
     }
     return { horses };
 }
-
 
 function updateSelectionArea() {
     const selectionArea = document.getElementById('selection-area');
