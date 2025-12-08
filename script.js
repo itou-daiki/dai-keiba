@@ -59,7 +59,7 @@ function setupEventListeners() {
 // ==================== データ取得・表示 ====================
 async function fetchTodaysRaces() {
     const url = 'https://netkeiba.com/';
-    showStatus('今日のレース情報を取得中...', 'info');
+    showStatus('🐎', 'info');
     try {
         const html = await fetchWithProxy(url);
         const parser = new DOMParser();
