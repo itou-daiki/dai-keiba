@@ -1,0 +1,452 @@
+/* ==================== リセット・基本設定 ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c5f2d;
+    --primary-light: #4a8a4d;
+    --primary-dark: #1b3a1c;
+    --secondary-color: #d4af37;
+    --accent-color: #ff6b35;
+    --bg-color: #f5f7f5;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --border-color: #e0e0e0;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    background: linear-gradient(135deg, #f5f7f5 0%, #e8f5e9 100%);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ==================== ヘッダー ==================== */
+header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1rem;
+    opacity: 0.95;
+    font-weight: 400;
+}
+
+/* ==================== カード ==================== */
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.card h2 {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* ==================== 馬券種類選択 ==================== */
+.bet-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.bet-type-btn {
+    background: white;
+    border: 2px solid var(--border-color);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.bet-type-btn:hover {
+    border-color: var(--primary-light);
+    background: #f0f8f0;
+    transform: translateY(-2px);
+}
+
+.bet-type-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* ==================== フォーム ==================== */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* ==================== レース情報 ==================== */
+.race-info {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 16px;
+}
+
+/* ==================== オッズ入力エリア ==================== */
+#odds-input-area {
+    margin-bottom: 16px;
+}
+
+.horse-input-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 80px;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.horse-input-row input {
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.horse-input-row input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.remove-horse-btn {
+    background: var(--error-color);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.remove-horse-btn:hover {
+    background: #d32f2f;
+}
+
+/* ==================== 選択エリア ==================== */
+#selection-area {
+    margin-top: 20px;
+}
+
+.selection-group {
+    margin-bottom: 16px;
+}
+
+.selection-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.horse-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+}
+
+.horse-select-btn {
+    background: white;
+    border: 2px solid var(--border-color);
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.horse-select-btn:hover {
+    border-color: var(--primary-light);
+    background: #f0f8f0;
+}
+
+.horse-select-btn.selected {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* ==================== ボタン ==================== */
+.primary-btn, .secondary-btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.primary-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.primary-btn:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+}
+
+.secondary-btn {
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.secondary-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+#add-horse-btn {
+    width: 100%;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/* ==================== 計算結果 ==================== */
+.result-card {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 2px solid var(--secondary-color);
+}
+
+.result-card h2 {
+    color: #e65100;
+    border-bottom-color: var(--secondary-color);
+}
+
+.result-item {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--success-color);
+}
+
+.result-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 4px;
+}
+
+.result-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.result-value.big {
+    font-size: 2rem;
+    color: var(--accent-color);
+}
+
+/* ==================== ガイドカード ==================== */
+.guide-card {
+    background: #f0f8ff;
+    border-left: 4px solid var(--primary-color);
+}
+
+.guide-card h2 {
+    color: var(--primary-color);
+}
+
+.guide-card ol {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.guide-card ol li {
+    margin-bottom: 8px;
+}
+
+.info-box {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.info-box h3 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.info-box ul {
+    padding-left: 20px;
+}
+
+.info-box ul li {
+    margin-bottom: 6px;
+}
+
+/* ==================== フッター ==================== */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.disclaimer {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--error-color);
+}
+
+/* ==================== レスポンシブ対応 ==================== */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .card h2 {
+        font-size: 1.1rem;
+    }
+
+    .bet-type-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .race-info {
+        grid-template-columns: 1fr;
+    }
+
+    .horse-input-row {
+        grid-template-columns: 80px 1fr 60px;
+        gap: 6px;
+    }
+
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .result-value.big {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bet-type-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .horse-select-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    }
+}
+
+/* ==================== アニメーション ==================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-card {
+    animation: fadeIn 0.5s ease;
+}
+
+/* ==================== ユーティリティ ==================== */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
