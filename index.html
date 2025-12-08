@@ -5,19 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>競馬オッズ計算機 - 中央競馬・地方競馬対応</title>
     <meta name="description" content="中央競馬・地方競馬のオッズから払戻金を計算できるツールです。単勝、複勝、馬連、馬単、ワイド、三連複、三連単に対応。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🏇 競馬オッズ計算機</h1>
-            <p class="subtitle">中央競馬・地方競馬対応</p>
+            <p class="subtitle">中央競馬・地方競馬のオッズを簡単計算</p>
         </header>
 
         <main>
+            <!-- レース選択・オッズ自動取得 -->
+            <section class="card scraping-card">
+                <h2><span role="img" aria-label="magnifying glass">🔍</span> レース選択・オッズ取得</h2>
+
+                <div id="auto-section">
+                    <div class="warning-box">
+                        <p><strong>注意事項</strong></p>
+                        <ul>
+                            <li>本機能は外部サイトから情報を取得します。利用規約を遵守し、自己責任でご利用ください。</li>
+                            <li>情報の正確性は保証されません。必ず公式サイトでご確認ください。</li>
+                            <li>サーバーに負荷をかけないよう、連続したアクセスはお控えください。</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label>1. 競馬場タイプ</label>
+                        <div id="race-type-btns" class="btn-group">
+                            <button class="btn-group-item" data-value="central">中央競馬 (JRA)</button>
+                            <button class="btn-group-item" data-value="local">地方競馬</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="venue-group" style="display: none;">
+                        <label>2. 競馬場</label>
+                        <div id="venue-btns" class="btn-group">
+                            <!-- JavaScriptで動的に生成 -->
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="date-group" style="display: none;">
+                        <label for="race-date">3. 開催日</label>
+                        <input type="date" id="race-date" class="step-select">
+                    </div>
+
+                    <div class="form-group" id="race-number-group" style="display: none;">
+                        <label>4. レース番号</label>
+                        <div id="race-number-btns" class="btn-group">
+                            <!-- JavaScriptで動的に生成 -->
+                        </div>
+                    </div>
+
+                    <div class="scraping-actions" id="fetch-btn-group" style="display: none;">
+                        <button id="fetch-odds-btn" class="primary-btn">
+                            <span class="btn-text">オッズを自動取得</span>
+                            <span class="btn-loading" style="display: none;">取得中...</span>
+                        </button>
+                    </div>
+
+                    <div id="scraping-status" class="status-message" style="display: none;"></div>
+                </div>
+            </section>
+            
             <!-- 馬券種類選択 -->
-            <section class="card">
-                <h2>馬券種類を選択</h2>
+            <section class="card" id="bet-type-section" style="display: none;">
+                <h2><span role="img" aria-label="ticket">🎟️</span> 馬券種類を選択</h2>
                 <div class="bet-type-grid">
                     <button class="bet-type-btn active" data-type="win">単勝</button>
                     <button class="bet-type-btn" data-type="place">複勝</button>
@@ -28,175 +83,59 @@
                     <button class="bet-type-btn" data-type="trifecta">三連単</button>
                 </div>
             </section>
-
-            <!-- レース選択・オッズ自動取得 -->
-            <section class="card scraping-card">
-                <h2>🏇 レース選択・オッズ取得</h2>
-
-                <!-- 自動取得モード -->
-                <div id="auto-section">
-                    <div class="info-box warning-box">
-                        <p><strong>⚠️ 注意事項</strong></p>
-                        <ul>
-                            <li>スクレイピングは対象サイトに負荷をかける可能性があります</li>
-                            <li>連続して何度もアクセスしないでください</li>
-                            <li>取得したデータの正確性は保証できません</li>
-                            <li>サイトの利用規約を遵守してください</li>
-                        </ul>
-                    </div>
-
-                    <!-- ステップ1: 競馬種別選択 -->
-                    <div class="form-group">
-                        <label for="race-type">1️⃣ 競馬種別を選択</label>
-                        <select id="race-type" class="step-select">
-                            <option value="">選択してください</option>
-                            <option value="central">中央競馬（JRA）</option>
-                            <option value="local">地方競馬</option>
-                        </select>
-                    </div>
-
-                    <!-- ステップ2: 競馬場選択 -->
-                    <div class="form-group" id="venue-group" style="display: none;">
-                        <label for="race-venue">2️⃣ 競馬場を選択</label>
-                        <select id="race-venue" class="step-select">
-                            <option value="">競馬種別を先に選択してください</option>
-                        </select>
-                    </div>
-
-                    <!-- ステップ3: 開催日選択 -->
-                    <div class="form-group" id="date-group" style="display: none;">
-                        <label for="race-date">3️⃣ 開催日を選択</label>
-                        <input type="date" id="race-date" class="step-select">
-                        <small class="help-text">今日の日付がデフォルトで設定されます</small>
-                    </div>
-
-                    <!-- ステップ4: レース番号選択 -->
-                    <div class="form-group" id="race-number-group" style="display: none;">
-                        <label for="race-number">4️⃣ レース番号を選択</label>
-                        <select id="race-number" class="step-select">
-                            <option value="">1～12Rから選択</option>
-                            <option value="01">1R</option>
-                            <option value="02">2R</option>
-                            <option value="03">3R</option>
-                            <option value="04">4R</option>
-                            <option value="05">5R</option>
-                            <option value="06">6R</option>
-                            <option value="07">7R</option>
-                            <option value="08">8R</option>
-                            <option value="09">9R</option>
-                            <option value="10">10R</option>
-                            <option value="11">11R</option>
-                            <option value="12">12R</option>
-                        </select>
-                    </div>
-
-                    <!-- オッズ取得ボタン -->
-                    <div class="scraping-actions" id="fetch-btn-group" style="display: none;">
-                        <button id="fetch-odds-btn" class="primary-btn">
-                            <span class="btn-text">5️⃣ オッズを自動取得</span>
-                            <span class="btn-loading" style="display: none;">取得中...</span>
-                        </button>
-                    </div>
-
-                    <div id="scraping-status" class="status-message" style="display: none;"></div>
-                </div>
-            </section>
-
-            <!-- オッズ入力 -->
-            <section class="card">
-                <h2>オッズ入力</h2>
-                <div id="odds-input-area">
+            
+            <!-- オッズ表示 -->
+            <section class="card" id="odds-display-section" style="display: none;">
+                <h2><span role="img" aria-label="chart">📊</span> オッズ一覧</h2>
+                <div id="odds-display-area">
                     <!-- JavaScriptで動的に生成 -->
                 </div>
-                <button id="add-horse-btn" class="secondary-btn">＋ 馬を追加</button>
             </section>
 
             <!-- 購入設定 -->
-            <section class="card">
-                <h2>購入設定</h2>
+            <section class="card" id="purchase-section" style="display: none;">
+                <h2><span role="img" aria-label="money bag">💰</span> 購入設定</h2>
                 <div class="form-group">
-                    <label for="bet-amount">購入金額（円）</label>
-                    <input type="number" id="bet-amount" value="100" min="100" step="100" placeholder="100">
+                    <label for="bet-amount">購入金額（1点あたり）</label>
+                    <input type="number" id="bet-amount" value="100" min="100" step="100" placeholder="例: 100">
                 </div>
 
                 <div id="selection-area">
-                    <!-- 馬券種類に応じて動的に生成 -->
+                    <p class="text-light">馬券種類を選択してください。</p>
+                </div>
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button id="calculate-btn" class="primary-btn">払戻金を計算</button>
+                    <button id="reset-btn" class="secondary-btn">リセット</button>
                 </div>
             </section>
-
+            
             <!-- 計算結果 -->
             <section class="card result-card" id="result-section" style="display: none;">
-                <h2>計算結果</h2>
+                <h2><span role="img" aria-label="trophy">🏆</span> 計算結果</h2>
                 <div id="result-content">
                     <!-- JavaScriptで動的に生成 -->
                 </div>
             </section>
 
-            <div class="action-buttons">
-                <button id="calculate-btn" class="primary-btn">払戻金を計算</button>
-                <button id="reset-btn" class="secondary-btn">リセット</button>
-            </div>
-
             <!-- 使い方ガイド -->
             <section class="card guide-card">
-                <h2>使い方</h2>
-
-                <h3>🤖 自動取得モード</h3>
+                <h2><span role="img" aria-label="books">📖</span> 使い方ガイド</h2>
+                
+                <h3>払戻金の計算方法</h3>
                 <ol>
-                    <li><strong>「自動取得モード」</strong>ボタンをクリック</li>
-                    <li><strong>取得元サイト</strong>を選択（netkeiba、JRA、地方競馬）</li>
-                    <li><strong>レースページURL</strong>を入力（netkeibaの出馬表ページなど）</li>
-                    <li><strong>「オッズを自動取得」</strong>ボタンをクリック</li>
-                    <li>オッズが自動入力されたら、以降は手動モードと同じ手順</li>
+                    <li><strong>レース選択:</strong> 上部のセクションで競馬のカテゴリ、競馬場、日付、レース番号を順番に選択します。</li>
+                    <li><strong>オッズ取得:</strong> 「オッズを自動取得」ボタンを押すと、選択したレースの出馬表と単勝オッズが表示されます。</li>
+                    <li><strong>馬券の種類:</strong> 計算したい馬券の種類（単勝、馬連など）を選びます。</li>
+                    <li><strong>購入金額:</strong> 1点あたりの購入金額を設定します。</li>
+                    <li><strong>的中馬番の選択:</strong> 的中した馬番を選びます。</li>
+                    <li><strong>計算実行:</strong> 「払戻金を計算」ボタンを押すと、結果が表示されます。</li>
                 </ol>
-
-                <h3>✍️ 手動入力モード</h3>
-                <ol>
-                    <li><strong>馬券種類を選択</strong>してください（単勝、複勝、馬連など）</li>
-                    <li><strong>オッズ入力</strong>欄に馬番とオッズを入力してください</li>
-                    <li><strong>購入金額</strong>を入力してください（100円単位）</li>
-                    <li><strong>的中した馬番</strong>を選択してください</li>
-                    <li>「払戻金を計算」ボタンをクリックすると、的中時の払戻金が表示されます</li>
-                </ol>
-
-                <div class="info-box">
-                    <h3>💡 各馬券の説明</h3>
-                    <ul>
-                        <li><strong>単勝:</strong> 1着になる馬を当てる</li>
-                        <li><strong>複勝:</strong> 3着以内に入る馬を当てる</li>
-                        <li><strong>馬連:</strong> 1・2着に入る2頭を当てる（順不同）</li>
-                        <li><strong>馬単:</strong> 1・2着を着順通りに当てる</li>
-                        <li><strong>ワイド:</strong> 3着以内に入る2頭を当てる（順不同）</li>
-                        <li><strong>三連複:</strong> 1・2・3着に入る3頭を当てる（順不同）</li>
-                        <li><strong>三連単:</strong> 1・2・3着を着順通りに当てる</li>
-                    </ul>
-                </div>
-
-                <div class="info-box">
-                    <h3>📝 注意事項</h3>
-                    <ul>
-                        <li>オッズは実際の競馬サイト（JRA公式、netkeiba等）から取得できます</li>
-                        <li>オッズは発走直前まで変動します</li>
-                        <li>このツールは計算のみを行い、実際の馬券購入機能はありません</li>
-                        <li>払戻金は10円未満切り捨てで計算されます</li>
-                    </ul>
-                </div>
-
-                <div class="info-box warning-box">
-                    <p><strong>⚠️ スクレイピング使用時の注意</strong></p>
-                    <ul>
-                        <li>対象サイトに負荷をかける可能性があります</li>
-                        <li>連続して何度もアクセスしないでください</li>
-                        <li>サイトの構造変更により動作しなくなる可能性があります</li>
-                        <li>サイトの利用規約を必ず遵守してください</li>
-                    </ul>
-                </div>
             </section>
         </main>
 
         <footer>
-            <p>&copy; 2025 競馬オッズ計算機 | 中央競馬・地方競馬対応</p>
-            <p class="disclaimer">※このサイトは馬券購入を推奨するものではありません。ギャンブルは計画的に。</p>
+            <p>&copy; 2025 競馬オッズ計算機. All Rights Reserved.</p>
+            <p class="disclaimer">このサイトは娯楽目的のツールであり、馬券の購入を推奨するものではありません。ギャンブルは責任を持って楽しみましょう。</p>
         </footer>
     </div>
 
