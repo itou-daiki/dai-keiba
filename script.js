@@ -61,6 +61,12 @@ async function fetchTodaysRaces() {
     showStatus('今日のレース情報を取得中...', 'info');
     try {
         const html = await fetchViaNetlifyProxy(url);
+
+        // HTMLが空またはnullでないかチェック
+        if (!html || html.trim() === '') {
+            throw new Error('取得したHTMLが空です。netkeiba.comがリクエストをブロックした可能性があります。');
+        }
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
@@ -92,12 +98,12 @@ async function fetchTodaysRaces() {
         if (raceList.length > 0) {
             showStatus('レースを選択してください。', 'info');
         } else {
-            showStatus('今日の開催レース情報が見つかりませんでした。', 'error');
+            showStatus('今日の開催レース情報が見つかりませんでした。(サイト構造変更の可能性)', 'error');
         }
 
     } catch (error) {
-        showStatus(`レース情報の取得に失敗しました: ${error.message}`, 'error');
-        displayTodaysRaces([]); // Show disabled button on error
+        showStatus(`エラー: ${error.message}`, 'error');
+        displayTodaysRaces([]); // エラー発生時もボタンを無効化
     }
 }
 
@@ -149,6 +155,9 @@ async function fetchOdds(raceId) {
         const oddsData = await fetchNetkeiba(url);
         if (oddsData && oddsData.horses && oddsData.horses.length > 0) {
             horses = oddsData.horses;
+            // オッズ表示エリアのクリア
+            const oddsContainer = document.getElementById('odds-display-area');
+            oddsContainer.innerHTML = ''; 
             displayOdds(horses);
             showStatus(`✓ オッズを取得しました！`, 'success');
             document.getElementById('bet-type-section').style.display = 'block';
@@ -407,7 +416,6 @@ function getBetTypeName(type) {
 async function fetchViaNetlifyProxy(targetUrl) {
     // /api/fetch エンドポイントに、URLをエンコードしてクエリパラメータとして渡す
     const apiUrl = `/api/fetch?url=${encodeURIComponent(targetUrl)}`;
-    console.log(`Netlifyプロキシ経由で取得: ${apiUrl}`);
 
     try {
         const response = await fetch(apiUrl);
