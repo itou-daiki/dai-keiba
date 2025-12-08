@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>競馬オッズ計算機 - 中央競馬・地方競馬対応</title>
+    <meta name="description" content="中央競馬・地方競馬のオッズから払戻金を計算できるツールです。単勝、複勝、馬連、馬単、ワイド、三連複、三連単に対応。">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏇 競馬オッズ計算機</h1>
+            <p class="subtitle">中央競馬・地方競馬対応</p>
+        </header>
+
+        <main>
+            <!-- 馬券種類選択 -->
+            <section class="card">
+                <h2>馬券種類を選択</h2>
+                <div class="bet-type-grid">
+                    <button class="bet-type-btn active" data-type="win">単勝</button>
+                    <button class="bet-type-btn" data-type="place">複勝</button>
+                    <button class="bet-type-btn" data-type="quinella">馬連</button>
+                    <button class="bet-type-btn" data-type="exacta">馬単</button>
+                    <button class="bet-type-btn" data-type="wide">ワイド</button>
+                    <button class="bet-type-btn" data-type="trio">三連複</button>
+                    <button class="bet-type-btn" data-type="trifecta">三連単</button>
+                </div>
+            </section>
+
+            <!-- レース情報入力 -->
+            <section class="card">
+                <h2>レース情報（任意）</h2>
+                <div class="race-info">
+                    <div class="form-group">
+                        <label for="race-type">競馬種別</label>
+                        <select id="race-type">
+                            <option value="">選択してください</option>
+                            <option value="central">中央競馬（JRA）</option>
+                            <option value="local">地方競馬</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="race-name">レース名</label>
+                        <input type="text" id="race-name" placeholder="例: 第○○回 ○○競馬場 ○R">
+                    </div>
+                </div>
+            </section>
+
+            <!-- オッズ入力 -->
+            <section class="card">
+                <h2>オッズ入力</h2>
+                <div id="odds-input-area">
+                    <!-- JavaScriptで動的に生成 -->
+                </div>
+                <button id="add-horse-btn" class="secondary-btn">＋ 馬を追加</button>
+            </section>
+
+            <!-- 購入設定 -->
+            <section class="card">
+                <h2>購入設定</h2>
+                <div class="form-group">
+                    <label for="bet-amount">購入金額（円）</label>
+                    <input type="number" id="bet-amount" value="100" min="100" step="100" placeholder="100">
+                </div>
+
+                <div id="selection-area">
+                    <!-- 馬券種類に応じて動的に生成 -->
+                </div>
+            </section>
+
+            <!-- 計算結果 -->
+            <section class="card result-card" id="result-section" style="display: none;">
+                <h2>計算結果</h2>
+                <div id="result-content">
+                    <!-- JavaScriptで動的に生成 -->
+                </div>
+            </section>
+
+            <div class="action-buttons">
+                <button id="calculate-btn" class="primary-btn">払戻金を計算</button>
+                <button id="reset-btn" class="secondary-btn">リセット</button>
+            </div>
+
+            <!-- 使い方ガイド -->
+            <section class="card guide-card">
+                <h2>使い方</h2>
+                <ol>
+                    <li><strong>馬券種類を選択</strong>してください（単勝、複勝、馬連など）</li>
+                    <li><strong>オッズ入力</strong>欄に馬番とオッズを入力してください</li>
+                    <li><strong>購入金額</strong>を入力してください（100円単位）</li>
+                    <li><strong>的中した馬番</strong>を選択してください</li>
+                    <li>「払戻金を計算」ボタンをクリックすると、的中時の払戻金が表示されます</li>
+                </ol>
+
+                <div class="info-box">
+                    <h3>💡 各馬券の説明</h3>
+                    <ul>
+                        <li><strong>単勝:</strong> 1着になる馬を当てる</li>
+                        <li><strong>複勝:</strong> 3着以内に入る馬を当てる</li>
+                        <li><strong>馬連:</strong> 1・2着に入る2頭を当てる（順不同）</li>
+                        <li><strong>馬単:</strong> 1・2着を着順通りに当てる</li>
+                        <li><strong>ワイド:</strong> 3着以内に入る2頭を当てる（順不同）</li>
+                        <li><strong>三連複:</strong> 1・2・3着に入る3頭を当てる（順不同）</li>
+                        <li><strong>三連単:</strong> 1・2・3着を着順通りに当てる</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>📝 注意事項</h3>
+                    <ul>
+                        <li>オッズは実際の競馬サイト（JRA公式、netkeiba等）から取得してください</li>
+                        <li>オッズは発走直前まで変動します</li>
+                        <li>このツールは計算のみを行い、実際の馬券購入機能はありません</li>
+                        <li>払戻金は10円未満切り捨てで計算されます</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 競馬オッズ計算機 | 中央競馬・地方競馬対応</p>
+            <p class="disclaimer">※このサイトは馬券購入を推奨するものではありません。ギャンブルは計画的に。</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
