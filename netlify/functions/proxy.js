@@ -2,6 +2,7 @@
 
 // node-fetchを動的にimportする
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const { TextDecoder } = require('util');
 
 exports.handler = async (event, context) => {
   // クエリパラメータからターゲットURLを取得
@@ -17,10 +18,8 @@ exports.handler = async (event, context) => {
   try {
     const response = await fetch(targetUrl, {
       headers: {
-        // netkeiba.comからのアクセスを模倣するためのヘッダー
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+        'Accept-Language': 'ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7',
       },
     });
 
@@ -31,14 +30,18 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const data = await response.text();
+    // EUC-JPの文字コードに対応するため、ArrayBufferとしてレスポンスを取得
+    const buffer = await response.arrayBuffer();
+    // TextDecoderを使用してEUC-JPからUTF-8に変換
+    const decoder = new TextDecoder('euc-jp');
+    const decodedHtml = decoder.decode(buffer);
 
     return {
       statusCode: 200,
-      body: data,
+      body: decodedHtml,
       headers: {
-        'Content-Type': 'text/html; charset=UTF-8',
-        'Access-Control-Allow-Origin': '*', // すべてのオリジンからのアクセスを許可
+        'Content-Type': 'text/html; charset=utf-8', // クライアントにはUTF-8として返す
+        'Access-Control-Allow-Origin': '*', 
       },
     };
   } catch (error) {
