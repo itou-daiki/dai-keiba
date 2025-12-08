@@ -329,12 +329,38 @@ header h1 {
     border-left: 4px solid var(--primary-light);
 }
 
-/* ... other styles from previous CSS ... */
-
 /* ==================== Scraping Section ==================== */
-.scraping-card {
-    background: #eef6ff;
-    border-left-color: var(--primary-color);
+#todays-races-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.race-select-btn {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.race-select-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.race-select-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: 700;
 }
 
 .warning-box {
@@ -360,6 +386,33 @@ header h1 {
 .btn-loading::after {
     border: 3px solid rgba(255, 255, 255,.3);
     border-top-color: white;
+}
+
+/* ==================== Odds Table ==================== */
+#odds-display-section {
+    display: none;
+}
+
+.odds-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.odds-table th, .odds-table td {
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.odds-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.odds-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 /* ==================== Responsive ==================== */
@@ -401,61 +454,26 @@ footer {
         border-top: 1px solid var(--border-color);
     }
     
-    /* ==================== Button Group ==================== */
-    .btn-group {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 10px;
+    .race-select-btn .race-number {
+        display: block;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 4px;
     }
     
-    .btn-group-item {
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        padding: 12px 10px;
-        border-radius: 8px;
+    .race-select-btn .race-name {
+        display: block;
         font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        color: var(--text-color);
-        text-align: center;
-    }
-    
-    .btn-group-item:hover {
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
-    
-    .btn-group-item.active {
-        background: var(--primary-color);
-        color: white;
-        border-color: var(--primary-color);
-    }
-    
-    /* ==================== Odds Table ==================== */
-    #odds-display-section {
-        display: none;
-    }
-    
-    .odds-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    
-    .odds-table th, .odds-table td {
-        padding: 12px 16px;
-        text-align: center;
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    .odds-table th {
-        background-color: #f8f9fa;
-        font-weight: 600;
         color: var(--text-light);
     }
     
-    .odds-table tbody tr:last-child td {
-        border-bottom: none;
+    .race-select-btn.active .race-name {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .race-select-btn[disabled] {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+        text-align: center;
     }
     

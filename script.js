@@ -1,11 +1,9 @@
 // ==================== グローバル変数 ====================
 let currentBetType = 'win'; // 現在選択中の馬券種類
 let horses = []; // 馬のデータ {number, odds}
-let raceInfo = {
-    type: null,
-    venue: null,
-    date: null,
-    number: null,
+let selectedRace = {
+    id: null,
+    name: null,
 };
 
 // CORSプロキシ設定
@@ -14,148 +12,121 @@ const CORS_PROXIES = [
     'https://corsproxy.io/?',
 ];
 
-// 競馬場データ
-const RACECOURSES = {
-    central: { '01': '札幌', '02': '函館', '03': '福島', '04': '新潟', '05': '東京', '06': '中山', '07': '中京', '08': '京都', '09': '阪神', '10': '小倉' },
-    local: { '30': '門別', '35': '盛岡', '36': '水沢', '42': '浦和', '43': '船橋', '44': '大井', '45': '川崎', '46': '金沢', '47': '笠松', '48': '名古屋', '50': '園田', '51': '姫路', '54': '高知', '55': '佐賀' }
-};
-
 // ==================== 初期化 ====================
 document.addEventListener('DOMContentLoaded', initializeApp);
 
 function initializeApp() {
+    fetchTodaysRaces();
     setupEventListeners();
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('race-date').value = today;
-    raceInfo.date = today;
-    generateRaceNumberButtons();
 }
 
 // ==================== イベントリスナー設定 ====================
 function setupEventListeners() {
-    // 競馬場タイプ選択
-    document.getElementById('race-type-btns').addEventListener('click', handleRaceTypeSelection);
-    
-    // 日付選択
-    document.getElementById('race-date').addEventListener('change', (e) => {
-        raceInfo.date = e.target.value;
-        showRaceNumberGroup();
-    });
-
-    // オッズ取得ボタン
-    document.getElementById('fetch-odds-btn').addEventListener('click', fetchOddsFromSelection);
-
-    // 馬券種類選択
+    document.getElementById('todays-races-list').addEventListener('click', handleRaceSelection);
     document.getElementById('bet-type-section').addEventListener('click', handleBetTypeSelection);
-
-    // 計算ボタン
     document.getElementById('calculate-btn').addEventListener('click', calculatePayout);
-
-    // リセットボタン
     document.getElementById('reset-btn').addEventListener('click', resetForm);
 }
 
-// ==================== UI生成 ====================
-function generateRaceVenueButtons(raceType) {
-    const container = document.getElementById('venue-btns');
-    container.innerHTML = '';
-    const courses = RACECOURSES[raceType];
-    for (const [code, name] of Object.entries(courses)) {
-        const button = document.createElement('button');
-        button.className = 'btn-group-item';
-        button.dataset.value = code;
-        button.textContent = name;
-        container.appendChild(button);
-    }
-    container.addEventListener('click', handleVenueSelection);
-    document.getElementById('venue-group').style.display = 'block';
-}
-
-function generateRaceNumberButtons() {
-    const container = document.getElementById('race-number-btns');
-    container.innerHTML = '';
-    for (let i = 1; i <= 12; i++) {
-        const button = document.createElement('button');
-        button.className = 'btn-group-item';
-        button.dataset.value = i.toString().padStart(2, '0');
-        button.textContent = `${i}R`;
-        container.appendChild(button);
-    }
-    container.addEventListener('click', handleRaceNumberSelection);
-}
-
-
-// ==================== UI操作ハンドラ ====================
-function handleRaceTypeSelection(e) {
-    if (!e.target.matches('.btn-group-item')) return;
-    const selectedBtn = e.target;
-    raceInfo.type = selectedBtn.dataset.value;
-    
-    // UI更新
-    updateButtonGroup(selectedBtn);
-    generateRaceVenueButtons(raceInfo.type);
-    
-    // 非表示リセット
-    ['date-group', 'race-number-group', 'fetch-btn-group'].forEach(id => {
-        document.getElementById(id).style.display = 'none';
-    });
-    raceInfo.venue = null;
-    raceInfo.number = null;
-}
-
-function handleVenueSelection(e) {
-    if (!e.target.matches('.btn-group-item')) return;
-    const selectedBtn = e.target;
-    raceInfo.venue = selectedBtn.dataset.value;
-    updateButtonGroup(selectedBtn);
-    document.getElementById('date-group').style.display = 'block';
-    if(raceInfo.date) showRaceNumberGroup();
-}
-
-function handleRaceNumberSelection(e) {
-    if (!e.target.matches('.btn-group-item')) return;
-    const selectedBtn = e.target;
-    raceInfo.number = selectedBtn.dataset.value;
-    updateButtonGroup(selectedBtn);
-    document.getElementById('fetch-btn-group').style.display = 'block';
-}
-
-function showRaceNumberGroup() {
-     document.getElementById('race-number-group').style.display = 'block';
-}
-
-function handleBetTypeSelection(e) {
-    if (!e.target.matches('.bet-type-btn')) return;
-    currentBetType = e.target.dataset.type;
-    updateButtonGroup(e.target, '.bet-type-btn');
-    updateSelectionArea();
-}
-
-function updateButtonGroup(selectedBtn, itemSelector = '.btn-group-item') {
-    const parent = selectedBtn.parentElement;
-    parent.querySelectorAll(itemSelector).forEach(btn => btn.classList.remove('active'));
-    selectedBtn.classList.add('active');
-}
-
-
 // ==================== データ取得・表示 ====================
-async function fetchOddsFromSelection() {
-    const raceId = generateRaceId();
-    if (!raceId) {
-        showStatus('すべての項目を選択してください', 'error');
+async function fetchTodaysRaces() {
+    const url = 'https://netkeiba.com/';
+    showStatus('今日のレース情報を取得中...', 'info');
+    try {
+        const html = await fetchWithProxy(url);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        const raceList = [];
+        const raceElements = doc.querySelectorAll('.RaceList_MajorRace, .RaceList_OtherRace');
+
+        raceElements.forEach(raceBlock => {
+            const venueName = raceBlock.querySelector('.RaceList_RaceName a, .RaceList_ItemTitle a')?.textContent.trim().replace(/競馬場/g, '');
+            const races = raceBlock.querySelectorAll('.RaceList_Item');
+
+            races.forEach(race => {
+                const link = race.querySelector('a');
+                if (link) {
+                    const raceName = link.querySelector('.Race_Name')?.textContent.trim();
+                    const raceNumber = link.querySelector('.Race_Num')?.textContent.trim();
+                    const href = link.href;
+                    const raceIdMatch = href.match(/race_id=([0-9]+)/);
+                    if (raceIdMatch && raceName && raceNumber) {
+                        raceList.push({
+                            id: raceIdMatch[1],
+                            venue: venueName,
+                            number: raceNumber,
+                            name: raceName,
+                        });
+                    }
+                }
+            });
+        });
+        
+        displayTodaysRaces(raceList);
+        if (raceList.length > 0) {
+            showStatus('レースを選択してください。', 'info');
+        } else {
+            showStatus('今日の開催レース情報が見つかりませんでした。', 'error');
+        }
+
+    } catch (error) {
+        showStatus(`レース情報の取得に失敗しました: ${error.message}`, 'error');
+        displayTodaysRaces([]); // Show disabled button on error
+    }
+}
+
+function displayTodaysRaces(races) {
+    const container = document.getElementById('todays-races-list');
+    container.innerHTML = '';
+
+    if (races.length === 0) {
+        const button = document.createElement('button');
+        button.className = 'race-select-btn';
+        button.disabled = true;
+        button.innerHTML = `<span class="race-name">本日のレースはありません</span>`;
+        container.appendChild(button);
         return;
     }
 
+    races.forEach(race => {
+        const button = document.createElement('button');
+        button.className = 'race-select-btn';
+        button.dataset.raceId = race.id;
+        button.dataset.raceName = `${race.venue} ${race.number} ${race.name}`; // Store full name
+        button.innerHTML = `
+            <span class="race-number">${race.venue} ${race.number}</span>
+            <span class="race-name">${race.name}</span>
+        `;
+        container.appendChild(button);
+    });
+}
+
+
+function handleRaceSelection(e) {
+    const selectedBtn = e.target.closest('.race-select-btn');
+    if (!selectedBtn || selectedBtn.disabled) return;
+
+    selectedRace.id = selectedBtn.dataset.raceId;
+    selectedRace.name = selectedBtn.dataset.raceName;
+    
+    document.querySelectorAll('.race-select-btn').forEach(btn => btn.classList.remove('active'));
+    selectedBtn.classList.add('active');
+
+    fetchOdds(selectedRace.id);
+}
+
+async function fetchOdds(raceId) {
     const url = `https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}`;
     setLoading(true);
-    showStatus(`レースID: ${raceId} のオッズを取得中...`, 'info');
+    showStatus(`「${selectedRace.name}」のオッズを取得中...`, 'info');
 
     try {
         const oddsData = await fetchNetkeiba(url);
         if (oddsData && oddsData.horses && oddsData.horses.length > 0) {
             horses = oddsData.horses;
             displayOdds(horses);
-            showStatus(`✓ ${horses.length}頭のオッズデータを取得しました！`, 'success');
+            showStatus(`✓ オッズを取得しました！`, 'success');
             document.getElementById('bet-type-section').style.display = 'block';
             document.getElementById('odds-display-section').style.display = 'block';
             document.getElementById('purchase-section').style.display = 'block';
@@ -194,7 +165,17 @@ function displayOdds(horsesData) {
     container.appendChild(table);
 }
 
-// ==================== 払戻金計算ロジック ====================
+// ==================== UIハンドラ ====================
+function handleBetTypeSelection(e) {
+    if (!e.target.matches('.bet-type-btn')) return;
+    currentBetType = e.target.dataset.type;
+    const parent = e.target.parentElement;
+    parent.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
+    e.target.classList.add('active');
+    updateSelectionArea();
+}
+
+// ==================== 払戻金計算 ====================
 function calculatePayout() {
     const betAmount = parseInt(document.getElementById('bet-amount').value) || 100;
     const selectedHorses = getSelectedHorses();
@@ -215,13 +196,13 @@ function calculatePayout() {
         case 'exacta':
         case 'wide':
             payout = calculateDoublePayout(selectedHorses, betAmount);
-            explanation = `${selectedHorses[0]}番 - ${selectedHorses[1]}番`;
+            explanation = `${selectedHorses.join(' - ')}番`;
             break;
 
         case 'trio':
         case 'trifecta':
             payout = calculateTriplePayout(selectedHorses, betAmount);
-            explanation = `${selectedHorses[0]}番 - ${selectedHorses[1]}番 - ${selectedHorses[2]}番`;
+            explanation = `${selectedHorses.join(' - ')}番`;
             break;
     }
     const betTypeName = getBetTypeName(currentBetType);
@@ -284,7 +265,6 @@ function validateInput(selectedHorses) {
 }
 
 
-// ==================== 払戻金計算 ====================
 function calculateSinglePayout(horseNumber, betAmount) {
     const horse = horses.find(h => h.number === horseNumber);
     if (!horse) return 0;
@@ -324,7 +304,6 @@ function calculateTriplePayout(selectedHorses, betAmount) {
 
     return Math.floor(payout / 10) * 10;
 }
-
 // ==================== 結果表示・リセット ====================
 function displayResult(payout, betAmount, explanation, betTypeName) {
     const resultContent = document.getElementById('result-content');
@@ -332,6 +311,10 @@ function displayResult(payout, betAmount, explanation, betTypeName) {
     const returnRate = betAmount > 0 ? ((payout / betAmount) * 100).toFixed(1) : 0;
     
     resultContent.innerHTML = `
+        <div class="result-item">
+            <span class="result-label">レース</span>
+            <span class="result-value">${selectedRace.name}</span>
+        </div>
         <div class="result-item">
             <span class="result-label">馬券種類</span>
             <span class="result-value">${betTypeName}</span>
@@ -361,34 +344,23 @@ function resetForm() {
         document.getElementById(id).style.display = 'none';
     });
     
-    raceInfo = { type: null, venue: null, date: new Date().toISOString().split('T')[0], number: null };
-    document.getElementById('race-date').value = raceInfo.date;
-
-    document.querySelectorAll('.btn-group-item.active').forEach(btn => btn.classList.remove('active'));
-    
-    document.getElementById('venue-group').style.display = 'none';
-    document.getElementById('race-number-group').style.display = 'none';
-    document.getElementById('fetch-btn-group').style.display = 'none';
-    
     horses = [];
+    selectedRace = { id: null, name: null };
     currentBetType = 'win';
-    updateButtonGroup(document.querySelector('.bet-type-btn[data-type="win"]'), '.bet-type-btn');
+    
+    const betTypeContainer = document.getElementById('bet-type-section');
+    betTypeContainer.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
+    betTypeContainer.querySelector('.bet-type-btn[data-type="win"]').classList.add('active');
+
+    fetchTodaysRaces();
 }
+
 
 // ==================== ユーティリティ ====================
-function generateRaceId() {
-    if (!raceInfo.type || !raceInfo.venue || !raceInfo.date || !raceInfo.number) {
-        return null;
-    }
-    const [year, month, day] = raceInfo.date.split('-');
-    return `${year}${raceInfo.venue}${month}${day}${raceInfo.number}`;
-}
-
 function setLoading(isLoading) {
-    const btn = document.getElementById('fetch-odds-btn');
-    btn.disabled = isLoading;
-    btn.querySelector('.btn-text').style.display = isLoading ? 'none' : 'inline';
-    btn.querySelector('.btn-loading').style.display = isLoading ? 'inline-flex' : 'none';
+    if (isLoading) {
+        showStatus('データを取得中...', 'info');
+    }
 }
 
 function showStatus(message, type = 'info') {
@@ -403,7 +375,6 @@ function getBetTypeName(type) {
     return names[type] || type;
 }
 
-// (fetchWithProxy, fetchNetkeiba は既存のものをほぼ流用)
 async function fetchWithProxy(url, proxyIndex = 0) {
     if (proxyIndex >= CORS_PROXIES.length) {
         throw new Error('すべてのCORSプロキシで失敗しました');
@@ -425,10 +396,10 @@ async function fetchNetkeiba(url) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const horses = [];
-    const rows = doc.querySelectorAll('.RaceTable01 tr[class^="HorseList"]');
+    const rows = doc.querySelectorAll('.Shutuba_Table tbody tr');
     rows.forEach(row => {
-        const numCell = row.querySelector('td:nth-child(2)');
-        const oddsCell = row.querySelector('td:nth-child(14)'); 
+        const numCell = row.querySelector('.Umaban');
+        const oddsCell = row.querySelector('.Odds_Tan'); 
         if (numCell && oddsCell) {
             const number = parseInt(numCell.textContent.trim(), 10);
             const odds = parseFloat(oddsCell.textContent.trim());
@@ -437,15 +408,15 @@ async function fetchNetkeiba(url) {
             }
         }
     });
-    if (horses.length === 0) {
-      const altRows = doc.querySelectorAll('.Shutuba_Table tbody tr');
+     if (horses.length === 0) { 
+        const altRows = doc.querySelectorAll('.RaceTable01 tr[class^="HorseList"]');
         altRows.forEach(row => {
-            const numCell = row.querySelector('.Num');
-            const oddsCell = row.querySelector('.Popular');
-             if (numCell && oddsCell) {
-                const number = parseInt(numCell.textContent.trim());
+            const numCell = row.querySelector('td:nth-child(2)');
+            const oddsCell = row.querySelector('td:nth-child(14)');
+            if (numCell && oddsCell) {
+                const number = parseInt(numCell.textContent.trim(), 10);
                 const odds = parseFloat(oddsCell.textContent.trim());
-                 if (number && !isNaN(odds) && odds > 0) {
+                if (number && !isNaN(odds) && odds > 0) {
                     horses.push({ number, odds });
                 }
             }
