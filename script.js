@@ -22,10 +22,37 @@ function initializeApp() {
 
 // ==================== イベントリスナー設定 ====================
 function setupEventListeners() {
-    document.getElementById('todays-races-list').addEventListener('click', handleRaceSelection);
-    document.getElementById('bet-type-section').addEventListener('click', handleBetTypeSelection);
-    document.getElementById('calculate-btn').addEventListener('click', calculatePayout);
-    document.getElementById('reset-btn').addEventListener('click', resetForm);
+    const mainElement = document.querySelector('main');
+    if (!mainElement) return;
+
+    mainElement.addEventListener('click', (e) => {
+        const raceSelectBtn = e.target.closest('.race-select-btn');
+        const betTypeBtn = e.target.closest('.bet-type-btn');
+        const calculateBtn = e.target.closest('#calculate-btn');
+        const resetBtn = e.target.closest('#reset-btn');
+        const horseSelectBtn = e.target.closest('.horse-select-btn');
+
+        if (raceSelectBtn) {
+            handleRaceSelection(raceSelectBtn);
+            return;
+        }
+        if (betTypeBtn) {
+            handleBetTypeSelection(betTypeBtn);
+            return;
+        }
+        if (calculateBtn) {
+            calculatePayout();
+            return;
+        }
+        if (resetBtn) {
+            resetForm();
+            return;
+        }
+        if (horseSelectBtn) {
+            handleHorseSelection(horseSelectBtn);
+            return;
+        }
+    });
 }
 
 // ==================== データ取得・表示 ====================
@@ -103,8 +130,7 @@ function displayTodaysRaces(races) {
 }
 
 
-function handleRaceSelection(e) {
-    const selectedBtn = e.target.closest('.race-select-btn');
+function handleRaceSelection(selectedBtn) {
     if (!selectedBtn || selectedBtn.disabled) return;
 
     selectedRace.id = selectedBtn.dataset.raceId;
@@ -166,12 +192,12 @@ function displayOdds(horsesData) {
 }
 
 // ==================== UIハンドラ ====================
-function handleBetTypeSelection(e) {
-    if (!e.target.matches('.bet-type-btn')) return;
-    currentBetType = e.target.dataset.type;
-    const parent = e.target.parentElement;
+function handleBetTypeSelection(selectedBtn) {
+    if (!selectedBtn) return;
+    currentBetType = selectedBtn.dataset.type;
+    const parent = selectedBtn.parentElement;
     parent.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
-    e.target.classList.add('active');
+    selectedBtn.classList.add('active');
     updateSelectionArea();
 }
 
@@ -466,14 +492,10 @@ function updateSelectionArea() {
             break;
     }
     selectionArea.innerHTML = html;
-    selectionArea.querySelectorAll('.horse-select-grid').forEach(grid => {
-        grid.addEventListener('click', handleHorseSelection);
-    });
 }
 
-function handleHorseSelection(e) {
-    if (!e.target.matches('.horse-select-btn')) return;
-    const selectedBtn = e.target;
+function handleHorseSelection(selectedBtn) {
+    if (!selectedBtn) return;
     
     const isMultiSelect = ['quinella', 'wide', 'trio'].includes(currentBetType);
     const parentGrid = selectedBtn.parentElement;
