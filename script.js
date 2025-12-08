@@ -62,7 +62,6 @@ async function fetchTodaysRaces() {
     try {
         const html = await fetchViaNetlifyProxy(url);
 
-        // HTMLが空またはnullでないかチェック
         if (!html || html.trim() === '') {
             throw new Error('取得したHTMLが空です。netkeiba.comがリクエストをブロックした可能性があります。');
         }
@@ -71,7 +70,21 @@ async function fetchTodaysRaces() {
         const doc = parser.parseFromString(html, 'text/html');
         
         const raceList = [];
-        const raceElements = doc.querySelectorAll('.RaceList_Box .RaceList_Item');
+        // セレクタを更新し、より具体的に RaceList_DataList 内の RaceList_Item をターゲットにする
+        const raceElements = doc.querySelectorAll('.RaceList_DataList .RaceList_Item');
+        
+        // デバッグログを追加
+        console.log(`'.RaceList_DataList .RaceList_Item' に一致する要素が ${raceElements.length} 件見つかりました。`);
+
+        if (raceElements.length === 0) {
+             // 代替セレクタを試す
+             const alternativeElements = doc.querySelectorAll('.RaceList_Box .RaceList_Item');
+             console.log(`代替セレクタ '.RaceList_Box .RaceList_Item' で ${alternativeElements.length} 件見つかりました。`);
+             if(alternativeElements.length > 0) {
+                 raceElements = alternativeElements;
+             }
+        }
+
 
         raceElements.forEach(race => {
             const link = race.querySelector('a');
@@ -79,6 +92,7 @@ async function fetchTodaysRaces() {
                 const href = link.href;
                 const raceIdMatch = href.match(/race_id=([0-9a-zA-Z_]+)/);
                 
+                // .RaceList_Item要素から直接JyoName等を探すように修正
                 const venueName = race.querySelector('.JyoName')?.textContent.trim();
                 const raceNumber = race.querySelector('.Race_Num')?.textContent.trim();
                 const raceName = race.querySelector('.RaceName')?.textContent.trim();
@@ -95,6 +109,7 @@ async function fetchTodaysRaces() {
         });
         
         displayTodaysRaces(raceList);
+
         if (raceList.length > 0) {
             showStatus('レースを選択してください。', 'info');
         } else {
@@ -103,7 +118,7 @@ async function fetchTodaysRaces() {
 
     } catch (error) {
         showStatus(`エラー: ${error.message}`, 'error');
-        displayTodaysRaces([]); // エラー発生時もボタンを無効化
+        displayTodaysRaces([]); 
     }
 }
 
@@ -124,7 +139,7 @@ function displayTodaysRaces(races) {
         const button = document.createElement('button');
         button.className = 'race-select-btn';
         button.dataset.raceId = race.id;
-        button.dataset.raceName = `${race.venue} ${race.number} ${race.name}`; // Store full name
+        button.dataset.raceName = `${race.venue} ${race.number} ${race.name}`;
         button.innerHTML = `
             <span class="race-number">${race.venue} ${race.number}</span>
             <span class="race-name">${race.name}</span>
@@ -155,9 +170,6 @@ async function fetchOdds(raceId) {
         const oddsData = await fetchNetkeiba(url);
         if (oddsData && oddsData.horses && oddsData.horses.length > 0) {
             horses = oddsData.horses;
-            // オッズ表示エリアのクリア
-            const oddsContainer = document.getElementById('odds-display-area');
-            oddsContainer.innerHTML = ''; 
             displayOdds(horses);
             showStatus(`✓ オッズを取得しました！`, 'success');
             document.getElementById('bet-type-section').style.display = 'block';
@@ -416,7 +428,7 @@ function getBetTypeName(type) {
 async function fetchViaNetlifyProxy(targetUrl) {
     // /api/fetch エンドポイントに、URLをエンコードしてクエリパラメータとして渡す
     const apiUrl = `/api/fetch?url=${encodeURIComponent(targetUrl)}`;
-
+    
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
@@ -430,7 +442,7 @@ async function fetchViaNetlifyProxy(targetUrl) {
 }
 
 async function fetchNetkeiba(url) {
-    const html = await fetchViaNetlifyProxy(url); // 新しい関数を使用
+    const html = await fetchViaNetlifyProxy(url); 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const horses = [];
