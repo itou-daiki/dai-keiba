@@ -424,8 +424,8 @@ function getBetTypeName(type) {
  * @returns {Promise<string>} 取得したHTML文字列
  */
 async function fetchViaNetlifyProxy(targetUrl) {
-    // Netlifyリダイレクトルール '/api/*' を使用
-    const apiUrl = `/api/${targetUrl}`;
+    // /api/fetch エンドポイントに、URLをエンコードしてクエリパラメータとして渡す
+    const apiUrl = `/api/fetch?url=${encodeURIComponent(targetUrl)}`;
     console.log(`Netlifyプロキシ経由で取得: ${apiUrl}`);
 
     try {
