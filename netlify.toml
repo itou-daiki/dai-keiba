@@ -1,0 +1,17 @@
+# netlify.toml
+[build]
+  # このコマンドはビルドプロセスで実行されます。
+  # このプロジェクトにはビルドステップがないため、空のコマンドを設定します。
+  command = ""
+  # ビルド成果物が出力されるディレクトリ。
+  publish = "."
+
+[functions]
+  # サーバーレスファンクションが配置されるディレクトリ。
+  directory = "netlify/functions/"
+
+[[redirects]]
+  # API呼び出しをプロキシするリダイレクトルール
+  from = "/api/*"
+  to = "/.netlify/functions/proxy?url=:splat"
+  status = 200

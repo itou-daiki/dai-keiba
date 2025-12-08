@@ -62,7 +62,7 @@ async function fetchTodaysRaces() {
     showStatus('今日のレース情報を取得中...', 'info');
     console.log('fetchTodaysRaces: 開始');
     try {
-        const html = await fetchWithProxy(url);
+        const html = await fetchViaNetlifyProxy(url); // 新しい関数を使用
 
         // --- デバッグ用ログ ---
         if (html) {
@@ -418,39 +418,32 @@ function getBetTypeName(type) {
     return names[type] || type;
 }
 
-async function fetchWithProxy(url, proxyIndex = 0) {
-    if (proxyIndex >= CORS_PROXIES.length) {
-        console.error('すべてのCORSプロキシで失敗しました。');
-        throw new Error('すべてのCORSプロキシで失敗しました');
-    }
-
-    const proxy = CORS_PROXIES[proxyIndex];
-    let proxyUrl;
-    // codetabsはURLエンコードが不要
-    if (proxy.includes('codetabs')) {
-        proxyUrl = proxy + url;
-    } else {
-        proxyUrl = proxy + encodeURIComponent(url);
-    }
-    
-    console.log(`プロキシ ${proxyIndex + 1} (${proxy}) を試行中: ${proxyUrl}`);
+/**
+ * Netlifyのサーバーレスプロキシ経由でURLからHTMLを取得します。
+ * @param {string} targetUrl 取得対象のURL
+ * @returns {Promise<string>} 取得したHTML文字列
+ */
+async function fetchViaNetlifyProxy(targetUrl) {
+    // Netlifyリダイレクトルール '/api/*' を使用
+    const apiUrl = `/api/${targetUrl}`;
+    console.log(`Netlifyプロキシ経由で取得: ${apiUrl}`);
 
     try {
-        const response = await fetch(proxyUrl);
+        const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status} で ${proxy} へのアクセスに失敗`);
+            throw new Error(`サーバーからの応答が不正です: ${response.status} ${response.statusText}`);
         }
-        console.log(`プロキシ ${proxyIndex + 1} (${proxy}) 成功`);
         return await response.text();
     } catch (error) {
-        console.warn(`プロキシ ${proxyIndex + 1} (${proxy}) 失敗。`, error);
-        // 次のプロキシで再試行
-        return fetchWithProxy(url, proxyIndex + 1);
+        console.error('Netlifyプロキシ経由でのフェッチに失敗しました:', error);
+        throw new Error(`データ取得に失敗しました。(${error.message})`);
     }
 }
 
+// 古いfetchWithProxyとCORS_PROXIESは削除
+
 async function fetchNetkeiba(url) {
-    const html = await fetchWithProxy(url);
+    const html = await fetchViaNetlifyProxy(url); // 新しい関数を使用
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const horses = [];
@@ -482,6 +475,7 @@ async function fetchNetkeiba(url) {
     }
     return { horses };
 }
+
 
 function updateSelectionArea() {
     const selectionArea = document.getElementById('selection-area');
