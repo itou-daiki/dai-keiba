@@ -2,6 +2,14 @@
 let currentBetType = 'win'; // 現在選択中の馬券種類
 let horseCount = 0; // 追加された馬の数
 let horses = []; // 馬のデータ {number, odds}
+let isScrapingMode = false; // スクレイピングモード
+
+// CORSプロキシ設定（複数用意してフォールバック）
+const CORS_PROXIES = [
+    'https://api.allorigins.win/raw?url=',
+    'https://corsproxy.io/?',
+    'https://cors-anywhere.herokuapp.com/'
+];
 
 // ==================== 初期化 ====================
 document.addEventListener('DOMContentLoaded', function() {
@@ -33,6 +41,18 @@ function setupEventListeners() {
             updateSelectionArea();
         });
     });
+
+    // モード切替ボタン
+    document.getElementById('mode-manual-btn').addEventListener('click', function() {
+        switchMode('manual');
+    });
+
+    document.getElementById('mode-scraping-btn').addEventListener('click', function() {
+        switchMode('scraping');
+    });
+
+    // オッズ自動取得ボタン
+    document.getElementById('fetch-odds-btn').addEventListener('click', fetchOddsData);
 
     // 馬を追加ボタン
     document.getElementById('add-horse-btn').addEventListener('click', addHorseInput);
@@ -455,6 +475,310 @@ function resetForm() {
 
     // 選択エリアを更新
     updateSelectionArea();
+}
+
+// ==================== スクレイピング機能 ====================
+
+// モード切替
+function switchMode(mode) {
+    const manualBtn = document.getElementById('mode-manual-btn');
+    const scrapingBtn = document.getElementById('mode-scraping-btn');
+    const scrapingSection = document.getElementById('scraping-section');
+
+    if (mode === 'scraping') {
+        isScrapingMode = true;
+        manualBtn.classList.remove('active');
+        scrapingBtn.classList.add('active');
+        scrapingSection.style.display = 'block';
+    } else {
+        isScrapingMode = false;
+        manualBtn.classList.add('active');
+        scrapingBtn.classList.remove('active');
+        scrapingSection.style.display = 'none';
+    }
+}
+
+// ステータスメッセージ表示
+function showStatus(message, type = 'info') {
+    const statusDiv = document.getElementById('scraping-status');
+    statusDiv.textContent = message;
+    statusDiv.className = `status-message ${type}`;
+    statusDiv.style.display = 'block';
+}
+
+// ローディング状態切替
+function setLoading(isLoading) {
+    const btn = document.getElementById('fetch-odds-btn');
+    const btnText = btn.querySelector('.btn-text');
+    const btnLoading = btn.querySelector('.btn-loading');
+
+    if (isLoading) {
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline-flex';
+    } else {
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+    }
+}
+
+// オッズデータ取得（メイン関数）
+async function fetchOddsData() {
+    const source = document.getElementById('scraping-source').value;
+    const url = document.getElementById('race-url').value.trim();
+
+    // バリデーション
+    if (!source) {
+        showStatus('取得元サイトを選択してください', 'error');
+        return;
+    }
+
+    if (!url) {
+        showStatus('レースページURLを入力してください', 'error');
+        return;
+    }
+
+    try {
+        setLoading(true);
+        showStatus('オッズデータを取得中...', 'info');
+
+        let oddsData = null;
+
+        switch (source) {
+            case 'netkeiba':
+                oddsData = await fetchNetkeiba(url);
+                break;
+            case 'jra':
+                oddsData = await fetchJRA(url);
+                break;
+            case 'nar':
+                oddsData = await fetchNAR(url);
+                break;
+            default:
+                throw new Error('未対応のサイトです');
+        }
+
+        if (oddsData && oddsData.horses && oddsData.horses.length > 0) {
+            populateHorsesFromScraping(oddsData);
+            showStatus(`✓ ${oddsData.horses.length}頭のオッズデータを取得しました！`, 'success');
+
+            // レース情報も更新
+            if (oddsData.raceName) {
+                document.getElementById('race-name').value = oddsData.raceName;
+            }
+        } else {
+            throw new Error('オッズデータが見つかりませんでした');
+        }
+
+    } catch (error) {
+        console.error('スクレイピングエラー:', error);
+        showStatus(`✗ エラー: ${error.message}`, 'error');
+    } finally {
+        setLoading(false);
+    }
+}
+
+// netkeiba からオッズ取得
+async function fetchNetkeiba(url) {
+    try {
+        const html = await fetchWithProxy(url);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const horses = [];
+
+        // netkeiba の出馬表ページから単勝オッズを取得
+        // テーブル構造: .RaceTableDataSet または .Shutuba_Table
+        const rows = doc.querySelectorAll('.RaceTableDataSet tr, .Shutuba_Table tbody tr');
+
+        rows.forEach(row => {
+            // 馬番を取得
+            const numCell = row.querySelector('.Waku, .Num, td:first-child');
+            const oddsCell = row.querySelector('.Odds, .Popular, td.txt_r');
+
+            if (numCell && oddsCell) {
+                const numberText = numCell.textContent.trim();
+                const oddsText = oddsCell.textContent.trim();
+
+                const number = parseInt(numberText);
+                const odds = parseFloat(oddsText);
+
+                if (number && odds && !isNaN(number) && !isNaN(odds) && odds > 0) {
+                    horses.push({ number, odds });
+                }
+            }
+        });
+
+        // 代替パターン: 別のHTML構造に対応
+        if (horses.length === 0) {
+            const altRows = doc.querySelectorAll('table tr');
+            altRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 2) {
+                    const number = parseInt(cells[0].textContent.trim());
+                    const oddsMatch = cells[cells.length - 1].textContent.match(/[\d.]+/);
+                    const odds = oddsMatch ? parseFloat(oddsMatch[0]) : null;
+
+                    if (number && odds && !isNaN(number) && !isNaN(odds) && odds > 0) {
+                        horses.push({ number, odds });
+                    }
+                }
+            });
+        }
+
+        // レース名を取得
+        const raceName = doc.querySelector('.RaceName, h1, .race_name')?.textContent.trim() || '';
+
+        return { horses, raceName, source: 'netkeiba' };
+
+    } catch (error) {
+        throw new Error(`netkeibaからの取得に失敗: ${error.message}`);
+    }
+}
+
+// JRA からオッズ取得
+async function fetchJRA(url) {
+    try {
+        const html = await fetchWithProxy(url);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const horses = [];
+
+        // JRAサイトの構造に応じて調整が必要
+        const rows = doc.querySelectorAll('table tr, .odds_table tr');
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 2) {
+                // 馬番とオッズを抽出（JRAサイトの実際の構造に応じて調整）
+                const numberMatch = cells[0].textContent.match(/\d+/);
+                const oddsMatch = cells[cells.length - 1].textContent.match(/[\d.]+/);
+
+                if (numberMatch && oddsMatch) {
+                    const number = parseInt(numberMatch[0]);
+                    const odds = parseFloat(oddsMatch[0]);
+
+                    if (number && odds && !isNaN(number) && !isNaN(odds) && odds > 0) {
+                        horses.push({ number, odds });
+                    }
+                }
+            }
+        });
+
+        const raceName = doc.querySelector('h1, .race_name')?.textContent.trim() || '';
+
+        return { horses, raceName, source: 'jra' };
+
+    } catch (error) {
+        throw new Error(`JRAサイトからの取得に失敗: ${error.message}`);
+    }
+}
+
+// 地方競馬からオッズ取得
+async function fetchNAR(url) {
+    try {
+        const html = await fetchWithProxy(url);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const horses = [];
+
+        // 地方競馬サイトの構造（netkeibaと同様の可能性）
+        const rows = doc.querySelectorAll('table tr');
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 2) {
+                const numberMatch = cells[0].textContent.match(/\d+/);
+                const oddsMatch = cells[cells.length - 1].textContent.match(/[\d.]+/);
+
+                if (numberMatch && oddsMatch) {
+                    const number = parseInt(numberMatch[0]);
+                    const odds = parseFloat(oddsMatch[0]);
+
+                    if (number && odds && !isNaN(number) && !isNaN(odds) && odds > 0) {
+                        horses.push({ number, odds });
+                    }
+                }
+            }
+        });
+
+        const raceName = doc.querySelector('h1')?.textContent.trim() || '';
+
+        return { horses, raceName, source: 'nar' };
+
+    } catch (error) {
+        throw new Error(`地方競馬サイトからの取得に失敗: ${error.message}`);
+    }
+}
+
+// CORSプロキシ経由でHTMLを取得
+async function fetchWithProxy(url, proxyIndex = 0) {
+    if (proxyIndex >= CORS_PROXIES.length) {
+        throw new Error('すべてのCORSプロキシで失敗しました');
+    }
+
+    const proxy = CORS_PROXIES[proxyIndex];
+    const proxyUrl = proxy + encodeURIComponent(url);
+
+    try {
+        const response = await fetch(proxyUrl, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const html = await response.text();
+        return html;
+
+    } catch (error) {
+        console.warn(`プロキシ${proxyIndex + 1}失敗、次を試行中...`, error);
+        // 次のプロキシで再試行
+        return fetchWithProxy(url, proxyIndex + 1);
+    }
+}
+
+// スクレイピングしたデータで馬の入力欄を自動生成
+function populateHorsesFromScraping(oddsData) {
+    // 既存の入力欄をクリア
+    const container = document.getElementById('odds-input-area');
+    container.innerHTML = '';
+    horseCount = 0;
+
+    // 取得したデータで入力欄を生成
+    oddsData.horses.forEach(horse => {
+        horseCount++;
+        const row = document.createElement('div');
+        row.className = 'horse-input-row';
+        row.id = `horse-row-${horseCount}`;
+
+        row.innerHTML = `
+            <input type="number" class="horse-number" placeholder="馬番" min="1" max="99" value="${horse.number}">
+            <input type="number" class="horse-odds" placeholder="オッズ" step="0.1" min="1.0" value="${horse.odds}">
+            <button class="remove-horse-btn" onclick="removeHorseInput(${horseCount})">削除</button>
+        `;
+
+        container.appendChild(row);
+
+        // 入力欄の変更時に選択エリアを更新
+        const inputs = row.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', updateSelectionArea);
+        });
+    });
+
+    // 選択エリアを更新
+    updateSelectionArea();
+
+    // 手動入力モードに切り替え
+    switchMode('manual');
 }
 
 // ==================== ユーティリティ関数 ====================
