@@ -6,10 +6,11 @@ let selectedRace = {
     name: null,
 };
 
-// CORSプロキシ設定
+// CORSプロキシ設定 (信頼性の高いものを優先)
 const CORS_PROXIES = [
+    'https://api.cors.lol/?url=',
+    'https://api.codetabs.com/v1/proxy?quest=',
     'https://api.allorigins.win/raw?url=',
-    'https://corsproxy.io/?',
 ];
 
 // ==================== 初期化 ====================
@@ -405,11 +406,18 @@ async function fetchWithProxy(url, proxyIndex = 0) {
     if (proxyIndex >= CORS_PROXIES.length) {
         throw new Error('すべてのCORSプロキシで失敗しました');
     }
+
     const proxy = CORS_PROXIES[proxyIndex];
-    const proxyUrl = proxy + encodeURIComponent(url);
+    let proxyUrl;
+    if (proxy.includes('codetabs')) {
+        proxyUrl = proxy + url;
+    } else {
+        proxyUrl = proxy + encodeURIComponent(url);
+    }
+    
     try {
         const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status} で ${proxy} へのアクセスに失敗`);
         return await response.text();
     } catch (error) {
         console.warn(`プロキシ ${proxy} 失敗.`, error);
