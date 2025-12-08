@@ -29,34 +29,12 @@
                 </div>
             </section>
 
-            <!-- レース情報入力 -->
-            <section class="card">
-                <h2>レース情報（任意）</h2>
-                <div class="race-info">
-                    <div class="form-group">
-                        <label for="race-type">競馬種別</label>
-                        <select id="race-type">
-                            <option value="">選択してください</option>
-                            <option value="central">中央競馬（JRA）</option>
-                            <option value="local">地方競馬</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="race-name">レース名</label>
-                        <input type="text" id="race-name" placeholder="例: 第○○回 ○○競馬場 ○R">
-                    </div>
-                </div>
-            </section>
-
-            <!-- オッズ自動取得 -->
+            <!-- レース選択・オッズ自動取得 -->
             <section class="card scraping-card">
-                <h2>🤖 オッズ自動取得（スクレイピング）</h2>
-                <div class="scraping-mode-toggle">
-                    <button id="mode-manual-btn" class="mode-btn active">手動入力モード</button>
-                    <button id="mode-scraping-btn" class="mode-btn">自動取得モード</button>
-                </div>
+                <h2>🏇 レース選択・オッズ取得</h2>
 
-                <div id="scraping-section" style="display: none;">
+                <!-- 自動取得モード -->
+                <div id="auto-section">
                     <div class="info-box warning-box">
                         <p><strong>⚠️ 注意事項</strong></p>
                         <ul>
@@ -67,27 +45,55 @@
                         </ul>
                     </div>
 
+                    <!-- ステップ1: 競馬種別選択 -->
                     <div class="form-group">
-                        <label for="scraping-source">取得元サイト</label>
-                        <select id="scraping-source">
+                        <label for="race-type">1️⃣ 競馬種別を選択</label>
+                        <select id="race-type" class="step-select">
                             <option value="">選択してください</option>
-                            <option value="netkeiba">netkeiba（競馬データベース）</option>
-                            <option value="jra">JRA公式サイト</option>
-                            <option value="nar">地方競馬情報サイト</option>
+                            <option value="central">中央競馬（JRA）</option>
+                            <option value="local">地方競馬</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="race-url">レースページURL</label>
-                        <input type="url" id="race-url" placeholder="例: https://race.netkeiba.com/race/shutuba.html?race_id=...">
-                        <small class="help-text">
-                            netkeibaの場合: レース詳細ページまたは出馬表ページのURLを入力してください
-                        </small>
+                    <!-- ステップ2: 競馬場選択 -->
+                    <div class="form-group" id="venue-group" style="display: none;">
+                        <label for="race-venue">2️⃣ 競馬場を選択</label>
+                        <select id="race-venue" class="step-select">
+                            <option value="">競馬種別を先に選択してください</option>
+                        </select>
                     </div>
 
-                    <div class="scraping-actions">
+                    <!-- ステップ3: 開催日選択 -->
+                    <div class="form-group" id="date-group" style="display: none;">
+                        <label for="race-date">3️⃣ 開催日を選択</label>
+                        <input type="date" id="race-date" class="step-select">
+                        <small class="help-text">今日の日付がデフォルトで設定されます</small>
+                    </div>
+
+                    <!-- ステップ4: レース番号選択 -->
+                    <div class="form-group" id="race-number-group" style="display: none;">
+                        <label for="race-number">4️⃣ レース番号を選択</label>
+                        <select id="race-number" class="step-select">
+                            <option value="">1～12Rから選択</option>
+                            <option value="01">1R</option>
+                            <option value="02">2R</option>
+                            <option value="03">3R</option>
+                            <option value="04">4R</option>
+                            <option value="05">5R</option>
+                            <option value="06">6R</option>
+                            <option value="07">7R</option>
+                            <option value="08">8R</option>
+                            <option value="09">9R</option>
+                            <option value="10">10R</option>
+                            <option value="11">11R</option>
+                            <option value="12">12R</option>
+                        </select>
+                    </div>
+
+                    <!-- オッズ取得ボタン -->
+                    <div class="scraping-actions" id="fetch-btn-group" style="display: none;">
                         <button id="fetch-odds-btn" class="primary-btn">
-                            <span class="btn-text">オッズを自動取得</span>
+                            <span class="btn-text">5️⃣ オッズを自動取得</span>
                             <span class="btn-loading" style="display: none;">取得中...</span>
                         </button>
                     </div>

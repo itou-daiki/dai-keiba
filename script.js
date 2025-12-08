@@ -2,7 +2,7 @@
 let currentBetType = 'win'; // 現在選択中の馬券種類
 let horseCount = 0; // 追加された馬の数
 let horses = []; // 馬のデータ {number, odds}
-let isScrapingMode = false; // スクレイピングモード
+let isAutoMode = true; // 自動取得モード（デフォルト）
 
 // CORSプロキシ設定（複数用意してフォールバック）
 const CORS_PROXIES = [
@@ -10,6 +10,38 @@ const CORS_PROXIES = [
     'https://corsproxy.io/?',
     'https://cors-anywhere.herokuapp.com/'
 ];
+
+// 競馬場データ
+const RACECOURSES = {
+    central: {
+        '01': '札幌',
+        '02': '函館',
+        '03': '福島',
+        '04': '新潟',
+        '05': '東京',
+        '06': '中山',
+        '07': '中京',
+        '08': '京都',
+        '09': '阪神',
+        '10': '小倉'
+    },
+    local: {
+        '30': '門別',
+        '35': '盛岡',
+        '36': '水沢',
+        '42': '浦和',
+        '43': '船橋',
+        '44': '大井',
+        '45': '川崎',
+        '46': '金沢',
+        '47': '笠松',
+        '48': '名古屋',
+        '50': '園田',
+        '51': '姫路',
+        '54': '高知',
+        '55': '佐賀'
+    }
+};
 
 // ==================== 初期化 ====================
 document.addEventListener('DOMContentLoaded', function() {
@@ -19,6 +51,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeApp() {
     // イベントリスナーを設定
     setupEventListeners();
+
+    // 今日の日付を設定
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('race-date').value = today;
 
     // 初期状態で3頭分の入力欄を追加
     addHorseInput();
@@ -42,17 +78,14 @@ function setupEventListeners() {
         });
     });
 
-    // モード切替ボタン
-    document.getElementById('mode-manual-btn').addEventListener('click', function() {
-        switchMode('manual');
-    });
-
-    document.getElementById('mode-scraping-btn').addEventListener('click', function() {
-        switchMode('scraping');
-    });
+    // 段階的選択のイベントリスナー
+    document.getElementById('race-type').addEventListener('change', onRaceTypeChange);
+    document.getElementById('race-venue').addEventListener('change', onVenueChange);
+    document.getElementById('race-date').addEventListener('change', onDateChange);
+    document.getElementById('race-number').addEventListener('change', onRaceNumberChange);
 
     // オッズ自動取得ボタン
-    document.getElementById('fetch-odds-btn').addEventListener('click', fetchOddsData);
+    document.getElementById('fetch-odds-btn').addEventListener('click', fetchOddsFromSelection);
 
     // 馬を追加ボタン
     document.getElementById('add-horse-btn').addEventListener('click', addHorseInput);
@@ -479,28 +512,140 @@ function resetForm() {
 
 // ==================== スクレイピング機能 ====================
 
-// モード切替
-function switchMode(mode) {
-    const manualBtn = document.getElementById('mode-manual-btn');
-    const scrapingBtn = document.getElementById('mode-scraping-btn');
-    const scrapingSection = document.getElementById('scraping-section');
+// 競馬種別変更時の処理
+function onRaceTypeChange(e) {
+    const raceType = e.target.value;
+    const venueGroup = document.getElementById('venue-group');
+    const venueSelect = document.getElementById('race-venue');
 
-    if (mode === 'scraping') {
-        isScrapingMode = true;
-        manualBtn.classList.remove('active');
-        scrapingBtn.classList.add('active');
-        scrapingSection.style.display = 'block';
-    } else {
-        isScrapingMode = false;
-        manualBtn.classList.add('active');
-        scrapingBtn.classList.remove('active');
-        scrapingSection.style.display = 'none';
+    if (!raceType) {
+        venueGroup.style.display = 'none';
+        return;
+    }
+
+    // 競馬場リストを更新
+    venueSelect.innerHTML = '<option value="">競馬場を選択してください</option>';
+    const courses = RACECOURSES[raceType];
+
+    for (const [code, name] of Object.entries(courses)) {
+        const option = document.createElement('option');
+        option.value = code;
+        option.textContent = name;
+        venueSelect.appendChild(option);
+    }
+
+    venueGroup.style.display = 'block';
+
+    // 後続のフィールドを非表示
+    document.getElementById('date-group').style.display = 'none';
+    document.getElementById('race-number-group').style.display = 'none';
+    document.getElementById('fetch-btn-group').style.display = 'none';
+}
+
+// 競馬場変更時の処理
+function onVenueChange(e) {
+    const venue = e.target.value;
+    const dateGroup = document.getElementById('date-group');
+
+    if (!venue) {
+        dateGroup.style.display = 'none';
+        return;
+    }
+
+    dateGroup.style.display = 'block';
+
+    // 後続のフィールドを非表示
+    document.getElementById('race-number-group').style.display = 'none';
+    document.getElementById('fetch-btn-group').style.display = 'none';
+}
+
+// 日付変更時の処理
+function onDateChange(e) {
+    const date = e.target.value;
+    const raceNumberGroup = document.getElementById('race-number-group');
+
+    if (!date) {
+        raceNumberGroup.style.display = 'none';
+        return;
+    }
+
+    raceNumberGroup.style.display = 'block';
+
+    // 取得ボタンを非表示（レース番号選択後に表示）
+    document.getElementById('fetch-btn-group').style.display = 'none';
+}
+
+// レース番号変更時の処理
+function onRaceNumberChange(e) {
+    const raceNumber = e.target.value;
+    const fetchBtnGroup = document.getElementById('fetch-btn-group');
+
+    if (!raceNumber) {
+        fetchBtnGroup.style.display = 'none';
+        return;
+    }
+
+    fetchBtnGroup.style.display = 'block';
+}
+
+// レースID生成関数
+function generateRaceId() {
+    const date = document.getElementById('race-date').value; // YYYY-MM-DD
+    const venue = document.getElementById('race-venue').value;
+    const raceNumber = document.getElementById('race-number').value;
+
+    if (!date || !venue || !raceNumber) {
+        return null;
+    }
+
+    // 日付をYYYYMMDD形式に変換
+    const [year, month, day] = date.split('-');
+
+    // レースIDの構造: YYYY + 競馬場コード(2桁) + MMDD + レース番号(2桁)
+    const raceId = year + venue + month + day + raceNumber;
+
+    return raceId;
+}
+
+// 選択からオッズを取得
+async function fetchOddsFromSelection() {
+    const raceId = generateRaceId();
+
+    if (!raceId) {
+        showStatus('すべての項目を選択してください', 'error');
+        return;
+    }
+
+    // netkeibaのURLを生成
+    const url = `https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}`;
+
+    console.log('生成されたレースID:', raceId);
+    console.log('生成されたURL:', url);
+
+    try {
+        setLoading(true);
+        showStatus(`レースID: ${raceId} のオッズを取得中...`, 'info');
+
+        const oddsData = await fetchNetkeiba(url);
+
+        if (oddsData && oddsData.horses && oddsData.horses.length > 0) {
+            populateHorsesFromScraping(oddsData);
+            showStatus(`✓ ${oddsData.horses.length}頭のオッズデータを取得しました！`, 'success');
+        } else {
+            throw new Error('オッズデータが見つかりませんでした。レース情報を確認してください。');
+        }
+
+    } catch (error) {
+        console.error('スクレイピングエラー:', error);
+        showStatus(`✗ エラー: ${error.message}`, 'error');
+    } finally {
+        setLoading(false);
     }
 }
 
 // ステータスメッセージ表示
-function showStatus(message, type = 'info') {
-    const statusDiv = document.getElementById('scraping-status');
+function showStatus(message, type = 'info', statusId = 'scraping-status') {
+    const statusDiv = document.getElementById(statusId);
     statusDiv.textContent = message;
     statusDiv.className = `status-message ${type}`;
     statusDiv.style.display = 'block';
@@ -520,62 +665,6 @@ function setLoading(isLoading) {
         btn.disabled = false;
         btnText.style.display = 'inline';
         btnLoading.style.display = 'none';
-    }
-}
-
-// オッズデータ取得（メイン関数）
-async function fetchOddsData() {
-    const source = document.getElementById('scraping-source').value;
-    const url = document.getElementById('race-url').value.trim();
-
-    // バリデーション
-    if (!source) {
-        showStatus('取得元サイトを選択してください', 'error');
-        return;
-    }
-
-    if (!url) {
-        showStatus('レースページURLを入力してください', 'error');
-        return;
-    }
-
-    try {
-        setLoading(true);
-        showStatus('オッズデータを取得中...', 'info');
-
-        let oddsData = null;
-
-        switch (source) {
-            case 'netkeiba':
-                oddsData = await fetchNetkeiba(url);
-                break;
-            case 'jra':
-                oddsData = await fetchJRA(url);
-                break;
-            case 'nar':
-                oddsData = await fetchNAR(url);
-                break;
-            default:
-                throw new Error('未対応のサイトです');
-        }
-
-        if (oddsData && oddsData.horses && oddsData.horses.length > 0) {
-            populateHorsesFromScraping(oddsData);
-            showStatus(`✓ ${oddsData.horses.length}頭のオッズデータを取得しました！`, 'success');
-
-            // レース情報も更新
-            if (oddsData.raceName) {
-                document.getElementById('race-name').value = oddsData.raceName;
-            }
-        } else {
-            throw new Error('オッズデータが見つかりませんでした');
-        }
-
-    } catch (error) {
-        console.error('スクレイピングエラー:', error);
-        showStatus(`✗ エラー: ${error.message}`, 'error');
-    } finally {
-        setLoading(false);
     }
 }
 
@@ -634,83 +723,6 @@ async function fetchNetkeiba(url) {
 
     } catch (error) {
         throw new Error(`netkeibaからの取得に失敗: ${error.message}`);
-    }
-}
-
-// JRA からオッズ取得
-async function fetchJRA(url) {
-    try {
-        const html = await fetchWithProxy(url);
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        const horses = [];
-
-        // JRAサイトの構造に応じて調整が必要
-        const rows = doc.querySelectorAll('table tr, .odds_table tr');
-
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length >= 2) {
-                // 馬番とオッズを抽出（JRAサイトの実際の構造に応じて調整）
-                const numberMatch = cells[0].textContent.match(/\d+/);
-                const oddsMatch = cells[cells.length - 1].textContent.match(/[\d.]+/);
-
-                if (numberMatch && oddsMatch) {
-                    const number = parseInt(numberMatch[0]);
-                    const odds = parseFloat(oddsMatch[0]);
-
-                    if (number && odds && !isNaN(number) && !isNaN(odds) && odds > 0) {
-                        horses.push({ number, odds });
-                    }
-                }
-            }
-        });
-
-        const raceName = doc.querySelector('h1, .race_name')?.textContent.trim() || '';
-
-        return { horses, raceName, source: 'jra' };
-
-    } catch (error) {
-        throw new Error(`JRAサイトからの取得に失敗: ${error.message}`);
-    }
-}
-
-// 地方競馬からオッズ取得
-async function fetchNAR(url) {
-    try {
-        const html = await fetchWithProxy(url);
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        const horses = [];
-
-        // 地方競馬サイトの構造（netkeibaと同様の可能性）
-        const rows = doc.querySelectorAll('table tr');
-
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length >= 2) {
-                const numberMatch = cells[0].textContent.match(/\d+/);
-                const oddsMatch = cells[cells.length - 1].textContent.match(/[\d.]+/);
-
-                if (numberMatch && oddsMatch) {
-                    const number = parseInt(numberMatch[0]);
-                    const odds = parseFloat(oddsMatch[0]);
-
-                    if (number && odds && !isNaN(number) && !isNaN(odds) && odds > 0) {
-                        horses.push({ number, odds });
-                    }
-                }
-            }
-        });
-
-        const raceName = doc.querySelector('h1')?.textContent.trim() || '';
-
-        return { horses, raceName, source: 'nar' };
-
-    } catch (error) {
-        throw new Error(`地方競馬サイトからの取得に失敗: ${error.message}`);
     }
 }
 
@@ -776,9 +788,6 @@ function populateHorsesFromScraping(oddsData) {
 
     // 選択エリアを更新
     updateSelectionArea();
-
-    // 手動入力モードに切り替え
-    switchMode('manual');
 }
 
 // ==================== ユーティリティ関数 ====================
