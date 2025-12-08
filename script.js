@@ -51,51 +51,48 @@ function setupEventListeners() {
 
 // ==================== データ取得・表示 ====================
 async function fetchTodaysRaces() {
-    const url = 'https://netkeiba.com/';
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const kaisaiDate = `${year}${month}${day}`;
+
+    const url = `https://race.netkeiba.com/top/race_list.html?kaisai_date=${kaisaiDate}`;
     showStatus('今日のレース情報を取得中...', 'info');
     try {
         const html = await fetchViaNetlifyProxy(url);
-
-        // --- ★★★ デバッグ用ログ ★★★ ---
-        // サイト構造を調査するために、取得したHTMLをコンソールに出力します。
-        console.log('取得したHTML:', html);
-        // --- ★★★ デバッグ用ログここまで ★★★ ---
-
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
         const raceList = [];
-        // サイト構造の変更に対応するため、セレクタを更新
-        const raceElements = doc.querySelectorAll('.RaceList_MajorRace, .RaceList_OtherRace, .Main_Race_RaceList');
+        const raceElements = doc.querySelectorAll('.RaceList_Box .RaceList_Item');
 
-        raceElements.forEach(raceBlock => {
-            const venueName = raceBlock.querySelector('.RaceList_RaceName a, .RaceList_ItemTitle a, .Race_Name a')?.textContent.trim().replace(/競馬場/g, '');
-            const races = raceBlock.querySelectorAll('.RaceList_Item, .RaceList_Data');
+        raceElements.forEach(race => {
+            const link = race.querySelector('a');
+            if (link) {
+                const href = link.href;
+                const raceIdMatch = href.match(/race_id=([0-9a-zA-Z_]+)/);
+                
+                const venueName = race.querySelector('.JyoName')?.textContent.trim();
+                const raceNumber = race.querySelector('.Race_Num')?.textContent.trim();
+                const raceName = race.querySelector('.RaceName')?.textContent.trim();
 
-            races.forEach(race => {
-                const link = race.querySelector('a');
-                if (link) {
-                    const raceName = link.querySelector('.Race_Name')?.textContent.trim();
-                    const raceNumber = link.querySelector('.Race_Num')?.textContent.trim();
-                    const href = link.href;
-                    const raceIdMatch = href.match(/race_id=([0-9a-zA-Z_]+)/);
-                    if (raceIdMatch && raceName && raceNumber) {
-                        raceList.push({
-                            id: raceIdMatch[1],
-                            venue: venueName,
-                            number: raceNumber,
-                            name: raceName,
-                        });
-                    }
+                if (raceIdMatch && venueName && raceNumber && raceName) {
+                    raceList.push({
+                        id: raceIdMatch[1],
+                        venue: venueName,
+                        number: raceNumber,
+                        name: raceName,
+                    });
                 }
-            });
+            }
         });
         
         displayTodaysRaces(raceList);
         if (raceList.length > 0) {
             showStatus('レースを選択してください。', 'info');
         } else {
-            showStatus('今日の開催レース情報が見つかりませんでした。サイトの構造が変更された可能性があります。', 'error');
+            showStatus('今日の開催レース情報が見つかりませんでした。', 'error');
         }
 
     } catch (error) {
