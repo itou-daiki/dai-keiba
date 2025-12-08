@@ -59,18 +59,31 @@ function setupEventListeners() {
 // ==================== データ取得・表示 ====================
 async function fetchTodaysRaces() {
     const url = 'https://netkeiba.com/';
-    showStatus('🐎', 'info');
+    showStatus('今日のレース情報を取得中...', 'info');
+    console.log('fetchTodaysRaces: 開始');
     try {
         const html = await fetchWithProxy(url);
+
+        // --- デバッグ用ログ ---
+        if (html) {
+            console.log('fetchTodaysRaces: HTML取得成功。解析を開始します。');
+            // console.log(html); // 必要に応じてHTML全体をログに出す
+        } else {
+            console.error('fetchTodaysRaces: HTMLの取得に失敗しました。返り値が空です。');
+            throw new Error('プロキシ経由でのHTML取得に失敗しました。');
+        }
+        // --- デバッグ用ログここまで ---
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
         const raceList = [];
-        const raceElements = doc.querySelectorAll('.RaceList_MajorRace, .RaceList_OtherRace');
+        // netkeibaのトップページは動的に変化するため、より広範なセレクタを試す
+        const raceElements = doc.querySelectorAll('.RaceList_MajorRace, .RaceList_OtherRace, .Main_Race_RaceList');
 
         raceElements.forEach(raceBlock => {
-            const venueName = raceBlock.querySelector('.RaceList_RaceName a, .RaceList_ItemTitle a')?.textContent.trim().replace(/競馬場/g, '');
-            const races = raceBlock.querySelectorAll('.RaceList_Item');
+            const venueName = raceBlock.querySelector('.RaceList_RaceName a, .RaceList_ItemTitle a, .Race_Name a')?.textContent.trim().replace(/競馬場/g, '');
+            const races = raceBlock.querySelectorAll('.RaceList_Item, .RaceList_Data');
 
             races.forEach(race => {
                 const link = race.querySelector('a');
@@ -78,7 +91,8 @@ async function fetchTodaysRaces() {
                     const raceName = link.querySelector('.Race_Name')?.textContent.trim();
                     const raceNumber = link.querySelector('.Race_Num')?.textContent.trim();
                     const href = link.href;
-                    const raceIdMatch = href.match(/race_id=([0-9]+)/);
+                    // hrefからrace_idを抽出する正規表現を改善
+                    const raceIdMatch = href.match(/race_id=([0-9a-zA-Z_]+)/);
                     if (raceIdMatch && raceName && raceNumber) {
                         raceList.push({
                             id: raceIdMatch[1],
@@ -95,10 +109,12 @@ async function fetchTodaysRaces() {
         if (raceList.length > 0) {
             showStatus('レースを選択してください。', 'info');
         } else {
-            showStatus('今日の開催レース情報が見つかりませんでした。', 'error');
+            console.log('fetchTodaysRaces: レースリストの解析結果が0件でした。HTML構造を確認してください。');
+            showStatus('今日の開催レース情報が見つかりませんでした。サイトの構造が変更された可能性があります。', 'error');
         }
 
     } catch (error) {
+        console.error('fetchTodaysRaces: 全体的なエラー', error);
         showStatus(`レース情報の取得に失敗しました: ${error.message}`, 'error');
         displayTodaysRaces([]); // Show disabled button on error
     }
@@ -404,23 +420,31 @@ function getBetTypeName(type) {
 
 async function fetchWithProxy(url, proxyIndex = 0) {
     if (proxyIndex >= CORS_PROXIES.length) {
+        console.error('すべてのCORSプロキシで失敗しました。');
         throw new Error('すべてのCORSプロキシで失敗しました');
     }
 
     const proxy = CORS_PROXIES[proxyIndex];
     let proxyUrl;
+    // codetabsはURLエンコードが不要
     if (proxy.includes('codetabs')) {
         proxyUrl = proxy + url;
     } else {
         proxyUrl = proxy + encodeURIComponent(url);
     }
     
+    console.log(`プロキシ ${proxyIndex + 1} (${proxy}) を試行中: ${proxyUrl}`);
+
     try {
         const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error(`HTTP ${response.status} で ${proxy} へのアクセスに失敗`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} で ${proxy} へのアクセスに失敗`);
+        }
+        console.log(`プロキシ ${proxyIndex + 1} (${proxy}) 成功`);
         return await response.text();
     } catch (error) {
-        console.warn(`プロキシ ${proxy} 失敗.`, error);
+        console.warn(`プロキシ ${proxyIndex + 1} (${proxy}) 失敗。`, error);
+        // 次のプロキシで再試行
         return fetchWithProxy(url, proxyIndex + 1);
     }
 }
@@ -520,8 +544,8 @@ function handleHorseSelection(selectedBtn) {
             }
         }
     } else {
-        parentGrid.querySelectorAll('.horse-select-btn').forEach(btn => btn.classList.remove('selected'));
-        selectedBtn.classList.add('selected');
+        parentGrid.querySelectorAll('.horse-select-btn').forEach(btn => btn.classList.remove('active'));
+        selectedBtn.classList.add('active');
     }
     
     const horseNumber = selectedBtn.dataset.horse;
