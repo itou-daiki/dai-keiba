@@ -55,10 +55,17 @@ async function fetchTodaysRaces() {
     showStatus('今日のレース情報を取得中...', 'info');
     try {
         const html = await fetchViaNetlifyProxy(url);
+
+        // --- ★★★ デバッグ用ログ ★★★ ---
+        // サイト構造を調査するために、取得したHTMLをコンソールに出力します。
+        console.log('取得したHTML:', html);
+        // --- ★★★ デバッグ用ログここまで ★★★ ---
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
         const raceList = [];
+        // サイト構造の変更に対応するため、セレクタを更新
         const raceElements = doc.querySelectorAll('.RaceList_MajorRace, .RaceList_OtherRace, .Main_Race_RaceList');
 
         raceElements.forEach(raceBlock => {
