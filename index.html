@@ -48,6 +48,54 @@
                 </div>
             </section>
 
+            <!-- オッズ自動取得 -->
+            <section class="card scraping-card">
+                <h2>🤖 オッズ自動取得（スクレイピング）</h2>
+                <div class="scraping-mode-toggle">
+                    <button id="mode-manual-btn" class="mode-btn active">手動入力モード</button>
+                    <button id="mode-scraping-btn" class="mode-btn">自動取得モード</button>
+                </div>
+
+                <div id="scraping-section" style="display: none;">
+                    <div class="info-box warning-box">
+                        <p><strong>⚠️ 注意事項</strong></p>
+                        <ul>
+                            <li>スクレイピングは対象サイトに負荷をかける可能性があります</li>
+                            <li>連続して何度もアクセスしないでください</li>
+                            <li>取得したデータの正確性は保証できません</li>
+                            <li>サイトの利用規約を遵守してください</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scraping-source">取得元サイト</label>
+                        <select id="scraping-source">
+                            <option value="">選択してください</option>
+                            <option value="netkeiba">netkeiba（競馬データベース）</option>
+                            <option value="jra">JRA公式サイト</option>
+                            <option value="nar">地方競馬情報サイト</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="race-url">レースページURL</label>
+                        <input type="url" id="race-url" placeholder="例: https://race.netkeiba.com/race/shutuba.html?race_id=...">
+                        <small class="help-text">
+                            netkeibaの場合: レース詳細ページまたは出馬表ページのURLを入力してください
+                        </small>
+                    </div>
+
+                    <div class="scraping-actions">
+                        <button id="fetch-odds-btn" class="primary-btn">
+                            <span class="btn-text">オッズを自動取得</span>
+                            <span class="btn-loading" style="display: none;">取得中...</span>
+                        </button>
+                    </div>
+
+                    <div id="scraping-status" class="status-message" style="display: none;"></div>
+                </div>
+            </section>
+
             <!-- オッズ入力 -->
             <section class="card">
                 <h2>オッズ入力</h2>
@@ -86,6 +134,17 @@
             <!-- 使い方ガイド -->
             <section class="card guide-card">
                 <h2>使い方</h2>
+
+                <h3>🤖 自動取得モード</h3>
+                <ol>
+                    <li><strong>「自動取得モード」</strong>ボタンをクリック</li>
+                    <li><strong>取得元サイト</strong>を選択（netkeiba、JRA、地方競馬）</li>
+                    <li><strong>レースページURL</strong>を入力（netkeibaの出馬表ページなど）</li>
+                    <li><strong>「オッズを自動取得」</strong>ボタンをクリック</li>
+                    <li>オッズが自動入力されたら、以降は手動モードと同じ手順</li>
+                </ol>
+
+                <h3>✍️ 手動入力モード</h3>
                 <ol>
                     <li><strong>馬券種類を選択</strong>してください（単勝、複勝、馬連など）</li>
                     <li><strong>オッズ入力</strong>欄に馬番とオッズを入力してください</li>
@@ -110,10 +169,20 @@
                 <div class="info-box">
                     <h3>📝 注意事項</h3>
                     <ul>
-                        <li>オッズは実際の競馬サイト（JRA公式、netkeiba等）から取得してください</li>
+                        <li>オッズは実際の競馬サイト（JRA公式、netkeiba等）から取得できます</li>
                         <li>オッズは発走直前まで変動します</li>
                         <li>このツールは計算のみを行い、実際の馬券購入機能はありません</li>
                         <li>払戻金は10円未満切り捨てで計算されます</li>
+                    </ul>
+                </div>
+
+                <div class="info-box warning-box">
+                    <p><strong>⚠️ スクレイピング使用時の注意</strong></p>
+                    <ul>
+                        <li>対象サイトに負荷をかける可能性があります</li>
+                        <li>連続して何度もアクセスしないでください</li>
+                        <li>サイトの構造変更により動作しなくなる可能性があります</li>
+                        <li>サイトの利用規約を必ず遵守してください</li>
                     </ul>
                 </div>
             </section>

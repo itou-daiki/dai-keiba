@@ -438,6 +438,129 @@ footer {
     animation: fadeIn 0.5s ease;
 }
 
+/* ==================== スクレイピング機能 ==================== */
+.scraping-card {
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f2ff 100%);
+    border-left: 4px solid var(--primary-color);
+}
+
+.scraping-mode-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.mode-btn:hover {
+    border-color: var(--primary-light);
+    background: #f0f8f0;
+}
+
+.mode-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.warning-box {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-left: 4px solid #ff9800;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.warning-box p {
+    margin-bottom: 8px;
+    color: #856404;
+    font-weight: 600;
+}
+
+.warning-box ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.warning-box ul li {
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+.help-text {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.scraping-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+}
+
+.scraping-actions button {
+    position: relative;
+}
+
+.btn-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-loading::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spinner 0.8s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.status-message {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.status-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.status-message.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
 /* ==================== ユーティリティ ==================== */
 .text-center {
     text-align: center;
