@@ -25,6 +25,7 @@ function setupEventListeners() {
         const calculateBtn = e.target.closest('#calculate-btn');
         const resetBtn = e.target.closest('#reset-btn');
         const horseSelectBtn = e.target.closest('.horse-select-btn');
+        const loadSimBtn = e.target.closest('#load-simulation-btn');
 
         if (raceSelectBtn) {
             handleRaceSelection(raceSelectBtn);
@@ -44,6 +45,10 @@ function setupEventListeners() {
         }
         if (horseSelectBtn) {
             handleHorseSelection(horseSelectBtn);
+            return;
+        }
+        if (loadSimBtn) {
+            loadSimulationData();
             return;
         }
     });
@@ -520,7 +525,7 @@ function updateSelectionArea() {
 
 function handleHorseSelection(selectedBtn) {
     if (!selectedBtn) return;
-    
+
     const isMultiSelect = ['quinella', 'wide', 'trio'].includes(currentBetType);
     const parentGrid = selectedBtn.parentElement;
     const position = parentGrid.dataset.position;
@@ -539,11 +544,163 @@ function handleHorseSelection(selectedBtn) {
         parentGrid.querySelectorAll('.horse-select-btn').forEach(btn => btn.classList.remove('active'));
         selectedBtn.classList.add('active');
     }
-    
+
     const horseNumber = selectedBtn.dataset.horse;
     document.querySelectorAll(`.horse-select-btn[data-horse="${horseNumber}"].selected`).forEach(btn => {
         if(btn.parentElement.dataset.position !== position) {
             btn.classList.remove('selected');
         }
     });
+}
+
+// ==================== シミュレーション機能 ====================
+async function loadSimulationData() {
+    const year = document.getElementById('sim-year').value;
+    const month = document.getElementById('sim-month').value;
+
+    const loadBtn = document.getElementById('load-simulation-btn');
+    loadBtn.disabled = true;
+    loadBtn.textContent = '読み込み中...';
+
+    try {
+        // レースデータと馬データを並行して取得
+        const [raceResponse, horseResponse] = await Promise.all([
+            fetch(`/api/race-data?year=${year}&month=${month}&type=race`),
+            fetch(`/api/race-data?year=${year}&month=${month}&type=horse`)
+        ]);
+
+        if (!raceResponse.ok || !horseResponse.ok) {
+            throw new Error('データが見つかりませんでした');
+        }
+
+        const raceData = await raceResponse.json();
+        const horseData = await horseResponse.json();
+
+        // シミュレーションを実行
+        runSimulation(raceData.data, horseData.data);
+
+    } catch (error) {
+        console.error('シミュレーションエラー:', error);
+        alert(`エラー: ${error.message}\n\n${year}年${month}月のデータが存在しません。`);
+    } finally {
+        loadBtn.disabled = false;
+        loadBtn.textContent = 'データを読み込む';
+    }
+}
+
+function runSimulation(races, horses) {
+    // 単勝1番人気を全て買った場合のシミュレーション
+    let totalBets = 0;
+    let totalWins = 0;
+    let totalPayout = 0;
+    const betAmount = 100;
+
+    const raceResults = [];
+
+    races.forEach(race => {
+        const raceId = race.race_id;
+        const raceHorses = horses.filter(h => h.race_id === raceId);
+
+        if (raceHorses.length === 0) return;
+
+        // 人気順に並べ替え（1番人気を見つける）
+        const sortedHorses = raceHorses.sort((a, b) => {
+            const popA = parseInt(a.popularity) || 999;
+            const popB = parseInt(b.popularity) || 999;
+            return popA - popB;
+        });
+
+        const favorite = sortedHorses[0];
+        if (!favorite) return;
+
+        totalBets += betAmount;
+
+        // 1着になったかチェック
+        const rank = parseInt(favorite.rank) || 999;
+        if (rank === 1) {
+            totalWins++;
+            const odds = parseFloat(favorite.odds) || 0;
+            const payout = Math.floor((betAmount * odds) / 10) * 10;
+            totalPayout += payout;
+
+            raceResults.push({
+                race: race.race_title || raceId,
+                horse: favorite.horse_number,
+                odds: odds,
+                payout: payout,
+                win: true
+            });
+        } else {
+            raceResults.push({
+                race: race.race_title || raceId,
+                horse: favorite.horse_number,
+                odds: parseFloat(favorite.odds) || 0,
+                payout: 0,
+                win: false
+            });
+        }
+    });
+
+    const profit = totalPayout - totalBets;
+    const recoveryRate = totalBets > 0 ? ((totalPayout / totalBets) * 100).toFixed(1) : 0;
+    const winRate = races.length > 0 ? ((totalWins / races.length) * 100).toFixed(1) : 0;
+
+    displaySimulationResults({
+        totalRaces: races.length,
+        totalBets,
+        totalWins,
+        totalPayout,
+        profit,
+        recoveryRate,
+        winRate,
+        results: raceResults
+    });
+}
+
+function displaySimulationResults(stats) {
+    const resultDiv = document.getElementById('simulation-result');
+    const statsDiv = document.getElementById('simulation-stats');
+
+    statsDiv.innerHTML = `
+        <div class="simulation-summary">
+            <div class="result-item">
+                <span class="result-label">総レース数</span>
+                <span class="result-value">${stats.totalRaces}レース</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">総投資額</span>
+                <span class="result-value">${stats.totalBets.toLocaleString()}円</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">的中数</span>
+                <span class="result-value">${stats.totalWins}回</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">的中率</span>
+                <span class="result-value">${stats.winRate}%</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">総払戻金</span>
+                <span class="result-value">${stats.totalPayout.toLocaleString()}円</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">損益</span>
+                <span class="result-value" style="color: ${stats.profit >= 0 ? 'var(--success-color)' : 'var(--error-color)'};">
+                    ${stats.profit >= 0 ? '+' : ''}${stats.profit.toLocaleString()}円
+                </span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">回収率</span>
+                <span class="result-value big" style="color: ${stats.recoveryRate >= 100 ? 'var(--success-color)' : 'var(--error-color)'};">
+                    ${stats.recoveryRate}%
+                </span>
+            </div>
+        </div>
+        <p class="help-text" style="margin-top: 16px;">
+            ※ このシミュレーションは「単勝1番人気を全て購入」した場合の結果です
+        </p>
+    `;
+
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
 }

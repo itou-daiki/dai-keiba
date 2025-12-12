@@ -23,6 +23,8 @@
 - ✅ 的中馬番の選択
 - ✅ 払戻金の自動計算
 - ✅ 損益と回収率の表示
+- ✅ **過去レースデータのシミュレーション機能** (NEW!)
+- ✅ **定期的な自動データ収集** (GitHub Actions)
 - ✅ モダンでレスポンシブなデザイン（スマホ対応）
 
 ## 🚀 使い方
@@ -70,9 +72,93 @@
 
 ## 💻 技術スタック
 
+### フロントエンド
 - HTML5
 - CSS3（レスポンシブデザイン）
 - Vanilla JavaScript（フレームワーク不使用）
+
+### バックエンド
+- Netlify Functions（サーバーレス）
+- Python 3.11（データ収集）
+
+### 自動化
+- GitHub Actions（定期実行）
+- Selenium（スクレイピング）
+- BeautifulSoup4（HTML解析）
+- Pandas（データ処理）
+
+## 📈 シミュレーション機能
+
+過去のレースデータを使って、馬券購入のシミュレーションができます。
+
+### 使い方
+1. アプリケーション下部の「過去レースシミュレーション」セクションへ移動
+2. 年と月を選択
+3. 「データを読み込む」ボタンをクリック
+4. シミュレーション結果が表示されます
+
+### シミュレーション内容
+- **戦略**: 単勝1番人気を全て購入
+- **投資額**: 1レースあたり100円
+- **表示項目**:
+  - 総レース数
+  - 総投資額
+  - 的中数 / 的中率
+  - 総払戻金
+  - 損益
+  - **回収率**（重要指標）
+
+## 🤖 自動データ収集
+
+GitHub Actionsを使って、毎日自動的にレースデータを収集します。
+
+### 定期実行スケジュール
+- **実行時間**: 毎日午前3時（JST 12時）
+- **対象**: 前月のレースデータ
+- **保存先**: `scraper/data/csv/`
+
+### 手動実行
+GitHubリポジトリの「Actions」タブから手動でワークフローを実行できます：
+1. 「定期レースデータ取得」ワークフローを選択
+2. 「Run workflow」ボタンをクリック
+3. 年月を指定（オプション）
+4. 実行
+
+## 🔧 開発者向け情報
+
+### ローカル開発
+```bash
+# リポジトリをクローン
+git clone https://github.com/yourusername/dai-keiba.git
+cd dai-keiba
+
+# Netlify CLI をインストール
+npm install -g netlify-cli
+
+# ローカルサーバーを起動
+netlify dev
+
+# ブラウザで http://localhost:8888 にアクセス
+```
+
+### スクレイピングツールの使用
+```bash
+cd scraper
+
+# Python依存関係をインストール
+pip install -r requirements.txt
+
+# ChromeDriverをインストール
+# Ubuntu/Debian:
+sudo apt-get install chromium-browser chromium-chromedriver
+
+# データ収集を実行
+python3 1_fetch_race_urls.py
+python3 2_fetch_html.py
+python3 3_parse_to_csv.py
+```
+
+詳細は `scraper/README.md` を参照してください。
 
 ## 🌐 GitHub Pagesでのデプロイ方法
 
