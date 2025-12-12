@@ -11,4 +11,9 @@
   from = "/api/fetch"
   to = "/.netlify/functions/proxy"
   status = 200
-  # force = true # このルールが他のルールより優先されるようにする
+
+[[redirects]]
+  # /api/race-data?year=...&month=...&type=... へのリクエストをrace-data関数にリダイレクト
+  from = "/api/race-data"
+  to = "/.netlify/functions/race-data"
+  status = 200

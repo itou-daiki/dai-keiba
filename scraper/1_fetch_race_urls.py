@@ -107,9 +107,11 @@ def fetch_race_urls(year, month, driver, wait):
 
 def main():
     """メイン処理"""
-    # 取得する年月を設定（例: 2019年1月）
-    year = 2019
-    month = 1
+    # 環境変数または引数から年月を取得、デフォルトは現在の年月
+    import datetime
+
+    year = int(os.environ.get('SCRAPE_YEAR', datetime.datetime.now().year))
+    month = int(os.environ.get('SCRAPE_MONTH', datetime.datetime.now().month))
 
     print(f"レースURL取得を開始します: {year}年{month}月")
     print("=" * 50)

@@ -85,9 +85,11 @@ def fetch_all_html(year, month):
 
 def main():
     """メイン処理"""
-    # 取得する年月を設定（1_fetch_race_urls.pyと同じ値を指定）
-    year = 2019
-    month = 1
+    # 環境変数から年月を取得、デフォルトは現在の年月
+    import datetime
+
+    year = int(os.environ.get('SCRAPE_YEAR', datetime.datetime.now().year))
+    month = int(os.environ.get('SCRAPE_MONTH', datetime.datetime.now().month))
 
     print(f"HTMLダウンロードを開始します: {year}年{month}月")
     print("=" * 50)
