@@ -436,9 +436,19 @@ async function handleRaceSelection(btn) {
         const race = todaysDataCache.races.find(r => String(r.id) === String(raceId));
         horses = race.horses;
         displayOdds(horses);
-    } else {
-        // Scrape Fresh Odds for Past Race
-        await fetchPastRaceOdds(raceId);
+
+        // Use CSV data for Past Race
+        // await fetchPastRaceOdds(raceId); // REMOVED: Scraping fails on GH Pages
+
+        horses = getHorsesFromCSV(raceId);
+        if (horses.length > 0) {
+            displayOdds(horses);
+            document.getElementById('odds-display-section').style.display = 'block';
+            document.getElementById('purchase-section').style.display = 'block';
+        } else {
+            document.getElementById('odds-display-area').innerHTML = '<p>オッズデータが見つかりませんでした。</p>';
+            document.getElementById('odds-display-section').style.display = 'block';
+        }
     }
 
     document.getElementById('bet-type-section').style.display = 'block';
@@ -617,7 +627,109 @@ async function fetchNetkeiba(url) {
 
 
 
-// ==================== 払戻金計算 ====================
+
+// ==================== CSV Data Handling for Past Races ====================
+function getHorsesFromCSV(raceId) {
+    if (!window.globalRaceData) return [];
+
+    // globalRaceData is an array of rows. Filter by race_id.
+    const raceRows = window.globalRaceData.filter(row => String(row['race_id']) === String(raceId));
+
+    return raceRows.map(row => ({
+        number: parseInt(row['馬 番']) || 0,
+        name: row['馬名'],
+        odds: parseFloat(row['単勝 オッズ']) || 0,
+        // Add other fields if needed for result display later
+        rank: parseInt(row['着 順']) || 0
+    })).sort((a, b) => a.number - b.number);
+}
+
+// ==================== UI Update Functions (Restored) ====================
+function updateSelectionArea() {
+    const selectionArea = document.getElementById('selection-area');
+    if (horses.length === 0) {
+        selectionArea.innerHTML = '<p class="text-light">オッズデータがありません。</p>';
+        return;
+    }
+
+    let html = '';
+    const horseOptions = horses.map(h => {
+        const oddsDisplay = h.odds > 0 ? `(${h.odds})` : '';
+        return `<button class="horse-select-btn" data-horse="${h.number}">
+            <span class="horse-num">${h.number}</span>
+            <span class="horse-odds-sm">${oddsDisplay}</span>
+        </button>`;
+    }).join('');
+
+    const generateHtml = (labels) => {
+        return labels.map((label, i) => `
+            <div class="selection-group">
+                <label>${label}</label>
+                <div class="horse-select-grid" data-position="${i + 1}">
+                    ${horseOptions}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    switch (currentBetType) {
+        case 'win':
+        case 'place':
+            html = generateHtml(['的中馬']);
+            break;
+        case 'quinella':
+        case 'wide':
+            html = generateHtml(['1頭目', '2頭目']);
+            break;
+        case 'exacta':
+            html = generateHtml(['1着', '2着']);
+            break;
+        case 'trio':
+            html = generateHtml(['1頭目', '2頭目', '3頭目']);
+            break;
+        case 'trifecta':
+            html = generateHtml(['1着', '2着', '3着']);
+            break;
+    }
+    selectionArea.innerHTML = html;
+}
+
+function handleHorseSelection(selectedBtn) {
+    if (!selectedBtn) return;
+
+    const isMultiSelect = ['quinella', 'wide', 'trio'].includes(currentBetType);
+    const parentGrid = selectedBtn.parentElement;
+    const position = parentGrid.dataset.position;
+
+    if (isMultiSelect) {
+        const maxSelections = currentBetType === 'trio' ? 3 : 2;
+        if (selectedBtn.classList.contains('selected')) {
+            selectedBtn.classList.remove('selected');
+        } else {
+            const selectedCount = parentGrid.querySelectorAll('.selected').length;
+            if (selectedCount < maxSelections) {
+                selectedBtn.classList.add('selected');
+            }
+        }
+    } else {
+        parentGrid.querySelectorAll('.horse-select-btn').forEach(btn => btn.classList.remove('active'));
+        selectedBtn.classList.add('active');
+    }
+
+    // Sync across positions if same horse cannot be selected? 
+    // Usually standard UI allows selecting same horse in different positions for Box/Formation, 
+    // but validateInput checks uniqueness. Let's keep specific logic simple for now.
+    // If strict uniqueness required in UI:
+    const horseNumber = selectedBtn.dataset.horse;
+    /* 
+    document.querySelectorAll(`.horse-select-btn[data-horse="${horseNumber}"].selected`).forEach(btn => {
+        if (btn.parentElement.dataset.position !== position) {
+            btn.classList.remove('selected');
+        }
+    }); 
+    */
+}
+
 function calculatePayout() {
     const betAmount = parseInt(document.getElementById('bet-amount').value) || 100;
     const selectedHorses = getSelectedHorses();
