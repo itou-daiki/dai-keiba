@@ -45,7 +45,15 @@ if last_date:
 
 # --- Update Section ---
 st.subheader("データ更新")
-st.write("netkeiba.comから最新データを取得し、データベースを更新します。")
+st.write("取得対象期間を指定してください。指定しない場合は自動で続きから取得します。")
+
+# Default dates
+default_start = last_date.date() + pd.Timedelta(days=1) if last_date else datetime(2025, 12, 1).date()
+default_end = datetime.now().date()
+
+col_d1, col_d2 = st.columns(2)
+start_date = col_d1.date_input("開始日", value=default_start)
+end_date = col_d2.date_input("終了日", value=default_end)
 
 if st.button("スクレイピングを実行して更新", type="primary"):
     status_area = st.empty()
@@ -58,26 +66,28 @@ if st.button("スクレイピングを実行して更新", type="primary"):
     f = io.StringIO()
     with redirect_stdout(f):
         # Run scraper
-        with st.spinner("スクレイピング実行中..."):
+        with st.spinner(f"スクレイピング実行中... ({start_date} ~ {end_date})"):
             try:
-                # auto_scraper.main() calls sys.exit() or runs indefinitely? 
-                # We need to make sure it doesn't kill streamlit.
-                # Modified auto_scraper to be importable.
+                # auto_scraper.main() now accepts arguments
                 
-                # We can call main() but we need to ensure it doesn't handle args if called directly,
-                # or we can pass args manually if modified to accept them.
-                # Currently auto_scraper.main() calls get_start_params() which parses sys.argv.
-                # We should clear sys.argv to avoid streamlit args interfering.
-                old_argv = sys.argv
-                sys.argv = ["auto_scraper.py"] # Reset args
+                # We do NOT need to hack sys.argv anymore because we refactored auto_scraper
+                # But to be safe, we pass arg list to main
                 
-                auto_scraper.main()
+                # Call main with explicit dates
+                # Convert date objects to datetime for auto_scraper compatibility if needed
+                # auto_scraper expects datetime objects or strings
                 
-                sys.argv = old_argv # Restore
+                auto_scraper.main(
+                    start_date_arg=datetime.combine(start_date, datetime.min.time()),
+                    end_date_arg=datetime.combine(end_date, datetime.min.time())
+                )
                 
                 st.success("更新完了！")
             except Exception as e:
                 st.error(f"実行中にエラーが発生しました: {e}")
+                # Print stacktrace for debugging
+                import traceback
+                traceback.print_exc()
                 
     # Show logs
     logs = f.getvalue()

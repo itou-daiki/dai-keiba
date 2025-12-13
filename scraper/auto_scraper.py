@@ -90,39 +90,49 @@ def scrape_race_data(race_id):
 # ==========================================
 # 2. 既存データ読み込みと開始地点の特定
 # ==========================================
-def get_start_params():
+def get_start_params(start_args=None, end_args=None, places_args=None):
     """
-    コマンドライン引数で日付指定があればそれを優先。
-    なければCSVの最終日+1日、それもなければ2024/1/1。
+    start_args, end_args: datetime objects or None.
+    places_args: list of ints or None.
+    If provided, use them. Otherwise check CLI args or existing CSV.
     """
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
     parser.add_argument("--places", type=str, help="Target places (comma separated, e.g. 6,7)")
+    
+    # Only parse args if not provided programmatically or if we want to fallback
+    # If called from admin UI, sys.argv might contain streamlit args, so be careful.
+    # To be safe, if programmatic args are None, we check sys.argv BUT
+    # best to rely on programmatic invocation from admin.py passing distinct args.
+    
+    # If run from CLI, parse_known_args will pick up --start etc.
     args, unknown = parser.parse_known_args()
 
-    # Default
-    start_date = None
-    target_places = range(1, 11)
+    # Determine Start Date
+    start_date = start_args
+    if start_date is None and args.start:
+        try:
+            start_date = datetime.strptime(args.start, '%Y-%m-%d')
+        except:
+             print("日付フォーマットエラー。YYYY-MM-DDで指定してください。")
 
-    if args.places:
+    # Determine End Date
+    end_date_str = end_args # Might be passed as str or obj? Let's assume passed as None or YYYY-MM-DD str usually not needed if object passed.
+    
+    # Let's standardize: main accepts datetime objects or None.
+    # get_start_params returns datetime objects and places list.
+    
+    # Determine Places
+    target_places = places_args if places_args is not None else range(1, 11)
+    if places_args is None and args.places:
         try:
             target_places = [int(p) for p in args.places.split(",")]
         except:
             print("places指定エラー。カンマ区切り数字で指定してください。")
-    
-    # If no args provided (e.g. called from admin w/o specific args), parser might be empty or defaults
-    # If explicit None passed to this func? This func reads global sys.argv
-    # We should probably allow passing args to this function or split logic.
-    # For now, if no start arg, it falls back to CSV check. that is fine.
-
-    if args.start:
-        try:
-            start_date = datetime.strptime(args.start, '%Y-%m-%d')
-        except:
-            print("日付フォーマットエラー。YYYY-MM-DDで指定してください。")
-    
+            
+    # Auto-detect start if still None
     if start_date is None:
         if os.path.exists(CSV_FILE_PATH):
             try:
@@ -139,7 +149,6 @@ def get_start_params():
     
     if start_date is None:
          # デフォルト：最近の結果を取得しやすくするため、2025年12月頭にしておく（デモ用）
-         # 本番運用時は2024/1/1に戻しても良い
          print("既存データなし。デモ用に2025年12月1日から開始します。")
          start_date = datetime(2025, 12, 1)
 
@@ -148,16 +157,32 @@ def get_start_params():
 # ==========================================
 # 3. メイン実行処理
 # ==========================================
-def main():
+def main(start_date_arg=None, end_date_arg=None, places_arg=None):
     print("=== 自動スクレイピング開始 ===")
     start_time = time.time()
     
-    start_date, end_arg, places = get_start_params()
+    # Pass arguments to helper
+    start_date, end_arg_cli, places = get_start_params(start_date_arg, end_date_arg, places_arg)
+    
     today = datetime.now()
     
-    if end_arg:
+    # Determine absolute End Date
+    if end_date_arg:
+        # If passed valid datetime or string?
+        if isinstance(end_date_arg, str):
+            try:
+                end_date = datetime.strptime(end_date_arg, "%Y-%m-%d")
+            except:
+                end_date = today
+        elif isinstance(end_date_arg, datetime) or isinstance(end_date_arg, date):
+            end_date = pd.to_datetime(end_date_arg) # Ensure datetime
+            # pd.to_datetime returns Timestamp, convert to datetime for compare
+            end_date = end_date.to_pydatetime()
+        else:
+             end_date = today
+    elif end_arg_cli:
         try:
-            end_date = datetime.strptime(end_arg, "%Y-%m-%d")
+             end_date = datetime.strptime(end_arg_cli, "%Y-%m-%d")
         except:
              end_date = today
     else:
