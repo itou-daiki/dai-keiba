@@ -505,6 +505,7 @@ function displayOdds(horsesData) {
         <thead>
             <tr>
                 <th>馬番</th>
+                <th>馬名</th>
                 <th>単勝オッズ</th>
             </tr>
         </thead>
@@ -512,6 +513,7 @@ function displayOdds(horsesData) {
             ${horsesData.map(h => `
                 <tr>
                     <td>${h.number}</td>
+                    <td>${h.name || '-'}</td>
                     <td>${h.odds > 0 ? h.odds.toFixed(1) : '---'}</td>
                 </tr>
             `).join('')}
@@ -609,7 +611,7 @@ async function fetchNetkeiba(url) {
     console.log(`Table type: ${isShutuba ? 'Shutuba (Race Card)' : 'Odds Page'}`);
 
     rows.forEach((row, idx) => {
-        let num, odds;
+        let num, odds, name;
         // Try to find cells
         const cells = row.querySelectorAll('td');
 
@@ -620,27 +622,31 @@ async function fetchNetkeiba(url) {
 
         if (isShutuba) {
             // Shutuba Page Logic
-            // Column 5 is Weight (e.g. 56.0). Odds are usually in class .Odds or later column.
+            // Name: .HorseName or .HorseInfo
+            const nameEl = row.querySelector('.HorseName, .HorseInfo');
+            if (nameEl) name = nameEl.textContent.trim();
+
+            // Odds: .Odds_Tan or .Popular
             const numEl = row.querySelector('.Umaban, .Horse_Num');
-            const oddsEl = row.querySelector('.Odds_Tan, .Popular'); // .Popular often holds odds in shutuba if .Odds_Tan missing
+            const oddsEl = row.querySelector('.Odds_Tan, .Popular');
 
             if (numEl) num = parseInt(numEl.textContent.trim());
 
             if (oddsEl) {
-                odds = parseFloat(oddsEl.textContent.trim());
-            } else {
-                // Fallback by index for Shutuba (usually around index 9-11 depending on layout)
-                // Let's rely on class first. If that fails, look for a cell with decimal point that isn't weight
-                // Weight is col 5. 
-                // Let's try finding the odds column by header logic? No, too complex.
-                // Just use class .Odds_Tan or .Popular, commonly used.
+                const txt = oddsEl.textContent.trim();
+                console.log(`Shutuba Row ${idx}: Num=${num}, OddsTxt="${txt}"`); // Debug log
+                odds = parseFloat(txt);
             }
         } else {
             // Odds Page Logic (Standard)
-            // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 6: WinOdds)
+            // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 3: Name, Col 6: WinOdds)
             if (cells.length >= 6) {
                 const n = parseInt(cells[1].textContent.trim());
                 const o = parseFloat(cells[5].textContent.trim());
+
+                // Name usually in col 3
+                if (cells[2]) name = cells[2].textContent.trim();
+
                 if (!isNaN(n)) {
                     num = n;
                     odds = o;
@@ -653,6 +659,10 @@ async function fetchNetkeiba(url) {
             const numEl = row.querySelector('.Umaban, .Horse_Num');
             if (numEl) num = parseInt(numEl.textContent.trim());
         }
+        if (!name) {
+            const nameEl = row.querySelector('.Horse_Name, .HorseName');
+            if (nameEl) name = nameEl.textContent.trim();
+        }
         if (num && (odds === undefined || isNaN(odds))) {
             const oddsEl = row.querySelector('.Odds_Tan, .Popular, .Odds');
             if (oddsEl) odds = parseFloat(oddsEl.textContent.trim());
@@ -662,7 +672,7 @@ async function fetchNetkeiba(url) {
             // Check for duplicate
             if (!horses.find(h => h.number === num)) {
                 // Handle "---" or invalid parsing
-                horses.push({ number: num, odds: (isNaN(odds) ? 0 : odds) });
+                horses.push({ number: num, odds: (isNaN(odds) ? 0 : odds), name: name || `馬番${num}` });
             }
         }
     });
