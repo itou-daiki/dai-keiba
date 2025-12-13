@@ -77,9 +77,14 @@ if st.button("スクレイピングを実行して更新", type="primary"):
                 # Convert date objects to datetime for auto_scraper compatibility if needed
                 # auto_scraper expects datetime objects or strings
                 
+                # Define callback
+                def progress_update(msg):
+                    status_area.text(f"【進捗】 {msg}")
+                
                 auto_scraper.main(
                     start_date_arg=datetime.combine(start_date, datetime.min.time()),
-                    end_date_arg=datetime.combine(end_date, datetime.min.time())
+                    end_date_arg=datetime.combine(end_date, datetime.min.time()),
+                    progress_callback=progress_update
                 )
                 
                 st.success("更新完了！")
