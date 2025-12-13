@@ -194,7 +194,7 @@ async function loadPastRaces() {
                 racesMap[rid] = {
                     id: rid,
                     venue: getVenueFromRow(row), // Extract venue
-                    number: row['レース'] || '',
+                    number: parseInt(row['レース番号']) || 0,
                     name: row['レース名'],
                     date: row['日付'],
                     mode: 'past'
