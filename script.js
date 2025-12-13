@@ -330,11 +330,11 @@ async function handleRaceSelection(btn) {
     // Header Info
     let raceInfo = '';
     if (mode === 'today') {
-        const race = todaysDataCache.races.find(r => r.id === raceId);
+        const race = todaysDataCache.races.find(r => String(r.id) === String(raceId));
         raceInfo = `${race.venue} ${race.number} ${race.name}`;
         selectedRace.name = race.name;
     } else {
-        const race = pastRaceListCache.find(r => r.id === raceId);
+        const race = pastRaceListCache.find(r => String(r.id) === String(raceId));
         raceInfo = `${race.date} ${race.venue} ${race.number}R ${race.name}`;
         selectedRace.name = race.name;
     }
@@ -342,7 +342,7 @@ async function handleRaceSelection(btn) {
 
     // Fetch Odds
     if (mode === 'today') {
-        const race = todaysDataCache.races.find(r => r.id === raceId);
+        const race = todaysDataCache.races.find(r => String(r.id) === String(raceId));
         horses = race.horses;
         displayOdds(horses);
     } else {
