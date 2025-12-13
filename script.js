@@ -454,10 +454,29 @@ async function fetchPastRaceOdds(raceId) {
 
     try {
         // Use netkeiba proxy logic
-        // Use odds_get_form.html which returns the HTML fragment with populated data (unlike index.html which may be empty frame)
-        // This matches the Python auto_scraper.py logic which is known to work.
-        const url = `https://race.netkeiba.com/odds/odds_get_form.html?type=b1&race_id=${raceId}&rf=shutuba_submenu&_t=${new Date().getTime()}`;
-        const data = await fetchNetkeiba(url);
+        // Attempt 1: odds_get_form.html (Live/Dynamic Odds)
+        let url = `https://race.netkeiba.com/odds/odds_get_form.html?type=b1&race_id=${raceId}&rf=shutuba_submenu&_t=${new Date().getTime()}`;
+        let data = await fetchNetkeiba(url);
+
+        // Check if data is valid (has horses and at least one horse has non-zero odds)
+        const hasValidOdds = data.horses && data.horses.length > 0 && data.horses.some(h => h.odds > 0);
+
+        if (!hasValidOdds) {
+            console.log("odds_get_form returned no odds (---). Falling back to shutuba.html");
+            // Attempt 2: shutuba.html (Race Card / Static Odds)
+            url = `https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}&rf=race_submenu&_t=${new Date().getTime()}`;
+            const fallbackData = await fetchNetkeiba(url);
+
+            // If fallback has distinct horses (or same), user it.
+            // Prefer fallback if it has odds.
+            if (fallbackData.horses && fallbackData.horses.length > 0) {
+                const fallbackHasOdds = fallbackData.horses.some(h => h.odds > 0);
+                if (fallbackHasOdds || (!data.horses || data.horses.length === 0)) {
+                    console.log("Using fallback data from shutuba.html");
+                    data = fallbackData;
+                }
+            }
+        }
 
         if (data.horses && data.horses.length > 0) {
             horses = data.horses;
