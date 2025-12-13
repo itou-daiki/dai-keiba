@@ -151,10 +151,21 @@ async function fetchTodaysRaces() {
 
 // ==================== Past Races Logic ====================
 async function loadDatabase() {
+    // Force reload if needed or check cache policy. 
+    // Usually fetching from file:// or simple server might cache.
+    // Adding timestamp query param.
+    // Note: If using file:// protocol, query params might not work or be ignored, but worth a try.
+    // If globalRaceData exists, maybe we should clear it if the user clicks "Load" again?
+    // Current logic returns cached globalRaceData. 
+    // If admin updates CSV, user has to refresh page.
+    // Let's NOT return cached data if we assume the user wants fresh data on click?
+    // But loadDatabase is called by loadPastRaces.
+    // If we want fresh data, we should clear `window.globalRaceData` before calling or force reload.
+    // For now, let's just bust cache on fetch.
     if (window.globalRaceData) return window.globalRaceData;
 
     return new Promise((resolve, reject) => {
-        Papa.parse("database.csv", {
+        Papa.parse(`database.csv?t=${new Date().getTime()}`, {
             download: true,
             header: true,
             skipEmptyLines: true,
@@ -177,15 +188,21 @@ async function loadPastRaces() {
     btn.textContent = '読み込み中...';
     btn.disabled = true;
 
+    // Clear Global Cache to ensure fresh reload if button is clicked again?
+    // window.globalRaceData = null; // Optional: Uncomment if we want "Load" to always fetch fresh.
+
     const year = document.getElementById('sim-year').value;
     const month = document.getElementById('sim-month').value;
 
     try {
+        window.globalRaceData = null; // Force reload logic
         const data = await loadDatabase();
 
         // Filter by date
         const prefix = `${year}年${month}月`;
         const filtered = data.filter(row => row['日付'] && row['日付'].startsWith(prefix));
+
+        console.log(`Filtering for ${prefix}: Found ${filtered.length} rows`);
 
         if (filtered.length === 0) {
             alert('該当するデータがありませんでした。');
@@ -214,12 +231,16 @@ async function loadPastRaces() {
 
         // Group by Date first
         const dates = [...new Set(pastRaceListCache.map(r => r.date))].sort((a, b) => {
-            // Sort date descending (newest first)
-            // Date format likely YYYY年M月D日
-            // Simple string compare often works if format is padded, but ideally parse
-            // Let's rely on standard Japanese date format logic or just string desc for now
-            return b.localeCompare(a, 'ja');
+            // Parse Japanese Date "YYYY年M月D日"
+            const parseDate = (dStr) => {
+                const match = dStr.match(/(\d+)年(\d+)月(\d+)日/);
+                if (!match) return 0;
+                return new Date(match[1], match[2] - 1, match[3]).getTime();
+            };
+            return parseDate(b) - parseDate(a); // Descending
         });
+
+        console.log("Dates found:", dates);
 
         renderDateSelect(dates);
 
