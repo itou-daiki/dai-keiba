@@ -591,6 +591,8 @@ async function fetchNetkeiba(url) {
         // Try to find cells
         const cells = row.querySelectorAll('td');
 
+        let logMsg = `Row ${idx}: `;
+
         // Debug: Log ALL cells to find where the odds are hiding
         const allExample = Array.from(cells).map((c, i) => `[${i}]="${c.textContent.trim()}"`).join(', ');
         logMsg += ` AllCells: ${allExample}`;
