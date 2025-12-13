@@ -574,7 +574,13 @@ async function fetchViaPublicProxy(targetUrl) {
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-        return await response.text(); // Returns raw HTML directly
+
+        // Netkeiba uses EUC-JP encoding. 
+        // response.text() defaults to UTF-8 resulting in mojibake.
+        // We must decode manually from ArrayBuffer.
+        const buffer = await response.arrayBuffer();
+        const decoder = new TextDecoder('euc-jp');
+        return decoder.decode(buffer);
     } catch (error) {
         console.error('Proxy Error:', error);
         throw error;
