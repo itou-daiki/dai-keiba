@@ -52,41 +52,30 @@ function setupEventListeners() {
         loadPastBtn.addEventListener('click', loadPastRaces);
     }
 
+    // Date Dropdown Change
+    const dateSelect = document.getElementById('past-date-select');
+    if (dateSelect) {
+        dateSelect.addEventListener('change', (e) => handleDateChange(e.target));
+    }
+
     // Dynamic Content Delegation
     document.querySelector('main').addEventListener('click', (e) => {
         const target = e.target;
-        console.log('Click detected on:', target, target.className);
+        // console.log('Click detected on:', target, target.className); // Cleanup logs if desired
 
         const raceSelectBtn = target.closest('.race-select-btn');
         const venueTabBtn = target.closest('.venue-tab-btn');
-        const dateTabBtn = target.closest('.date-tab-btn');
         const betTypeBtn = target.closest('.bet-type-btn');
         const methodTabBtn = target.closest('.method-tab-btn');
         const calculateBtn = target.closest('#calculate-btn');
         const resetBtn = target.closest('#reset-btn');
         const horseSelectBtn = target.closest('.horse-select-btn');
-        const loadPastBtn = target.closest('#load-past-races-btn'); // Add check for load button too if needed
-
-        console.log('Detected types:', {
-            raceSelectBtn,
-            venueTabBtn,
-            dateTabBtn,
-            isDateTab: !!dateTabBtn,
-            isVenueTab: !!venueTabBtn
-        });
 
         if (raceSelectBtn) {
-            console.log('Handling race selection');
             handleRaceSelection(raceSelectBtn);
             return;
         }
-        if (dateTabBtn) {
-            console.log('Handling date selection');
-            handleDateSelection(dateTabBtn);
-            return;
-        }
         if (venueTabBtn) {
-            console.log('Handling venue selection');
             handleVenueSelection(venueTabBtn);
             return;
         }
@@ -232,14 +221,21 @@ async function loadPastRaces() {
             return b.localeCompare(a, 'ja');
         });
 
-        renderDateTabs(dates);
+        renderDateSelect(dates);
 
         // Auto-select first date
         if (dates.length > 0) {
+            // Need to set select value manually if we auto-select
+            // selectDate(dates[0]); // This updates logic
+            // But UI dropdown needs to update too.
+            // renderDateSelect creates options.
+            // We should pick the first option.
+            const select = document.getElementById('past-date-select');
+            select.value = dates[0];
             selectDate(dates[0]);
         }
 
-        document.getElementById('past-date-tabs-container').style.display = 'block';
+        document.getElementById('past-date-select-container').style.display = 'block';
         document.getElementById('past-venue-tabs-container').style.display = 'block';
         document.getElementById('past-races-list-section').style.display = 'block';
 
@@ -265,52 +261,52 @@ function getVenueFromRow(row) {
 
 // ==================== Venue & Date Rendering ====================
 
-function renderDateTabs(dates) {
-    const container = document.getElementById('past-date-tabs');
-    const wrapper = document.getElementById('past-date-tabs-container');
-    container.innerHTML = '';
+// ==================== Venue & Date Rendering ====================
 
-    if (dates.length === 0) {
-        wrapper.style.display = 'none';
-        return;
-    }
+function renderDateSelect(dates) {
+    const select = document.getElementById('past-date-select');
+    select.innerHTML = '<option value="">日付を選択してください</option>';
+
+    if (dates.length === 0) return;
 
     dates.forEach(date => {
-        // Shorten date for display? "12月7日"
-        const label = date.replace(/^\d+年/, '');
-        const btn = document.createElement('button');
-        btn.className = 'venue-tab-btn date-tab-btn'; // Reuse style + identifier
-        btn.textContent = label;
-        btn.dataset.date = date;
-        container.appendChild(btn);
+        const option = document.createElement('option');
+        option.value = date;
+        option.textContent = date;
+        select.appendChild(option);
     });
 }
 
-function handleDateSelection(btn) {
-    selectDate(btn.dataset.date);
+function handleDateChange(selectElement) {
+    const selectedDate = selectElement.value;
+    if (!selectedDate) {
+        // Clear venues/races if needed
+        document.getElementById('past-venue-tabs-container').style.display = 'none';
+        return;
+    }
+    selectDate(selectedDate);
 }
 
 function selectDate(date) {
     selectedDatePast = date;
-
-    // Highlight active date
-    document.querySelectorAll('.date-tab-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.date === date);
-    });
+    console.log("Selected Date:", date);
 
     // Filter venues for this date
     const racesOnDate = pastRaceListCache.filter(r => r.date === date);
-    const venues = [...new Set(racesOnDate.map(r => r.venue))];
+    const venues = [...new Set(racesOnDate.map(r => r.venue))]; // Assuming unique venues
 
+    // Render Venue Tabs (Using existing logic, need to ensure container visibility)
+    // Note: renderVenueTabs handles sorting/rendering
     renderVenueTabs('past', venues);
 
-    // Auto Select first venue
+    // Auto-select first venue
     if (venues.length > 0) {
         selectVenue('past', venues[0]);
-    } else {
-        renderRaceList('past-races-list', []);
     }
+
+    document.getElementById('past-venue-tabs-container').style.display = 'block';
 }
+
 
 function renderVenueTabs(type, venues) {
     const containerId = type === 'today' ? 'today-venue-tabs' : 'past-venue-tabs';

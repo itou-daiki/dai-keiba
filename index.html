@@ -79,9 +79,12 @@
                 </div>
 
                 <!-- Date Tabs (Dynamically populated) -->
-                <div class="card" id="past-date-tabs-container"
-                    style="display:none; padding: 10px 20px; background: transparent; box-shadow: none; border: none; margin-bottom: 0;">
-                    <div class="venue-tabs-header" id="past-date-tabs"></div>
+                <!-- Date Selection (Dropdown) -->
+                <div id="past-date-select-container" class="control-group" style="display:none; margin: 10px 20px;">
+                    <label for="past-date-select" style="font-weight:bold; margin-right:10px;">日付選択</label>
+                    <select id="past-date-select" class="form-select" style="padding: 5px;">
+                        <option value="">日付を選択してください</option>
+                    </select>
                 </div>
 
                 <!-- Venue Tabs (Dynamically populated) -->
