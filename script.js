@@ -604,48 +604,64 @@ async function fetchNetkeiba(url) {
     if (rows.length === 0) rows = sel2;
     if (rows.length === 0) rows = sel3;
 
-    let debugCount = 0;
+    // Determine table type
+    const isShutuba = doc.querySelector('.Shutuba_Table') !== null;
+    console.log(`Table type: ${isShutuba ? 'Shutuba (Race Card)' : 'Odds Page'}`);
+
     rows.forEach((row, idx) => {
         let num, odds;
         // Try to find cells
         const cells = row.querySelectorAll('td');
 
-        let logMsg = `Row ${idx}: `;
+        // Debug
+        // let logMsg = `Row ${idx}: `;
+        // const allExample = Array.from(cells).map((c, i) => `[${i}]="${c.textContent.trim()}"`).join(', ');
+        // logMsg += ` AllCells: ${allExample}`;
 
-        // Debug: Log ALL cells to find where the odds are hiding
-        const allExample = Array.from(cells).map((c, i) => `[${i}]="${c.textContent.trim()}"`).join(', ');
-        logMsg += ` AllCells: ${allExample}`;
+        if (isShutuba) {
+            // Shutuba Page Logic
+            // Column 5 is Weight (e.g. 56.0). Odds are usually in class .Odds or later column.
+            const numEl = row.querySelector('.Umaban, .Horse_Num');
+            const oddsEl = row.querySelector('.Odds_Tan, .Popular'); // .Popular often holds odds in shutuba if .Odds_Tan missing
 
-        // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 6: WinOdds)
-        if (cells.length >= 6) {
-            const n = parseInt(cells[1].textContent.trim());
-            const o = parseFloat(cells[5].textContent.trim());
-            logMsg += `Strat1(Cells=${cells.length}, Col1="${cells[1].textContent.trim()}", Col5="${cells[5].textContent.trim()}") -> n=${n}, o=${o}. `;
-            if (!isNaN(n)) {
-                num = n;
-                odds = o;
+            if (numEl) num = parseInt(numEl.textContent.trim());
+
+            if (oddsEl) {
+                odds = parseFloat(oddsEl.textContent.trim());
+            } else {
+                // Fallback by index for Shutuba (usually around index 9-11 depending on layout)
+                // Let's rely on class first. If that fails, look for a cell with decimal point that isn't weight
+                // Weight is col 5. 
+                // Let's try finding the odds column by header logic? No, too complex.
+                // Just use class .Odds_Tan or .Popular, commonly used.
+            }
+        } else {
+            // Odds Page Logic (Standard)
+            // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 6: WinOdds)
+            if (cells.length >= 6) {
+                const n = parseInt(cells[1].textContent.trim());
+                const o = parseFloat(cells[5].textContent.trim());
+                if (!isNaN(n)) {
+                    num = n;
+                    odds = o;
+                }
             }
         }
 
-        // Strategy 2: If strategy 1 failed, try searching by class
+        // Universal class fallback (Strategy 2) if specific logic failed
         if (!num) {
             const numEl = row.querySelector('.Umaban, .Horse_Num');
+            if (numEl) num = parseInt(numEl.textContent.trim());
+        }
+        if (num && (odds === undefined || isNaN(odds))) {
             const oddsEl = row.querySelector('.Odds_Tan, .Popular, .Odds');
-            if (numEl && oddsEl) {
-                logMsg += `Strat2(NumEl="${numEl.textContent.trim()}", OddsEl="${oddsEl.textContent.trim()}") -> `;
-                num = parseInt(numEl.textContent.trim());
-                odds = parseFloat(oddsEl.textContent.trim());
-                logMsg += `n=${num}, o=${odds}. `;
-            }
+            if (oddsEl) odds = parseFloat(oddsEl.textContent.trim());
         }
 
         if (num && !isNaN(num)) {
-            if (debugCount < 3) {
-                console.log(logMsg);
-                debugCount++;
-            }
             // Check for duplicate
             if (!horses.find(h => h.number === num)) {
+                // Handle "---" or invalid parsing
                 horses.push({ number: num, odds: (isNaN(odds) ? 0 : odds) });
             }
         }
