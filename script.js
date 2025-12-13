@@ -811,8 +811,6 @@ function resetForm() {
     const betTypeContainer = document.getElementById('bet-type-section');
     betTypeContainer.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
     betTypeContainer.querySelector('.bet-type-btn[data-type="win"]').classList.add('active');
-
-    fetchTodaysRaces();
 }
 
 
