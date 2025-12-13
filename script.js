@@ -182,6 +182,9 @@ async function loadPastRaces() {
         });
 
         pastRaceListCache = Object.values(racesMap);
+        window.pastRaceListCache = pastRaceListCache; // Force global
+        console.log("Past Races Loaded:", pastRaceListCache.length, "races");
+        console.log("Sample Race IDs:", pastRaceListCache.slice(0, 3).map(r => r.id));
 
         // Group by Venue
         const venues = [...new Set(pastRaceListCache.map(r => r.venue))].filter(v => v);
@@ -344,8 +347,14 @@ async function handleRaceSelection(btn) {
         raceInfo = `${race.venue} ${race.number} ${race.name}`;
         selectedRace.name = race.name;
     } else {
-        if (!pastRaceListCache) {
-            console.error("Past cache is missing!");
+        // Fallback to window cache if available
+        if ((!pastRaceListCache || pastRaceListCache.length === 0) && window.pastRaceListCache) {
+            console.log("Restoring pastRaceListCache from window");
+            pastRaceListCache = window.pastRaceListCache;
+        }
+
+        if (!pastRaceListCache || pastRaceListCache.length === 0) {
+            console.error("Past cache is missing or empty!", pastRaceListCache);
             return;
         }
         const race = pastRaceListCache.find(r => String(r.id) === String(raceId));
