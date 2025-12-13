@@ -571,10 +571,13 @@ async function fetchNetkeiba(url) {
     const horses = [];
 
     // Debug selectors
+    // const sel1 = doc.querySelectorAll('#odds_tan_block table tr');
+    // const sel2 = doc.querySelectorAll('.RaceOdds_HorseList_Table tr');
+    // const sel3 = doc.querySelectorAll('.Shutuba_Table tr');
+    // console.log(`Selectors matches: #odds_tan_block=${sel1.length}, .RaceOdds=${sel2.length}, .Shutuba=${sel3.length}`);
     const sel1 = doc.querySelectorAll('#odds_tan_block table tr');
     const sel2 = doc.querySelectorAll('.RaceOdds_HorseList_Table tr');
     const sel3 = doc.querySelectorAll('.Shutuba_Table tr');
-    console.log(`Selectors matches: #odds_tan_block=${sel1.length}, .RaceOdds=${sel2.length}, .Shutuba=${sel3.length}`);
 
     // Prioritize #odds_tan_block (Win Odds specific)
     let rows = sel1;
@@ -614,7 +617,7 @@ async function fetchNetkeiba(url) {
         }
     });
 
-    console.log("Parsed horses:", horses.length);
+    // console.log("Parsed horses:", horses.length);
     if (horses.length === 0) console.warn("No horses parsed! HTML snippet:", html.substring(0, 1000));
 
     return { horses: horses.sort((a, b) => a.number - b.number) };
