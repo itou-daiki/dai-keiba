@@ -603,153 +603,121 @@ async function fetchNetkeiba(url) {
     const doc = parser.parseFromString(html, 'text/html');
     const horses = [];
 
-    // Debug selectors
-    // const sel1 = doc.querySelectorAll('#odds_tan_block table tr');
-    // const sel2 = doc.querySelectorAll('.RaceOdds_HorseList_Table tr');
-    // const sel3 = doc.querySelectorAll('.Shutub        if (!hasValidOdds) {
-    console.log("odds_get_form returned no odds (---). Falling back to shutuba.html");
-    // Attempt 2: shutuba.html (Race Card / Static Odds)
-    url = `https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}&rf=race_submenu&_t=${new Date().getTime()}`;
-    let fallbackData = await fetchNetkeiba(url);
 
-    // Check if attempt 2 worked
-    let fallbackHasOdds = fallbackData.horses && fallbackData.horses.some(h => h.odds > 0);
+    // Selectors for various page types
 
-    if (!fallbackHasOdds) {
-        console.log("shutuba.html returned no odds. Falling back to result.html");
-        // Attempt 3: result.html (Race Result / Final Odds)
-        url = `https://race.netkeiba.com/race/result.html?race_id=${raceId}&rf=race_submenu&_t=${new Date().getTime()}`;
-        const resultData = await fetchNetkeiba(url);
-        if (resultData.horses && resultData.horses.some(h => h.odds > 0)) {
-            console.log("Using result data from result.html");
-            data = resultData;
+    const sel1 = doc.querySelectorAll('#odds_tan_block table tr');
+    const sel2 = doc.querySelectorAll('.RaceOdds_HorseList_Table tr');
+    const sel3 = doc.querySelectorAll('.Shutuba_Table tr');
+    const sel4 = doc.querySelectorAll('#All_Result_Table tr'); // New selector
+
+    // Prioritize #odds_tan_block (Win Odds specific)
+    let rows = sel1;
+    if (rows.length === 0) rows = sel2;
+    if (rows.length === 0) rows = sel3;
+    if (rows.length === 0) rows = sel4; // New condition
+
+    // Determine table type
+    const isShutuba = doc.querySelector('.Shutuba_Table') !== null;
+    const isResult = doc.querySelector('#All_Result_Table') !== null;
+    console.log(`Table type: ${isResult ? 'Result Page' : (isShutuba ? 'Shutuba (Race Card)' : 'Odds Page')}`);
+
+    rows.forEach((row, idx) => {
+        let num, odds, name;
+        // Try to find cells
+        const cells = row.querySelectorAll('td');
+
+        // Debug
+        // let logMsg = `Row ${idx}: `;
+        // const allExample = Array.from(cells).map((c, i) => `[${i}]="${c.textContent.trim()}"`).join(', ');
+        // logMsg += ` AllCells: ${allExample}`;
+
+        if (isResult) {
+            // Result Page Logic
+            // Name: .Horse_Name
+            const nameEl = row.querySelector('.Horse_Name');
+            if (nameEl) name = nameEl.textContent.trim();
+
+            // Num: .Umaban or col 3 (usually Rank, Waku, Num...)
+            const numEl = row.querySelector('.Umaban, div.Umaban');
+            // Result table often uses div inside td for Umaban
+
+            // Odds: .Odds (class usually present)
+            const oddsEl = row.querySelector('.Odds');
+
+            if (numEl) num = parseInt(numEl.textContent.trim());
+            // Fallback for num if class missing: col 3
+            if (!num && cells.length > 2) num = parseInt(cells[2].textContent.trim());
+
+            if (oddsEl) {
+                odds = parseFloat(oddsEl.textContent.trim());
+            } else {
+                // Fallback: look for column with decimal
+                // Usually col 11 or so.
+            }
+
+        } else if (isShutuba) {
+            // Shutuba Page Logic
+            // Name: .HorseName or .HorseInfo
+            const nameEl = row.querySelector('.HorseName, .HorseInfo');
+            if (nameEl) name = nameEl.textContent.trim();
+
+            // Odds: .Odds_Tan or .Popular
+            const numEl = row.querySelector('.Umaban, .Horse_Num');
+            const oddsEl = row.querySelector('.Odds_Tan, .Popular');
+
+            if (numEl) num = parseInt(numEl.textContent.trim());
+
+            if (oddsEl) {
+                const txt = oddsEl.textContent.trim();
+                // console.log(`Shutuba Row ${idx}: Num=${num}, OddsTxt="${txt}"`); // Debug log
+                odds = parseFloat(txt);
+            }
         } else {
-            // If result also fails, use the best we have (likely names but no odds)
-            data = fallbackData;
-        }
-    } else {
-        console.log("Using fallback data from shutuba.html");
-        data = fallbackData;
-    }
-}
-// ...
-const sel1 = doc.querySelectorAll('#odds_tan_block table tr');
-const sel2 = doc.querySelectorAll('.RaceOdds_HorseList_Table tr');
-const sel3 = doc.querySelectorAll('.Shutuba_Table tr');
-const sel4 = doc.querySelectorAll('#All_Result_Table tr'); // New selector
+            // Odds Page Logic (Standard)
+            // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 3: Name, Col 6: WinOdds)
+            if (cells.length >= 6) {
+                const n = parseInt(cells[1].textContent.trim());
+                const o = parseFloat(cells[5].textContent.trim());
 
-// Prioritize #odds_tan_block (Win Odds specific)
-let rows = sel1;
-if (rows.length === 0) rows = sel2;
-if (rows.length === 0) rows = sel3;
-if (rows.length === 0) rows = sel4; // New condition
+                // Name usually in col 3
+                if (cells[2]) name = cells[2].textContent.trim();
 
-// Determine table type
-const isShutuba = doc.querySelector('.Shutuba_Table') !== null;
-const isResult = doc.querySelector('#All_Result_Table') !== null;
-console.log(`Table type: ${isResult ? 'Result Page' : (isShutuba ? 'Shutuba (Race Card)' : 'Odds Page')}`);
-
-rows.forEach((row, idx) => {
-    let num, odds, name;
-    // Try to find cells
-    const cells = row.querySelectorAll('td');
-
-    // Debug
-    // let logMsg = `Row ${idx}: `;
-    // const allExample = Array.from(cells).map((c, i) => `[${i}]="${c.textContent.trim()}"`).join(', ');
-    // logMsg += ` AllCells: ${allExample}`;
-
-    if (isResult) {
-        // Result Page Logic
-        // Name: .Horse_Name
-        const nameEl = row.querySelector('.Horse_Name');
-        if (nameEl) name = nameEl.textContent.trim();
-
-        // Num: .Umaban or col 3 (usually Rank, Waku, Num...)
-        const numEl = row.querySelector('.Umaban, div.Umaban');
-        // Result table often uses div inside td for Umaban
-
-        // Odds: .Odds (class usually present)
-        const oddsEl = row.querySelector('.Odds');
-
-        if (numEl) num = parseInt(numEl.textContent.trim());
-        // Fallback for num if class missing: col 3
-        if (!num && cells.length > 2) num = parseInt(cells[2].textContent.trim());
-
-        if (oddsEl) {
-            odds = parseFloat(oddsEl.textContent.trim());
-        } else {
-            // Fallback: look for column with decimal
-            // Usually col 11 or so.
-        }
-
-    } else if (isShutuba) {
-        // Shutuba Page Logic
-        // Name: .HorseName or .HorseInfo
-        const nameEl = row.querySelector('.HorseName, .HorseInfo');
-        if (nameEl) name = nameEl.textContent.trim();
-
-        // Odds: .Odds_Tan or .Popular
-        const numEl = row.querySelector('.Umaban, .Horse_Num');
-        const oddsEl = row.querySelector('.Odds_Tan, .Popular');
-
-        if (numEl) num = parseInt(numEl.textContent.trim());
-
-        if (oddsEl) {
-            const txt = oddsEl.textContent.trim();
-            // console.log(`Shutuba Row ${idx}: Num=${num}, OddsTxt="${txt}"`); // Debug log
-            odds = parseFloat(txt);
-        }
-    } else {
-        // Odds Page Logic (Standard)
-        // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 3: Name, Col 6: WinOdds)
-        if (cells.length >= 6) {
-            const n = parseInt(cells[1].textContent.trim());
-            const o = parseFloat(cells[5].textContent.trim());
-
-            // Name usually in col 3
-            if (cells[2]) name = cells[2].textContent.trim();
-
-            if (!isNaN(n)) {
-                num = n;
-                odds = o;
+                if (!isNaN(n)) {
+                    num = n;
+                    odds = o;
+                }
             }
         }
-    }
 
-    // Universal class fallback (Strategy 2) if specific logic failed
-    if (!num) {
-        const numEl = row.querySelector('.Umaban, .Horse_Num');
-        if (numEl) num = parseInt(numEl.textContent.trim());
-    }
-    if (!name) {
-        const nameEl = row.querySelector('.Horse_Name, .HorseName');
-        if (nameEl) name = nameEl.textContent.trim();
-    }
-    if (num && (odds === undefined || isNaN(odds))) {
-        const oddsEl = row.querySelector('.Odds_Tan, .Popular, .Odds');
-        if (oddsEl) odds = parseFloat(oddsEl.textContent.trim());
-    }
-
-    if (num && !isNaN(num)) {
-        // Check for duplicate
-        if (!horses.find(h => h.number === num)) {
-            // Handle "---" or invalid parsing
-            horses.push({ number: num, odds: (isNaN(odds) ? 0 : odds), name: name || `馬番${num}` });
+        // Universal class fallback (Strategy 2) if specific logic failed
+        if (!num) {
+            const numEl = row.querySelector('.Umaban, .Horse_Num');
+            if (numEl) num = parseInt(numEl.textContent.trim());
         }
-    }
-});
+        if (!name) {
+            const nameEl = row.querySelector('.Horse_Name, .HorseName');
+            if (nameEl) name = nameEl.textContent.trim();
+        }
+        if (num && (odds === undefined || isNaN(odds))) {
+            const oddsEl = row.querySelector('.Odds_Tan, .Popular, .Odds');
+            if (oddsEl) odds = parseFloat(oddsEl.textContent.trim());
+        }
 
-// console.log("Parsed horses:", horses.length);
-if (horses.length === 0) console.warn("No horses parsed! HTML snippet:", html.substring(0, 1000));
+        if (num && !isNaN(num)) {
+            // Check for duplicate
+            if (!horses.find(h => h.number === num)) {
+                // Handle "---" or invalid parsing
+                horses.push({ number: num, odds: (isNaN(odds) ? 0 : odds), name: name || `馬番${num}` });
+            }
+        }
+    });
 
-return { horses: horses.sort((a, b) => a.number - b.number) };
+    // console.log("Parsed horses:", horses.length);
+    if (horses.length === 0) console.warn("No horses parsed! HTML snippet:", html.substring(0, 1000));
 
-// Ensure other helpers are available
-// ... (Preserve calculatePayout, displayResult, functions)
-
-
-
+    return { horses: horses.sort((a, b) => a.number - b.number) };
+}
 
 // ==================== CSV Data Handling for Past Races ====================
 function getHorsesFromCSV(raceId) {
