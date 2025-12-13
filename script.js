@@ -13,9 +13,11 @@ let pastDataCache = null;
 let pastRaceListCache = []; // Processed list of past races
 
 // State
+// State
 let activeTab = 'tab-today';
 let selectedVenueToday = null;
 let selectedVenuePast = null;
+let selectedDatePast = null;
 
 // ==================== 初期化 ====================
 document.addEventListener('DOMContentLoaded', initializeApp);
@@ -42,6 +44,7 @@ function setupEventListeners() {
     document.querySelector('main').addEventListener('click', (e) => {
         const raceSelectBtn = e.target.closest('.race-select-btn');
         const venueTabBtn = e.target.closest('.venue-tab-btn');
+        const dateTabBtn = e.target.closest('.date-tab-btn');
         const betTypeBtn = e.target.closest('.bet-type-btn');
         const calculateBtn = e.target.closest('#calculate-btn');
         const resetBtn = e.target.closest('#reset-btn');
@@ -53,6 +56,10 @@ function setupEventListeners() {
         }
         if (venueTabBtn) {
             handleVenueSelection(venueTabBtn);
+            return;
+        }
+        if (dateTabBtn) {
+            handleDateSelection(dateTabBtn);
             return;
         }
         if (betTypeBtn) {
@@ -156,7 +163,6 @@ async function loadPastRaces() {
         const data = await loadDatabase();
 
         // Filter by date
-        // Note: CSV date format is typically "YYYY年M月D日" or similar
         const prefix = `${year}年${month}月`;
         const filtered = data.filter(row => row['日付'] && row['日付'].startsWith(prefix));
 
@@ -173,7 +179,7 @@ async function loadPastRaces() {
                 racesMap[rid] = {
                     id: rid,
                     venue: getVenueFromRow(row), // Extract venue
-                    number: row['レース'] || '', // Usually needs parsing "11 R"
+                    number: row['レース'] || '',
                     name: row['レース名'],
                     date: row['日付'],
                     mode: 'past'
@@ -184,18 +190,26 @@ async function loadPastRaces() {
         pastRaceListCache = Object.values(racesMap);
         window.pastRaceListCache = pastRaceListCache; // Force global
         console.log("Past Races Loaded:", pastRaceListCache.length, "races");
-        console.log("Sample Race IDs:", pastRaceListCache.slice(0, 3).map(r => r.id));
 
-        // Group by Venue
-        const venues = [...new Set(pastRaceListCache.map(r => r.venue))].filter(v => v);
-        renderVenueTabs('past', venues);
+        // Group by Date first
+        const dates = [...new Set(pastRaceListCache.map(r => r.date))].sort((a, b) => {
+            // Sort date descending (newest first)
+            // Date format likely YYYY年M月D日
+            // Simple string compare often works if format is padded, but ideally parse
+            // Let's rely on standard Japanese date format logic or just string desc for now
+            return b.localeCompare(a, 'ja');
+        });
 
+        renderDateTabs(dates);
+
+        // Auto-select first date
+        if (dates.length > 0) {
+            selectDate(dates[0]);
+        }
+
+        document.getElementById('past-date-tabs-container').style.display = 'block';
         document.getElementById('past-venue-tabs-container').style.display = 'block';
         document.getElementById('past-races-list-section').style.display = 'block';
-
-        if (venues.length > 0) {
-            selectVenue('past', venues[0]);
-        }
 
     } catch (e) {
         console.error(e);
@@ -208,14 +222,6 @@ async function loadPastRaces() {
 
 function getVenueFromRow(row) {
     if (row['開催']) return row['開催'].replace(/\d+回/, '').replace(/\d+日目/, '').trim();
-    // Derive from race_id if venue name not clear
-    // Default to a guess or use existing logic if CSV has venue
-    // Checking CSV structure... Usually "会場" or part of race_id
-    // Assuming 'venue' isn't explicitly in CSV, parse it?
-    // User's scraper/auto_scraper.py extracts it. database.csv usually has it.
-    // Let's assume there is a column or we infer.
-    // Looking at previous `script.js` line 603... no explicit venue.
-    // Let's deduce from ID (4th-5th digit)
     const id = String(row['race_id']);
     const placeCode = id.substring(4, 6);
     const placeMap = {
@@ -225,7 +231,55 @@ function getVenueFromRow(row) {
     return placeMap[placeCode] || "その他";
 }
 
-// ==================== Venue & Race Rendering ====================
+// ==================== Venue & Date Rendering ====================
+
+function renderDateTabs(dates) {
+    const container = document.getElementById('past-date-tabs');
+    const wrapper = document.getElementById('past-date-tabs-container');
+    container.innerHTML = '';
+
+    if (dates.length === 0) {
+        wrapper.style.display = 'none';
+        return;
+    }
+
+    dates.forEach(date => {
+        // Shorten date for display? "12月7日"
+        const label = date.replace(/^\d+年/, '');
+        const btn = document.createElement('button');
+        btn.className = 'venue-tab-btn date-tab-btn'; // Reuse style + identifier
+        btn.textContent = label;
+        btn.dataset.date = date;
+        container.appendChild(btn);
+    });
+}
+
+function handleDateSelection(btn) {
+    selectDate(btn.dataset.date);
+}
+
+function selectDate(date) {
+    selectedDatePast = date;
+
+    // Highlight active date
+    document.querySelectorAll('.date-tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.date === date);
+    });
+
+    // Filter venues for this date
+    const racesOnDate = pastRaceListCache.filter(r => r.date === date);
+    const venues = [...new Set(racesOnDate.map(r => r.venue))];
+
+    renderVenueTabs('past', venues);
+
+    // Auto Select first venue
+    if (venues.length > 0) {
+        selectVenue('past', venues[0]);
+    } else {
+        renderRaceList('past-races-list', []);
+    }
+}
+
 function renderVenueTabs(type, venues) {
     const containerId = type === 'today' ? 'today-venue-tabs' : 'past-venue-tabs';
     const containerWrapper = document.getElementById(`${type}-venue-tabs-container`);
@@ -261,7 +315,7 @@ function selectVenue(type, venue) {
     const containerId = type === 'today' ? 'today-venue-tabs' : 'past-venue-tabs';
     const container = document.getElementById(containerId);
 
-    container.querySelectorAll('.venue-tab-btn').forEach(b => {
+    container.querySelectorAll('.venue-tab-btn:not(.date-tab-btn)').forEach(b => {
         b.classList.toggle('active', b.dataset.venue === venue);
     });
 
@@ -271,15 +325,10 @@ function selectVenue(type, venue) {
         renderRaceList('todays-races-list', races);
     } else {
         selectedVenuePast = venue;
-        const races = pastRaceListCache.filter(r => r.venue === venue);
-        // Sort by date then race number? Or just race number if date is same?
-        // Usually Past Mode is monthly, so multiple dates.
-        // Group by Date? Or just list all?
-        // Let's sort by date descending, then race number.
-        races.sort((a, b) => {
-            if (a.date !== b.date) return b.date.localeCompare(a.date);
-            return parseInt(a.number) - parseInt(b.number);
-        });
+        // Filter by Date AND Venue
+        const races = pastRaceListCache.filter(r => r.date === selectedDatePast && r.venue === venue);
+
+        races.sort((a, b) => parseInt(a.number) - parseInt(b.number));
         renderRaceList('past-races-list', races);
     }
 }
