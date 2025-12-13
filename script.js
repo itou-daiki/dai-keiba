@@ -55,7 +55,7 @@ function setupEventListeners() {
 }
 
 // ==================== データ取得・表示 ====================
-let todaysDataCacche = null;
+let todaysDataCache = null;
 
 async function fetchTodaysRaces() {
     showStatus('今日のレース情報を読み込んでいます...', 'info');
@@ -67,7 +67,7 @@ async function fetchTodaysRaces() {
         }
 
         const data = await response.json();
-        todaysDataCacche = data;
+        todaysDataCache = data;
 
         const raceList = data.races.map(r => ({
             id: r.id,
@@ -136,7 +136,7 @@ async function fetchOdds(raceId) {
 
     try {
         // キャッシュから検索
-        const race = todaysDataCacche.races.find(r => r.id === raceId);
+        const race = todaysDataCache.races.find(r => r.id === raceId);
 
         if (race && race.horses && race.horses.length > 0) {
             horses = race.horses;

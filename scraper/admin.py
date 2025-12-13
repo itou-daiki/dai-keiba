@@ -110,8 +110,37 @@ if st.button("今日のレース情報を更新", type="secondary"):
         success, msg = auto_scraper.scrape_todays_schedule()
         if success:
             st.success(f"完了: {msg}")
+            time.sleep(1)
+            st.rerun()
         else:
             st.error(f"エラー: {msg}")
+
+# Display Today's Data
+json_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "todays_data.json")
+if os.path.exists(json_path):
+    try:
+        import json
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        if data.get('races'):
+            st.write(f"取得済みデータ: {data.get('date')} ({len(data['races'])} レース)")
+            
+            # Simple table
+            races_preview = []
+            for r in data['races']:
+                races_preview.append({
+                    "ID": r['id'],
+                    "会場": r['venue'],
+                    "R": r['number'],
+                    "レース名": r['name'],
+                    "出走頭数": len(r['horses'])
+                })
+            st.dataframe(pd.DataFrame(races_preview))
+        else:
+            st.info("今日の予定データは空です。")
+    except Exception as e:
+        st.error(f"JSON読み込みエラー: {e}")
 
 # --- Preview Section ---
 if count > 0:
