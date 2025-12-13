@@ -11,7 +11,8 @@ import sys
 # ==========================================
 # CONSTANTS
 # ==========================================
-CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), "JRA_Results_2024_2025.csv")
+# Root directory (parent of scraper) -> database.csv
+CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
 TARGET_YEARS = [2024, 2025] # Expandable
 
 # ==========================================
@@ -91,27 +92,58 @@ def scrape_race_data(race_id):
 # ==========================================
 def get_start_params():
     """
-    CSVが存在すれば、最新の日付を取得して、その翌日からスタートするようにする。
-    存在しなければ、デフォルト(例えば2024年1月)からスタート。
+    コマンドライン引数で日付指定があればそれを優先。
+    なければCSVの最終日+1日、それもなければ2024/1/1。
     """
-    if os.path.exists(CSV_FILE_PATH):
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
+    parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
+    parser.add_argument("--places", type=str, help="Target places (comma separated, e.g. 6,7)")
+    args, unknown = parser.parse_known_args()
+
+    # Default
+    start_date = None
+    target_places = range(1, 11)
+
+    if args.places:
         try:
-            df_existing = pd.read_csv(CSV_FILE_PATH)
-            if '日付' in df_existing.columns and not df_existing.empty:
-                # 日付をdatetimeに変換
-                df_existing['date_obj'] = pd.to_datetime(df_existing['日付'], format='%Y年%m月%d日', errors='coerce')
-                last_date = df_existing['date_obj'].max()
-                
-                if pd.notna(last_date):
-                    print(f"既存データが見つかりました。最終データ日時: {last_date}")
-                    # 最終日の翌日から検索開始
-                    start_date = last_date + timedelta(days=1)
-                    return start_date
-        except Exception as e:
-            print(f"既存CSV読み込みエラー: {e} - 新規作成します。")
+            target_places = [int(p) for p in args.places.split(",")]
+        except:
+            print("places指定エラー。カンマ区切り数字で指定してください。")
     
-    print("既存データなし、または読み込み失敗。2024年1月1日から開始します。")
-    return datetime(2024, 1, 1)
+    # If no args provided (e.g. called from admin w/o specific args), parser might be empty or defaults
+    # If explicit None passed to this func? This func reads global sys.argv
+    # We should probably allow passing args to this function or split logic.
+    # For now, if no start arg, it falls back to CSV check. that is fine.
+
+    if args.start:
+        try:
+            start_date = datetime.strptime(args.start, '%Y-%m-%d')
+        except:
+            print("日付フォーマットエラー。YYYY-MM-DDで指定してください。")
+    
+    if start_date is None:
+        if os.path.exists(CSV_FILE_PATH):
+            try:
+                df_existing = pd.read_csv(CSV_FILE_PATH)
+                if '日付' in df_existing.columns and not df_existing.empty:
+                    df_existing['date_obj'] = pd.to_datetime(df_existing['日付'], format='%Y年%m月%d日', errors='coerce')
+                    last_date = df_existing['date_obj'].max()
+                    
+                    if pd.notna(last_date):
+                        print(f"既存データが見つかりました。最終データ日時: {last_date}")
+                        start_date = last_date + timedelta(days=1)
+            except Exception as e:
+                print(f"既存CSV読み込みエラー: {e}")
+    
+    if start_date is None:
+         # デフォルト：最近の結果を取得しやすくするため、2025年12月頭にしておく（デモ用）
+         # 本番運用時は2024/1/1に戻しても良い
+         print("既存データなし。デモ用に2025年12月1日から開始します。")
+         start_date = datetime(2025, 12, 1)
+
+    return start_date, args.end, target_places
 
 # ==========================================
 # 3. メイン実行処理
@@ -120,21 +152,31 @@ def main():
     print("=== 自動スクレイピング開始 ===")
     start_time = time.time()
     
-    start_date = get_start_params()
+    start_date, end_arg, places = get_start_params()
     today = datetime.now()
     
-    # 未来の日付まで検索する必要はないので、今日までとする
-    # ただし、開始日が未来になってしまった場合は終了
-    if start_date > today:
-        print("最新データまで取得済みです。")
+    if end_arg:
+        try:
+            end_date = datetime.strptime(end_arg, "%Y-%m-%d")
+        except:
+             end_date = today
+    else:
+        end_date = today
+    
+    # 終了日補正（その日の終わりまで）
+    end_date = end_date.replace(hour=23, minute=59, second=59)
+
+    if start_date > end_date:
+        print("指定期間が不正、または最新データまで取得済みです。")
         return
 
-    print(f"取得対象期間: {start_date.strftime('%Y-%m-%d')} 〜 {today.strftime('%Y-%m-%d')}")
+    print(f"取得対象期間: {start_date.strftime('%Y-%m-%d')} 〜 {end_date.strftime('%Y-%m-%d')}")
+    print(f"対象会場: {list(places)}")
 
     all_data = []
     
-    # 年ごとのループ (start_dateからtodayに含まれる年)
-    years_to_scan = range(start_date.year, today.year + 1)
+    # 年ごとのループ
+    years_to_scan = range(start_date.year, end_date.year + 1)
 
     # 探索ロジック
     # netkeibaのrace_id構造: YYYY(4) + 場所(2) + 回(2) + 日(2) + R(2)
@@ -142,7 +184,7 @@ def main():
     # 「開催されているかどうか」を効率よく探る必要がある。
     # ここではユーザー提供のループ構造をベースにしつつ、日付チェックを入れる。
 
-    places = range(1, 11) # 01:札幌 ～ 10:小倉
+    # places = range(1, 11) # Argument used instead
     kais = range(1, 7)    # 開催回
     days = range(1, 13)   # 開催日数
     
@@ -215,8 +257,8 @@ def main():
                             # 続きのDayには新しいデータが来るかもしれないので continue
                             continue
                         
-                        if race_date > today:
-                            print(f"Skip (Future: {race_date_str})")
+                        if race_date > end_date:
+                            print(f"Skip (Future/Outside Range: {race_date_str})")
                             # 未来ならこれ以上探索不要だが、並行開催の他場があるかもなので
                             # このループ(Day)はbreakでいいかも
                             break
@@ -259,10 +301,17 @@ def main():
         else:
             combined_df = new_df
         
-        # 重複排除 (race_id と 馬名 とか? 行単位で重複削除)
-        # race_id + 着順(または馬名) でユニークになるはずだが
-        # 単純に全重複削除
-        combined_df.drop_duplicates(subset=['race_id', '着順', '馬名'], keep='last', inplace=True)
+        # Column name cleaning
+        # Sometimes header has newlines
+        
+        # 重複排除
+        # race_id と 馬名 でユニークにする
+        subset_cols = ['race_id', '馬名']
+        # 実際に存在するカラムだけでフィルタ
+        subset_cols = [c for c in subset_cols if c in combined_df.columns]
+        
+        if subset_cols:
+            combined_df.drop_duplicates(subset=subset_cols, keep='last', inplace=True)
         
         # 日付ソート
         try:

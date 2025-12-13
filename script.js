@@ -73,21 +73,21 @@ async function fetchTodaysRaces() {
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        
+
         const raceList = [];
         // セレクタを更新し、より具体的に RaceList_DataList 内の RaceList_Item をターゲットにする
         const raceElements = doc.querySelectorAll('.RaceList_DataList .RaceList_Item');
-        
+
         // デバッグログを追加
         console.log(`'.RaceList_DataList .RaceList_Item' に一致する要素が ${raceElements.length} 件見つかりました。`);
 
         if (raceElements.length === 0) {
-             // 代替セレクタを試す
-             const alternativeElements = doc.querySelectorAll('.RaceList_Box .RaceList_Item');
-             console.log(`代替セレクタ '.RaceList_Box .RaceList_Item' で ${alternativeElements.length} 件見つかりました。`);
-             if(alternativeElements.length > 0) {
-                 raceElements = alternativeElements;
-             }
+            // 代替セレクタを試す
+            const alternativeElements = doc.querySelectorAll('.RaceList_Box .RaceList_Item');
+            console.log(`代替セレクタ '.RaceList_Box .RaceList_Item' で ${alternativeElements.length} 件見つかりました。`);
+            if (alternativeElements.length > 0) {
+                raceElements = alternativeElements;
+            }
         }
 
 
@@ -96,7 +96,7 @@ async function fetchTodaysRaces() {
             if (link) {
                 const href = link.href;
                 const raceIdMatch = href.match(/race_id=([0-9a-zA-Z_]+)/);
-                
+
                 // .RaceList_Item要素から直接JyoName等を探すように修正
                 const venueName = race.querySelector('.JyoName')?.textContent.trim();
                 const raceNumber = race.querySelector('.Race_Num')?.textContent.trim();
@@ -112,7 +112,7 @@ async function fetchTodaysRaces() {
                 }
             }
         });
-        
+
         displayTodaysRaces(raceList);
 
         if (raceList.length > 0) {
@@ -123,7 +123,7 @@ async function fetchTodaysRaces() {
 
     } catch (error) {
         showStatus(`エラー: ${error.message}`, 'error');
-        displayTodaysRaces([]); 
+        displayTodaysRaces([]);
     }
 }
 
@@ -159,7 +159,7 @@ function handleRaceSelection(selectedBtn) {
 
     selectedRace.id = selectedBtn.dataset.raceId;
     selectedRace.name = selectedBtn.dataset.raceName;
-    
+
     document.querySelectorAll('.race-select-btn').forEach(btn => btn.classList.remove('active'));
     selectedBtn.classList.add('active');
 
@@ -234,7 +234,7 @@ function calculatePayout() {
 
     let payout = 0;
     let explanation = '';
-    
+
     switch (currentBetType) {
         case 'win':
         case 'place':
@@ -263,7 +263,7 @@ function calculatePayout() {
 function getSelectedHorses() {
     const selected = new Set();
     const grids = document.querySelectorAll('.horse-select-grid');
-    
+
     grids.forEach(grid => {
         const selectedButtons = grid.querySelectorAll('.horse-select-btn.selected');
         selectedButtons.forEach(btn => {
@@ -271,7 +271,7 @@ function getSelectedHorses() {
         });
     });
 
-    return Array.from(selected).sort((a,b) => a - b);
+    return Array.from(selected).sort((a, b) => a - b);
 }
 
 function validateInput(selectedHorses) {
@@ -304,7 +304,7 @@ function validateInput(selectedHorses) {
         alert(`${requiredCount}頭の馬を選択してください`);
         return false;
     }
-    
+
     const uniqueHorses = new Set(selectedHorses);
     if (uniqueHorses.size !== selectedHorses.length) {
         alert('同じ馬を複数選択することはできません');
@@ -359,7 +359,7 @@ function displayResult(payout, betAmount, explanation, betTypeName) {
     const resultContent = document.getElementById('result-content');
     const profit = payout - betAmount;
     const returnRate = betAmount > 0 ? ((payout / betAmount) * 100).toFixed(1) : 0;
-    
+
     resultContent.innerHTML = `
         <div class="result-item">
             <span class="result-label">レース</span>
@@ -393,11 +393,11 @@ function resetForm() {
     ['bet-type-section', 'odds-display-section', 'purchase-section', 'result-section'].forEach(id => {
         document.getElementById(id).style.display = 'none';
     });
-    
+
     horses = [];
     selectedRace = { id: null, name: null };
     currentBetType = 'win';
-    
+
     const betTypeContainer = document.getElementById('bet-type-section');
     betTypeContainer.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
     betTypeContainer.querySelector('.bet-type-btn[data-type="win"]').classList.add('active');
@@ -433,7 +433,7 @@ function getBetTypeName(type) {
 async function fetchViaNetlifyProxy(targetUrl) {
     // /api/fetch エンドポイントに、URLをエンコードしてクエリパラメータとして渡す
     const apiUrl = `/api/fetch?url=${encodeURIComponent(targetUrl)}`;
-    
+
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
@@ -447,14 +447,14 @@ async function fetchViaNetlifyProxy(targetUrl) {
 }
 
 async function fetchNetkeiba(url) {
-    const html = await fetchViaNetlifyProxy(url); 
+    const html = await fetchViaNetlifyProxy(url);
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const horses = [];
     const rows = doc.querySelectorAll('.Shutuba_Table tbody tr');
     rows.forEach(row => {
         const numCell = row.querySelector('.Umaban');
-        const oddsCell = row.querySelector('.Odds_Tan'); 
+        const oddsCell = row.querySelector('.Odds_Tan');
         if (numCell && oddsCell) {
             const number = parseInt(numCell.textContent.trim(), 10);
             const odds = parseFloat(oddsCell.textContent.trim());
@@ -463,7 +463,7 @@ async function fetchNetkeiba(url) {
             }
         }
     });
-     if (horses.length === 0) { 
+    if (horses.length === 0) {
         const altRows = doc.querySelectorAll('.RaceTable01 tr[class^="HorseList"]');
         altRows.forEach(row => {
             const numCell = row.querySelector('td:nth-child(2)');
@@ -547,66 +547,124 @@ function handleHorseSelection(selectedBtn) {
 
     const horseNumber = selectedBtn.dataset.horse;
     document.querySelectorAll(`.horse-select-btn[data-horse="${horseNumber}"].selected`).forEach(btn => {
-        if(btn.parentElement.dataset.position !== position) {
+        if (btn.parentElement.dataset.position !== position) {
             btn.classList.remove('selected');
         }
     });
 }
 
 // ==================== シミュレーション機能 ====================
+// ==================== シミュレーション機能 ====================
+let globalRaceData = null; // CSVデータをキャッシュ
+
+async function loadDatabase() {
+    if (globalRaceData) return globalRaceData;
+
+    return new Promise((resolve, reject) => {
+        Papa.parse("database.csv", {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            dynamicTyping: true,
+            complete: function (results) {
+                console.log("Database loaded:", results.data.length, "rows");
+                globalRaceData = results.data;
+                resolve(globalRaceData);
+            },
+            error: function (error) {
+                console.error("CSV Parse Error:", error);
+                reject(error);
+            }
+        });
+    });
+}
+
 async function loadSimulationData() {
-    const year = document.getElementById('sim-year').value;
-    const month = document.getElementById('sim-month').value;
+    const yearStr = document.getElementById('sim-year').value;
+    const monthStr = document.getElementById('sim-month').value;
+
+    // YYYY年M月 or YYYY年MM月 format matching
+    // CSV has "2025年12月6日" format date column: "日付"
 
     const loadBtn = document.getElementById('load-simulation-btn');
     loadBtn.disabled = true;
     loadBtn.textContent = '読み込み中...';
 
     try {
-        // レースデータと馬データを並行して取得
-        const [raceResponse, horseResponse] = await Promise.all([
-            fetch(`/api/race-data?year=${year}&month=${month}&type=race`),
-            fetch(`/api/race-data?year=${year}&month=${month}&type=horse`)
-        ]);
-
-        if (!raceResponse.ok || !horseResponse.ok) {
-            throw new Error('データが見つかりませんでした');
+        const data = await loadDatabase();
+        if (!data || data.length === 0) {
+            throw new Error("データベースが空か、読み込めませんでした。");
         }
 
-        const raceData = await raceResponse.json();
-        const horseData = await horseResponse.json();
+        // Filter data key: "日付" like "2024年1月%"
+        // yearStr=2024, monthStr=01 -> "2024年1月" or "2024年01月" (Usually single digit month has no pad in Japanese date format often, but let's check scraper)
+        // Scraper uses: date_text = match.group(1) from netkeiba title (e.g. 2024年1月5日)
+        // So month is likely not zero-padded if < 10.
 
-        // シミュレーションを実行
-        runSimulation(raceData.data, horseData.data);
+        const targetMonth = parseInt(monthStr, 10); // Remove zero padding
+        const filterPrefix = `${yearStr}年${targetMonth}月`;
+
+        console.log("Filtering for:", filterPrefix);
+
+        // Filter relevant rows
+        const filteredRows = data.filter(row => {
+            return row['日付'] && row['日付'].startsWith(filterPrefix);
+        });
+
+        if (filteredRows.length === 0) {
+            throw new Error(`${yearStr}年${targetMonth}月のデータが見つかりませんでした。`);
+        }
+
+        runSimulationCSV(filteredRows);
 
     } catch (error) {
         console.error('シミュレーションエラー:', error);
-        alert(`エラー: ${error.message}\n\n${year}年${month}月のデータが存在しません。`);
+        alert(`エラー: ${error.message}`);
     } finally {
         loadBtn.disabled = false;
         loadBtn.textContent = 'データを読み込む';
     }
 }
 
-function runSimulation(races, horses) {
-    // 単勝1番人気を全て買った場合のシミュレーション
+function runSimulationCSV(rows) {
+    // Rows contains mixed race info and horse info (it is 1 row per horse)
+    // We need to group by race_id
+
+    const races = {};
+
+    rows.forEach(row => {
+        const rid = row['race_id'];
+        if (!races[rid]) {
+            races[rid] = {
+                race_id: rid,
+                race_title: row['レース名'],
+                horses: []
+            };
+        }
+        races[rid].horses.push({
+            horse_number: row['馬 番'],
+            popularity: row['人 気'],
+            odds: row['単勝 オッズ'],
+            rank: row['着 順'],
+            horse_name: row['馬名']
+        });
+    });
+
+    // Convert to array
+    const raceList = Object.values(races);
+
+    // Init stats
     let totalBets = 0;
     let totalWins = 0;
     let totalPayout = 0;
     const betAmount = 100;
-
     const raceResults = [];
 
-    races.forEach(race => {
-        const raceId = race.race_id;
-        const raceHorses = horses.filter(h => h.race_id === raceId);
-
-        if (raceHorses.length === 0) return;
-
-        // 人気順に並べ替え（1番人気を見つける）
-        const sortedHorses = raceHorses.sort((a, b) => {
-            const popA = parseInt(a.popularity) || 999;
-            const popB = parseInt(b.popularity) || 999;
+    raceList.forEach(race => {
+        // Sort horses by popularity
+        const sortedHorses = race.horses.sort((a, b) => {
+            const popA = parseFloat(a.popularity) || 999;
+            const popB = parseFloat(b.popularity) || 999;
             return popA - popB;
         });
 
@@ -615,8 +673,10 @@ function runSimulation(races, horses) {
 
         totalBets += betAmount;
 
-        // 1着になったかチェック
-        const rank = parseInt(favorite.rank) || 999;
+        // Check win
+        // rank might be "1" or 1
+        const rank = parseInt(favorite.rank);
+
         if (rank === 1) {
             totalWins++;
             const odds = parseFloat(favorite.odds) || 0;
@@ -624,7 +684,7 @@ function runSimulation(races, horses) {
             totalPayout += payout;
 
             raceResults.push({
-                race: race.race_title || raceId,
+                race: race.race_title || race.race_id,
                 horse: favorite.horse_number,
                 odds: odds,
                 payout: payout,
@@ -632,7 +692,7 @@ function runSimulation(races, horses) {
             });
         } else {
             raceResults.push({
-                race: race.race_title || raceId,
+                race: race.race_title || race.race_id,
                 horse: favorite.horse_number,
                 odds: parseFloat(favorite.odds) || 0,
                 payout: 0,
@@ -643,10 +703,10 @@ function runSimulation(races, horses) {
 
     const profit = totalPayout - totalBets;
     const recoveryRate = totalBets > 0 ? ((totalPayout / totalBets) * 100).toFixed(1) : 0;
-    const winRate = races.length > 0 ? ((totalWins / races.length) * 100).toFixed(1) : 0;
+    const winRate = raceList.length > 0 ? ((totalWins / raceList.length) * 100).toFixed(1) : 0;
 
     displaySimulationResults({
-        totalRaces: races.length,
+        totalRaces: raceList.length,
         totalBets,
         totalWins,
         totalPayout,
@@ -656,6 +716,8 @@ function runSimulation(races, horses) {
         results: raceResults
     });
 }
+
+// Function runSimulation(races, horses) is no longer used, replaced by runSimulationCSV
 
 function displaySimulationResults(stats) {
     const resultDiv = document.getElementById('simulation-result');
