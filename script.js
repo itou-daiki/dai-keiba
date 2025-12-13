@@ -631,21 +631,35 @@ async function fetchNetkeiba(url) {
 
 // ==================== CSV Data Handling for Past Races ====================
 function getHorsesFromCSV(raceId) {
-    if (!window.globalRaceData) {
+    if (!window.globalRaceData || window.globalRaceData.length === 0) {
         console.warn("getHorsesFromCSV: globalRaceData is empty");
         return [];
     }
 
+    // Debug: Check first row keys and raceId format
+    const firstRow = window.globalRaceData[0];
+    console.log("Debug Data Check:", {
+        searchId: raceId,
+        searchIdType: typeof raceId,
+        firstRowId: firstRow['race_id'],
+        firstRowIdType: typeof firstRow['race_id'],
+        allKeys: Object.keys(firstRow)
+    });
+
     // globalRaceData is an array of rows. Filter by race_id.
-    const raceRows = window.globalRaceData.filter(row => String(row['race_id']) === String(raceId));
+    // Ensure strict string comparison works by trimming and handling types
+    const raceRows = window.globalRaceData.filter(row => {
+        const rowId = String(row['race_id']).trim();
+        const targetId = String(raceId).trim();
+        return rowId === targetId;
+    });
     console.log(`getHorsesFromCSV: Found ${raceRows.length} rows for race ${raceId}`);
 
     return raceRows.map(row => ({
-        number: parseInt(row['馬 番']) || 0,
+        number: parseInt(row['馬 番']) || parseInt(row['馬番']) || 0, // Try generic variations
         name: row['馬名'],
-        odds: parseFloat(row['単勝 オッズ']) || 0,
-        // Add other fields if needed for result display later
-        rank: parseInt(row['着 順']) || 0
+        odds: parseFloat(row['単勝 オッズ']) || parseFloat(row['単勝']) || 0,
+        rank: parseInt(row['着 順']) || parseInt(row['着順']) || 0
     })).sort((a, b) => a.number - b.number);
 }
 
