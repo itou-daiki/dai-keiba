@@ -437,18 +437,8 @@ async function handleRaceSelection(btn) {
         horses = race.horses;
         displayOdds(horses);
     } else {
-        // Use CSV data for Past Race
-        // await fetchPastRaceOdds(raceId); // REMOVED: Scraping fails on GH Pages
-
-        horses = getHorsesFromCSV(raceId);
-        if (horses.length > 0) {
-            displayOdds(horses);
-            document.getElementById('odds-display-section').style.display = 'block';
-            document.getElementById('purchase-section').style.display = 'block';
-        } else {
-            document.getElementById('odds-display-area').innerHTML = '<p>オッズデータが見つかりませんでした。</p>';
-            document.getElementById('odds-display-section').style.display = 'block';
-        }
+        // Use Netkeiba Scraping via Proxy for Past Race (Restored)
+        await fetchPastRaceOdds(raceId);
     }
 
     document.getElementById('bet-type-section').style.display = 'block';
@@ -560,13 +550,16 @@ function resetForm(keepRace = false) {
     document.getElementById('purchase-section').style.display = 'none';
 }
 
-// Utility for Netlify Proxy (Preserved)
-async function fetchViaNetlifyProxy(targetUrl) {
-    const apiUrl = `/api/fetch?url=${encodeURIComponent(targetUrl)}`;
+// Utility for Public Proxy (AllOrigins) to bypass CORS
+async function fetchViaPublicProxy(targetUrl) {
+    // AllOrigins returns JSON with 'contents' holding the actual HTML
+    const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+    console.log("Fetching via proxy:", apiUrl);
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-        return await response.text();
+        const data = await response.json();
+        return data.contents; // The HTML string
     } catch (error) {
         console.error('Proxy Error:', error);
         throw error;
@@ -574,7 +567,7 @@ async function fetchViaNetlifyProxy(targetUrl) {
 }
 
 async function fetchNetkeiba(url) {
-    const html = await fetchViaNetlifyProxy(url);
+    const html = await fetchViaPublicProxy(url);
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const horses = [];
