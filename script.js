@@ -18,6 +18,18 @@ let activeTab = 'tab-today';
 let selectedVenueToday = null;
 let selectedVenuePast = null;
 let selectedDatePast = null;
+let currentBetMethod = 'normal'; // 'normal', 'box', 'nagashi', 'formation'
+
+// Methods Definition
+const bettingMethods = {
+    'win': ['normal'],
+    'place': ['normal'],
+    'quinella': ['normal', 'box', 'nagashi'], // nagashi = 1-axis
+    'exacta': ['normal', 'box', 'nagashi', 'formation'], // nagashi = 1-axis, multi?
+    'wide': ['normal', 'box', 'nagashi'],
+    'trio': ['normal', 'box', 'nagashi', 'formation'], // nagashi = 1-axis, formation
+    'trifecta': ['normal', 'box', 'nagashi', 'formation']
+};
 
 // ==================== 初期化 ====================
 document.addEventListener('DOMContentLoaded', initializeApp);
@@ -49,6 +61,7 @@ function setupEventListeners() {
         const venueTabBtn = target.closest('.venue-tab-btn');
         const dateTabBtn = target.closest('.date-tab-btn');
         const betTypeBtn = target.closest('.bet-type-btn');
+        const methodTabBtn = target.closest('.method-tab-btn');
         const calculateBtn = target.closest('#calculate-btn');
         const resetBtn = target.closest('#reset-btn');
         const horseSelectBtn = target.closest('.horse-select-btn');
@@ -79,6 +92,10 @@ function setupEventListeners() {
         }
         if (betTypeBtn) {
             handleBetTypeSelection(betTypeBtn);
+            return;
+        }
+        if (methodTabBtn) {
+            handleMethodSelection(methodTabBtn);
             return;
         }
         if (calculateBtn) {
@@ -600,16 +617,59 @@ async function fetchViaPublicProxy(targetUrl) {
 
 // Re-implement handleBetTypeSelection
 function handleBetTypeSelection(selectedBtn) {
-    console.log("handleBetTypeSelection called", selectedBtn);
     if (!selectedBtn) return;
     currentBetType = selectedBtn.dataset.type;
     console.log("Bet type selected:", currentBetType);
+
+    // UI Update
     const parent = selectedBtn.parentElement;
     parent.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
     selectedBtn.classList.add('active');
 
+    // Reset Betting Method to 'normal' default
+    currentBetMethod = 'normal';
+    renderBettingMethodSelector();
+
     updateSelectionArea();
 }
+
+function renderBettingMethodSelector() {
+    const container = document.getElementById('bet-method-container');
+    const available = bettingMethods[currentBetType] || ['normal'];
+
+    // Japanese labels
+    const labels = {
+        'normal': '通常',
+        'box': 'ボックス',
+        'nagashi': '流し',
+        'formation': 'フォーメーション'
+    };
+
+    container.innerHTML = available.map(m => `
+        <button class="method-tab-btn ${m === currentBetMethod ? 'active' : ''}" data-method="${m}">
+            ${labels[m]}
+        </button>
+    `).join('');
+}
+
+function handleMethodSelection(btn) {
+    if (!btn) return;
+    const method = btn.dataset.method;
+
+    // Update state
+    currentBetMethod = method;
+
+    // Update UI
+    document.querySelectorAll('.method-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Clear selections when method changes (structure changes)
+    selectedHorses = []; // Or specific reset depending on implementation
+    document.querySelectorAll('.horse-select-btn').forEach(b => b.classList.remove('selected'));
+
+    updateSelectionArea();
+}
+
 
 async function fetchNetkeiba(url) {
     const html = await fetchViaPublicProxy(url);
@@ -793,23 +853,24 @@ function getHorsesFromCSV(raceId) {
 
 // ==================== UI Update Functions (Restored) ====================
 function updateSelectionArea() {
-    console.log("updateSelectionArea called. Horses:", horses.length, "BetType:", currentBetType);
+    console.log("updateSelectionArea called. Method:", currentBetMethod);
     const selectionArea = document.getElementById('selection-area');
+
     if (horses.length === 0) {
         selectionArea.innerHTML = '<p class="text-light">オッズデータがありません。</p>';
         return;
     }
 
-    let html = '';
-    const horseOptions = horses.map(h => {
-        const oddsDisplay = h.odds > 0 ? `(${h.odds})` : '';
-        return `<button class="horse-select-btn" data-horse="${h.number}">
-            <span class="horse-num">${h.number}</span>
-            <span class="horse-odds-sm">${oddsDisplay}</span>
-        </button>`;
-    }).join('');
-
     const generateHtml = (labels) => {
+        let html = '';
+        const horseOptions = horses.map(h => {
+            const oddsDisplay = h.odds > 0 ? `(${h.odds})` : '';
+            return `<button class="horse-select-btn" data-horse="${h.number}">
+                <span class="horse-num">${h.number}</span>
+                <span class="horse-odds-sm">${oddsDisplay}</span>
+            </button>`;
+        }).join('');
+
         return labels.map((label, i) => `
             <div class="selection-group">
                 <label>${label}</label>
@@ -818,66 +879,77 @@ function updateSelectionArea() {
                 </div>
             </div>
         `).join('');
+    };
+
+    let html = '';
+
+    // Layout Logic based on Method
+    if (currentBetMethod === 'box') {
+        html = generateHtml(['ボックス選択（複数選択可）']);
+    }
+    else if (currentBetMethod === 'nagashi') {
+        html = generateHtml(['軸馬選択', '相手馬選択']);
+    }
+    else if (currentBetMethod === 'formation') {
+        // Formation
+        if (['trifecta', 'trio'].includes(currentBetType)) {
+            html = generateHtml(['1頭目（1着）', '2頭目（2着）', '3頭目（3着）']);
+        } else {
+            html = generateHtml(['1頭目（1着）', '2頭目（2着）']);
+        }
+    }
+    else {
+        // Normal (Default)
+        switch (currentBetType) {
+            case 'win':
+            case 'place':
+                html = generateHtml(['馬選択']);
+                break;
+            case 'quinella':
+            case 'wide':
+                // Normal Quinella/Wide = Select 2 horses (unordered)
+                // Usability: Single grid, select 2? Or 1st/2nd (redundant for unordered)?
+                // JRA "Normal" = Select combinations.
+                // Let's use Single Grid ("Mark 2") for unordered "Normal".
+                html = generateHtml(['馬選択（2頭）']);
+                break;
+            case 'trio':
+                html = generateHtml(['馬選択（3頭）']);
+                break;
+            case 'exacta':
+                html = generateHtml(['1着', '2着']);
+                break;
+            case 'trifecta':
+                html = generateHtml(['1着', '2着', '3着']);
+                break;
+        }
     }
 
-    switch (currentBetType) {
-        case 'win':
-        case 'place':
-            html = generateHtml(['的中馬']);
-            break;
-        case 'quinella':
-        case 'wide':
-            html = generateHtml(['1頭目', '2頭目']);
-            break;
-        case 'exacta':
-            html = generateHtml(['1着', '2着']);
-            break;
-        case 'trio':
-            html = generateHtml(['1頭目', '2頭目', '3頭目']);
-            break;
-        case 'trifecta':
-            html = generateHtml(['1着', '2着', '3着']);
-            break;
-    }
     selectionArea.innerHTML = html;
 }
 
 function handleHorseSelection(selectedBtn) {
     if (!selectedBtn) return;
 
-    const isMultiSelect = ['quinella', 'wide', 'trio'].includes(currentBetType);
+    // The UI generates separate grids for each position (1st, 2nd, etc.)
+    // We enforce Single Selection per grid to match this "Formation/Position" style UI.
     const parentGrid = selectedBtn.parentElement;
-    const position = parentGrid.dataset.position;
 
-    if (isMultiSelect) {
-        const maxSelections = currentBetType === 'trio' ? 3 : 2;
-        if (selectedBtn.classList.contains('selected')) {
-            selectedBtn.classList.remove('selected');
-        } else {
-            const selectedCount = parentGrid.querySelectorAll('.selected').length;
-            if (selectedCount < maxSelections) {
-                selectedBtn.classList.add('selected');
-            }
-        }
+    // Toggle selection if already selected
+    if (selectedBtn.classList.contains('selected')) {
+        selectedBtn.classList.remove('selected');
     } else {
-        parentGrid.querySelectorAll('.horse-select-btn').forEach(btn => btn.classList.remove('active'));
-        selectedBtn.classList.add('active');
+        // Clear other selections in the same grid
+        parentGrid.querySelectorAll('.horse-select-btn').forEach(btn => btn.classList.remove('selected'));
+        // Select the clicked one
+        selectedBtn.classList.add('selected');
     }
 
-    // Sync across positions if same horse cannot be selected? 
-    // Usually standard UI allows selecting same horse in different positions for Box/Formation, 
-    // but validateInput checks uniqueness. Let's keep specific logic simple for now.
-    // If strict uniqueness required in UI:
-    const horseNumber = selectedBtn.dataset.horse;
-    /* 
-    document.querySelectorAll(`.horse-select-btn[data-horse="${horseNumber}"].selected`).forEach(btn => {
-        if (btn.parentElement.dataset.position !== position) {
-            btn.classList.remove('selected');
-        }
-    }); 
-    */
+    // Optional: Check uniqueness across grids?
+    // For now, allow selecting same horse in different grids (user might want to change selection order, validateInput handles logic)
 }
 
+// Calculate approximate odds based on Win odds
 // Calculate approximate odds based on Win odds
 function calculateEstimatedOdds(type, selectedHorses) {
     if (selectedHorses.length === 0) return 0;
@@ -915,95 +987,284 @@ function calculateEstimatedOdds(type, selectedHorses) {
     return 0;
 }
 
+// ==================== Interaction Logic ====================
+function handleHorseSelection(selectedBtn) {
+    if (!selectedBtn) return;
+
+    const parentGrid = selectedBtn.parentElement;
+    const position = parseInt(parentGrid.dataset.position); // 1-based index
+
+    // Selection Logic based on Method
+    if (currentBetMethod === 'box' || currentBetMethod === 'formation') {
+        // Multi-select allowed
+        selectedBtn.classList.toggle('selected');
+    }
+    else if (currentBetMethod === 'nagashi') {
+        // Nagashi: Grid 1 is Axis, Grid 2 is Opponent
+        if (position === 1) {
+            // Axis: Limit depending on bet type?
+            // Usually Nagashi implies 1 Axis (or 2 for 3-Ren).
+            // Simple implementation: Limit Grid 1 to 1 horse (Single Axis) for simplicity, or 2 for Trio/Trifecta?
+            // Standard Nagashi is 1-Axis. "2-Axis Nagashi" is separate.
+            // Let's enforce Single Axis for now.
+
+            // Toggle off others
+            parentGrid.querySelectorAll('.horse-select-btn').forEach(b => b.classList.remove('selected'));
+            selectedBtn.classList.add('selected');
+        } else {
+            // Opponent: Multi-select
+            selectedBtn.classList.toggle('selected');
+        }
+    }
+    else {
+        // Normal (Default): Single Select per Grid
+        // (For Quinella Normal, allows just 1 pair? Yes, usually 1 combination per input)
+        parentGrid.querySelectorAll('.horse-select-btn').forEach(b => b.classList.remove('selected'));
+        selectedBtn.classList.add('selected');
+    }
+}
+
+// ==================== Calculation & Simulation ====================
 function calculatePayout() {
     const betAmount = parseInt(document.getElementById('bet-amount').value) || 100;
-    const selectedNums = getSelectedHorses(); // Returns array of numbers
 
-    if (!validateInput(selectedNums)) return;
+    // Gather selections by grid position
+    const grids = document.querySelectorAll('.horse-select-grid');
+    const selections = {}; // { 1: [ids], 2: [ids], 3: [ids] }
 
-    // Map numbers to horse objects
-    const selectedHorseObjs = selectedNums.map(n => horses.find(h => h.number === n)).filter(Boolean);
+    grids.forEach(grid => {
+        const pos = grid.dataset.position;
+        const selected = Array.from(grid.querySelectorAll('.horse-select-btn.selected')).map(b => parseInt(b.dataset.horse));
+        if (selected.length > 0) selections[pos] = selected;
+    });
 
-    // Calculate Estimated Odds/Payout
-    const odds = calculateEstimatedOdds(currentBetType, selectedHorseObjs);
-    const potential = Math.floor(betAmount * odds);
-    const explanation = selectedNums.join(' - ');
-    const betTypeName = getLocalBetTypeName(currentBetType);
+    // Validate
+    if (Object.keys(selections).length === 0) {
+        alert("馬を選択してください");
+        return;
+    }
 
-    // Display Calculation
-    // displayResult(potential, betAmount, explanation, betTypeName); // This just updates the UI "Potential Payout"
-    // The user probably wants "Purchase" -> Show Result (Win/Loss)?
-    // Usually "Purchase" means "Commit".
-    // I'll use `displayResult` to show the "Purchase Confirmation & Simulation Result".
-    // Wait, existing `displayResult` (if it exists) might just be for the betting area display.
-    // Let's check `displayResult`.
+    // Generate Combinations (Points)
+    let combinations = [];
 
-    // Actually, I'll inline the "Purchase & Result" logic here as `handlePurchase` equivalent.
+    try {
+        combinations = generateCombinations(currentBetType, currentBetMethod, selections);
+    } catch (e) {
+        console.error(e);
+        alert("組み合わせ計算エラー: " + e.message);
+        return;
+    }
 
-    // Check Result (Simulation)
-    let resultTitle = "購入結果";
-    let resultMessage = "";
-    let isWin = false;
+    const points = combinations.length;
+    const totalCost = points * betAmount;
 
-    // Only simulate if we have rank data
-    const hasRank = horses.some(h => h.rank && h.rank > 0);
+    if (points === 0) {
+        alert("有効な組み合わせがありません\n（選択数が不足しているか、重複があります）");
+        return;
+    }
 
-    if (hasRank) {
-        // Winning Logic (Simplified)
-        const ranks = horses.filter(h => h.rank > 0).sort((a, b) => a.rank - b.rank);
-        const r1 = ranks[0];
-        const r2 = ranks[1];
-        const r3 = ranks[2];
+    // Confirm Purchase
+    const proceed = confirm(`【購入確認】\n賭け式: ${getLocalBetTypeName(currentBetType)} (${getLocalMethodName(currentBetMethod)})\n点数: ${points}点\n合計金額: ${totalCost.toLocaleString()}円\n\n購入（シミュレーション）しますか？`);
 
-        const myNumbers = selectedNums; // sorted asc
+    if (!proceed) return;
 
-        switch (currentBetType) {
-            case 'win':
-                if (r1 && myNumbers[0] === r1.number) isWin = true;
-                break;
-            case 'place':
-                // Top 3
-                if (r1 && myNumbers.includes(r1.number)) isWin = true;
-                else if (r2 && myNumbers.includes(r2.number)) isWin = true;
-                else if (r3 && myNumbers.includes(r3.number)) isWin = true;
-                break;
-            case 'quinella': // 1-2 any order
-                if (r1 && r2 && myNumbers.includes(r1.number) && myNumbers.includes(r2.number)) isWin = true;
-                break;
-            case 'exacta': // 1-2 exact order
-                // User input sorted by number usually, but for Exacta order matters! 
-                // Creating Exacta UI usually requires "1st", "2nd" selection. 
-                // `getSelectedHorses` sorts by number! This breaks Exacta/Trifecta logic if the UI assumes ordered input.
-                // However, `updateSelectionArea` renders "1着" "2着" grids. `getSelectedHorses` iterates `grids`.
-                // Let's check `getSelectedHorses`. It iterates grids. It invokes `sort`. That DESTROYS order?
-                // `getSelectedHorses` returns `Array.from(set).sort((a,b)=>a-b)`. YES, IT SORTS.
-                // This means currently Exacta is treated as Box/Quinella in valid input.
-                // I should fix `getSelectedHorses` to preserve order if important?
-                // But `grids` are ordered by `data-position`.
-                // If `getSelectedHorses` just collected them in order of grids, it would be fine.
-                // But it sorts.
-                // For now, I'll assume standard simulation where user must match the *winning numbers* in correct order?
-                // If `getSelectedHorses` returns sorted, I can't distinguish 1-2 from 2-1.
-                // I will modify `getSelectedHorses` to NOT sort if type implies order.
-                break;
-            // ...
+    // Simulate Results
+    simulateResults(combinations, betAmount, totalCost);
+}
+
+function getLocalMethodName(m) {
+    const map = { 'normal': '通常', 'box': 'ボックス', 'nagashi': '流し', 'formation': 'フォーメーション' };
+    return map[m] || m;
+}
+
+function generateCombinations(type, method, selections) {
+    // Helper: Cartesian Product
+    const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
+
+    let combs = [];
+
+    // --- Box ---
+    if (method === 'box') {
+        const sel = selections[1] || [];
+        if (sel.length < 2) return [];
+        // Combinations of r from n
+        const k = (type === 'trio' || type === 'trifecta') ? 3 : 2;
+        // Logic depends on type
+        // Permutation (Exacta/Trifecta) vs Combination (Quinella/Wide/Trio)
+        // Actually Box usually means "All Permutations" for Ordered types, "All Combinations" for Unordered.
+
+        const isOrdered = ['exacta', 'trifecta'].includes(type);
+
+        // Use helper to generate
+        combs = getCombinations(sel, k); // Combinations
+        if (isOrdered) {
+            // Expand to Permutations
+            combs = combs.flatMap(c => getPermutations(c));
+        }
+    }
+    // --- Nagashi ---
+    else if (method === 'nagashi') {
+        const axis = selections[1] || [];
+        const opps = selections[2] || [];
+
+        if (axis.length === 0 || opps.length === 0) return [];
+        const a = axis[0]; // Assume 1 axis
+
+        // Nagashi Logic
+        // Quinella/Wide: Axis - Opp match.
+        // Exacta: Axis -> Opp (usually Fixed Axis 1st). 
+        // Trio: Axis - Opp - Opp (Axis 1 head, select 2 from opps). Wait, Trio Nagashi 1-Axis means Axis is IN top 3.
+        // Trifecta: Axis -> Opp -> Opp? Or Axis 1st fixed?
+        // Standard "Nagashi" usually implies:
+        // - Ordered Types (Exacta/Trifecta): Axis 1st Fixed. (Use "Multi" to vary).
+        // - Unordered Types (Quinella/Wide/Trio): Axis included.
+
+        // Simplified Nagashi Implementation:
+        if (type === 'quinella' || type === 'wide' || type === 'exacta') {
+            // Pair: Axis + 1 Opp
+            opps.forEach(o => combs.push([a, o]));
+
+            // For Exacta, strict order Axis -> Opp. (Unless Multi checked? Assuming standard).
+        }
+        else if (type === 'trio' || type === 'trifecta') {
+            // 3-Horse: Axis + 2 Opps
+            // Opps must have size >= 2
+            const oppPairs = getCombinations(opps, 2);
+            oppPairs.forEach(pair => combs.push([a, ...pair]));
+        }
+    }
+    // --- Normal / Formation ---
+    else {
+        // Formation Logic (Cartesian product of positions)
+        // Normal is just restricted Formation (Single sel per pos)
+        const p1 = selections[1] || [];
+        const p2 = selections[2] || [];
+        let p3 = selections[3] || [];
+
+        if (type === 'win' || type === 'place') {
+            p1.forEach(h => combs.push([h]));
+            return combs;
+        }
+
+        // Multi-leg
+        if ((p1.length === 0 || p2.length === 0)) return [];
+        if (['trio', 'trifecta'].includes(type) && p3.length === 0) return [];
+
+        let candidates = [];
+        if (['trio', 'trifecta'].includes(type)) {
+            candidates = cartesian(p1, p2, p3); // [[1,2,3], [1,2,4]...]
+        } else {
+            candidates = cartesian(p1, p2); // [[1,2], [3,4]...]
+        }
+
+        // Filter Invalid (Duplicate horses in same comb)
+        // e.g. 1-1 is invalid.
+        combs = candidates.filter(c => new Set(c).size === c.length);
+
+        // For Unordered types (Quinella/Wide/Trio), filter duplicates ignoring order?
+        // e.g. 1-2 and 2-1 are same.
+        // Formation generates permutations.
+        // For Unordered, usually Formation implies "Position 1" "Position 2".
+        // If I put 1 in P1 and 2 in P2 -> 1-2.
+        // If I put 2 in P1 and 1 in P2 -> 2-1.
+        // For Quinella, 1-2 and 2-1 are same bet. JRA Formation collapses duplicates.
+        if (!['exacta', 'trifecta'].includes(type)) {
+            const uniqueSet = new Set();
+            const uniqueCombs = [];
+            combs.forEach(c => {
+                const key = [...c].sort((a, b) => a - b).join('-');
+                if (!uniqueSet.has(key)) {
+                    uniqueSet.add(key);
+                    uniqueCombs.push(c);
+                }
+            });
+            combs = uniqueCombs;
         }
     }
 
-    // Alert Result
-    // If Exacta/Trifecta logic is blocked by sorting, I'll just skip detailed check for now or assume Quinella-like match for simplicity in this step.
-    // Or I fix `getSelectedHorses`. 
+    return combs;
+}
 
-    // For now, simple Alert with Payout.
-    alert(`【購入完了】\n賭け式: ${betTypeName}\n買い目: ${explanation}\n金額: ${betAmount.toLocaleString()}円\n\n推定払戻金: ${potential.toLocaleString()}円\n(オッズ: ${odds}倍)`);
-
-    // If hasRank, show result in alert or separate
-    if (hasRank) {
-        // Just show the winners
-        const winners = horses.filter(h => h.rank > 0 && h.rank <= 3).sort((a, b) => a.rank - b.rank);
-        let winMsg = winners.map(h => `${h.rank}着: ${h.number} (${h.name})`).join('\n');
-        alert(`レース結果 (シミュレーション):\n${winMsg}`);
+// Math Helpers
+function getCombinations(options, k) {
+    if (k === 1) return options.map(o => [o]);
+    let result = [];
+    for (let i = 0; i < options.length; i++) {
+        const head = options[i];
+        const tail = options.slice(i + 1);
+        const tailCombs = getCombinations(tail, k - 1);
+        tailCombs.forEach(tc => result.push([head, ...tc]));
     }
+    return result;
+}
+
+function getPermutations(arr) {
+    if (arr.length <= 1) return [arr];
+    let result = [];
+    for (let i = 0; i < arr.length; i++) {
+        const curr = arr[i];
+        const rem = [...arr.slice(0, i), ...arr.slice(i + 1)];
+        const perms = getPermutations(rem);
+        perms.forEach(p => result.push([curr, ...p]));
+    }
+    return result;
+}
+
+// Simulation
+function simulateResults(combinations, betAmount, totalCost) {
+    // Check Ranks
+    const hasRank = horses.some(h => h.rank && h.rank > 0);
+    if (!hasRank) {
+        alert("レース結果データがありません（本日のレース等はシミュレーション不可）");
+        return;
+    }
+
+    const ranks = horses.filter(h => h.rank > 0).sort((a, b) => a.rank - b.rank);
+    const r1 = ranks[0] ? ranks[0].number : -1;
+    const r2 = ranks[1] ? ranks[1].number : -1;
+    const r3 = ranks[2] ? ranks[2].number : -1;
+
+    let totalPayout = 0;
+    let hitCount = 0;
+    let hitDetails = [];
+
+    combinations.forEach(comb => {
+        let isWin = false;
+        // Betting Type Logic
+        if (currentBetType === 'win') isWin = (comb[0] === r1);
+        else if (currentBetType === 'quinella') isWin = (comb.includes(r1) && comb.includes(r2));
+        else if (currentBetType === 'exacta') isWin = (comb[0] === r1 && comb[1] === r2);
+        else if (currentBetType === 'wide') {
+            // Top 3 any pair
+            const match1 = comb.includes(r1);
+            const match2 = comb.includes(r2);
+            const match3 = comb.includes(r3);
+            if ((match1 && match2) || (match1 && match3) || (match2 && match3)) isWin = true;
+        }
+        else if (currentBetType === 'trio') isWin = (comb.includes(r1) && comb.includes(r2) && comb.includes(r3));
+        else if (currentBetType === 'trifecta') isWin = (comb[0] === r1 && comb[1] === r2 && comb[2] === r3);
+
+        if (isWin) {
+            hitCount++;
+            // Calculate Odds (Approx)
+            // Need horse objects
+            const hObjs = comb.map(n => horses.find(h => h.number === n));
+            const odds = calculateEstimatedOdds(currentBetType, hObjs);
+            totalPayout += Math.floor(betAmount * odds);
+            hitDetails.push(`${comb.join('-')} (${odds}倍)`);
+        }
+    });
+
+    // Result Alert
+    const net = totalPayout - totalCost;
+    let msg = hitCount > 0 ? `⭐️ 的中！ (${hitCount}点)` : "💔 外れ...";
+    msg += `\n\n購入: ${totalCost.toLocaleString()}円\n払戻: ${totalPayout.toLocaleString()}円\n収支: ${net > 0 ? '+' : ''}${net.toLocaleString()}円`;
+
+    if (hitCount > 0) {
+        msg += `\n\n的中内訳:\n${hitDetails.join('\n')}`;
+    }
+
+    alert(msg);
 }
 
 function getSelectedHorses() {
@@ -1032,126 +1293,3 @@ function getSelectedHorses() {
     return selected;
 }
 
-function validateInput(selectedHorses) {
-    // ... existing validation
-    const betAmount = parseInt(document.getElementById('bet-amount').value);
-    if (!betAmount || betAmount < 100) { alert('購入金額を100円以上で入力してください'); return false; }
-
-    // ... logic ...
-    return true;
-}
-
-function validateInput(selectedHorses) {
-    const betAmount = parseInt(document.getElementById('bet-amount').value);
-
-    if (!betAmount || betAmount < 100) {
-        alert('購入金額を100円以上で入力してください');
-        return false;
-    }
-
-    if (betAmount % 100 !== 0) {
-        alert('購入金額は100円単位で入力してください');
-        return false;
-    }
-
-    let requiredCount = 1;
-    switch (currentBetType) {
-        case 'quinella':
-        case 'exacta':
-        case 'wide':
-            requiredCount = 2;
-            break;
-        case 'trio':
-        case 'trifecta':
-            requiredCount = 3;
-            break;
-    }
-
-    if (selectedHorses.length < requiredCount) {
-        alert(`${requiredCount}頭の馬を選択してください`);
-        return false;
-    }
-
-    const uniqueHorses = new Set(selectedHorses);
-    if (uniqueHorses.size !== selectedHorses.length) {
-        alert('同じ馬を複数選択することはできません');
-        return false;
-    }
-
-    return true;
-}
-
-
-function calculateSinglePayout(horseNumber, betAmount) {
-    const horse = horses.find(h => h.number === horseNumber);
-    if (!horse) return 0;
-
-    const payout = betAmount * horse.odds;
-    return Math.floor(payout / 10) * 10;
-}
-
-function calculateDoublePayout(selectedHorses, betAmount) {
-    const horse1 = horses.find(h => h.number === selectedHorses[0]);
-    const horse2 = horses.find(h => h.number === selectedHorses[1]);
-
-    if (!horse1 || !horse2) return 0;
-
-    let coefficient = 1.5;
-    if (currentBetType === 'exacta') coefficient = 2.0;
-    if (currentBetType === 'wide') coefficient = 1.2;
-
-    const combinedOdds = ((horse1.odds + horse2.odds) / 2) * coefficient;
-    const payout = betAmount * combinedOdds;
-
-    return Math.floor(payout / 10) * 10;
-}
-
-function calculateTriplePayout(selectedHorses, betAmount) {
-    const horse1 = horses.find(h => h.number === selectedHorses[0]);
-    const horse2 = horses.find(h => h.number === selectedHorses[1]);
-    const horse3 = horses.find(h => h.number === selectedHorses[2]);
-
-    if (!horse1 || !horse2 || !horse3) return 0;
-
-    let coefficient = 5.0;
-    if (currentBetType === 'trifecta') coefficient = 10.0;
-
-    const combinedOdds = ((horse1.odds + horse2.odds + horse3.odds) / 3) * coefficient;
-    const payout = betAmount * combinedOdds;
-
-    return Math.floor(payout / 10) * 10;
-}
-// ==================== 結果表示・リセット ====================
-function displayResult(payout, betAmount, explanation, betTypeName) {
-    const resultContent = document.getElementById('result-content');
-    const profit = payout - betAmount;
-    const returnRate = betAmount > 0 ? ((payout / betAmount) * 100).toFixed(1) : 0;
-
-    resultContent.innerHTML = `
-        <div class="result-item">
-            <span class="result-label">レース</span>
-            <span class="result-value">${selectedRace.name}</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">馬券種類</span>
-            <span class="result-value">${betTypeName}</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">的中馬番</span>
-            <span class="result-value">${explanation}</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">払戻金</span>
-            <span class="result-value big">${payout.toLocaleString()}円</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">損益</span>
-            <span class="result-value" style="color: ${profit >= 0 ? 'var(--success-color)' : 'var(--error-color)'};">
-                ${profit >= 0 ? '+' : ''}${profit.toLocaleString()}円 (回収率: ${returnRate}%)
-            </span>
-        </div>
-    `;
-    const resultSection = document.getElementById('result-section');
-    resultSection.style.display = 'block';
-    resultSection.scrollIntoView({ behavior: 'smooth' });
-}
