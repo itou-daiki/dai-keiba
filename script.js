@@ -42,23 +42,38 @@ function setupEventListeners() {
 
     // Dynamic Content Delegation
     document.querySelector('main').addEventListener('click', (e) => {
-        const raceSelectBtn = e.target.closest('.race-select-btn');
-        const venueTabBtn = e.target.closest('.venue-tab-btn');
-        const dateTabBtn = e.target.closest('.date-tab-btn');
-        const betTypeBtn = e.target.closest('.bet-type-btn');
-        const calculateBtn = e.target.closest('#calculate-btn');
-        const resetBtn = e.target.closest('#reset-btn');
-        const horseSelectBtn = e.target.closest('.horse-select-btn');
+        const target = e.target;
+        console.log('Click detected on:', target, target.className);
+
+        const raceSelectBtn = target.closest('.race-select-btn');
+        const venueTabBtn = target.closest('.venue-tab-btn');
+        const dateTabBtn = target.closest('.date-tab-btn');
+        const betTypeBtn = target.closest('.bet-type-btn');
+        const calculateBtn = target.closest('#calculate-btn');
+        const resetBtn = target.closest('#reset-btn');
+        const horseSelectBtn = target.closest('.horse-select-btn');
+        const loadPastBtn = target.closest('#load-past-races-btn'); // Add check for load button too if needed
+
+        console.log('Detected types:', {
+            raceSelectBtn,
+            venueTabBtn,
+            dateTabBtn,
+            isDateTab: !!dateTabBtn,
+            isVenueTab: !!venueTabBtn
+        });
 
         if (raceSelectBtn) {
+            console.log('Handling race selection');
             handleRaceSelection(raceSelectBtn);
             return;
         }
         if (dateTabBtn) {
+            console.log('Handling date selection');
             handleDateSelection(dateTabBtn);
             return;
         }
         if (venueTabBtn) {
+            console.log('Handling venue selection');
             handleVenueSelection(venueTabBtn);
             return;
         }
