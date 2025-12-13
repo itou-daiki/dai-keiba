@@ -516,9 +516,10 @@ function displayOdds(horsesData) {
 
 // Re-implement handleBetTypeSelection to ensure it shows selection area
 function handleBetTypeSelection(selectedBtn) {
+    console.log("handleBetTypeSelection called", selectedBtn);
     if (!selectedBtn) return;
     currentBetType = selectedBtn.dataset.type;
-
+    console.log("Bet type selected:", currentBetType);
     const parent = selectedBtn.parentElement;
     parent.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
     selectedBtn.classList.add('active');
@@ -630,10 +631,14 @@ async function fetchNetkeiba(url) {
 
 // ==================== CSV Data Handling for Past Races ====================
 function getHorsesFromCSV(raceId) {
-    if (!window.globalRaceData) return [];
+    if (!window.globalRaceData) {
+        console.warn("getHorsesFromCSV: globalRaceData is empty");
+        return [];
+    }
 
     // globalRaceData is an array of rows. Filter by race_id.
     const raceRows = window.globalRaceData.filter(row => String(row['race_id']) === String(raceId));
+    console.log(`getHorsesFromCSV: Found ${raceRows.length} rows for race ${raceId}`);
 
     return raceRows.map(row => ({
         number: parseInt(row['馬 番']) || 0,
@@ -646,6 +651,7 @@ function getHorsesFromCSV(raceId) {
 
 // ==================== UI Update Functions (Restored) ====================
 function updateSelectionArea() {
+    console.log("updateSelectionArea called. Horses:", horses.length, "BetType:", currentBetType);
     const selectionArea = document.getElementById('selection-area');
     if (horses.length === 0) {
         selectionArea.innerHTML = '<p class="text-light">オッズデータがありません。</p>';
