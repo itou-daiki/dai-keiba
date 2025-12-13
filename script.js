@@ -212,14 +212,20 @@ async function loadPastRaces() {
         // Process into Race objects
         const racesMap = {};
         filtered.forEach(row => {
-            const rid = row['race_id'];
-            if (!racesMap[rid]) {
-                racesMap[rid] = {
-                    id: rid,
-                    venue: getVenueFromRow(row), // Extract venue
-                    number: parseInt(row['レース番号']) || 0,
+            const date = row['日付'];
+            const venue = getVenueFromRow(row);
+            const number = parseInt(row['レース番号']) || 0;
+
+            // Create Synthetic ID because CSV race_id might be corrupted (e.g. Scientific Notation from Excel)
+            const syntheticId = `${date}_${venue}_${number}`;
+
+            if (!racesMap[syntheticId]) {
+                racesMap[syntheticId] = {
+                    id: syntheticId, // Use synthetic ID internally
+                    venue: venue, // Extract venue
+                    number: number,
                     name: row['レース名'],
-                    date: row['日付'],
+                    date: date,
                     mode: 'past'
                 };
             }
