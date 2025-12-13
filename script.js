@@ -615,58 +615,7 @@ async function fetchNetkeiba(url) {
 // Ensure other helpers are available
 // ... (Preserve calculatePayout, displayResult, functions)
 
-// ==================== イベントリスナー設定 ====================
-function setupEventListeners() {
-    const mainElement = document.querySelector('main');
-    if (!mainElement) return;
 
-    mainElement.addEventListener('click', (e) => {
-        const raceSelectBtn = e.target.closest('.race-select-btn');
-        const betTypeBtn = e.target.closest('.bet-type-btn');
-        const calculateBtn = e.target.closest('#calculate-btn');
-        const resetBtn = e.target.closest('#reset-btn');
-        const horseSelectBtn = e.target.closest('.horse-select-btn');
-        const loadSimBtn = e.target.closest('#load-simulation-btn');
-
-        if (raceSelectBtn) {
-            handleRaceSelection(raceSelectBtn);
-            return;
-        }
-        if (betTypeBtn) {
-            handleBetTypeSelection(betTypeBtn);
-            return;
-        }
-        if (calculateBtn) {
-            calculatePayout();
-            return;
-        }
-        if (resetBtn) {
-            resetForm();
-            return;
-        }
-        if (horseSelectBtn) {
-            handleHorseSelection(horseSelectBtn);
-            return;
-        }
-        if (loadSimBtn) {
-            loadSimulationData();
-            return;
-        }
-    });
-}
-
-// ==================== データ取得・表示 ====================
-
-
-// ==================== UIハンドラ ====================
-function handleBetTypeSelection(selectedBtn) {
-    if (!selectedBtn) return;
-    currentBetType = selectedBtn.dataset.type;
-    const parent = selectedBtn.parentElement;
-    parent.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
-    selectedBtn.classList.add('active');
-    updateSelectionArea();
-}
 
 // ==================== 払戻金計算 ====================
 function calculatePayout() {
