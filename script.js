@@ -454,8 +454,9 @@ async function fetchPastRaceOdds(raceId) {
 
     try {
         // Use netkeiba proxy logic
-        // User suggested URL: https://race.netkeiba.com/odds/index.html?type=b1&race_id=...&rf=shutuba_submenu
-        const url = `https://race.netkeiba.com/odds/index.html?type=b1&race_id=${raceId}&rf=shutuba_submenu&_t=${new Date().getTime()}`;
+        // Use odds_get_form.html which returns the HTML fragment with populated data (unlike index.html which may be empty frame)
+        // This matches the Python auto_scraper.py logic which is known to work.
+        const url = `https://race.netkeiba.com/odds/odds_get_form.html?type=b1&race_id=${raceId}&rf=shutuba_submenu&_t=${new Date().getTime()}`;
         const data = await fetchNetkeiba(url);
 
         if (data.horses && data.horses.length > 0) {
@@ -590,7 +591,9 @@ async function fetchNetkeiba(url) {
         // Try to find cells
         const cells = row.querySelectorAll('td');
 
-        let logMsg = `Row ${idx}: `;
+        // Debug: Log ALL cells to find where the odds are hiding
+        const allExample = Array.from(cells).map((c, i) => `[${i}]="${c.textContent.trim()}"`).join(', ');
+        logMsg += ` AllCells: ${allExample}`;
 
         // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 6: WinOdds)
         if (cells.length >= 6) {
