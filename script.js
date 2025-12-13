@@ -533,19 +533,32 @@ function resetForm(keepRace = false) {
     document.getElementById('purchase-section').style.display = 'none';
 }
 
-// Utility for Public Proxy (AllOrigins) to bypass CORS
+// Utility for Public Proxy (CorsProxy.io) to bypass CORS
 async function fetchViaPublicProxy(targetUrl) {
-    const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+    // CorsProxy.io is a direct proxy
+    const apiUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
     console.log("Fetching via proxy:", apiUrl);
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-        const data = await response.json();
-        return data.contents; // The HTML string
+        return await response.text(); // Returns raw HTML directly
     } catch (error) {
         console.error('Proxy Error:', error);
         throw error;
     }
+}
+
+// Re-implement handleBetTypeSelection
+function handleBetTypeSelection(selectedBtn) {
+    console.log("handleBetTypeSelection called", selectedBtn);
+    if (!selectedBtn) return;
+    currentBetType = selectedBtn.dataset.type;
+    console.log("Bet type selected:", currentBetType);
+    const parent = selectedBtn.parentElement;
+    parent.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
+    selectedBtn.classList.add('active');
+
+    updateSelectionArea();
 }
 
 async function fetchNetkeiba(url) {
