@@ -221,14 +221,21 @@ async function loadPastRaces() {
 
             if (!racesMap[syntheticId]) {
                 racesMap[syntheticId] = {
-                    id: syntheticId, // Use synthetic ID internally
-                    venue: venue, // Extract venue
+                    id: syntheticId,
+                    venue: venue,
                     number: number,
                     name: row['レース名'],
                     date: date,
-                    mode: 'past'
+                    mode: 'past',
+                    rows: [] // Store raw rows
                 };
             }
+            racesMap[syntheticId].rows.push(row);
+        });
+
+        // Sort horses by number in each race
+        Object.values(racesMap).forEach(race => {
+            race.rows.sort((a, b) => (parseInt(a['馬 番']) || 0) - (parseInt(b['馬 番']) || 0));
         });
 
         pastRaceListCache = Object.values(racesMap);
@@ -498,8 +505,29 @@ async function handleRaceSelection(btn) {
         horses = race.horses;
         displayOdds(horses);
     } else {
-        // Use Netkeiba Scraping via Proxy for Past Race (Restored)
-        await fetchPastRaceOdds(raceId);
+        // Use Local CSV Data for Past Race
+        // race object now contains 'rows'
+        const race = pastRaceListCache.find(r => String(r.id) === String(raceId));
+        if (race && race.rows) {
+            horses = race.rows.map(row => {
+                // Parse Odds (handle empty or non-numeric)
+                let odds = parseFloat(row['単勝 オッズ']);
+                if (isNaN(odds)) odds = 0;
+
+                return {
+                    number: parseInt(row['馬 番']) || 0,
+                    name: row['馬名'] || 'Unknown',
+                    odds: odds,
+                    rank: parseInt(row['着 順']) // Store rank for simulation if needed?
+                };
+            });
+            displayOdds(horses);
+            document.getElementById('purchase-section').style.display = 'block';
+        } else {
+            // Fallback if rows missing (shouldn't happen with new logic)
+            console.error("No rows found for past race", race);
+            alert("レースデータの取得に失敗しました。");
+        }
     }
 
     document.getElementById('bet-type-section').style.display = 'block';
