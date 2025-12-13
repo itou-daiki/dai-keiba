@@ -276,14 +276,24 @@ async function loadPastRaces() {
 }
 
 function getVenueFromRow(row) {
-    if (row['開催']) return row['開催'].replace(/\d+回/, '').replace(/\d+日目/, '').trim();
+    // Check '会場' (from CSV header) or '開催' (legacy)
+    let venue = row['会場'] || row['開催'];
+    if (venue) {
+        return venue.replace(/\d+回/, '').replace(/\d+日目/, '').trim();
+    }
+
+    // Fallback to race_id (only if valid)
     const id = String(row['race_id']);
-    const placeCode = id.substring(4, 6);
-    const placeMap = {
-        "01": "札幌", "02": "函館", "03": "福島", "04": "新潟", "05": "東京",
-        "06": "中山", "07": "中京", "08": "京都", "09": "阪神", "10": "小倉"
-    };
-    return placeMap[placeCode] || "その他";
+    if (id && id.length >= 10 && !id.includes('E+')) {
+        const placeCode = id.substring(4, 6);
+        const placeMap = {
+            "01": "札幌", "02": "函館", "03": "福島", "04": "新潟", "05": "東京",
+            "06": "中山", "07": "中京", "08": "京都", "09": "阪神", "10": "小倉"
+        };
+        return placeMap[placeCode] || "その他";
+    }
+
+    return "その他";
 }
 
 // ==================== Venue & Date Rendering ====================
