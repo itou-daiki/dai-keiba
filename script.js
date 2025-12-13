@@ -329,12 +329,30 @@ async function handleRaceSelection(btn) {
 
     // Header Info
     let raceInfo = '';
+    console.log(`Selecting Race: ID=${raceId}, Mode=${mode}`);
+
     if (mode === 'today') {
+        if (!todaysDataCache || !todaysDataCache.races) {
+            console.error("Today's cache is missing!");
+            return;
+        }
         const race = todaysDataCache.races.find(r => String(r.id) === String(raceId));
+        if (!race) {
+            console.error("Race not found in Today's cache", raceId, todaysDataCache.races);
+            return;
+        }
         raceInfo = `${race.venue} ${race.number} ${race.name}`;
         selectedRace.name = race.name;
     } else {
+        if (!pastRaceListCache) {
+            console.error("Past cache is missing!");
+            return;
+        }
         const race = pastRaceListCache.find(r => String(r.id) === String(raceId));
+        if (!race) {
+            console.error("Race not found in Past cache", raceId, pastRaceListCache);
+            return;
+        }
         raceInfo = `${race.date} ${race.venue} ${race.number}R ${race.name}`;
         selectedRace.name = race.name;
     }
