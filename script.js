@@ -454,8 +454,8 @@ async function fetchPastRaceOdds(raceId) {
 
     try {
         // Use netkeiba proxy logic
-        // URL for odds: 
-        const url = `https://race.netkeiba.com/odds/index.html?race_id=${raceId}`;
+        // User suggested URL: https://race.netkeiba.com/odds/index.html?type=b1&race_id=...&rf=shutuba_submenu
+        const url = `https://race.netkeiba.com/odds/index.html?type=b1&race_id=${raceId}&rf=shutuba_submenu&_t=${new Date().getTime()}`;
         const data = await fetchNetkeiba(url);
 
         if (data.horses && data.horses.length > 0) {
@@ -502,45 +502,28 @@ function displayOdds(horsesData) {
     document.getElementById('purchase-section').style.display = 'block';
 }
 
-// ... (Rest of logic: handleBetTypeSelection, calculatePayout, etc. - largely same but ensuring they work with global `horses` variable)
-
-// Re-implement handleBetTypeSelection to ensure it shows selection area
-function handleBetTypeSelection(selectedBtn) {
-    console.log("handleBetTypeSelection called", selectedBtn);
-    if (!selectedBtn) return;
-    currentBetType = selectedBtn.dataset.type;
-    console.log("Bet type selected:", currentBetType);
-    const parent = selectedBtn.parentElement;
-    parent.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
-    selectedBtn.classList.add('active');
-
-    updateSelectionArea();
-}
-
-// ... Reuse existing updateSelectionArea, handleHorseSelection, calculatePayout, displayResult ...
-// Copied helper functions for completeness or ensure they are preserved
-
 function resetForm(keepRace = false) {
     if (!keepRace) {
+        // Only clear race selection highlight if we are unselecting the race
+        // But handleRaceSelection usually updates selectedRace BEFORE calling this with true?
+        // Wait, logic check: usually resetForm is called to clear INPUTS when switching races.
+        // If switching tabs, we might clear everything.
+        // For now, minimal reset.
         document.querySelectorAll('.race-select-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('common-betting-section').style.display = 'none';
+        if (!selectedRace.id) { // Only hide if no race selected
+            document.getElementById('common-betting-section').style.display = 'none';
+        }
+    }
+    // Deep reset if not keeping race
+    if (!keepRace) {
         selectedRace = { id: null, name: null, mode: null };
         horses = [];
-
-        // Reset Bet Type buttons
         document.querySelectorAll('.bet-type-btn').forEach(btn => btn.classList.remove('active'));
-        const winBtn = document.querySelector('.bet-type-btn[data-type="win"]');
-        if (winBtn) winBtn.classList.add('active');
         currentBetType = 'win';
+        document.getElementById('common-betting-section').style.display = 'none';
     }
 
     document.getElementById('result-section').style.display = 'none';
-
-    // Hide sub-sections if fully resetting or just switching race? 
-    // Usually switching race keeps bet type but resets odds display? 
-    // Original logic was aggressive. Let's keep it simple: 
-    // If keepRace is true, we anticipate new odds affecting the display soon.
-
     const betInput = document.getElementById('bet-amount');
     if (betInput) betInput.value = 100;
 
@@ -552,7 +535,6 @@ function resetForm(keepRace = false) {
 
 // Utility for Public Proxy (AllOrigins) to bypass CORS
 async function fetchViaPublicProxy(targetUrl) {
-    // AllOrigins returns JSON with 'contents' holding the actual HTML
     const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
     console.log("Fetching via proxy:", apiUrl);
     try {
@@ -568,37 +550,43 @@ async function fetchViaPublicProxy(targetUrl) {
 
 async function fetchNetkeiba(url) {
     const html = await fetchViaPublicProxy(url);
+    console.log("Fetched HTML length:", html.length);
+    if (html.length < 500) console.log("Short HTML content:", html);
+
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const horses = [];
 
-    // Parsing logic for Odds Page
-    // Selector: .RaceOdds_HorseList_Table (Win/Place)
-    // Need to handle different page structures if scraping shutuba vs odds
-    // The scrape_todays logic uses race/odds/odds_get_form.html?type=b1
+    // Debug selectors
+    const sel1 = doc.querySelectorAll('#odds_tan_block table tr');
+    const sel2 = doc.querySelectorAll('.RaceOdds_HorseList_Table tr');
+    const sel3 = doc.querySelectorAll('.Shutuba_Table tr');
+    console.log(`Selectors matches: #odds_tan_block=${sel1.length}, .RaceOdds=${sel2.length}, .Shutuba=${sel3.length}`);
 
-    // Let's try to parse standard odds page table
-    const rows = doc.querySelectorAll('#odds_tan_block table tr, .RaceOdds_HorseList_Table tr, .Shutuba_Table tr');
+    // Prioritize #odds_tan_block (Win Odds specific)
+    let rows = sel1;
+    if (rows.length === 0) rows = sel2;
+    if (rows.length === 0) rows = sel3;
 
-    rows.forEach(row => {
+    rows.forEach((row, idx) => {
         let num, odds;
-
-        // Try different column patterns
-        // Pattern 1: Odds Page (Col 2 = Num, Col 6 = Odds)
+        // Try to find cells
         const cells = row.querySelectorAll('td');
-        if (cells.length > 5) {
-            const numTxt = cells[1].textContent.trim();
-            const oddsTxt = cells[5].textContent.trim();
-            if (numTxt.match(/^\d+$/)) {
-                num = parseInt(numTxt);
-                odds = parseFloat(oddsTxt);
+
+        // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 6: WinOdds)
+        if (cells.length >= 6) {
+            const n = parseInt(cells[1].textContent.trim());
+            const o = parseFloat(cells[5].textContent.trim());
+            if (!isNaN(n)) {
+                num = n;
+                odds = o;
             }
         }
 
-        // Pattern 2: Shutuba Page (Class names)
+        // Strategy 2: If strategy 1 failed, try searching by class
         if (!num) {
-            const numEl = row.querySelector('.Umaban');
-            const oddsEl = row.querySelector('.Odds_Tan, .Popular');
+            const numEl = row.querySelector('.Umaban, .Horse_Num');
+            const oddsEl = row.querySelector('.Odds_Tan, .Popular, .Odds');
             if (numEl && oddsEl) {
                 num = parseInt(numEl.textContent.trim());
                 odds = parseFloat(oddsEl.textContent.trim());
@@ -608,10 +596,13 @@ async function fetchNetkeiba(url) {
         if (num && !isNaN(num)) {
             // Check for duplicate
             if (!horses.find(h => h.number === num)) {
-                horses.push({ number: num, odds: isNaN(odds) ? 0 : odds });
+                horses.push({ number: num, odds: (isNaN(odds) ? 0 : odds) });
             }
         }
     });
+
+    console.log("Parsed horses:", horses.length);
+    if (horses.length === 0) console.warn("No horses parsed! HTML snippet:", html.substring(0, 1000));
 
     return { horses: horses.sort((a, b) => a.number - b.number) };
 }
