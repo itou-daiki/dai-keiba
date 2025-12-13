@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -25,9 +27,9 @@
                     <!-- JavaScriptで動的に生成 -->
                     <p class="text-light">今日のレース情報を取得しています...</p>
                 </div>
-                 <div id="scraping-status" class="status-message" style="display: none;"></div>
+                <div id="scraping-status" class="status-message" style="display: none;"></div>
             </section>
-            
+
             <!-- 馬券種類選択 -->
             <section class="card" id="bet-type-section" style="display: none;">
                 <h2><span role="img" aria-label="ticket">🎟️</span> 馬券種類を選択</h2>
@@ -41,7 +43,7 @@
                     <button class="bet-type-btn" data-type="trifecta">三連単</button>
                 </div>
             </section>
-            
+
             <!-- オッズ表示 -->
             <section class="card" id="odds-display-section" style="display: none;">
                 <h2><span role="img" aria-label="chart">📊</span> オッズ一覧</h2>
@@ -66,7 +68,7 @@
                     <button id="reset-btn" class="secondary-btn">リセット</button>
                 </div>
             </section>
-            
+
             <!-- 計算結果 -->
             <section class="card result-card" id="result-section" style="display: none;">
                 <h2><span role="img" aria-label="trophy">🏆</span> 計算結果</h2>
@@ -89,6 +91,7 @@
                         <option value="2022">2022年</option>
                         <option value="2023">2023年</option>
                         <option value="2024">2024年</option>
+                        <option value="2025">2025年</option>
                     </select>
                 </div>
 
@@ -130,4 +133,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
