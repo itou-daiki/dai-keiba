@@ -436,7 +436,7 @@ async function handleRaceSelection(btn) {
         const race = todaysDataCache.races.find(r => String(r.id) === String(raceId));
         horses = race.horses;
         displayOdds(horses);
-
+    } else {
         // Use CSV data for Past Race
         // await fetchPastRaceOdds(raceId); // REMOVED: Scraping fails on GH Pages
 
