@@ -165,7 +165,7 @@ async function loadDatabase() {
     if (window.globalRaceData) return window.globalRaceData;
 
     return new Promise((resolve, reject) => {
-        Papa.parse(`database.csv?t=${new Date().getTime()}`, {
+        Papa.parse("database.csv", {
             download: true,
             header: true,
             skipEmptyLines: true,
