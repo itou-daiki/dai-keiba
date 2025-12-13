@@ -589,7 +589,14 @@ async function fetchNetkeiba(url) {
         // Try to find cells
         const cells = row.querySelectorAll('td');
 
+        // Debug first row structure
+        if (idx === 0) {
+            const cellTexts = Array.from(cells).map((c, i) => `[${i}]${c.textContent.trim()}`);
+            console.log("First Row Cells:", cellTexts.join(', '));
+        }
+
         // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 6: WinOdds)
+        // Usually: [0]Waku [1]Num [2]Horse [3]Jockey [4]Weight [5]Odds [6]Pop ...
         if (cells.length >= 6) {
             const n = parseInt(cells[1].textContent.trim());
             const o = parseFloat(cells[5].textContent.trim());
