@@ -88,7 +88,130 @@ def scrape_race_data(race_id):
         return None
 
 # ==========================================
-# 2. 既存データ読み込みと開始地点の特定
+# 2. Upcoming/Today's Race Scraping (JSON for Web App)
+# ==========================================
+def scrape_todays_schedule():
+    """
+    Scrapes today's race list and odds from race.netkeiba.com
+    Saves to 'todays_data.json' for the static web app.
+    """
+    import json
+    
+    # Target date: Today
+    today = datetime.now()
+    kaisai_date = today.strftime("%Y%m%d")
+    
+    url = f"https://race.netkeiba.com/top/race_list.html?kaisai_date={kaisai_date}"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" 
+    }
+    
+    print(f"Fetching race list for {kaisai_date}...")
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.encoding = response.apparent_encoding
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        race_list = []
+        
+        # Selectors based on script.js logic
+        # .RaceList_DataList .RaceList_Item
+        items = soup.select('.RaceList_DataList .RaceList_Item')
+        if not items:
+            items = soup.select('.RaceList_Box .RaceList_Item')
+            
+        print(f"Found {len(items)} races.")
+        
+        for item in items:
+            link_elem = item.find('a')
+            if not link_elem: continue
+            
+            href = link_elem.get('href', '')
+            # Extract race_id
+            # href might be "../race/shutuba.html?race_id=2025..."
+            race_id_match = re.search(r'race_id=(\d+)', href)
+            if not race_id_match: continue
+            
+            race_id = race_id_match.group(1)
+            
+            # Metadata
+            venue_elem = item.select_one('.JyoName')
+            race_num_elem = item.select_one('.Race_Num')
+            race_name_elem = item.select_one('.RaceName')
+            
+            venue = venue_elem.text.strip() if venue_elem else ""
+            num = race_num_elem.text.strip() if race_num_elem else ""
+            name = race_name_elem.text.strip() if race_name_elem else ""
+            
+            # Fetch Odds for this race
+            odds_data = scrape_odds_for_race(race_id)
+            
+            race_info = {
+                "id": race_id,
+                "venue": venue,
+                "number": num,
+                "name": name,
+                "horses": odds_data
+            }
+            race_list.append(race_info)
+            print(f"  + {venue} {num} {name} ({len(odds_data)} horses)")
+            time.sleep(1) # Be gentle
+            
+        # Save to JSON
+        output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "todays_data.json")
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump({"date": kaisai_date, "races": race_list}, f, ensure_ascii=False, indent=2)
+            
+        print(f"Saved {len(race_list)} races to {output_path}")
+        return True, f"{len(race_list)} races saved."
+        
+    except Exception as e:
+        print(f"Error scraping schedule: {e}")
+        return False, str(e)
+
+def scrape_odds_for_race(race_id):
+    """
+    Fetches odds for a specific race_id
+    Returns list of {number, odds}
+    """
+    url = f"https://race.netkeiba.com/race/shutuba.html?race_id={race_id}"
+    headers = { "User-Agent": "Mozilla/5.0" }
+    
+    horses = []
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.encoding = response.apparent_encoding
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Selector: .Shutuba_Table tbody tr
+        rows = soup.select('.Shutuba_Table tbody tr')
+        if not rows:
+            rows = soup.select('.RaceTable01 tr[class^="HorseList"]')
+            
+        for row in rows:
+            # Horse Number
+            num_elem = row.select_one('.Umaban') or row.select_one('td:nth-child(2)')
+            # Odds
+            odds_elem = row.select_one('.Odds_Tan') or row.select_one('td:nth-child(14)')
+            
+            if num_elem and odds_elem:
+                try:
+                    num = int(num_elem.text.strip())
+                    odds_txt = odds_elem.text.strip()
+                    odds = float(odds_txt)
+                    if odds > 0:
+                        horses.append({"number": num, "odds": odds})
+                except:
+                    continue
+                    
+    except Exception as e:
+        print(f"Error scraping odds for {race_id}: {e}")
+        
+    return horses
+
+# ==========================================
+# 3. 既存データ読み込みと開始地点の特定
 # ==========================================
 def get_start_params(start_args=None, end_args=None, places_args=None):
     """

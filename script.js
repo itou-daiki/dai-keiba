@@ -55,74 +55,38 @@ function setupEventListeners() {
 }
 
 // ==================== データ取得・表示 ====================
+let todaysDataCacche = null;
+
 async function fetchTodaysRaces() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const kaisaiDate = `${year}${month}${day}`;
-
-    const url = `https://race.netkeiba.com/top/race_list.html?kaisai_date=${kaisaiDate}`;
-    showStatus('今日のレース情報を取得中...', 'info');
+    showStatus('今日のレース情報を読み込んでいます...', 'info');
     try {
-        const html = await fetchViaNetlifyProxy(url);
-
-        if (!html || html.trim() === '') {
-            throw new Error('取得したHTMLが空です。netkeiba.comがリクエストをブロックした可能性があります。');
+        // GitHub Pages用に事前にスクレイピングされたJSONを読み込む
+        const response = await fetch('todays_data.json');
+        if (!response.ok) {
+            throw new Error('レース情報ファイル(todays_data.json)が見つかりません。管理画面で更新してください。');
         }
 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
+        const data = await response.json();
+        todaysDataCacche = data;
 
-        const raceList = [];
-        // セレクタを更新し、より具体的に RaceList_DataList 内の RaceList_Item をターゲットにする
-        const raceElements = doc.querySelectorAll('.RaceList_DataList .RaceList_Item');
-
-        // デバッグログを追加
-        console.log(`'.RaceList_DataList .RaceList_Item' に一致する要素が ${raceElements.length} 件見つかりました。`);
-
-        if (raceElements.length === 0) {
-            // 代替セレクタを試す
-            const alternativeElements = doc.querySelectorAll('.RaceList_Box .RaceList_Item');
-            console.log(`代替セレクタ '.RaceList_Box .RaceList_Item' で ${alternativeElements.length} 件見つかりました。`);
-            if (alternativeElements.length > 0) {
-                raceElements = alternativeElements;
-            }
-        }
-
-
-        raceElements.forEach(race => {
-            const link = race.querySelector('a');
-            if (link) {
-                const href = link.href;
-                const raceIdMatch = href.match(/race_id=([0-9a-zA-Z_]+)/);
-
-                // .RaceList_Item要素から直接JyoName等を探すように修正
-                const venueName = race.querySelector('.JyoName')?.textContent.trim();
-                const raceNumber = race.querySelector('.Race_Num')?.textContent.trim();
-                const raceName = race.querySelector('.RaceName')?.textContent.trim();
-
-                if (raceIdMatch && venueName && raceNumber && raceName) {
-                    raceList.push({
-                        id: raceIdMatch[1],
-                        venue: venueName,
-                        number: raceNumber,
-                        name: raceName,
-                    });
-                }
-            }
-        });
+        const raceList = data.races.map(r => ({
+            id: r.id,
+            venue: r.venue,
+            number: r.number,
+            name: r.name
+        }));
 
         displayTodaysRaces(raceList);
 
         if (raceList.length > 0) {
-            showStatus('レースを選択してください。', 'info');
+            showStatus(`データ日時: ${data.date} (管理画面で更新可能)`, 'success');
         } else {
-            showStatus('今日の開催レース情報が見つかりませんでした。(サイト構造変更の可能性)', 'error');
+            showStatus('本日のレースデータはありません。', 'info');
         }
 
     } catch (error) {
-        showStatus(`エラー: ${error.message}`, 'error');
+        console.error(error);
+        showStatus('レース情報の読み込みに失敗しました。管理画面で「今日のレース情報を更新」を実行してください。', 'error');
         displayTodaysRaces([]);
     }
 }
@@ -135,7 +99,7 @@ function displayTodaysRaces(races) {
         const button = document.createElement('button');
         button.className = 'race-select-btn';
         button.disabled = true;
-        button.innerHTML = `<span class="race-name">本日のレースはありません</span>`;
+        button.innerHTML = `<span class="race-name">データなし</span>`;
         container.appendChild(button);
         return;
     }
@@ -167,22 +131,23 @@ function handleRaceSelection(selectedBtn) {
 }
 
 async function fetchOdds(raceId) {
-    const url = `https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}`;
     setLoading(true);
-    showStatus(`「${selectedRace.name}」のオッズを取得中...`, 'info');
+    showStatus(`「${selectedRace.name}」のオッズを表示中...`, 'info');
 
     try {
-        const oddsData = await fetchNetkeiba(url);
-        if (oddsData && oddsData.horses && oddsData.horses.length > 0) {
-            horses = oddsData.horses;
+        // キャッシュから検索
+        const race = todaysDataCacche.races.find(r => r.id === raceId);
+
+        if (race && race.horses && race.horses.length > 0) {
+            horses = race.horses;
             displayOdds(horses);
-            showStatus(`✓ オッズを取得しました！`, 'success');
+            showStatus(`✓ オッズを表示しました`, 'success');
             document.getElementById('bet-type-section').style.display = 'block';
             document.getElementById('odds-display-section').style.display = 'block';
             document.getElementById('purchase-section').style.display = 'block';
             updateSelectionArea();
         } else {
-            throw new Error('オッズデータが見つかりませんでした。');
+            throw new Error('このレースのオッズデータがありません。');
         }
     } catch (error) {
         showStatus(`✗ エラー: ${error.message}`, 'error');

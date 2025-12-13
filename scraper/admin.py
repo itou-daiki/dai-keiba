@@ -102,6 +102,17 @@ if st.button("スクレイピングを実行して更新", type="primary"):
     time.sleep(1)
     st.rerun()
 
+# --- Today's Races Section ---
+st.subheader("今日のレース情報 (GitHub Pages用)")
+st.write("今日の出馬表とオッズを取得し、Webアプリ用のJSONを作成します。")
+if st.button("今日のレース情報を更新", type="secondary"):
+    with st.spinner("取得中..."):
+        success, msg = auto_scraper.scrape_todays_schedule()
+        if success:
+            st.success(f"完了: {msg}")
+        else:
+            st.error(f"エラー: {msg}")
+
 # --- Preview Section ---
 if count > 0:
     st.subheader("データベースプレビュー (最新20件)")
