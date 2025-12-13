@@ -101,7 +101,8 @@ def scrape_todays_schedule():
     today = datetime.now()
     kaisai_date = today.strftime("%Y%m%d")
     
-    url = f"https://race.netkeiba.com/top/race_list.html?kaisai_date={kaisai_date}"
+    # Use race_list_sub.html to get the actual content as race_list.html loads via AJAX
+    url = f"https://race.netkeiba.com/top/race_list_sub.html?kaisai_date={kaisai_date}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" 
     }
@@ -116,10 +117,10 @@ def scrape_todays_schedule():
         race_list = []
         
         # Selectors based on script.js logic
-        # .RaceList_DataList .RaceList_Item
-        items = soup.select('.RaceList_DataList .RaceList_Item')
+        # Changed to .RaceList_DataItem as per inspection of race_list_sub.html
+        items = soup.select('.RaceList_DataList .RaceList_DataItem')
         if not items:
-            items = soup.select('.RaceList_Box .RaceList_Item')
+            items = soup.select('.RaceList_Box .RaceList_DataItem')
             
         print(f"Found {len(items)} races.")
         
@@ -136,13 +137,26 @@ def scrape_todays_schedule():
             race_id = race_id_match.group(1)
             
             # Metadata
+            # Metadata
             venue_elem = item.select_one('.JyoName')
             race_num_elem = item.select_one('.Race_Num')
-            race_name_elem = item.select_one('.RaceName')
+            race_name_elem = item.select_one('.RaceName') or item.select_one('.ItemTitle')
             
             venue = venue_elem.text.strip() if venue_elem else ""
             num = race_num_elem.text.strip() if race_num_elem else ""
             name = race_name_elem.text.strip() if race_name_elem else ""
+            
+            # If venue is missing, try to derive from race_id
+            if not venue and len(race_id) >= 6:
+                place_code = race_id[4:6]
+                venue_map = {
+                    "01": "札幌", "02": "函館", "03": "福島", "04": "新潟", "05": "東京",
+                    "06": "中山", "07": "中京", "08": "京都", "09": "阪神", "10": "小倉"
+                }
+                venue = venue_map.get(place_code, "")
+                
+            # Clean up num (remove newlines/spaces)
+            num = re.sub(r'\s+', '', num)
             
             # Fetch Odds for this race
             odds_data = scrape_odds_for_race(race_id)
@@ -175,7 +189,8 @@ def scrape_odds_for_race(race_id):
     Fetches odds for a specific race_id
     Returns list of {number, odds}
     """
-    url = f"https://race.netkeiba.com/race/shutuba.html?race_id={race_id}"
+    # Use odds_get_form.html for single/place odds (type=b1)
+    url = f"https://race.netkeiba.com/odds/odds_get_form.html?type=b1&race_id={race_id}"
     headers = { "User-Agent": "Mozilla/5.0" }
     
     horses = []
@@ -184,24 +199,50 @@ def scrape_odds_for_race(race_id):
         response.encoding = response.apparent_encoding
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Selector: .Shutuba_Table tbody tr
-        rows = soup.select('.Shutuba_Table tbody tr')
+        # Selector: #odds_tan_block .RaceOdds_HorseList_Table tbody tr (Specific to Win odds)
+        rows = soup.select('#odds_tan_block .RaceOdds_HorseList_Table tbody tr')
         if not rows:
-            rows = soup.select('.RaceTable01 tr[class^="HorseList"]')
-            
+             # Fallback to generic if id not found (though unlikely for b1 type)
+             rows = soup.select('.RaceOdds_HorseList_Table tbody tr')
+        
+        # Falls back to old selector if new one fails (for compatibility)
+        if not rows:
+            url_alt = f"https://race.netkeiba.com/race/shutuba.html?race_id={race_id}"
+            try:
+                resp_alt = requests.get(url_alt, headers=headers, timeout=10)
+                resp_alt.encoding = resp_alt.apparent_encoding
+                soup_alt = BeautifulSoup(resp_alt.text, 'html.parser')
+                rows = soup_alt.select('.Shutuba_Table tbody tr') or soup_alt.select('.RaceTable01 tr[class^="HorseList"]')
+            except:
+                pass
+
         for row in rows:
-            # Horse Number
-            num_elem = row.select_one('.Umaban') or row.select_one('td:nth-child(2)')
-            # Odds
-            odds_elem = row.select_one('.Odds_Tan') or row.select_one('td:nth-child(14)')
+            # Check if it's a valid row (ignore headers)
+            # Valid rows usually have numeric cells
+            
+            # Try to find Number and Odds
+            # Strategy 1: RaceOdds_HorseList_Table (Col 2 and 6)
+            if 'RaceOdds_HorseList_Table' in str(row.find_parent('table')):
+                num_elem = row.select_one('td:nth-child(2)')
+                odds_elem = row.select_one('td:nth-child(6)')
+            else:
+                # Strategy 2: Shutuba_Table / RaceTable01
+                num_elem = row.select_one('.Umaban') or row.select_one('td:nth-child(2)')
+                odds_elem = row.select_one('.Odds_Tan') or row.select_one('td:nth-child(14)')
             
             if num_elem and odds_elem:
                 try:
-                    num = int(num_elem.text.strip())
+                    num_txt = num_elem.text.strip()
+                    if not num_txt.isdigit(): continue
+                    num = int(num_txt)
+                    
                     odds_txt = odds_elem.text.strip()
-                    odds = float(odds_txt)
-                    if odds > 0:
-                        horses.append({"number": num, "odds": odds})
+                    if '---' in odds_txt:
+                        odds = 0.0
+                    else:
+                        odds = float(odds_txt)
+                        
+                    horses.append({"number": num, "odds": odds})
                 except:
                     continue
                     
@@ -460,4 +501,20 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, progress_callb
     print(f"所要時間: {(time.time() - start_time)/60:.1f} 分")
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--today", action="store_true", help="Scrape today's race schedule")
+    # Also parse arguments for main() to avoid conflicts if they are passed
+    parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
+    parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
+    parser.add_argument("--places", type=str, help="Target places")
+    
+    args, unknown = parser.parse_known_args()
+    
+    if args.today:
+        scrape_todays_schedule()
+    else:
+        # Pass unknown arguments or parse them again inside main/get_start_params 
+        # but get_start_params parses sys.argv again or uses its own parser.
+        # Since get_start_params uses parse_known_args, it should be fine.
+        main()

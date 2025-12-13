@@ -172,7 +172,7 @@ function displayOdds(horsesData) {
             ${horsesData.map(h => `
                 <tr>
                     <td>${h.number}</td>
-                    <td>${h.odds.toFixed(1)}</td>
+                    <td>${h.odds > 0 ? h.odds.toFixed(1) : '---'}</td>
                 </tr>
             `).join('')}
         </tbody>
