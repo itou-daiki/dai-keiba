@@ -82,9 +82,13 @@
                 <!-- Date Selection (Dropdown) -->
                 <div id="past-date-select-container" class="control-group" style="display:none; margin: 10px 20px;">
                     <label for="past-date-select" style="font-weight:bold; margin-right:10px;">日付選択</label>
-                    <select id="past-date-select" class="form-select" style="padding: 5px;">
-                        <option value="">日付を選択してください</option>
-                    </select>
+                    <div style="display:flex; gap:10px; align-items:center; flex:1;">
+                        <select id="past-date-select" class="form-select" style="padding: 5px; flex:1;">
+                            <option value="">日付を選択してください</option>
+                        </select>
+                        <button id="analyze-balance-btn" class="primary-btn"
+                            style="padding: 5px 15px; font-size: 0.9em; background-color: #28a745;">人気分析</button>
+                    </div>
                 </div>
 
                 <!-- Venue Tabs (Dynamically populated) -->

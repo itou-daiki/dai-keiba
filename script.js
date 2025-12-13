@@ -58,6 +58,11 @@ function setupEventListeners() {
         dateSelect.addEventListener('change', (e) => handleDateChange(e.target));
     }
 
+    const analyzeBtn = document.getElementById('analyze-balance-btn');
+    if (analyzeBtn) {
+        analyzeBtn.addEventListener('click', analyzePastDateBalance);
+    }
+
     // Dynamic Content Delegation
     document.querySelector('main').addEventListener('click', (e) => {
         const target = e.target;
@@ -351,6 +356,78 @@ function selectDate(date) {
     document.getElementById('past-venue-tabs-container').style.display = 'block';
 }
 
+function analyzePastDateBalance() {
+    if (!selectedDatePast) {
+        alert("分析する日付を選択してください。");
+        return;
+    }
+
+    const racesOnDate = pastRaceListCache.filter(r => r.date === selectedDatePast);
+    if (racesOnDate.length === 0) {
+        alert("レースデータがありません。");
+        return;
+    }
+
+    // Initialize stats
+    // [0] unused, [1] Fav1, [2] Fav2, [3] Fav3
+    const stats = [
+        {},
+        { buy: 0, return: 0, hit: 0 },
+        { buy: 0, return: 0, hit: 0 },
+        { buy: 0, return: 0, hit: 0 }
+    ];
+
+    let totalRaces = 0;
+
+    racesOnDate.forEach(race => {
+        if (!race.rows) return;
+        totalRaces++;
+
+        race.rows.forEach(row => {
+            const pop = parseInt(row['人 気']);
+            if (pop >= 1 && pop <= 3) {
+                stats[pop].buy += 100;
+
+                const rank = parseInt(row['着 順']);
+                if (rank === 1) {
+                    const odds = parseFloat(row['単勝 オッズ']) || 0;
+                    stats[pop].return += Math.floor(odds * 100);
+                    stats[pop].hit++;
+                }
+            }
+        });
+    });
+
+    // Total
+    const totalBuy = stats[1].buy + stats[2].buy + stats[3].buy;
+    const totalReturn = stats[1].return + stats[2].return + stats[3].return;
+    const totalNet = totalReturn - totalBuy;
+    const totalRate = totalBuy > 0 ? ((totalReturn / totalBuy) * 100).toFixed(1) : 0;
+
+    let msg = `📅 ${selectedDatePast} の人気傾向分析 (単勝)\n`;
+    msg += `対象レース: ${totalRaces}R\n\n`;
+
+    for (let i = 1; i <= 3; i++) {
+        const net = stats[i].return - stats[i].buy;
+        const rate = stats[i].buy > 0 ? ((stats[i].return / stats[i].buy) * 100).toFixed(1) : 0;
+        const sign = net >= 0 ? '+' : '';
+        msg += `【${i}番人気】\n`;
+        msg += `購入: ${stats[i].buy.toLocaleString()}円 (的中 ${stats[i].hit})\n`;
+        msg += `払戻: ${stats[i].return.toLocaleString()}円\n`;
+        msg += `収支: ${sign}${net.toLocaleString()}円 (${rate}%)\n\n`;
+    }
+
+    msg += `━━━━━━━━━━━━━━\n`;
+    msg += `【合計 (1-3番人気)】\n`;
+    msg += `購入: ${totalBuy.toLocaleString()}円\n`;
+    msg += `払戻: ${totalReturn.toLocaleString()}円\n`;
+    msg += `収支: ${totalNet >= 0 ? '+' : ''}${totalNet.toLocaleString()}円 (${totalRate}%)`;
+
+    // Add warning relating to lack of Place data
+    msg += `\n\n※複勝データがないため、単勝のみの計算です。`;
+
+    alert(msg);
+}
 
 function renderVenueTabs(type, venues) {
     const containerId = type === 'today' ? 'today-venue-tabs' : 'past-venue-tabs';
