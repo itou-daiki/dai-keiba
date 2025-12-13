@@ -584,22 +584,19 @@ async function fetchNetkeiba(url) {
     if (rows.length === 0) rows = sel2;
     if (rows.length === 0) rows = sel3;
 
+    let debugCount = 0;
     rows.forEach((row, idx) => {
         let num, odds;
         // Try to find cells
         const cells = row.querySelectorAll('td');
 
-        // Debug first row structure
-        if (idx === 0) {
-            const cellTexts = Array.from(cells).map((c, i) => `[${i}]${c.textContent.trim()}`);
-            console.log("First Row Cells:", cellTexts.join(', '));
-        }
+        let logMsg = `Row ${idx}: `;
 
         // Strategy 1: Standard Odds Table (Col 2: HorseNum, Col 6: WinOdds)
-        // Usually: [0]Waku [1]Num [2]Horse [3]Jockey [4]Weight [5]Odds [6]Pop ...
         if (cells.length >= 6) {
             const n = parseInt(cells[1].textContent.trim());
             const o = parseFloat(cells[5].textContent.trim());
+            logMsg += `Strat1(Cells=${cells.length}, Col1="${cells[1].textContent.trim()}", Col5="${cells[5].textContent.trim()}") -> n=${n}, o=${o}. `;
             if (!isNaN(n)) {
                 num = n;
                 odds = o;
@@ -611,12 +608,18 @@ async function fetchNetkeiba(url) {
             const numEl = row.querySelector('.Umaban, .Horse_Num');
             const oddsEl = row.querySelector('.Odds_Tan, .Popular, .Odds');
             if (numEl && oddsEl) {
+                logMsg += `Strat2(NumEl="${numEl.textContent.trim()}", OddsEl="${oddsEl.textContent.trim()}") -> `;
                 num = parseInt(numEl.textContent.trim());
                 odds = parseFloat(oddsEl.textContent.trim());
+                logMsg += `n=${num}, o=${odds}. `;
             }
         }
 
         if (num && !isNaN(num)) {
+            if (debugCount < 3) {
+                console.log(logMsg);
+                debugCount++;
+            }
             // Check for duplicate
             if (!horses.find(h => h.number === num)) {
                 horses.push({ number: num, odds: (isNaN(odds) ? 0 : odds) });
