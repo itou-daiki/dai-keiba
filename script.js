@@ -54,12 +54,12 @@ function setupEventListeners() {
             handleRaceSelection(raceSelectBtn);
             return;
         }
-        if (venueTabBtn) {
-            handleVenueSelection(venueTabBtn);
-            return;
-        }
         if (dateTabBtn) {
             handleDateSelection(dateTabBtn);
+            return;
+        }
+        if (venueTabBtn) {
+            handleVenueSelection(venueTabBtn);
             return;
         }
         if (betTypeBtn) {
