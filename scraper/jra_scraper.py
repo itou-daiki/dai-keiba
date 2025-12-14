@@ -29,8 +29,6 @@ def scrape_jra_race(url):
 
         
         # --- Metadata Extraction ---
-        # Look for the H1 header text
-        # Example: "レース結果2025年12月14日（日曜）5回阪神4日 10レース"
         h1_elem = soup.select_one("div.header_line h1 .txt")
         full_text = h1_elem.text.strip() if h1_elem else ""
         if not full_text and soup.h1:
@@ -42,18 +40,12 @@ def scrape_jra_race(url):
         kai = "01"
         day = "01"
         
-        # Regex to parse specifically:
-        # 2025年12月14日 ... 5回阪神4日 ... 10レース
-        # Note: "レース結果" might prefix it.
-        
         # Extract Date
         match_date = re.search(r'(\d{4}年\d{1,2}月\d{1,2}日)', full_text)
         if match_date:
             date_text = match_date.group(1)
             
         # Extract Venue, Kai, Day
-        # Pattern: (\d+)回(Venue)(\d+)日
-        # Venues can be 2 chars.
         venues_str = "札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉"
         match_meta = re.search(rf'(\d+)回({venues_str})(\d+)日', full_text)
         if match_meta:
@@ -62,7 +54,6 @@ def scrape_jra_race(url):
             day = f"{int(match_meta.group(3)):02}"
             
         # Extract Race Num
-        # Pattern: (\d+)レース
         match_race = re.search(r'(\d+)レース', full_text)
         if match_race:
             r_val = int(match_race.group(1))
@@ -85,7 +76,6 @@ def scrape_jra_race(url):
         elif "G3" in str(soup) or "ＧⅢ" in str(soup): grade_text = "G3"
 
         # --- Table Extraction ---
-        # Find table with "着順"
         tables = soup.find_all('table')
         target_table = None
         for tbl in tables:
@@ -94,7 +84,6 @@ def scrape_jra_race(url):
                 break
         
         if not target_table:
-            print("Error: Could not find result table.")
             return None
 
         dfs = pd.read_html(io.StringIO(str(target_table)))
@@ -104,25 +93,10 @@ def scrape_jra_race(url):
         df = dfs[0]
         
         # --- Column Mapping ---
-        # JRA columns usually: ['着順', '枠番', '馬番', '馬名', '性齢', 'あられ', '騎手', 'タイム', '着差', '推定上り', '通過順', '馬体重', '調教師', '人気', '単勝オッズ']
-        # Map to database.csv:
-        # 日付,会場,レース番号,レース名,重賞,着 順,枠,馬 番,馬名,性齢,斤量,騎手,タイム,着差,人 気,単勝 オッズ,後3F,コーナー 通過順,厩舎,馬体重 (増減),race_id
-        
-        # Clean JRA columns
-        # Remove spaces in col names if any
-        
-        # Mapping dict
-        # Key: JRA column (approx), Value: database.csv column
-        
-        # Let's inspect current columns from prototype output or just robustly rename
-        # Based on typical JRA HTML:
-        # 着順, 枠番, 馬番, 馬名, 性齢, 負担重量, 騎手, タイム, 着差, タイム指数, 通過, 上り, 単勝オッズ, 人気, 馬体重, 調教師
-        
-        # We need to map these dynamically or check existence
         rename_map = {
             '着順': '着 順',
             '枠番': '枠',
-            '枠': '枠', # sometimes just 枠
+            '枠': '枠', 
             '馬番': '馬 番',
             '馬名': '馬名',
             '性齢': '性齢',
@@ -131,7 +105,7 @@ def scrape_jra_race(url):
             'タイム': 'タイム',
             '着差': '着差',
             '人気': '人 気',
-            '単勝': '単勝 オッズ', # Check if header is 单勝 or 单勝オッズ. Often split rows.
+            '単勝': '単勝 オッズ', 
             '単勝オッズ': '単勝 オッズ',
             '上り': '後3F',
             '推定上り': '後3F',
@@ -140,10 +114,8 @@ def scrape_jra_race(url):
             '馬体重': '馬体重 (増減)'
         }
         
-        # Rename columns present
         df.rename(columns=rename_map, inplace=True)
         
-        # Add missing standard columns
         df['日付'] = date_text
         df['会場'] = venue_text
         df['レース番号'] = race_num_text
@@ -164,38 +136,18 @@ def scrape_jra_race(url):
         generated_id = f"{year}{p_code}{kai}{day}{r_num}"
         df['race_id'] = generated_id
 
-        # Assign extracted metadata to columns
-        df['日付'] = date_text
-        df['会場'] = venue_text
-        df['レース番号'] = race_num_text
-        df['レース名'] = race_name_text
-        df['重賞'] = grade_text
-
-        
-        # Ensure '単勝 オッズ' is numeric
         if '単勝 オッズ' in df.columns:
-            # Clean up text (sometimes contains "---")
             df['単勝 オッズ'] = pd.to_numeric(df['単勝 オッズ'], errors='coerce').fillna(0.0)
 
-        # Standardize '着 順'
-        if '着 順' in df.columns:
-             # handle "取消", "除外" etc -> keep as is or convert?
-             # existing csv has mixed types or numeric? 
-             # Usually standard scraper keeps them as string if mixed, or numeric
-             pass
-
-        # Select standard columns
         standard_columns = [
             "日付","会場","レース番号","レース名","重賞","着 順","枠","馬 番","馬名","性齢","斤量","騎手",
             "タイム","着差","人 気","単勝 オッズ","後3F","コーナー 通過順","厩舎","馬体重 (増減)","race_id"
         ]
         
-        # Add missing columns with empty values
         for col in standard_columns:
             if col not in df.columns:
                 df[col] = ""
                 
-        # Reorder
         df = df[standard_columns]
         
         print(f"Scraped {len(df)} rows.")
@@ -228,26 +180,34 @@ def scrape_jra_year(year_str, save_callback=None):
     print(f"=== Starting JRA Bulk Scraping for {year_str} ===")
     
     for month, suffix in params.items():
-        # Construct monthly list CNAME
-        # Format: pw01skl10 + YYYYMM + / + SUFFIX
-        cname = f"pw01skl10{year_str}{month}/{suffix}"
+        # Logic for skl00 vs skl10
+        # Cutoff is 202512
+        try:
+            ym = int(year_str + month)
+            prefix = "pw01skl00" if ym >= 202512 else "pw01skl10"
+        except:
+            prefix = "pw01skl10" # fallback
+
+        # Construct CNAME
+        cname = f"{prefix}{year_str}{month}/{suffix}"
         
-        list_url = f"{base_url}?CNAME={cname}"
-        print(f"Fetching list for {year_str}/{month}: {list_url}")
+        print(f"Fetching list for {year_str}/{month} (CNAME={cname})...")
         
         try:
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" 
             }
-            response = requests.get(list_url, headers=headers, timeout=10)
+            # Use POST for monthly list
+            response = requests.post(base_url, data={"cname": cname}, headers=headers, timeout=10)
             response.encoding = 'cp932'
             
             if response.status_code != 200:
-                print(f"Failed to fetch {list_url}")
+                print(f"Failed to fetch {cname} (Status {response.status_code})")
                 continue
                 
             soup = BeautifulSoup(response.text, 'html.parser')
             
+            # Find Day List CNAMEs (pw01srl...)
             race_cnames = []
             links = soup.find_all('a')
             for link in links:
@@ -262,15 +222,17 @@ def scrape_jra_year(year_str, save_callback=None):
             print(f"  Found {len(race_cnames)} race days.")
             
             for day_cname in race_cnames:
-                day_url = f"{base_url}?CNAME={day_cname}"
-                time.sleep(1) # Gentle
+                # Use POST for Day List (srl) as verified
+                # day_url = f"{base_url}?CNAME={day_cname}" # NO, Use POST
+                # time.sleep(1) 
                 
-                resp_day = requests.get(day_url, headers=headers, timeout=10)
+                resp_day = requests.post(base_url, data={"cname": day_cname}, headers=headers, timeout=10)
                 resp_day.encoding = 'cp932'
                 soup_day = BeautifulSoup(resp_day.text, 'html.parser')
                 
                 race_links_set = set()
                 
+                # Check anchors for sde (Detail)
                 all_anchors = soup_day.find_all('a')
                 for a in all_anchors:
                     href = a.get('href', '')
