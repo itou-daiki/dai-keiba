@@ -7,6 +7,11 @@ import re
 from datetime import datetime, timedelta, date
 import os
 import sys
+try:
+    from jra_scraper import scrape_jra_race
+except ImportError:
+    # Try relative import if running as module
+    from .jra_scraper import scrape_jra_race
 
 # ==========================================
 # CONSTANTS
@@ -504,6 +509,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--today", action="store_true", help="Scrape today's race schedule")
+    parser.add_argument("--jra_url", type=str, help="Direct JRA URL to scrape")
     # Also parse arguments for main() to avoid conflicts if they are passed
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
@@ -513,6 +519,35 @@ if __name__ == "__main__":
     
     if args.today:
         scrape_todays_schedule()
+    elif args.jra_url:
+        print(f"Direct JRA Mode: {args.jra_url}")
+        df = scrape_jra_race(args.jra_url)
+        if df is not None and not df.empty:
+            # Save logic (similar to main)
+            # We can reuse the save logic but it's embedded in main()
+            # Let's minimal-copy the save logic here for simplicity or refactor
+            # For now, append to CSV directly
+            CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+            
+            if os.path.exists(CSV_FILE_PATH):
+                try:
+                    existing_df = pd.read_csv(CSV_FILE_PATH)
+                    combined_df = pd.concat([existing_df, df], ignore_index=True)
+                except:
+                    combined_df = df
+            else:
+                combined_df = df
+                
+            # Deduplicate
+            subset_cols = ['race_id', '馬名']
+            subset_cols = [c for c in subset_cols if c in combined_df.columns]
+            if subset_cols:
+                combined_df.drop_duplicates(subset=subset_cols, keep='last', inplace=True)
+            
+            combined_df.to_csv(CSV_FILE_PATH, index=False, encoding="utf-8-sig")
+            print(f"Saved to {CSV_FILE_PATH}")
+        else:
+            print("Failed to scrape JRA data.")
     else:
         # Pass unknown arguments or parse them again inside main/get_start_params 
         # but get_start_params parses sys.argv again or uses its own parser.
