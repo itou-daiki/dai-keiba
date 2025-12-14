@@ -8,10 +8,10 @@ from datetime import datetime, timedelta, date
 import os
 import sys
 try:
-    from jra_scraper import scrape_jra_race
+    from jra_scraper import scrape_jra_race, scrape_jra_year
 except ImportError:
     # Try relative import if running as module
-    from .jra_scraper import scrape_jra_race
+    from .jra_scraper import scrape_jra_race, scrape_jra_year
 
 # ==========================================
 # CONSTANTS
@@ -510,6 +510,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--today", action="store_true", help="Scrape today's race schedule")
     parser.add_argument("--jra_url", type=str, help="Direct JRA URL to scrape")
+    parser.add_argument("--jra_year", type=str, help="Scrape entire year from JRA (e.g. 2025)")
     # Also parse arguments for main() to avoid conflicts if they are passed
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
@@ -548,6 +549,33 @@ if __name__ == "__main__":
             print(f"Saved to {CSV_FILE_PATH}")
         else:
             print("Failed to scrape JRA data.")
+    elif args.jra_year:
+        print(f"JRA Bulk Scraping Year: {args.jra_year}")
+        
+        # Define save callback to handle incremental saves
+        def save_chunk(df_chunk):
+            CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+            
+            if os.path.exists(CSV_FILE_PATH):
+                try:
+                    existing_df = pd.read_csv(CSV_FILE_PATH)
+                    combined_df = pd.concat([existing_df, df_chunk], ignore_index=True)
+                except:
+                    combined_df = df_chunk
+            else:
+                combined_df = df_chunk
+            
+            # Deduplicate
+            subset_cols = ['race_id', '馬名']
+            subset_cols = [c for c in subset_cols if c in combined_df.columns]
+            if subset_cols:
+                combined_df.drop_duplicates(subset=subset_cols, keep='last', inplace=True)
+            
+            combined_df.to_csv(CSV_FILE_PATH, index=False, encoding="utf-8-sig")
+            print(f"  -> Saved {len(df_chunk)} rows. Total: {len(combined_df)}")
+            
+        scrape_jra_year(args.jra_year, save_callback=save_chunk)
+
     else:
         # Pass unknown arguments or parse them again inside main/get_start_params 
         # but get_start_params parses sys.argv again or uses its own parser.

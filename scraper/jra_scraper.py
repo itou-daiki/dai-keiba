@@ -4,6 +4,8 @@ import pandas as pd
 import io
 import re
 from datetime import datetime
+import urllib.parse
+import time
 
 def scrape_jra_race(url):
     """
@@ -25,10 +27,6 @@ def scrape_jra_race(url):
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-
-        
-        # --- Metadata Extraction ---
-        # JRA HTML structure is complex. We try to find patterns.
         
         # --- Metadata Extraction ---
         # Look for the H1 header text
@@ -37,7 +35,6 @@ def scrape_jra_race(url):
         full_text = h1_elem.text.strip() if h1_elem else ""
         if not full_text and soup.h1:
             full_text = soup.h1.text.strip()
-
 
         date_text = ""
         venue_text = ""
@@ -107,7 +104,51 @@ def scrape_jra_race(url):
         df = dfs[0]
         
         # --- Column Mapping ---
-
+        # JRA columns usually: ['着順', '枠番', '馬番', '馬名', '性齢', 'あられ', '騎手', 'タイム', '着差', '推定上り', '通過順', '馬体重', '調教師', '人気', '単勝オッズ']
+        # Map to database.csv:
+        # 日付,会場,レース番号,レース名,重賞,着 順,枠,馬 番,馬名,性齢,斤量,騎手,タイム,着差,人 気,単勝 オッズ,後3F,コーナー 通過順,厩舎,馬体重 (増減),race_id
+        
+        # Clean JRA columns
+        # Remove spaces in col names if any
+        
+        # Mapping dict
+        # Key: JRA column (approx), Value: database.csv column
+        
+        # Let's inspect current columns from prototype output or just robustly rename
+        # Based on typical JRA HTML:
+        # 着順, 枠番, 馬番, 馬名, 性齢, 負担重量, 騎手, タイム, 着差, タイム指数, 通過, 上り, 単勝オッズ, 人気, 馬体重, 調教師
+        
+        # We need to map these dynamically or check existence
+        rename_map = {
+            '着順': '着 順',
+            '枠番': '枠',
+            '枠': '枠', # sometimes just 枠
+            '馬番': '馬 番',
+            '馬名': '馬名',
+            '性齢': '性齢',
+            '負担重量': '斤量',
+            '騎手': '騎手',
+            'タイム': 'タイム',
+            '着差': '着差',
+            '人気': '人 気',
+            '単勝': '単勝 オッズ', # Check if header is 单勝 or 单勝オッズ. Often split rows.
+            '単勝オッズ': '単勝 オッズ',
+            '上り': '後3F',
+            '推定上り': '後3F',
+            '通過': 'コーナー 通過順',
+            '調教師': '厩舎',
+            '馬体重': '馬体重 (増減)'
+        }
+        
+        # Rename columns present
+        df.rename(columns=rename_map, inplace=True)
+        
+        # Add missing standard columns
+        df['日付'] = date_text
+        df['会場'] = venue_text
+        df['レース番号'] = race_num_text
+        df['レース名'] = race_name_text
+        df['重賞'] = grade_text
         
         # ID Generation
         place_map = {
@@ -120,7 +161,6 @@ def scrape_jra_race(url):
         if date_text:
             year = date_text[:4]
             
-        generated_id = f"{year}{p_code}{kai}{day}{r_num}"
         generated_id = f"{year}{p_code}{kai}{day}{r_num}"
         df['race_id'] = generated_id
 
@@ -164,3 +204,95 @@ def scrape_jra_race(url):
     except Exception as e:
         print(f"Error scraping JRA URL: {e}")
         return None
+
+# Parameter Map for Monthly Results (Reverse Engineered)
+JRA_MONTH_PARAMS = {
+    "2025": { "01": "3F", "02": "0D", "03": "DB", "04": "A9", "05": "77", "06": "45", "07": "13", "08": "E1", "09": "AF", "10": "1E", "11": "EC", "12": "D3" },
+    "2024": { "01": "B3", "02": "81", "03": "4F", "04": "1D", "05": "EB", "06": "B9", "07": "87", "08": "55", "09": "23", "10": "92", "11": "60", "12": "2E" }
+}
+
+def scrape_jra_year(year_str, save_callback=None):
+    """
+    Scrapes all races for a given year.
+    year_str: "2024" or "2025"
+    save_callback: function(df) to save progress
+    """
+    
+    if year_str not in JRA_MONTH_PARAMS:
+        print(f"Year {year_str} not supported in parameter map.")
+        return
+
+    params = JRA_MONTH_PARAMS[year_str]
+    base_url = "https://www.jra.go.jp/JRADB/accessS.html"
+    
+    print(f"=== Starting JRA Bulk Scraping for {year_str} ===")
+    
+    for month, suffix in params.items():
+        # Construct monthly list CNAME
+        # Format: pw01skl10 + YYYYMM + / + SUFFIX
+        cname = f"pw01skl10{year_str}{month}/{suffix}"
+        
+        list_url = f"{base_url}?CNAME={cname}"
+        print(f"Fetching list for {year_str}/{month}: {list_url}")
+        
+        try:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" 
+            }
+            response = requests.get(list_url, headers=headers, timeout=10)
+            response.encoding = 'cp932'
+            
+            if response.status_code != 200:
+                print(f"Failed to fetch {list_url}")
+                continue
+                
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            race_cnames = []
+            links = soup.find_all('a')
+            for link in links:
+                onclick = link.get('onclick', '')
+                match = re.search(r"doAction\('[^']+',\s*'([^']+)'\)", onclick)
+                if match:
+                    c = match.group(1)
+                    if c.startswith('pw01srl'):
+                        race_cnames.append(c)
+            
+            race_cnames = sorted(list(set(race_cnames)))
+            print(f"  Found {len(race_cnames)} race days.")
+            
+            for day_cname in race_cnames:
+                day_url = f"{base_url}?CNAME={day_cname}"
+                time.sleep(1) # Gentle
+                
+                resp_day = requests.get(day_url, headers=headers, timeout=10)
+                resp_day.encoding = 'cp932'
+                soup_day = BeautifulSoup(resp_day.text, 'html.parser')
+                
+                race_links_set = set()
+                
+                all_anchors = soup_day.find_all('a')
+                for a in all_anchors:
+                    href = a.get('href', '')
+                    if 'CNAME=' in href and 'pw01sde' in href:
+                        race_links_set.add(urllib.parse.urljoin(base_url, href))
+                        
+                for a in all_anchors:
+                    onclick = a.get('onclick', '')
+                    match_sde = re.search(r"doAction\('[^']+',\s*'(pw01sde[^']+)'\)", onclick)
+                    if match_sde:
+                        full_l = f"{base_url}?CNAME={match_sde.group(1)}"
+                        race_links_set.add(full_l)
+
+                sorted_race_links = sorted(list(race_links_set))
+                print(f"    Day {day_cname[:20]}... -> {len(sorted_race_links)} races.")
+                
+                for r_link in sorted_race_links:
+                    df = scrape_jra_race(r_link)
+                    if df is not None and not df.empty:
+                        if save_callback:
+                            save_callback(df)
+                    time.sleep(0.5)
+
+        except Exception as e:
+            print(f"Error processing month {month}: {e}")
