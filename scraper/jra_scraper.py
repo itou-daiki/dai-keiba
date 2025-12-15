@@ -27,7 +27,6 @@ def scrape_jra_race(url):
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        
         # --- Metadata Extraction ---
         h1_elem = soup.select_one("div.header_line h1 .txt")
         full_text = h1_elem.text.strip() if h1_elem else ""
@@ -63,7 +62,7 @@ def scrape_jra_race(url):
             race_num_text = "10R" # Fallback
             r_num = "10"
             
-        # Race Name extraction attempts
+        # Race Name
         race_name_text = ""
         name_elem = soup.select_one(".race_name")
         if name_elem:
@@ -75,7 +74,8 @@ def scrape_jra_race(url):
         elif "G2" in str(soup) or "ＧⅡ" in str(soup): grade_text = "G2"
         elif "G3" in str(soup) or "ＧⅢ" in str(soup): grade_text = "G3"
 
-        # --- Table Extraction ---
+        # --- Table Extraction (Custom BS4 Parsing) ---
+        # Find table with "着順"
         tables = soup.find_all('table')
         target_table = None
         for tbl in tables:
@@ -86,36 +86,78 @@ def scrape_jra_race(url):
         if not target_table:
             return None
 
-        dfs = pd.read_html(io.StringIO(str(target_table)))
-        if not dfs:
-            return None
+        # Parse Rows
+        rows = target_table.find_all('tr')
+        data = []
         
-        df = dfs[0]
+        for row in rows:
+            # Skip header (usually th) or invalid rows
+            if row.find('th'):
+                continue
+                
+            cells = row.find_all('td')
+            if not cells:
+                continue
+
+            # Need to robustly map cells. 
+            # We can use class names if available, or index.
+            # Based on debug:
+            # 0: place (着順)
+            # 1: waku (枠) -> img alt
+            # 2: num (馬番)
+            # 3: horse (馬名)
+            # 4: age (性齢)
+            # 5: weight (斤量)
+            # 6: jockey (騎手)
+            # 7: time (タイム)
+            # 8: margin (着差)
+            # 9: corner (通過)
+            # 10: f_time (上り)
+            # 11: h_weight (馬体重)
+            # 12: trainer (調教師)
+            # 13: pop (人気)
+            # * Odds is missing *
+
+            def get_text(idx):
+                if idx < len(cells):
+                    return cells[idx].get_text(strip=True)
+                return ""
+
+            # Extract Frame (Waku) from Image
+            waku_text = ""
+            if len(cells) > 1:
+                img = cells[1].find('img')
+                if img and 'alt' in img.attrs:
+                    # Example: "枠6緑" -> Extract number
+                    alt = img['alt']
+                    m = re.search(r'枠(\d+)', alt)
+                    if m:
+                        waku_text = m.group(1)
+                    else:
+                        waku_text = alt # Fallback
+            
+            row_data = {
+                '着 順': get_text(0),
+                '枠': waku_text,
+                '馬 番': get_text(2),
+                '馬名': get_text(3),
+                '性齢': get_text(4),
+                '斤量': get_text(5),
+                '騎手': get_text(6),
+                'タイム': get_text(7),
+                '着差': get_text(8),
+                'コーナー 通過順': get_text(9),
+                '後3F': get_text(10),
+                '馬体重 (増減)': get_text(11),
+                '厩舎': get_text(12),
+                '人 気': get_text(13),
+                '単勝 オッズ': "0.0" # Missing in source
+            }
+            data.append(row_data)
+
+        df = pd.DataFrame(data)
         
-        # --- Column Mapping ---
-        rename_map = {
-            '着順': '着 順',
-            '枠番': '枠',
-            '枠': '枠', 
-            '馬番': '馬 番',
-            '馬名': '馬名',
-            '性齢': '性齢',
-            '負担重量': '斤量',
-            '騎手': '騎手',
-            'タイム': 'タイム',
-            '着差': '着差',
-            '人気': '人 気',
-            '単勝': '単勝 オッズ', 
-            '単勝オッズ': '単勝 オッズ',
-            '上り': '後3F',
-            '推定上り': '後3F',
-            '通過': 'コーナー 通過順',
-            '調教師': '厩舎',
-            '馬体重': '馬体重 (増減)'
-        }
-        
-        df.rename(columns=rename_map, inplace=True)
-        
+        # Add Metadata Columns
         df['日付'] = date_text
         df['会場'] = venue_text
         df['レース番号'] = race_num_text
@@ -136,6 +178,7 @@ def scrape_jra_race(url):
         generated_id = f"{year}{p_code}{kai}{day}{r_num}"
         df['race_id'] = generated_id
 
+        # Cleanups
         if '単勝 オッズ' in df.columns:
             df['単勝 オッズ'] = pd.to_numeric(df['単勝 オッズ'], errors='coerce').fillna(0.0)
 
