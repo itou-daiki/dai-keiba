@@ -4,6 +4,8 @@ import os
 import sys
 import pandas as pd
 from datetime import date, datetime
+import time
+
 
 # Set page config
 st.set_page_config(page_title="JRA データ管理パネル", layout="wide")
