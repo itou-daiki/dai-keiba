@@ -511,6 +511,8 @@ if __name__ == "__main__":
     parser.add_argument("--today", action="store_true", help="Scrape today's race schedule")
     parser.add_argument("--jra_url", type=str, help="Direct JRA URL to scrape")
     parser.add_argument("--jra_year", type=str, help="Scrape entire year from JRA (e.g. 2025)")
+    parser.add_argument("--jra_date_start", type=str, help="Start date (YYYY-MM-DD) for JRA bulk scrape")
+    parser.add_argument("--jra_date_end", type=str, help="End date (YYYY-MM-DD) for JRA bulk scrape")
     # Also parse arguments for main() to avoid conflicts if they are passed
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
@@ -552,6 +554,23 @@ if __name__ == "__main__":
     elif args.jra_year:
         print(f"JRA Bulk Scraping Year: {args.jra_year}")
         
+        start_date = None
+        end_date = None
+        
+        if args.jra_date_start:
+            try:
+                start_date = datetime.strptime(args.jra_date_start, "%Y-%m-%d").date()
+            except ValueError:
+                print("Invalid start date format. Use YYYY-MM-DD")
+                return
+
+        if args.jra_date_end:
+            try:
+                end_date = datetime.strptime(args.jra_date_end, "%Y-%m-%d").date()
+            except ValueError:
+                print("Invalid end date format. Use YYYY-MM-DD")
+                return
+
         # Define save callback to handle incremental saves
         def save_chunk(df_chunk):
             CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
@@ -574,7 +593,7 @@ if __name__ == "__main__":
             combined_df.to_csv(CSV_FILE_PATH, index=False, encoding="utf-8-sig")
             print(f"  -> Saved {len(df_chunk)} rows. Total: {len(combined_df)}")
             
-        scrape_jra_year(args.jra_year, save_callback=save_chunk)
+        scrape_jra_year(args.jra_year, start_date=start_date, end_date=end_date, save_callback=save_chunk)
 
     else:
         # Pass unknown arguments or parse them again inside main/get_start_params 

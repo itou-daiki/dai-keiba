@@ -163,10 +163,12 @@ JRA_MONTH_PARAMS = {
     "2024": { "01": "B3", "02": "81", "03": "4F", "04": "1D", "05": "EB", "06": "B9", "07": "87", "08": "55", "09": "23", "10": "92", "11": "60", "12": "2E" }
 }
 
-def scrape_jra_year(year_str, save_callback=None):
+def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None):
     """
-    Scrapes all races for a given year.
+    Scrapes races for a given year and date range.
     year_str: "2024" or "2025"
+    start_date: datetime.date (optional)
+    end_date: datetime.date (optional)
     save_callback: function(df) to save progress
     """
     
@@ -177,18 +179,30 @@ def scrape_jra_year(year_str, save_callback=None):
     params = JRA_MONTH_PARAMS[year_str]
     base_url = "https://www.jra.go.jp/JRADB/accessS.html"
     
-    print(f"=== Starting JRA Bulk Scraping for {year_str} ===")
+    # Determine months to iterate
+    start_m = 1
+    end_m = 12
     
-    for month, suffix in params.items():
+    if start_date:
+        start_m = start_date.month
+    if end_date:
+        end_m = end_date.month
+        
+    print(f"=== Starting JRA Bulk Scraping for {year_str} (Period: {start_date} - {end_date}) ===")
+    
+    for m in range(start_m, end_m + 1):
+        month = f"{m:02}"
+        if month not in params:
+            continue
+            
+        suffix = params[month]
         # Logic for skl00 vs skl10
-        # Cutoff is 202512
         try:
             ym = int(year_str + month)
             prefix = "pw01skl00" if ym >= 202512 else "pw01skl10"
         except:
-            prefix = "pw01skl10" # fallback
+            prefix = "pw01skl10"
 
-        # Construct CNAME
         cname = f"{prefix}{year_str}{month}/{suffix}"
         
         print(f"Fetching list for {year_str}/{month} (CNAME={cname})...")
@@ -197,7 +211,6 @@ def scrape_jra_year(year_str, save_callback=None):
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" 
             }
-            # Use POST for monthly list
             response = requests.post(base_url, data={"cname": cname}, headers=headers, timeout=10)
             response.encoding = 'cp932'
             
@@ -207,7 +220,6 @@ def scrape_jra_year(year_str, save_callback=None):
                 
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Find Day List CNAMEs (pw01srl...)
             race_cnames = []
             links = soup.find_all('a')
             for link in links:
@@ -219,20 +231,36 @@ def scrape_jra_year(year_str, save_callback=None):
                         race_cnames.append(c)
             
             race_cnames = sorted(list(set(race_cnames)))
-            print(f"  Found {len(race_cnames)} race days.")
+            print(f"  Found {len(race_cnames)} race days in month.")
             
             for day_cname in race_cnames:
-                # Use POST for Day List (srl) as verified
-                # day_url = f"{base_url}?CNAME={day_cname}" # NO, Use POST
-                # time.sleep(1) 
-                
                 resp_day = requests.post(base_url, data={"cname": day_cname}, headers=headers, timeout=10)
                 resp_day.encoding = 'cp932'
                 soup_day = BeautifulSoup(resp_day.text, 'html.parser')
                 
-                race_links_set = set()
+                # Check date of this day page
+                day_date_text = ""
+                d_h1 = soup_day.select_one("div.header_line h1 .txt")
+                full_d_text = d_h1.text.strip() if d_h1 else (soup_day.h1.text.strip() if soup_day.h1 else "")
                 
-                # Check anchors for sde (Detail)
+                # Parse date from "2025年1月5日（日曜）..."
+                match_day_date = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', full_d_text)
+                if match_day_date:
+                    y, mo, d_day = map(int, match_day_date.groups())
+                    current_day_date = datetime(y, mo, d_day).date()
+                    
+                    # Filtering
+                    if start_date and current_day_date < start_date:
+                        print(f"    Skipping day {current_day_date} (Before start date)")
+                        continue
+                    if end_date and current_day_date > end_date:
+                        print(f"    Skipping day {current_day_date} (After end date)")
+                        continue
+                    print(f"    Processing Day: {current_day_date}")
+                else:
+                    print(f"    Processing Day (Date unknown): {full_d_text[:20]}...")
+
+                race_links_set = set()
                 all_anchors = soup_day.find_all('a')
                 for a in all_anchors:
                     href = a.get('href', '')
@@ -247,7 +275,7 @@ def scrape_jra_year(year_str, save_callback=None):
                         race_links_set.add(full_l)
 
                 sorted_race_links = sorted(list(race_links_set))
-                print(f"    Day {day_cname[:20]}... -> {len(sorted_race_links)} races.")
+                print(f"      -> {len(sorted_race_links)} races.")
                 
                 for r_link in sorted_race_links:
                     df = scrape_jra_race(r_link)
