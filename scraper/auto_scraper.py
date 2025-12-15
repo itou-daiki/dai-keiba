@@ -562,14 +562,14 @@ if __name__ == "__main__":
                 start_date = datetime.strptime(args.jra_date_start, "%Y-%m-%d").date()
             except ValueError:
                 print("Invalid start date format. Use YYYY-MM-DD")
-                return
+                sys.exit(1)
 
         if args.jra_date_end:
             try:
                 end_date = datetime.strptime(args.jra_date_end, "%Y-%m-%d").date()
             except ValueError:
                 print("Invalid end date format. Use YYYY-MM-DD")
-                return
+                sys.exit(1)
 
         # Define save callback to handle incremental saves
         def save_chunk(df_chunk):
