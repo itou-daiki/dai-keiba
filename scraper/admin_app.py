@@ -84,9 +84,8 @@ with col_btn_1:
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             cmd = [
                 sys.executable, "-u", "scraper/auto_scraper.py", 
-                "--jra_year", year,
-                "--jra_date_start", start_date_str,
-                "--jra_date_end", end_date_str
+                "--start", start_date_str,
+                "--end", end_date_str
             ]
             
             try:
