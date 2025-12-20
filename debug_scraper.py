@@ -38,6 +38,14 @@ if racedata2:
 print("Title:", soup.title.text)
 
 # Check existing scraper output
-# df = scrape_race_data(race_id)
-# if df is not None:
-#    print("Existing Columns:", df.columns.tolist())
+print("-" * 20)
+from scraper.auto_scraper import scrape_race_data
+
+df = scrape_race_data(race_id)
+if df is not None:
+   print("Scraped Columns:", df.columns.tolist())
+   target_cols = ["コースタイプ", "距離", "回り", "天候", "馬場状態"]
+   print("Target Cols Data:")
+   print(df[target_cols].iloc[0])
+else:
+   print("Scraper returned None")

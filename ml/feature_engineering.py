@@ -166,6 +166,74 @@ def process_data(df, lambda_decay=0.2):
          df['age'] = 3.0
     feature_cols.append('age')
     
+    # --- New Course Features ---
+    # Convert raw strings to numeric codes
+    
+    # 1. Course Type (course_type) -> 芝=1, ダ=2, 障=3
+    if 'コースタイプ' in df.columns:
+        def map_course(x):
+            if not isinstance(x, str): return 0
+            if '芝' in x: return 1
+            if 'ダ' in x: return 2
+            if '障' in x: return 3
+            return 0
+        df['course_type_code'] = df['コースタイプ'].apply(map_course)
+        feature_cols.append('course_type_code')
+    else:
+        df['course_type_code'] = 0
+        feature_cols.append('course_type_code')
+
+    # 2. Distance -> Numeric
+    if '距離' in df.columns:
+        df['distance_val'] = pd.to_numeric(df['距離'], errors='coerce').fillna(1600)
+        feature_cols.append('distance_val')
+    else:
+        df['distance_val'] = 1600
+        feature_cols.append('distance_val')
+
+    # 3. Rotation -> 右=1, 左=2, 直線=3, 他=0
+    if '回り' in df.columns:
+        def map_rot(x):
+            if not isinstance(x, str): return 0
+            if '右' in x: return 1
+            if '左' in x: return 2
+            if '直線' in x: return 3
+            return 0
+        df['rotation_code'] = df['回り'].apply(map_rot)
+        feature_cols.append('rotation_code')
+    else:
+        df['rotation_code'] = 0
+        feature_cols.append('rotation_code')
+
+    # 4. Weather (Current Race) -> 晴=1, 曇=2, 雨=3, 小雨=4, 雪=5
+    # Note: DB might have '天候' column
+    w_map = {'晴': 1, '曇': 2, '雨': 3, '小雨': 4, '雪': 5}
+    if '天候' in df.columns:
+         def map_weather_curr(val):
+            if not isinstance(val, str): return 2
+            for k, v in w_map.items():
+                if k in val: return v
+            return 2
+         df['weather_code'] = df['天候'].apply(map_weather_curr)
+         feature_cols.append('weather_code')
+    else:
+         df['weather_code'] = 2
+         feature_cols.append('weather_code')
+
+    # 5. Condition (Current Race) -> 良=1, 稍重=2, 重=3, 不良=4
+    c_map = {'良': 1, '稍重': 2, '重': 3, '不良': 4}
+    if '馬場状態' in df.columns:
+        def map_cond_curr(val):
+            if not isinstance(val, str): return 1
+            for k, v in c_map.items():
+                if k in val: return v
+            return 1
+        df['condition_code'] = df['馬場状態'].apply(map_cond_curr)
+        feature_cols.append('condition_code')
+    else:
+        df['condition_code'] = 1
+        feature_cols.append('condition_code')
+    
     # Meta cols
     meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
     # Add date string if not exists
