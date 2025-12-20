@@ -222,8 +222,12 @@ if race_id:
         
         evs = []
         for p, o, m in zip(probs, odds, marks):
-            w = mark_weights.get(m, 1.0)
-            ev = (p * w * o) - 1.0
+            # Penalize low probability (Safety filter)
+            if p < 0.08: # Ignore if AI chance is less than 8%
+                ev = -1.0
+            else:
+                w = mark_weights.get(m, 1.0)
+                ev = (p * w * o) - 1.0
             evs.append(ev)
             
         edited_df['期待値(EV)'] = evs
