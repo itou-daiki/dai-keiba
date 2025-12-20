@@ -71,6 +71,12 @@ if st.sidebar.button("📅 レース一覧を更新 (今後1週間)"):
         else:
             st.sidebar.error(f"エラー: {msg}")
 
+if st.sidebar.button("🧠 最新モデルを再読み込み"):
+    load_model.clear()
+    st.cache_resource.clear()
+    st.success("モデルを再読み込みしました！")
+
+
 schedule_data = load_schedule_data()
 race_id = None
 
@@ -128,7 +134,7 @@ if race_id:
                         meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
                         features = [c for c in X_df.columns if c not in meta_cols and c != 'target_top3']
                         # Ensure numeric
-                        X_pred = X_df[features].select_dtypes(include=['number'])
+                        X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
                         
                         probs = model.predict(X_pred)
                         
@@ -159,9 +165,9 @@ if race_id:
         if 'Odds' not in df_display.columns:
              # Try to get scraped odds if available
              if '単勝' in df_display.columns:
-                 df_display['Odds'] = pd.to_numeric(df_display['単勝'], errors='coerce').fillna(10.0)
+                 df_display['Odds'] = pd.to_numeric(df_display['単勝'], errors='coerce').fillna(0.0)
              else:
-                 df_display['Odds'] = 10.0
+                 df_display['Odds'] = 0.0
         
         display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds']
         # Map nice names
@@ -200,7 +206,7 @@ if race_id:
                 "予想印": st.column_config.SelectboxColumn(
                     "予想印",
                     options=["", "◎", "◯", "▲", "△", "✕"],
-                    required=True,
+                    required=False,
                 )
             },
             hide_index=True,
