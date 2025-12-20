@@ -48,9 +48,21 @@ def add_history_features(df):
     # DB columns: 日付,会場,レース番号,レース名,重賞,着 順,枠,馬 番,馬名,性齢,斤量,騎手,タイム,着差,人 気,単勝 オッズ,後3F,コーナー 通過順,厩舎,馬体重 (増減),race_id
     
     # Process raw cols first to be numeric
-    df['rank_num'] = pd.to_numeric(df['着 順'], errors='coerce')
-    df['last_3f_num'] = pd.to_numeric(df['後3F'], errors='coerce')
-    df['odds_num'] = pd.to_numeric(df['単勝 オッズ'], errors='coerce')
+    # Handle missing columns for prediction mode
+    if '着 順' in df.columns:
+        df['rank_num'] = pd.to_numeric(df['着 順'], errors='coerce')
+    else:
+        df['rank_num'] = np.nan
+
+    if '後3F' in df.columns:
+        df['last_3f_num'] = pd.to_numeric(df['後3F'], errors='coerce')
+    else:
+        df['last_3f_num'] = np.nan
+
+    if '単勝 オッズ' in df.columns:
+        df['odds_num'] = pd.to_numeric(df['単勝 オッズ'], errors='coerce')
+    else:
+        df['odds_num'] = np.nan
     
     # Run Style Process: "2-2-2" -> take first number? Or avg? 
     # Usually "1-1" is nige (1), "10-10" is oikomi (4). 
@@ -66,7 +78,10 @@ def add_history_features(df):
     # We will use existing columns directly
     
     # Process Time
-    df['time_seconds'] = df['タイム'].apply(parse_time)
+    if 'タイム' in df.columns:
+        df['time_seconds'] = df['タイム'].apply(parse_time)
+    else:
+        df['time_seconds'] = np.nan
     
     # Process Distance
     if '距離' in df.columns:
