@@ -286,7 +286,7 @@ if race_id:
                 fig_line.add_trace(go.Scatter(x=hist_df['Run'], y=hist_df['3Fタイム'], name="上り3F", mode='lines+markers', line=dict(dash='dot')), secondary_y=True)
                 
                 fig_line.update_layout(title="過去5走の推移 (着順 vs 3Fタイム)")
-                fig_line.update_yaxes(title_text="着順 (低い方が良い)", reversed=True, secondary_y=False)
+                fig_line.update_yaxes(title_text="着順 (低い方が良い)", autorange="reversed", secondary_y=False)
                 fig_line.update_yaxes(title_text="上り3Fタイム (秒)", secondary_y=True)
                 
             else:

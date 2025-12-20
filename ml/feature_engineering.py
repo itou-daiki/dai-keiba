@@ -107,9 +107,13 @@ def add_history_features(df):
 
     # Apply parse_weight_full
     # We need to zip results to two columns
-    weight_data = df['馬体重(増減)'].apply(parse_weight_full)
-    df['weight_num'] = weight_data.apply(lambda x: x[0])
-    df['weight_change_num'] = weight_data.apply(lambda x: x[1])
+    if '馬体重(増減)' in df.columns:
+        weight_data = df['馬体重(増減)'].apply(parse_weight_full)
+        df['weight_num'] = weight_data.apply(lambda x: x[0])
+        df['weight_change_num'] = weight_data.apply(lambda x: x[1])
+    else:
+        df['weight_num'] = np.nan
+        df['weight_change_num'] = 0.0 # Change unknown, assume 0
     df['weather_num'] = 2 
     # Pre-calculate Current Date for Interval
     # Already done at top
