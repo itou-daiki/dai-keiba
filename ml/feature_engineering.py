@@ -21,9 +21,15 @@ def add_history_features(df):
     """
     Groups by horse and sorts by date to add past N race features.
     """
-    # Ensure date is datetime
+    def parse_jp_date(s):
+        if not isinstance(s, str): return pd.NaT
+        try:
+            return pd.to_datetime(s, format='%Y年%m月%d日')
+        except:
+            return pd.to_datetime(s, errors='coerce')
+
     if '日付' in df.columns:
-        df['date_dt'] = pd.to_datetime(df['日付'], errors='coerce')
+        df['date_dt'] = df['日付'].apply(parse_jp_date)
     else:
         # If no date, can't sort properly
         return df
@@ -56,7 +62,8 @@ def add_history_features(df):
             return float(s.split('-')[0])
         except:
             return np.nan
-    df['run_style_num'] = df['コーナー通過順'].apply(get_run_pos)
+    # Remove shifting loop that overwrites data
+    # We will use existing columns directly
     
     # Process Time
     df['time_seconds'] = df['タイム'].apply(parse_time)
@@ -89,27 +96,77 @@ def add_history_features(df):
     df['weight_num'] = weight_data.apply(lambda x: x[0])
     df['weight_change_num'] = weight_data.apply(lambda x: x[1])
     df['weather_num'] = 2 
+    # Pre-calculate Current Date for Interval
+    # Already done at top
+    # df['date_dt'] = df['日付'].apply(parse_jp_date)
 
-    # Shift for past 1..5
-    # Shift for past 1..5
+    # Iterate 1..5 to process existing past columns
     for i in range(1, 6):
-        grouped = df.groupby('馬名')
-        df[f'past_{i}_rank'] = grouped['rank_num'].shift(i)
-        df[f'past_{i}_run_style'] = grouped['run_style_num'].shift(i)
-        df[f'past_{i}_last_3f'] = grouped['last_3f_num'].shift(i)
-        df[f'past_{i}_odds'] = grouped['odds_num'].shift(i)
-        df[f'past_{i}_weather'] = grouped['weather_num'].shift(i) # Dummy
+        # 1. Parse Date & Interval
+        p_date_col = f'past_{i}_date'
+        if p_date_col in df.columns:
+            # Past date seems to be '2025/11/08', standard format
+            p_dt = pd.to_datetime(df[p_date_col], errors='coerce')
+            df[f'past_{i}_interval'] = (df['date_dt'] - p_dt).dt.days
+        else:
+            df[f'past_{i}_interval'] = np.nan
+
+        # 2. Parse Rank (Handle '除', '中' etc by coercion)
+        p_rank_col = f'past_{i}_rank'
+        if p_rank_col in df.columns:
+             # Already likely strings, convert
+             df[f'past_{i}_rank'] = pd.to_numeric(df[p_rank_col], errors='coerce')
+
+        # 3. Parse Weight & Change
+        p_weight_col = f'past_{i}_horse_weight'
+        if p_weight_col in df.columns:
+            # Apply parse_weight_full
+            w_data = df[p_weight_col].apply(parse_weight_full)
+            # Tuple unpacking is tricky in one go if NaNs, so:
+            df[f'past_{i}_horse_weight'] = w_data.apply(lambda x: x[0])
+            df[f'past_{i}_weight_change'] = w_data.apply(lambda x: x[1])
+        else:
+            df[f'past_{i}_weight_change'] = np.nan
+
+        # 4. Parse Weather & Condition
+        # Maps defined inside/outside? Let's define maps.
+        w_map = {'晴': 1, '曇': 2, '雨': 3, '小雨': 4, '雪': 5}
+        c_map = {'良': 1, '稍重': 2, '重': 3, '不良': 4}
+
+        p_weather_col = f'past_{i}_weather'
+        if p_weather_col in df.columns:
+            def map_w(x):
+                if not isinstance(x, str): return 2
+                for k, v in w_map.items():
+                    if k in x: return v
+                return 2
+            df[f'past_{i}_weather'] = df[p_weather_col].apply(map_w)
         
-        df[f'past_{i}_horse_weight'] = grouped['weight_num'].shift(i)
-        df[f'past_{i}_weight_change'] = grouped['weight_change_num'].shift(i)
-        
-        # Time and Distance for Speed
-        df[f'past_{i}_time_seconds'] = grouped['time_seconds'].shift(i)
-        df[f'past_{i}_distance'] = grouped['distance_num'].shift(i)
-        
-        # Calculate Speed (m/s)
-        # Avoid division by zero
-        df[f'past_{i}_speed'] = df[f'past_{i}_distance'] / df[f'past_{i}_time_seconds']
+        p_cond_col = f'past_{i}_condition'
+        if p_cond_col in df.columns:
+             def map_c(x):
+                if not isinstance(x, str): return 1
+                for k, v in c_map.items():
+                    if k in x: return v
+                return 1
+             df[f'past_{i}_condition'] = df[p_cond_col].apply(map_c) # New feature likely needed in list
+
+        # 5. Speed?
+        # We DON'T have past distance easily.
+        # But we have `past_i_last_3f`.
+        # We'll rely on last_3f for speed-like metric.
+        # No change needed for last_3f if it's already numeric or simple string
+        p_3f_col = f'past_{i}_last_3f'
+        if p_3f_col in df.columns:
+             df[f'past_{i}_last_3f'] = pd.to_numeric(df[p_3f_col], errors='coerce')
+
+        # 6. Parse Time (Optional, useful if valid)
+        p_time_col = f'past_{i}_time'
+        if p_time_col in df.columns:
+             df[f'past_{i}_time_seconds'] = df[p_time_col].apply(parse_time)
+
+    # Clean up current weight change (calculated above)
+    # Already done: df['weight_change_num']
 
     return df
 
@@ -133,7 +190,9 @@ def process_data(df, lambda_decay=0.2):
     
     # Feature Columns to generate
     # Feature Columns to generate
-    features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather', 'weight_change', 'speed']
+    # Feature Columns to generate
+    # Added interval
+    features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather', 'weight_change', 'interval']
     
     # Pre-process columns (Fill NaNs)
     for i in range(1, 6):
@@ -144,10 +203,26 @@ def process_data(df, lambda_decay=0.2):
         else:
             df[col] = 18
             
-        # Run Style
+        # Run Style - parse from 'past_i_run_style'?
+        # The CSV has strings likely.
+        # Need numeric logic? If scrape raw is '10-10', extract first.
+        # Assuming simple parsing for 'run_style' was missed in step above.
+        # Let's simple parse here if needed or assume feature is cleaner.
+        # Actually `past_1_run_style` in CSV might be '12-10'.
+        # We need a quick parse for it in loop above? 
+        # For safety, let's treat it as numeric position if possible, or fill 10.
         col = f"past_{i}_run_style"
+        # We didn't parse it above! 
+        # Quick fix: standard simple parse
+        def quick_run_pos(x):
+            try:
+                if isinstance(x, (int, float)): return float(x)
+                if isinstance(x, str): return float(x.split('-')[0])
+                return 10.0
+            except: return 10.0
+            
         if col in df.columns:
-            df[col] = df[col].fillna(10) # Default mid-pack
+            df[col] = df[col].apply(quick_run_pos).fillna(10)
         else:
             df[col] = 10
 
@@ -179,13 +254,12 @@ def process_data(df, lambda_decay=0.2):
         else:
             df[col] = 0.0
             
-        # Speed
-        col = f"past_{i}_speed"
+        # Interval
+        col = f"past_{i}_interval"
         if col in df.columns:
-            # fill with average speed approx 16 m/s (1600m in 100s)
-            df[col] = df[col].fillna(16.0)
+            df[col] = df[col].fillna(180) # Default long interval if missing
         else:
-            df[col] = 16.0
+            df[col] = 180
 
         # Weather
         col = f"past_{i}_weather"
