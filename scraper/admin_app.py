@@ -12,8 +12,10 @@ import plotly.graph_objects as go
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ml'))
 try:
     import train_model
+    import feature_engineering
     import importlib
     importlib.reload(train_model)
+    importlib.reload(feature_engineering)
 except ImportError:
     st.error("Failed to import train_model. Make sure ml/train_model.py exists.")
 
@@ -193,59 +195,98 @@ with st.expander("ℹ️ MLflow (実験管理) の使い方"):
     (デフォルトポート: http://127.0.0.1:5000)
     """)
 
-tab_train, tab_tune, tab_upload = st.tabs(["🧠 モデル学習", "🧪 パラメータチューニング (Optuna)", "📤 リポジトリ更新"])
+tab_ml, tab_upload = st.tabs(["🧠 モデル学習 & チューニング", "📤 リポジトリ更新"])
 
-# --- Tab 1: Training ---
-with tab_train:
-    st.markdown("### モデル学習")
+# --- Tab 1: ML (Training & Tuning) ---
+with tab_ml:
+    st.markdown("### モデル学習の設定")
     
-    # Use best params if available
-    use_best_params = False
-    if 'best_params' in st.session_state:
-        st.success("✅ チューニングされた最適パラメータが利用可能です。")
-        use_best_params = st.checkbox("最適パラメータを使用して学習する", value=True)
-        if use_best_params:
-            st.json(st.session_state['best_params'])
+    col_conf_1, col_conf_2 = st.columns(2)
     
-    if st.button("🧠 モデルを学習する", type="primary"):
-        with st.spinner("学習中..."):
-            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            data_path = os.path.join(project_root, "ml", "processed_data.csv")
-            model_dir = os.path.join(project_root, "ml", "models")
-            os.makedirs(model_dir, exist_ok=True)
-            model_path = os.path.join(model_dir, "lgbm_model.pkl")
-            
-            params = st.session_state['best_params'] if use_best_params else None
-            
-            if not os.path.exists(data_path):
-                st.error(f"データが見つかりません: {data_path}")
+    with col_conf_1:
+        is_tuning = st.checkbox("ハイパーパラメータ自動チューニング (Optuna) を実行する", value=False)
+        
+        n_trials = 20
+        if is_tuning:
+            st.info("AIが最適な設定を探索してから学習を行います。")
+            n_trials = st.slider("試行回数", 5, 100, 20)
+        else:
+            if 'best_params' in st.session_state:
+                st.success("✅ 前回チューニングされた最適パラメータを使用して学習します。")
+                if st.checkbox("最適パラメータを破棄してデフォルトに戻す"):
+                    del st.session_state['best_params']
+                    st.rerun()
             else:
-                try:
-                    results = train_model.train_and_save_model(data_path, model_path, params=params)
-                    if results:
-                        st.success("学習完了！")
-                        st.session_state['ml_results'] = results
-                    else:
-                        st.error("学習に失敗しました（データ不足など）。")
-                except Exception as e:
-                    st.error(f"学習中にエラーが発生しました: {e}")
+                st.info("デフォルト設定で学習します。")
 
+    with col_conf_2:
+        st.markdown(f"""
+        **実行内容:**
+        1. データ前処理 (最新データの反映)
+        2. {'チューニング (最適化)' if is_tuning else '設定の確認'}
+        3. モデル学習 (LightGBM)
+        """)
+        
+        btn_label = "🧪 チューニング ＆ 学習開始" if is_tuning else "🧠 学習開始"
+        start_process = st.button(btn_label, type="primary")
+
+    if start_process:
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        data_path = os.path.join(project_root, "ml", "processed_data.csv")
+        db_path = os.path.join(project_root, "database.csv")
+        model_dir = os.path.join(project_root, "ml", "models")
+        os.makedirs(model_dir, exist_ok=True)
+        model_path = os.path.join(model_dir, "lgbm_model.pkl")
+
+        # 1. Preprocess
+        with st.spinner("1/3 データ前処理中..."):
+            if os.path.exists(db_path):
+               feature_engineering.calculate_features(db_path, data_path)
+            else:
+               st.error("database.csvが見つかりません。")
+               st.stop()
+        
+        # 2. Tuning (if selected)
+        if is_tuning:
+            with st.spinner(f"2/3 パラメータチューニング中 ({n_trials} trials)..."):
+                try:
+                    opt_res = train_model.optimize_hyperparameters(data_path, n_trials=n_trials)
+                    if opt_res:
+                        st.success(f"最適化完了！ Best AUC: {opt_res['best_auc']:.4f}")
+                        st.session_state['best_params'] = opt_res['best_params']
+                    else:
+                        st.error("最適化に失敗しました。デフォルト設定で学習を続行します。")
+                except Exception as e:
+                     st.error(f"最適化中にエラー: {e}")
+        
+        # 3. Training
+        step_label = "3/3" if is_tuning else "2/2"
+        with st.spinner(f"{step_label} モデル学習中..."):
+            params = st.session_state.get('best_params', None)
+            
+            try:
+                results = train_model.train_and_save_model(data_path, model_path, params=params)
+                if results:
+                    st.success("学習完了！")
+                    st.session_state['ml_results'] = results
+                else:
+                    st.error("学習に失敗しました。")
+            except Exception as e:
+                st.error(f"学習中にエラー: {e}")
+
+    # Display Results
     if 'ml_results' in st.session_state:
+        st.markdown("---")
         res = st.session_state['ml_results']
         
-        # Metrics
-        st.markdown("#### 学習結果")
+        st.markdown("#### 📊 学習結果レポート")
         m_col1, m_col2, m_col3 = st.columns(3)
         m_col1.metric("Accuracy", f"{res['accuracy']:.4f}")
         m_col2.metric("AUC", f"{res['auc']:.4f}")
         m_col3.metric("Positive Rate", f"{res['positive_rate']:.2%}")
         
-        # Plots
-        st.markdown("#### 詳細分析")
         p_col1, p_col2 = st.columns(2)
-        
         with p_col1:
-            # Learning Curve
             if 'evals_result' in res and res['evals_result']:
                 evals = res['evals_result']
                 if 'train' in evals and 'auc' in evals['train']:
@@ -255,20 +296,15 @@ with tab_train:
                         fig_lc.add_trace(go.Scatter(y=evals['valid']['auc'], mode='lines', name='Valid AUC'))
                     fig_lc.update_layout(title="学習曲線 (AUC)", xaxis_title="Rounds", yaxis_title="AUC")
                     st.plotly_chart(fig_lc, use_container_width=True)
-                else:
-                    st.info("学習履歴データがありません。")
             else:
-                st.info("学習履歴がありません。")
+                st.info("学習履歴なし")
 
         with p_col2:
-            # Feature Importance
             if 'feature_importance' in res:
                 fi = pd.DataFrame(res['feature_importance'])
                 if not fi.empty:
                     fig_fi = go.Figure(go.Bar(
-                        x=fi['Value'],
-                        y=fi['Feature'],
-                        orientation='h'
+                        x=fi['Value'], y=fi['Feature'], orientation='h'
                     ))
                     fig_fi.update_layout(
                         title="特徴量重要度 (Top 20)",
@@ -276,32 +312,10 @@ with tab_train:
                         xaxis_title="Importance (Gain)"
                     )
                     st.plotly_chart(fig_fi, use_container_width=True)
-                else:
-                    st.info("特徴量重要度がありません。")
+            else:
+                st.info("特徴量重要度なし")
 
-# --- Tab 2: Tuning ---
-with tab_tune:
-    st.markdown("### ハイパーパラメータの自動探索 (Optuna)")
-    st.info("AIが様々な設定を試して、精度(AUC)が最も高くなるパラメータを見つけます。")
-    
-    n_trials = st.slider("試行回数 (多いほど高精度ですが時間がかかります)", 5, 100, 20)
-    
-    if st.button("🧪 チューニングを開始する"):
-        with st.spinner(f"最適化中... {n_trials}回の試行を行います。"):
-            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            data_path = os.path.join(project_root, "ml", "processed_data.csv")
-            
-            try:
-                opt_res = train_model.optimize_hyperparameters(data_path, n_trials=n_trials)
-                if opt_res:
-                    st.success(f"最適化完了！ Best AUC: {opt_res['best_auc']:.4f}")
-                    st.session_state['best_params'] = opt_res['best_params']
-                    st.json(opt_res['best_params'])
-                    st.markdown("👉 **「モデル学習」タブに戻って、このパラメータで再学習してください。**")
-                else:
-                    st.error("最適化に失敗しました。")
-            except Exception as e:
-                st.error(f"最適化中にエラーが発生しました: {e}")
+
 
 # --- Tab 3: Upload ---
 with tab_upload:
