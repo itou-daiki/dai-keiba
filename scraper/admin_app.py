@@ -171,7 +171,7 @@ if os.path.exists(csv_path):
     try:
         df = pd.read_csv(csv_path)
         st.metric("総データ数 (行)", len(df))
-        st.dataframe(df.tail(20), use_container_width=True)
+        st.dataframe(use_container_width=True)
     except Exception as e:
         st.error(f"database.csv を読み込めませんでした: {e}")
 else:
