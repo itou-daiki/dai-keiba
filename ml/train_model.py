@@ -47,17 +47,20 @@ def train_and_save_model(data_path, model_path, params=None):
     train_data = lgb.Dataset(X_train, label=y_train)
     test_data = lgb.Dataset(X_test, label=y_test, reference=train_data)
     
-    # Default Params if None
-    if params is None:
-        params = {
-            'objective': 'binary',
-            'metric': 'auc',
-            'boosting_type': 'gbdt',
-            'num_leaves': 31,
-            'learning_rate': 0.05,
-            'feature_fraction': 0.9,
-            'verbose': -1
-        }
+    # Default Params
+    lgb_params = {
+        'objective': 'binary',
+        'metric': 'auc',
+        'boosting_type': 'gbdt',
+        'verbose': -1,
+        'feature_pre_filter': False,
+        'num_leaves': 31,
+        'learning_rate': 0.05,
+        'feature_fraction': 0.9,
+    }
+
+    if params:
+        lgb_params.update(params)
     
     evals_result = {}
     
@@ -66,11 +69,11 @@ def train_and_save_model(data_path, model_path, params=None):
     mlflow.set_experiment("keiba_prediction")
     
     with mlflow.start_run(run_name="manual_train_run"):
-        mlflow.log_params(params)
+        mlflow.log_params(lgb_params)
         
         print("Training LightGBM model...")
         bst = lgb.train(
-            params,
+            lgb_params,
             train_data,
             num_boost_round=100,
             valid_sets=[train_data, test_data],
