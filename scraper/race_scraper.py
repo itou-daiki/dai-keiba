@@ -69,7 +69,8 @@ class RaceScraper:
                 df = df.sort_values('date_obj', ascending=False)
                 
             # Take top N
-            df = df.head(n_samples)
+            if n_samples:
+                df = df.head(n_samples)
             
             # Process Run Style (Leg Type)
             if '通過' in df.columns:

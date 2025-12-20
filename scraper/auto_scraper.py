@@ -21,6 +21,7 @@ except ImportError:
 # Root directory (parent of scraper) -> database.csv
 CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
 TARGET_YEARS = [2024, 2025] # Expandable
+HORSE_HISTORY_CACHE = {} # Cache for horse history DataFrames
 
 # ==========================================
 # 1. レース詳細データを取得する関数
@@ -224,9 +225,20 @@ def scrape_race_data(race_id):
             for idx, row in df.iterrows():
                 hid = row.get('horse_id')
                 if hid and str(hid).isdigit():
-                    past_df = scraper.get_past_races(hid, n_samples=20) # Get more to filter by date
+                    # Use Cache to avoid repeated requests
+                    global HORSE_HISTORY_CACHE
+                    if hid in HORSE_HISTORY_CACHE:
+                        past_df = HORSE_HISTORY_CACHE[hid].copy()
+                    else:
+                        past_df = scraper.get_past_races(hid, n_samples=None) # Fetch ALL
+                        HORSE_HISTORY_CACHE[hid] = past_df
+                        past_df = past_df.copy()
+                        
+                    # past_df = scraper.get_past_races(hid, n_samples=20) # Old method
                     
                     if not past_df.empty:
+                    
+
                          # Filter: Date < current_race_date
                          if 'date' in past_df.columns: # Changed from date_obj or 日付
                             if 'date_obj' not in past_df.columns and 'date' in past_df.columns:
@@ -609,7 +621,15 @@ def scrape_shutuba_data(race_id):
         for idx, row in df.iterrows():
             hid = row.get('horse_id')
             if hid and str(hid).isdigit():
-                past_df = scraper.get_past_races(hid, n_samples=20)
+                # Use Cache
+                global HORSE_HISTORY_CACHE
+                if hid in HORSE_HISTORY_CACHE:
+                    past_df = HORSE_HISTORY_CACHE[hid].copy()
+                else:
+                    past_df = scraper.get_past_races(hid, n_samples=None)
+                    HORSE_HISTORY_CACHE[hid] = past_df
+                    past_df = past_df.copy()
+
                 if not past_df.empty:
                      if 'date' in past_df.columns:
                         if 'date_obj' not in past_df.columns:
