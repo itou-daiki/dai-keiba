@@ -77,6 +77,35 @@ def scrape_race_data(race_id):
         if len(dfs) > 0:
             df = dfs[0]
             df = df.replace(r'\n', '', regex=True)
+            
+            # Column Normalization
+            # Replace newlines in columns
+            df.columns = df.columns.astype(str).str.replace(r'\n', '', regex=True).str.replace(r'\s+', '', regex=True)
+            
+            # Map known columns to database.csv standard
+            # Expected DB: 着順, 枠, 馬番, 馬名, 性齢, 斤量, 騎手, タイム, 着差, 人気, 単勝オッズ, 後3F, ...
+            # Actual from read_html might be: 着順, 枠番, 馬番, 馬名, 性齢, 斤量, 騎手, タイム, 着差, 人気, 単勝, 後3F...
+            
+            rename_map = {
+                '枠番': '枠',
+                '枠': '枠',
+                '馬番': '馬 番', # DB has space? Check debug output or CSV header.
+                # CSV Header: 着 順,枠,馬 番,馬名,性齢,斤量,騎手,タイム,着差,人 気,単勝 オッズ,後3F
+                '馬名': '馬名',
+                '単勝': '単勝 オッズ',
+                '単勝オッズ': '単勝 オッズ',
+                '人気': '人 気',
+                '着順': '着 順',
+                '上り': '後3F'
+            }
+            df.rename(columns=rename_map, inplace=True)
+            
+            # Ensure Odds is numeric
+            if '単勝 オッズ' in df.columns:
+                 df['単勝 オッズ'] = pd.to_numeric(df['単勝 オッズ'], errors='coerce').fillna(0.0) 
+            
+            # Warning if mismatch
+            # print("Columns after rename:", df.columns)
 
             # 列追加
             df.insert(0, "日付", date_text)
