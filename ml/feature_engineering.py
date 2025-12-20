@@ -56,13 +56,41 @@ def add_history_features(df):
             return float(s.split('-')[0])
         except:
             return np.nan
-    df['run_style_num'] = df['コーナー 通過順'].apply(get_run_pos)
+    df['run_style_num'] = df['コーナー通過順'].apply(get_run_pos)
     
-    # Weather is difficult if not in DB. Let's assume 2 (Cloudy) or random if missing.
-    # Actually DB doesn't have weather. We can't generate past weather if we don't have it.
-    # We will skip weather lag or set to default.
+    # Process Time
+    df['time_seconds'] = df['タイム'].apply(parse_time)
+    
+    # Process Distance
+    if '距離' in df.columns:
+        df['distance_num'] = pd.to_numeric(df['距離'], errors='coerce')
+    else:
+        df['distance_num'] = np.nan
+        
+    # Process Weight and Weight Change
+    def parse_weight_full(val):
+        # Returns (weight, change)
+        if not isinstance(val, str):
+            return np.nan, np.nan
+        # Match '460(0)', '460(+2)', '460(-6)', '460'
+        match = re.search(r'(\d{3,4})\s*\(([-+]?\d+)\)', val)
+        if match:
+            return float(match.group(1)), float(match.group(2))
+        
+        # Match just number
+        match_num = re.search(r'(\d{3,4})', val)
+        if match_num:
+            return float(match_num.group(1)), 0.0 # Assume 0 change if not specified
+        return np.nan, np.nan
+
+    # Apply parse_weight_full
+    # We need to zip results to two columns
+    weight_data = df['馬体重(増減)'].apply(parse_weight_full)
+    df['weight_num'] = weight_data.apply(lambda x: x[0])
+    df['weight_change_num'] = weight_data.apply(lambda x: x[1])
     df['weather_num'] = 2 
 
+    # Shift for past 1..5
     # Shift for past 1..5
     for i in range(1, 6):
         grouped = df.groupby('馬名')
@@ -72,16 +100,16 @@ def add_history_features(df):
         df[f'past_{i}_odds'] = grouped['odds_num'].shift(i)
         df[f'past_{i}_weather'] = grouped['weather_num'].shift(i) # Dummy
         
-        # Weight needs string parsing again? Or use the raw string column and parse later?
-        # Let's parse weight first to numeric
-        def parse_weight(val):
-            if isinstance(val, (int, float)): return val
-            if not isinstance(val, str): return np.nan
-            match = re.search(r'(\d{3,4})', val)
-            return float(match.group(1)) if match else np.nan
-        
-        df['weight_num'] = df['馬体重 (増減)'].apply(parse_weight)
         df[f'past_{i}_horse_weight'] = grouped['weight_num'].shift(i)
+        df[f'past_{i}_weight_change'] = grouped['weight_change_num'].shift(i)
+        
+        # Time and Distance for Speed
+        df[f'past_{i}_time_seconds'] = grouped['time_seconds'].shift(i)
+        df[f'past_{i}_distance'] = grouped['distance_num'].shift(i)
+        
+        # Calculate Speed (m/s)
+        # Avoid division by zero
+        df[f'past_{i}_speed'] = df[f'past_{i}_distance'] / df[f'past_{i}_time_seconds']
 
     return df
 
@@ -104,7 +132,8 @@ def process_data(df, lambda_decay=0.2):
     norm_weights = [w / sum_weights for w in weights]
     
     # Feature Columns to generate
-    features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather']
+    # Feature Columns to generate
+    features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather', 'weight_change', 'speed']
     
     # Pre-process columns (Fill NaNs)
     for i in range(1, 6):
@@ -142,6 +171,21 @@ def process_data(df, lambda_decay=0.2):
             df[col] = df[col].fillna(100.0) 
         else:
             df[col] = 100.0
+
+        # Weight Change
+        col = f"past_{i}_weight_change"
+        if col in df.columns:
+            df[col] = df[col].fillna(0.0)
+        else:
+            df[col] = 0.0
+            
+        # Speed
+        col = f"past_{i}_speed"
+        if col in df.columns:
+            # fill with average speed approx 16 m/s (1600m in 100s)
+            df[col] = df[col].fillna(16.0)
+        else:
+            df[col] = 16.0
 
         # Weather
         col = f"past_{i}_weather"
