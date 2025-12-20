@@ -293,8 +293,228 @@ def process_data(df, lambda_decay=0.2):
         for i in range(1, 6):
             df[f'weighted_avg_{feat}'] += df[f"past_{i}_{feat}"] * norm_weights[i-1]
 
+    # ========== 新規特徴量: コース・馬場適性 ==========
+
+    # 1. 芝適性（芝での平均着順）
+    df['turf_compatibility'] = 0.0
+    df['dirt_compatibility'] = 0.0
+    df['turf_count'] = 0
+    df['dirt_count'] = 0
+
+    for i in range(1, 6):
+        # past_i_race_nameから芝/ダートを判定（簡易版）
+        race_name_col = f'past_{i}_race_name'
+        rank_col = f'past_{i}_rank'
+
+        if race_name_col in df.columns and rank_col in df.columns:
+            # 芝レースの判定（レース名に距離が含まれるパターン: 芝1600など）
+            is_turf = df[race_name_col].astype(str).str.contains('芝', na=False)
+            is_dirt = df[race_name_col].astype(str).str.contains('ダ', na=False)
+
+            # 芝での成績集計
+            df.loc[is_turf, 'turf_compatibility'] += df.loc[is_turf, rank_col]
+            df.loc[is_turf, 'turf_count'] += 1
+
+            # ダートでの成績集計
+            df.loc[is_dirt, 'dirt_compatibility'] += df.loc[is_dirt, rank_col]
+            df.loc[is_dirt, 'dirt_count'] += 1
+
+    # 平均化（0除算回避）
+    df['turf_compatibility'] = df.apply(
+        lambda x: x['turf_compatibility'] / x['turf_count'] if x['turf_count'] > 0 else 10.0, axis=1
+    )
+    df['dirt_compatibility'] = df.apply(
+        lambda x: x['dirt_compatibility'] / x['dirt_count'] if x['dirt_count'] > 0 else 10.0, axis=1
+    )
+
+    # 2. 馬場状態適性（良/稍重/重/不良での平均着順）
+    df['good_condition_avg'] = 0.0
+    df['heavy_condition_avg'] = 0.0
+    df['good_count'] = 0
+    df['heavy_count'] = 0
+
+    for i in range(1, 6):
+        cond_col = f'past_{i}_condition'
+        rank_col = f'past_{i}_rank'
+
+        if cond_col in df.columns and rank_col in df.columns:
+            # 良馬場（1）
+            is_good = df[cond_col] == 1
+            df.loc[is_good, 'good_condition_avg'] += df.loc[is_good, rank_col]
+            df.loc[is_good, 'good_count'] += 1
+
+            # 重馬場（3以上: 重/不良）
+            is_heavy = df[cond_col] >= 3
+            df.loc[is_heavy, 'heavy_condition_avg'] += df.loc[is_heavy, rank_col]
+            df.loc[is_heavy, 'heavy_count'] += 1
+
+    # 平均化
+    df['good_condition_avg'] = df.apply(
+        lambda x: x['good_condition_avg'] / x['good_count'] if x['good_count'] > 0 else 10.0, axis=1
+    )
+    df['heavy_condition_avg'] = df.apply(
+        lambda x: x['heavy_condition_avg'] / x['heavy_count'] if x['heavy_count'] > 0 else 10.0, axis=1
+    )
+
+    # 3. 距離適性（現在のレース距離との近さで判定）
+    # 現在の距離に±200m以内の過去レースでの平均着順
+    df['distance_compatibility'] = 10.0  # デフォルト
+
+    if '距離' in df.columns:
+        current_distance = pd.to_numeric(df['距離'], errors='coerce').fillna(1600)
+
+        distance_sum = 0.0
+        distance_count = 0
+
+        for i in range(1, 6):
+            rank_col = f'past_{i}_rank'
+            race_name_col = f'past_{i}_race_name'
+
+            if race_name_col in df.columns and rank_col in df.columns:
+                # レース名から距離を抽出（例: "芝1600" -> 1600）
+                def extract_distance(name):
+                    if not isinstance(name, str):
+                        return np.nan
+                    match = re.search(r'(\d{3,4})m?', name)
+                    if match:
+                        return float(match.group(1))
+                    return np.nan
+
+                past_distance = df[race_name_col].apply(extract_distance)
+
+                # ±200m以内のレース
+                for idx in df.index:
+                    if pd.notna(past_distance[idx]) and pd.notna(current_distance[idx]):
+                        if abs(past_distance[idx] - current_distance[idx]) <= 200:
+                            distance_sum += df.loc[idx, rank_col]
+                            distance_count += 1
+
+        if distance_count > 0:
+            df['distance_compatibility'] = distance_sum / distance_count
+
+    # ========== 新規特徴量: レース間隔関連 ==========
+
+    # 4. 休養明けフラグ（最小レース間隔が90日以上）
+    df['is_rest_comeback'] = 0
+
+    min_interval_cols = [f'past_{i}_interval' for i in range(1, 6) if f'past_{i}_interval' in df.columns]
+    if min_interval_cols:
+        min_interval = df[min_interval_cols].min(axis=1)
+        df['is_rest_comeback'] = (min_interval >= 90).astype(int)
+
+    # 5. レース間隔カテゴリ（直近レースからの間隔）
+    # 1: 2週以内, 2: 1ヶ月以内, 3: 2ヶ月以内, 4: 3ヶ月以上
+    df['interval_category'] = 2  # デフォルト
+
+    if 'past_1_interval' in df.columns:
+        df['interval_category'] = df['past_1_interval'].apply(
+            lambda x: 1 if x <= 14 else (2 if x <= 30 else (3 if x <= 60 else 4))
+        )
+
+    # 6. 連闘フラグ（2週間以内の連続出走）
+    df['is_consecutive'] = 0
+    if 'past_1_interval' in df.columns:
+        df['is_consecutive'] = (df['past_1_interval'] <= 14).astype(int)
+
+    # ========== 新規特徴量: 騎手との相性 ==========
+
+    # 7. 現在の騎手との過去成績（過去5走で同じ騎手の時の平均着順）
+    df['jockey_compatibility'] = 10.0  # デフォルト
+
+    if '騎手' in df.columns:
+        current_jockey = df['騎手'].astype(str)
+
+        jockey_rank_sum = 0.0
+        jockey_count = 0
+
+        for i in range(1, 6):
+            past_jockey_col = f'past_{i}_jockey'
+            rank_col = f'past_{i}_rank'
+
+            if past_jockey_col in df.columns and rank_col in df.columns:
+                # 同じ騎手の過去走
+                same_jockey = df[past_jockey_col].astype(str) == current_jockey
+
+                for idx in df.index:
+                    if same_jockey[idx]:
+                        jockey_rank_sum += df.loc[idx, rank_col]
+                        jockey_count += 1
+
+        if jockey_count > 0:
+            df['jockey_compatibility'] = jockey_rank_sum / jockey_count
+
+    # ========== 新規特徴量: レースクラス・条件 ==========
+
+    # 8. レースクラスコード（新馬/未勝利/1勝/2勝/3勝/オープン/G3/G2/G1）
+    df['race_class'] = 0  # デフォルト
+
+    if 'レース名' in df.columns:
+        def classify_race(name):
+            if not isinstance(name, str):
+                return 0
+            name = str(name)
+            if 'G1' in name or 'ＧⅠ' in name:
+                return 9
+            elif 'G2' in name or 'ＧⅡ' in name:
+                return 8
+            elif 'G3' in name or 'ＧⅢ' in name:
+                return 7
+            elif 'オープン' in name or 'OP' in name:
+                return 6
+            elif '3勝' in name:
+                return 5
+            elif '2勝' in name:
+                return 4
+            elif '1勝' in name:
+                return 3
+            elif '未勝利' in name:
+                return 2
+            elif '新馬' in name:
+                return 1
+            return 0
+
+        df['race_class'] = df['レース名'].apply(classify_race)
+
+    # 9. 重賞フラグ
+    df['is_graded'] = 0
+    if '重賞' in df.columns:
+        df['is_graded'] = df['重賞'].notna().astype(int)
+
+    # 10. 年齢制限（2歳限定/3歳限定/3歳以上など）
+    df['age_limit'] = 0  # 0: 制限なし, 2: 2歳限定, 3: 3歳限定, 4: 3歳以上
+
+    if 'レース名' in df.columns:
+        def extract_age_limit(name):
+            if not isinstance(name, str):
+                return 0
+            if '2歳' in name:
+                return 2
+            elif '3歳' in name:
+                if '以上' in name or '上' in name:
+                    return 4
+                return 3
+            return 0
+
+        df['age_limit'] = df['レース名'].apply(extract_age_limit)
+
+    # 新規特徴量をリストに追加
+    new_features = [
+        'turf_compatibility',
+        'dirt_compatibility',
+        'good_condition_avg',
+        'heavy_condition_avg',
+        'distance_compatibility',
+        'is_rest_comeback',
+        'interval_category',
+        'is_consecutive',
+        'jockey_compatibility',
+        'race_class',
+        'is_graded',
+        'age_limit'
+    ]
+
     # Features to save
-    feature_cols = [f'weighted_avg_{f}' for f in features]
+    feature_cols = [f'weighted_avg_{f}' for f in features] + new_features
     
     # Add scalar features (Age)
     if '性齢' in df.columns:
