@@ -389,95 +389,164 @@ def scrape_todays_schedule():
 def scrape_odds_for_race(race_id):
     """
     Fetches odds for a specific race_id.
-    Tries API first, then falls back to Main Odds page (Predicted Odds).
+    Tries API first, then falls back to Main Odds page.
     Returns list of {number, odds}
     """
     horses = []
-    headers = { "User-Agent": "Mozilla/5.0" }
+    headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" }
     
-    # 1. Try API (odds_get_form.html) - Good for real-time official odds
+    print(f"  Scraping odds for {race_id}...")
+    
+    # 1. Try API (odds_get_form.html)
     try:
         url = f"https://race.netkeiba.com/odds/odds_get_form.html?type=b1&race_id={race_id}"
         response = requests.get(url, headers=headers, timeout=10)
         response.encoding = response.apparent_encoding
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        rows = soup.select('#odds_tan_block .RaceOdds_HorseList_Table tbody tr')
+        # Selectors for API
+        # Usually #odds_tan_block exists.
+        tan_block = soup.select_one('#odds_tan_block')
+        rows = []
+        if tan_block:
+             rows = tan_block.select('.RaceOdds_HorseList_Table tbody tr')
         if not rows:
              rows = soup.select('.RaceOdds_HorseList_Table tbody tr')
         
+        # If API returned rows, parse
+        temp_horses = []
         for row in rows:
-            if 'RaceOdds_HorseList_Table' in str(row.find_parent('table')):
-                num_elem = row.select_one('td:nth-child(2)')
-                odds_elem = row.select_one('td:nth-child(6)')
-            else:
-                num_elem = row.select_one('.Umaban') or row.select_one('td:nth-child(2)')
-                odds_elem = row.select_one('.Odds_Tan') or row.select_one('td:nth-child(14)')
+            # Check for Umaban and Odds
+            # Header often has th.
+            if row.find('th'): continue
             
-            if num_elem and odds_elem:
+            # Waku, Umaban, Mark, ... Name, Odds
+            # Umaban is usually 2nd cell (td:nth-child(2))
+            # Odds is usually 6th cell (td:nth-child(6))
+            
+            # Try finding by class if possible
+            umaban_elem = row.select_one('.Umaban') or row.select_one('td:nth-child(2)')
+            odds_elem = row.select_one('.Odds') or row.select_one('td:nth-child(6)') # API uses td:nth-child(6) for odds usually? No class .Odds?
+            
+            # Use 'id' attribute logic if available? e.g. "td_odds_1"
+            # Actually API often returns simpler table.
+            
+            if umaban_elem and odds_elem:
                 try:
-                    num_txt = num_elem.text.strip()
-                    if not num_txt.isdigit(): continue
-                    num = int(num_txt)
+                    u_txt = umaban_elem.text.strip()
+                    if not u_txt.isdigit(): continue
+                    num = int(u_txt)
                     
-                    odds_txt = odds_elem.text.strip()
-                    if '---' in odds_txt: odds = 0.0
-                    else: odds = float(odds_txt)
-                        
-                    horses.append({"number": num, "odds": odds})
+                    o_txt = odds_elem.text.strip()
+                    if '---' in o_txt or not o_txt: 
+                        odds = 0.0
+                    else:
+                        odds = float(o_txt)
+                    
+                    temp_horses.append({"number": num, "odds": odds})
                 except: continue
-    except Exception as e:
-        print(f"Error scraping API odds for {race_id}: {e}")
+        
+        # Check if valid
+        if temp_horses and any(h['odds'] > 0 for h in temp_horses):
+            print(f"  Got {len(temp_horses)} odds via API.")
+            return temp_horses
+        else:
+            if temp_horses:
+                 print("  API returned odds but all were 0.0 (or ---).")
+            else:
+                 print("  API returned no rows.")
 
-    # 2. Check if we got valid odds (at least one non-zero)
-    has_valid_odds = any(h['odds'] > 0 for h in horses)
-    
-    if not has_valid_odds:
-        # Fallback to Main Page (index.html) - Good for Predicted Odds / Early Odds
-        print(f"  No official odds found via API. Trying Main Odds page for {race_id}...")
-        try:
-            url_main = f"https://race.netkeiba.com/odds/index.html?race_id={race_id}"
-            response = requests.get(url_main, headers=headers, timeout=10)
-            response.encoding = 'EUC-JP' # Netkeiba is usually EUC-JP
-            soup = BeautifulSoup(response.text, 'html.parser')
+    except Exception as e:
+        print(f"  API Odds Error: {e}")
+
+    # 2. Fallback Main Page
+    try:
+        url_main = f"https://race.netkeiba.com/odds/index.html?race_id={race_id}"
+        response = requests.get(url_main, headers=headers, timeout=10)
+        response.encoding = 'EUC-JP' 
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Try finding the "Tanfuku" table (Umaban order) first, then "Ninki" (Rank order)
+        # Usually Tanfuku is active by default? 
+        # Tables with class 'RaceOdds_HorseList_Table'
+        
+        tables = soup.select('table.RaceOdds_HorseList_Table')
+        target_table = None
+        
+        # Heuristic: Look for table with "馬番" in header
+        for t in tables:
+            if "馬番" in t.text and "単勝" in t.text:
+                target_table = t
+                break
+        
+        # If not found, try #Ninki
+        if not target_table:
+             target_table = soup.select_one('table#Ninki')
+             
+        if not target_table:
+             print("  No odds table found on Main Page.")
+             return []
+             
+        rows = target_table.find_all('tr')
+        horses = []
+        for row in rows:
+            if row.find('th'): continue
+            cols = row.find_all('td')
+            if not cols: continue
             
-            # Target #Ninki table (Popularity order)
-            # Row structure: Rank | Waku | Umaban | Horse ... | Odds
-            # But Selector check says Umaban is nth-child(3)
-            table = soup.select_one('table#Ninki')
-            if table:
-                rows = table.find_all('tr')
-                # Reset horses list as we are re-fetching
-                horses = []
+            num = None
+            odds = 0.0
+            
+            # Strategy: look for digit column around index 1-3
+            # And odds column with '.' around index 5-end
+            
+            # Try classes first
+            u_el = row.select_one('.Umaban')
+            o_el = row.select_one('.Odds') or row.select_one('.Tan_Odds')
+            
+            if u_el and o_el:
+                 try:
+                     num = int(u_el.text.strip())
+                     ot = o_el.text.strip()
+                     if '---' not in ot and ot:
+                         odds = float(ot)
+                 except: pass
+            
+            # If classes failed, try positional
+            if num is None and len(cols) >= 5:
+                # Guess index. 
+                # If #Ninki: 2=Umaban
+                # If Tanfuku: 1=Umaban? 
+                # Let's check text
+                try:
+                    # Clean text
+                    texts = [c.text.strip() for c in cols]
+                    # Find Umaban (1-18)
+                    for i in [1, 2, 0]: # Priority check
+                         if i < len(texts) and texts[i].isdigit() and 1 <= int(texts[i]) <= 18:
+                             num = int(texts[i])
+                             break
+                    
+                    # Find Odds (float)
+                    # Search from specific index
+                    if num is not None:
+                        # Look for odds in later columns
+                        # Odds often has "."
+                        for i in range(len(texts)-1, 2, -1): # Search backwards
+                            if re.match(r'^\d+\.\d+$', texts[i]):
+                                odds = float(texts[i])
+                                break
+                except: pass
+            
+            if num is not None:
+                horses.append({"number": num, "odds": odds})
                 
-                for row in rows:
-                    # Skip header (usually th)
-                    if row.find('th'): continue
-                    
-                    cols = row.find_all('td')
-                    if len(cols) < 5: continue
-                    
-                    # Umaban is usually 3rd col (index 2)
-                    # Odds is usually in class 'Odds' or 'Tan_Odds'
-                    try:
-                        num_txt = cols[2].text.strip() # Umaban
-                        if not num_txt.isdigit(): continue
-                        num = int(num_txt)
-                        
-                        odds_elem = row.select_one('.Odds') or row.select_one('.Tan_Odds')
-                        if odds_elem:
-                            odds_txt = odds_elem.text.strip()
-                            if '---' in odds_txt: odds = 0.0
-                            else: odds = float(odds_txt)
-                        else:
-                            odds = 0.0
-                            
-                        horses.append({"number": num, "odds": odds})
-                    except: continue
-        except Exception as e:
-            print(f"Error scraping Main odds for {race_id}: {e}")
-            
-    return horses
+        print(f"  Got {len(horses)} odds via Main Page.")
+        return horses
+
+    except Exception as e:
+        print(f"  Main Odds Error: {e}")
+        return []
 
     return horses
 
