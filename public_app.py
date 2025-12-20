@@ -176,7 +176,7 @@ if race_id:
         edited_df.rename(columns=rename_map, inplace=True)
         
         # Add Mark column
-        edited_df['予想印'] = " "
+        edited_df['予想印'] = ""
         
         st.subheader("📝 予想・オッズ入力")
         st.info("「予想印」や「現在オッズ」を編集すると、リアルタイムで期待値(EV)が計算されます。")
@@ -199,7 +199,7 @@ if race_id:
                 ),
                 "予想印": st.column_config.SelectboxColumn(
                     "予想印",
-                    options=[" ", "◎", "◯", "▲", "△", "✕"],
+                    options=["", "◎", "◯", "▲", "△", "✕"],
                     required=True,
                 )
             },
@@ -208,7 +208,7 @@ if race_id:
         )
         
         # Calculate EV
-        mark_weights = {"◎": 1.5, "◯": 1.2, "▲": 1.1, "△": 1.05, "✕": 0.0, " ": 1.0}
+        mark_weights = {"◎": 1.5, "◯": 1.2, "▲": 1.1, "△": 1.05, "✕": 0.0, "": 1.0}
         
         probs = edited_df['AIスコア(%)'] / 100.0
         odds = edited_df['現在オッズ']
