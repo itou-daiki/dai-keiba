@@ -144,6 +144,7 @@ def optimize_hyperparameters(data_path, n_trials=10):
             'metric': 'auc',
             'boosting_type': 'gbdt',
             'verbose': -1,
+            'feature_pre_filter': False,
             'num_leaves': trial.suggest_int('num_leaves', 20, 100),
             'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.2, log=True),
             'feature_fraction': trial.suggest_float('feature_fraction', 0.5, 1.0),

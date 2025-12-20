@@ -8,9 +8,12 @@ import time
 import plotly.graph_objects as go
 
 # Add ml to path
+# Add ml to path
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ml'))
 try:
     import train_model
+    import importlib
+    importlib.reload(train_model)
 except ImportError:
     st.error("Failed to import train_model. Make sure ml/train_model.py exists.")
 
