@@ -15,16 +15,29 @@ from scraper.auto_scraper import scrape_race_data
 race_id = "202507020109"
 
 print(f"Scraping {race_id}...")
-df = scrape_race_data(race_id)
+import requests
+from bs4 import BeautifulSoup
 
-if df is not None:
-    print("Columns:", df.columns.tolist())
-    # Check Odds column
-    possible_cols = [c for c in df.columns if '単勝' in c or 'Odds' in c]
-    print("Odds Columns:", possible_cols)
-    if possible_cols:
-        print(df[possible_cols + ['馬名']].head())
-    else:
-        print("No Odds column found.")
-else:
-    print("Failed to scrape.")
+url = f"https://race.netkeiba.com/race/result.html?race_id={race_id}"
+headers = {"User-Agent": "Mozilla/5.0"}
+res = requests.get(url, headers=headers)
+res.encoding = res.apparent_encoding
+soup = BeautifulSoup(res.text, 'html.parser')
+
+# Inspect Race Data
+racedata = soup.select_one(".RaceData01")
+if racedata:
+    print("RaceData01:", racedata.text.strip())
+    # Often looks like: "15:35発走 / 芝2000m (右) / 天候:晴 / 馬場:良"
+
+racedata2 = soup.select_one(".RaceData02")
+if racedata2:
+     print("RaceData02:", racedata2.text.strip())
+
+# Check Title
+print("Title:", soup.title.text)
+
+# Check existing scraper output
+# df = scrape_race_data(race_id)
+# if df is not None:
+#    print("Existing Columns:", df.columns.tolist())

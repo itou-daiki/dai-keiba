@@ -72,6 +72,41 @@ def scrape_race_data(race_id):
         elif soup.select_one(".Icon_GradeType2"): grade_text = "G2"
         elif soup.select_one(".Icon_GradeType3"): grade_text = "G3"
 
+        # --- コース情報抽出 (RaceData01) ---
+        # Format: "14:15発走 / ダ1200m (左) / 天候:小雨 / 馬場:良"
+        surface_type = ""
+        distance = ""
+        rotation = ""
+        weather = ""
+        condition = ""
+
+        racedata1 = soup.select_one(".RaceData01")
+        if racedata1:
+            raw_text = racedata1.text.replace("\n", "").strip()
+            
+            # Surface & Distance & Rotation
+            # Matches: 芝1600m or 芝2000m (右) or ダ1200m (左)
+            # Regex: (芝|ダ|障)(\d+)m(?:\s*\((.*?)\))?
+            
+            match_course = re.search(r'(芝|ダ|障)(\d+)m(?:\s*\((.*?)\))?', raw_text)
+            if match_course:
+                surface_type = match_course.group(1) # 芝/ダ
+                distance = match_course.group(2)     # 2000
+                rotation = match_course.group(3) if match_course.group(3) else "直線" if "直線" in raw_text else ""
+            
+            # Weather
+            match_weather = re.search(r'天候:(\S+)', raw_text)
+            if match_weather:
+                weather = match_weather.group(1)
+            
+            # Condition
+            match_cond = re.search(r'馬場:(\S+)', raw_text)
+            if match_cond:
+                condition = match_cond.group(1)
+
+            # Debug check
+            # print(f"Parsed: {surface_type} {distance}m {rotation} En:{weather} Cond:{condition}")
+
         # --- データフレーム化 ---
         dfs = pd.read_html(io.StringIO(str(target_table)))
         if len(dfs) > 0:
@@ -113,6 +148,11 @@ def scrape_race_data(race_id):
             df.insert(2, "レース番号", race_num_text)
             df.insert(3, "レース名", race_name_text)
             df.insert(4, "重賞", grade_text)
+            df.insert(5, "コースタイプ", surface_type)
+            df.insert(6, "距離", distance)
+            df.insert(7, "回り", rotation)
+            df.insert(8, "天候", weather)
+            df.insert(9, "馬場状態", condition)
             df["race_id"] = race_id # IDも保存 (末尾に追加されることが多いが明示的に)
             
             # 不要な列が含まれることがあるので整理しても良いが、
