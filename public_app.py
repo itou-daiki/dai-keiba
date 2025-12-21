@@ -164,11 +164,25 @@ if race_id:
         else:
             with st.spinner("出馬表を取得し、AI予測を実行中..."):
                 # Scrape Shutuba
+                with st.expander("🔍 デバッグ情報 (ファイル確認)"):
+                    st.write(f"Current Dir: {os.getcwd()}")
+                    st.write(f"Files in root: {os.listdir('.')}")
+                    db_exists = os.path.exists("database.csv")
+                    db_nar_exists = os.path.exists("database_nar.csv")
+                    st.write(f"database.csv Exists: {db_exists}")
+                    st.write(f"database_nar.csv Exists: {db_nar_exists}")
+                    st.write(f"Model Path: {os.path.join(os.path.dirname(__file__), 'ml/models/lgbm_model_nar.pkl')}")
+
                 df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
             
             if df is not None and not df.empty:
                 # 2. FE (use_venue_features=False to match existing model trained with 27 features)
                 X_df = process_data(df, use_venue_features=False)
+                
+                with st.expander("🔍 デバッグ情報 (特徴量)"):
+                    st.write("Prediction Features (Top 5 rows):")
+                    st.dataframe(X_df.head())
+                    st.write("Columns:", list(X_df.columns))
                 
                 # 3. Predict
                 if model:
