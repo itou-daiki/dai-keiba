@@ -211,8 +211,8 @@ def scrape_race_data(race_id):
             
             past_columns = []
             # Prepare new columns
-            # Added: last_3f, horse_weight, jockey, weight_carried, condition, odds, weather
-            p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather']
+            # Added: last_3f, horse_weight, jockey, weight_carried, condition, odds, weather, distance, course_type
+            p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather', 'distance', 'course_type']
             
             for i in range(1, 6):
                 for f in p_fields:
@@ -264,8 +264,9 @@ def scrape_race_data(race_id):
                              df.at[idx, f"past_{n}_horse_weight"] = p_row.get('horse_weight')
                              df.at[idx, f"past_{n}_jockey"] = p_row.get('jockey')
                              df.at[idx, f"past_{n}_condition"] = p_row.get('condition')
-                             df.at[idx, f"past_{n}_odds"] = p_row.get('odds')
                              df.at[idx, f"past_{n}_weather"] = p_row.get('weather')
+                             df.at[idx, f"past_{n}_distance"] = p_row.get('distance')
+                             df.at[idx, f"past_{n}_course_type"] = p_row.get('course_type')
             
             return df
         else:
@@ -675,10 +676,9 @@ def scrape_shutuba_data(race_id):
             df['単勝'] = 0.0
             df['Odds'] = 0.0
 
-        # Enrich
         print(f"  Enriching {len(df)} horses with past data...")
         past_columns = []
-        p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather']
+        p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather', 'distance', 'course_type']
         
         for i in range(1, 6):
              for f in p_fields:
@@ -722,8 +722,9 @@ def scrape_shutuba_data(race_id):
                          df.at[idx, f"past_{n}_horse_weight"] = p_row.get('horse_weight')
                          df.at[idx, f"past_{n}_jockey"] = p_row.get('jockey')
                          df.at[idx, f"past_{n}_condition"] = p_row.get('condition')
-                         df.at[idx, f"past_{n}_odds"] = p_row.get('odds')
                          df.at[idx, f"past_{n}_weather"] = p_row.get('weather')
+                         df.at[idx, f"past_{n}_distance"] = p_row.get('distance')
+                         df.at[idx, f"past_{n}_course_type"] = p_row.get('course_type')
         
         return df
         

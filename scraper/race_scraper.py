@@ -93,19 +93,45 @@ class RaceScraper:
                 '馬番': 'umaban',
                 '騎手': 'jockey',
                 '斤量': 'weight_carried',
-                '馬場': 'condition', # 芝/ダート + 良/重
+                '馬場': 'condition', # 良/重/稍重 etc.
                 'タイム': 'time',
                 '着差': 'margin',
                 '上り': 'last_3f',
                 '通過': 'passing',
                 '馬体重': 'horse_weight',
                 'run_style_val': 'run_style',
-                '単勝': 'odds'
+                '単勝': 'odds',
+                '距離': 'raw_distance' # e.g. "芝1600"
             }
             
             # Rename available columns
             df.rename(columns=column_map, inplace=True)
             
+            # Extract Surface and Distance from 'raw_distance'
+            if 'raw_distance' in df.columns:
+                def parse_dist(x):
+                    if not isinstance(x, str): return None, None
+                    # "芝1600", "ダ1200", "障3000"
+                    # Sometimes "芝1600" or just "1600"
+                    surf = None
+                    dist = None
+                    if '芝' in x: surf = '芝'
+                    elif 'ダ' in x: surf = 'ダ'
+                    elif '障' in x: surf = '障'
+                    
+                    # Extract number
+                    match = re.search(r'(\d+)', x)
+                    if match:
+                        dist = int(match.group(1))
+                    return surf, dist
+
+                parsed = df['raw_distance'].apply(parse_dist)
+                df['course_type'] = parsed.apply(lambda x: x[0])
+                df['distance'] = parsed.apply(lambda x: x[1])
+            else:
+                df['course_type'] = None
+                df['distance'] = None
+
             # Coerce numeric
             if 'rank' in df.columns:
                 df['rank'] = pd.to_numeric(df['rank'], errors='coerce')
@@ -114,7 +140,7 @@ class RaceScraper:
                  df['odds'] = pd.to_numeric(df['odds'], errors='coerce')
             
             # Fill missing
-            for target_col in column_map.values():
+            for target_col in list(column_map.values()) + ['course_type', 'distance']:
                 if target_col not in df.columns:
                     df[target_col] = None
                 
