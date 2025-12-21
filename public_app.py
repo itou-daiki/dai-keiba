@@ -148,9 +148,9 @@ if race_id:
         elif not model:
              st.error(f"モデル ({mode_val}) が読み込めませんでした。管理画面で学習を実行するか、モデルファイルを確認してください。")
         else:
-             with st.spinner("出馬表を取得し、AI予測を実行中..."):
-                 # Scrape Shutuba
-                 df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
+            with st.spinner("出馬表を取得し、AI予測を実行中..."):
+                # Scrape Shutuba
+                df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
             
             if df is not None and not df.empty:
                 # 2. FE
@@ -288,14 +288,16 @@ if race_id:
                                  except:
                                      return row.get('Odds', 0.0)
                                  
-                         target_df['Odds'] = target_df.apply(update_odds, axis=1)
-                         target_df['単勝'] = target_df['Odds'] # Sync
-                         
-                         st.session_state[f'data_{race_id}'] = target_df
-                         st.success("オッズを更新しました！")
-                         st.rerun()
-                     else:
-                         st.warning("オッズの取得に失敗したか、データが見つかりませんでした。")
+                             target_df['Odds'] = target_df.apply(update_odds, axis=1)
+                             target_df['単勝'] = target_df['Odds'] # Sync
+                             
+                             st.session_state[f'data_{race_id}'] = target_df
+                             st.success("オッズを更新しました！")
+                             st.rerun()
+                         else:
+                             st.warning("オッズの取得に失敗したか、データが見つかりませんでした。")
+                     except Exception as e:
+                         st.error(f"オッズ取得エラー: {e}")
 
         
         edited_df = st.data_editor(

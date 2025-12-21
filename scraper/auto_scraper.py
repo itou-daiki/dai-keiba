@@ -540,6 +540,75 @@ def scrape_odds_for_race(race_id, mode="JRA"):
 
     return horses
 
+
+def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None):
+    """
+    Scrapes NAR races for a given year.
+    Iterates every day.
+    """
+    print(f"=== Starting NAR Bulk Scraping for {year_str} ===")
+    import time
+    from datetime import timedelta
+    
+    try:
+        y = int(year_str)
+        # Determine range
+        d_start = datetime(y, 1, 1).date()
+        d_end = datetime(y, 12, 31).date()
+        
+        if start_date: d_start = max(d_start, start_date)
+        if end_date: d_end = min(d_end, end_date)
+            
+        current = d_start
+        headers = { "User-Agent": "Mozilla/5.0" }
+        
+        while current <= d_end:
+            kaisai_date = current.strftime("%Y%m%d")
+            url = f"https://nar.netkeiba.com/top/race_list_sub.html?kaisai_date={kaisai_date}"
+            
+            print(f"Checking {current}...")
+            
+            try:
+                resp = requests.get(url, headers=headers, timeout=10)
+                # Parse
+                soup = BeautifulSoup(resp.content, 'html.parser')
+                # Usually .RaceList_DataList -> .RaceList_DataItem
+                items = soup.select('.RaceList_Box .RaceList_DataItem')
+                if not items:
+                    items = soup.select('.RaceList_DataList .RaceList_DataItem')
+                    
+                if items:
+                    race_ids = []
+                    for item in items:
+                        a = item.find('a')
+                        if a and 'href' in a.attrs:
+                            # ../race/result.html?race_id=...
+                             m = re.search(r'race_id=(\d+)', a['href'])
+                             if m:
+                                 race_ids.append(m.group(1))
+                    
+                    race_ids = sorted(list(set(race_ids)))
+                    print(f"  Found {len(race_ids)} races.")
+                    
+                    for rid in race_ids:
+                        # Scrape Result
+                        df = scrape_race_data(rid, mode="NAR")
+                        if df is not None and not df.empty:
+                            if save_callback:
+                                save_callback(df)
+                        time.sleep(0.5)
+                else:
+                    print("  No races.")
+                    
+            except Exception as e:
+                 print(f"  Error on {current}: {e}")
+            
+            current += timedelta(days=1)
+            time.sleep(0.5)
+            
+    except Exception as e:
+        print(f"Error in scrape_nar_year: {e}")
+
 # ==========================================
 # 2.5 Shutuba Scraping (Future Races)
 # ==========================================
