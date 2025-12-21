@@ -489,20 +489,144 @@ if race_id:
                         adjusted_p *= run_compat
 
                 # Apply frame advantage if available
-                if frames is not None and venue_char:
-                    frame = frames.iloc[idx]
-                    if not pd.isna(frame):
-                        outer_advantage = venue_char.get('outer_track_advantage', 1.0)
-                        frame_num = int(frame)
-                        if frame_num >= 6:  # 外枠
-                            adjusted_p *= outer_advantage
-                        elif frame_num <= 3:  # 内枠
-                            # 外枠有利な会場では内枠は不利
-                            adjusted_p *= (2.0 - outer_advantage)
+                if frames is not None:
+                    try:
+                        frame = int(frames.iloc[idx])
+                         
+                        # Default Venue Char adjustments
+                        if venue_char:
+                            outer_advantage = venue_char.get('outer_track_advantage', 1.0)
+                            if frame >= 6:  # 外枠
+                                adjusted_p *= outer_advantage
+                            elif frame <= 3:  # 内枠
+                                adjusted_p *= (2.0 - outer_advantage)
+                        
+                        # Tipster Logic: Mizusawa Specific
+                        # 水沢は「小回り」「先行有利」「内枠有利（特に1300/1400m）」
+                        if '水沢' in venue_info:
+                             # 内枠 (1-3) 有利
+                             if frame <= 3:
+                                 adjusted_p *= 1.15 # 内枠ボーナス
+                             # 外枠 (7-8) 割引
+                             elif frame >= 7:
+                                 adjusted_p *= 0.95
+                        
+                        # Tipster Logic: Kanazawa Specific
+                        # 金沢は「1500mは外枠も自在」「1400mは内枠先行有利」
+                        if '金沢' in venue_info:
+                            # 距離判定
+                            is_1400 = False
+                            if '距離' in edited_df.columns:
+                                try:
+                                    d_val = int(str(edited_df['距離'].iloc[idx]).replace('m',''))
+                                    if d_val == 1400: is_1400 = True
+                                except: pass
+                            
+                            if is_1400:
+                                # 1400m: 内枠（1-3枠）先行有利（基本セオリー）
+                                if frame <= 3:
+                                    adjusted_p *= 1.10
+                                elif frame >= 7:
+                                    adjusted_p *= 0.95
+                                    
+                                # 距離適性一致（1400m得意）の馬（AIスコア高評価馬）へのボーナス
+                                if p > 0.25:
+                                    adjusted_p *= 1.05
+                            else:
+                                # 1500m他: 外枠(5-8)も割引せず、むしろ自在性でプラス評価（特に人気馬）
+                                if frame >= 5:
+                                    adjusted_p *= 1.05 # 外枠の自在性を評価
+                            
+                            # 1. 逃げ・先行（脚質1-2）を大幅プラス（全距離共通）
+                            pass
 
-                ev = (adjusted_p * w * o) - 1.0
-                # Kelly criterion (placeholder for now)
-                kelly = 0.0
+                        # Tipster Logic: Kawasaki Specific
+                        # 川崎1500mは「コーナー4回の独特なコース」「内枠（特に1-2枠）が圧倒的有利」「外枠は距離ロス大」
+                        if '川崎' in venue_info:
+                            # 1. 内枠（1-2枠）は「聖域」級の有利
+                            if frame <= 2:
+                                adjusted_p *= 1.20 # 強力な内枠ボーナス
+                            
+                            # 2. 外枠（7-8枠）はコーナーきつく距離ロス大
+                            elif frame >= 7:
+                                adjusted_p *= 0.90 # 厳しめの割引
+                            
+                            # 3. 騎手の腕（コーナー巧者）
+                            # jockey_compatibilityが高い場合、少しボーナス
+                            if 'jockey_compatibility' in edited_df.columns:
+                                j_compat = edited_df['jockey_compatibility'].iloc[idx]
+                                if j_compat <= 5.0 and j_compat > 0: # 1に近いほど好成績（平均着順）
+                                     adjusted_p *= 1.05
+
+                        # Tipster Logic: Sonoda Specific
+                        # 園田は「1230mは外枠有利（スムーズに先行）」
+                        if '園田' in venue_info:
+                             # 1230m戦かどうかの判定（距離列があれば）
+                             is_1230 = False
+                             if '距離' in edited_df.columns:
+                                 try:
+                                     d_val = int(str(edited_df['距離'].iloc[idx]).replace('m',''))
+                                     if d_val == 1230: is_1230 = True
+                                 except: pass
+                             
+                             if is_1230:
+                                 # 外枠（6-8枠）有利
+                                 if frame >= 6:
+                                     adjusted_p *= 1.10
+                             else:
+                                 # 園田1400m他: 「内枠の先行馬は被せられるリスクあり」「外枠（特に8枠）が好成績」
+                                 if frame >= 7:
+                                     adjusted_p *= 1.05 # 外枠ボーナス
+                                 elif frame <= 2:
+                                     adjusted_p *= 0.95 # 内枠の被されリスク割引
+                                 
+                                 # スピード絶対主義（持ち時計）
+                                 if p > 0.3: # AIが高評価している場合（＝能力上位）
+                                     adjusted_p *= 1.05 # さらに後押し
+                        
+                        # Tipster Logic: Kasamatsu Specific
+                        # 笠松1400m/1600mは「逃げ・先行圧倒的有利」「内枠の逃げ残りが強い」
+                        if '笠松' in venue_info:
+                             # 1600mも1コーナーまで200mと短く、内枠先行が絶対有利
+                             
+                             # 2. 内枠（1-3枠）有利（特に逃げ馬）
+                             if frame <= 3:
+                                 adjusted_p *= 1.15
+                             # 外枠は割引（被されるリスク大）
+                             elif frame >= 7:
+                                 adjusted_p *= 0.95
+                                 
+                             # 3. 先行力（持ち時計換算）
+                             # 1600m換算などでトップの馬（AI高評価馬）をさらに後押し
+                             if p > 0.25:
+                                 adjusted_p *= 1.05
+
+                    except: pass
+
+                # Market Confidence Fallback (Missing Data Safeguard)
+                # オッズ1.0~2.0倍の圧倒的人気馬に対し、AIが極端に低い評価（20%未満）を下している場合、
+                # データ欠落の可能性が高いため、市場評価（オッズ）を一部信頼して補正する。
+                if o > 1.0 and o <= 2.5:
+                     implied_prob = 0.8 / o # 控除率考慮
+                     if adjusted_p < (implied_prob * 0.4): # AIが市場の4割以下しか評価していない場合
+                         adjusted_p = max(adjusted_p, implied_prob * 0.4) # 最低でも市場評価の4割は持たせる
+
+                ev = (adjusted_p * m * o) - 1.0
+                
+                # Kelly Criterion
+                # f = (p(b+1) - 1) / b  => (p*o - 1) / (o - 1)
+                # p = adjusted_p * mark_bias
+                p_final = adjusted_p * m
+                
+                if o > 1.0 and p_final > 0:
+                    k = ((p_final * o) - 1.0) / (o - 1.0)
+                    kelly = max(0.0, k * 100) # Convert to %
+                    
+                    # Cap Kelly at reasonable amounts (e.g. 50%) to prevent reckless betting
+                    kelly = min(kelly, 50.0)
+                else:
+                    kelly = 0.0
+            
             evs.append(ev)
             kellys.append(kelly)
 
