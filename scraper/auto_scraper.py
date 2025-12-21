@@ -1099,9 +1099,9 @@ if __name__ == "__main__":
     # Also parse arguments for main() to avoid conflicts if they are passed
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
-    parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
     parser.add_argument("--places", type=str, help="Target places")
     parser.add_argument("--source", type=str, help="Source: netkeiba or jra")
+    parser.add_argument("--mode", type=str, help="Mode: JRA or NAR")
     
     args, unknown = parser.parse_known_args()
     
