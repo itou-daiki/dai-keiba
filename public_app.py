@@ -250,7 +250,39 @@ if race_id:
         edited_df['予想印'] = ""
         
         st.subheader("📝 予想・オッズ入力")
-        st.info("「予想印」や「現在オッズ」を編集すると、リアルタイムで期待値(EV)が計算されます。")
+        
+        col_input_1, col_input_2 = st.columns([3, 1])
+        with col_input_1:
+             st.info("「予想印」や「現在オッズ」を編集すると、リアルタイムで期待値(EV)が計算されます。")
+        with col_input_2:
+             if st.button("🔄 現在オッズのみ更新"):
+                 with st.spinner("最新オッズを取得中..."):
+                     new_odds = auto_scraper.scrape_odds_for_race(race_id)
+                     if new_odds:
+                         # Update Session State
+                         # new_odds is list of {number, odds}
+                         odds_map = {x['number']: x['odds'] for x in new_odds}
+                         
+                         target_df = st.session_state[f'data_{race_id}']
+                         
+                         # Update '単勝' and 'Odds'
+                         # Map using '馬 番' (ensure int type matching)
+                         def update_odds(row):
+                             try:
+                                 num = int(row['馬 番'])
+                                 return odds_map.get(num, row.get('Odds', 0.0))
+                             except:
+                                 return row.get('Odds', 0.0)
+                                 
+                         target_df['Odds'] = target_df.apply(update_odds, axis=1)
+                         target_df['単勝'] = target_df['Odds'] # Sync
+                         
+                         st.session_state[f'data_{race_id}'] = target_df
+                         st.success("オッズを更新しました！")
+                         st.rerun()
+                     else:
+                         st.warning("オッズの取得に失敗したか、データが見つかりませんでした。")
+
         
         edited_df = st.data_editor(
             edited_df,
