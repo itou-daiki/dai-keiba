@@ -1,27 +1,66 @@
 
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), 'scraper'))
-import auto_scraper
+import requests
+from bs4 import BeautifulSoup
+import re
 
-def test_nar_schedule_save():
-    print("Testing scrape_todays_schedule(mode='NAR')...")
-    success, msg = auto_scraper.scrape_todays_schedule(mode="NAR")
-    print(f"Success: {success}, Msg: {msg}")
+def test_nar_schedule_inspect():
+    # Use a date known to have races
+    url = "https://nar.netkeiba.com/top/race_list_sub.html?kaisai_date=20241221"
+    headers = { "User-Agent": "Mozilla/5.0" }
     
-    expected_file = "todays_data_nar.json" # Relative to scraper usually.. no, relative to project root in my fix?
-    # Fix in auto_scraper was: os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
-    # auto_scraper is in scraper/, so dirname is scraper/, dirname(dirname) is root.
-    # So it should be in root.
+    print(f"Fetching {url}...")
+    resp = requests.get(url, headers=headers, timeout=10)
     
-    if os.path.exists(expected_file):
-        print(f"File {expected_file} created successfully.")
-        import json
-        with open(expected_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            print(f"Loaded {len(data.get('races', []))} races.")
-    else:
-        print(f"File {expected_file} NOT found.")
+    print(f"Original Encoding: {resp.encoding}")
+    print(f"Apparent Encoding: {resp.apparent_encoding}")
+    
+    # Force EUC-JP which is common for older Netkeiba pages
+    # Or ISO-8859-1 is default guess if headers missing charset
+    
+    resp.encoding = resp.apparent_encoding
+    
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    
+    print(f"Title: {soup.title.text if soup.title else 'No Title'}")
+    
+    # Check Structure
+    boxes = soup.select('.RaceList_Box')
+    print(f"Found {len(boxes)} '.RaceList_Box' elements.")
+    if boxes:
+        box = boxes[0]
+        # Check header
+        header = box.select_one('dt')
+        print(f"Box Header (dt): {header.text.strip() if header else 'None'}")
+        
+    # Find a race item
+    items = soup.select('.RaceList_Box .RaceList_DataItem')
+    if not items:
+        # Try finding via ID
+        items = soup.select('.RaceList_DataList .RaceList_DataItem')
+        
+    print(f"Found {len(items)} items.")
+    
+    if items:
+        item = items[0]
+        print("\n--- First Item Dump ---")
+        print(item.prettify())
+        print("-----------------------")
+        
+        # Try parsing Venue
+        # JRA uses .RaceList_Item02
+        meta = item.select_one('.RaceList_Item02')
+        if meta:
+            print(f"Meta (.RaceList_Item02): {meta.text.strip()}")
+        else:
+            print("Meta (.RaceList_Item02) NOT FOUND")
+            # Try finding venue by text analysis of other classes
+            print("Trying .RaceList_Item01...")
+            m1 = item.select_one('.RaceList_Item01')
+            if m1: print(f"Meta (.RaceList_Item01): {m1.text.strip()}")
+        
+        # Check title
+        title_elem = item.select_one('.RaceList_ItemTitle')
+        print(f"Title Elem: {title_elem.text.strip() if title_elem else 'None'}")
 
 if __name__ == "__main__":
-    test_nar_schedule_save()
+    test_nar_schedule_inspect()

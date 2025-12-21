@@ -311,21 +311,58 @@ def scrape_todays_schedule(mode="JRA"):
             if i > 0: time.sleep(1)
             
             response = requests.get(url, headers=headers, timeout=10)
+            response.encoding = response.apparent_encoding # Fix encoding
+            
             if not response.text: continue
             
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Selectors
-            items = soup.select('.RaceList_DataList .RaceList_DataItem')
-            if not items:
-                items = soup.select('.RaceList_Box .RaceList_DataItem')
-                
-            if not items:
+            # ---------------------------------------------------------
+            # Identify Venue & Items
+            # ---------------------------------------------------------
+            venue_item_pairs = []
+            
+            if mode == "NAR":
+                # NAR: Grouped by .RaceList_Box with Venue in Header
+                boxes = soup.select('.RaceList_Box')
+                if not boxes:
+                     # Fallback if structure is flat (rare but possible)
+                     items = soup.select('.RaceList_DataList .RaceList_DataItem')
+                     for it in items: venue_item_pairs.append(("Unknown", it))
+                else:
+                    for box in boxes:
+                        venue_name = "Unknown"
+                        dt = box.select_one('dt')
+                        if dt:
+                            txt = dt.text.replace("\n", " ").strip()
+                            # e.g. "高知競馬場TOP" -> "高知"
+                            m = re.search(r'(\S+?)競馬場', txt)
+                            if m:
+                                venue_name = m.group(1)
+                            else:
+                                # Fallback: Look for "帯広" "門別" etc in text
+                                # Rough heuristic: Split by space, take parts
+                                match_v = re.search(r'(帯広|門別|盛岡|水沢|浦和|船橋|大井|川崎|金沢|笠松|名古屋|園田|姫路|高知|佐賀)', txt)
+                                if match_v:
+                                    venue_name = match_v.group(1)
+
+                        sub_items = box.select('.RaceList_DataItem')
+                        for it in sub_items:
+                            venue_item_pairs.append((venue_name, it))
+            else:
+                # JRA: Flat list usually, Venue in Item02
+                items = soup.select('.RaceList_DataList .RaceList_DataItem')
+                if not items:
+                    items = soup.select('.RaceList_Box .RaceList_DataItem')
+                for it in items:
+                    venue_item_pairs.append((None, it)) # Extract later
+
+            if not venue_item_pairs:
                 continue
                 
-            print(f"  Found {len(items)} races for {date_str}.")
+            print(f"  Found {len(venue_item_pairs)} races for {date_str}.")
             
-            for item in items:
+            for venue_cache, item in venue_item_pairs:
                 link_elem = item.find('a')
                 if not link_elem: continue
                 
@@ -335,32 +372,34 @@ def scrape_todays_schedule(mode="JRA"):
                 
                 race_id = race_id_match.group(1)
                 
-                # Check for Race Name and Number
-                # NAR structure might be slightly different
-                # Usually .RaceList_ItemTitle
                 title_elem = item.select_one('.RaceList_ItemTitle')
                 race_name = title_elem.text.strip() if title_elem else "Unknown Race"
                 
-                # JRA has .RaceList_Item02 (Venue + R)
-                # NAR has .RaceList_Item01?
-                
-                meta_elem = item.select_one('.RaceList_Item02')
                 venue = "Unknown"
                 number = ""
                 
-                if meta_elem:
-                     meta_txt = meta_elem.text.strip()
-                     # e.g. "中山1R"
-                     # NAR might be "大井 1R"
-                     vm = re.search(r'(\D+)(\d+)R', meta_txt)
-                     if vm:
-                         venue = vm.group(1).strip()
-                         number = vm.group(2)
+                if venue_cache:
+                    venue = venue_cache
+                    # Try to get number from .Race_Num
+                    # <div class="Race_Num"><span>1R</span></div>
+                    num_elem = item.select_one('.Race_Num')
+                    if num_elem:
+                        num_txt = num_elem.text.strip()
+                        nm = re.search(r'(\d+)R', num_txt)
+                        if nm: number = nm.group(1)
                 else:
-                    # NAR fallbacks
-                    # Try parsing from parent or siblings
-                    # But simpler: just use defaults if missing
-                    number = "1" # Placeholder
+                    # JRA Parsing Logic
+                    meta_elem = item.select_one('.RaceList_Item02')
+                    if meta_elem:
+                         meta_txt = meta_elem.text.strip()
+                         # e.g. "中山1R"
+                         vm = re.search(r'(\D+)(\d+)R', meta_txt)
+                         if vm:
+                             venue = vm.group(1).strip()
+                             number = vm.group(2)
+                    else:
+                        number = "1" # Placeholder
+
                     
                 # For odds, only check Today (i==0)
                 horses = []
