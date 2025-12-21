@@ -26,14 +26,23 @@ def test_nar_schedule_inspect():
     # Check Structure
     boxes = soup.select('.RaceList_Box')
     print(f"Found {len(boxes)} '.RaceList_Box' elements.")
+    
     if boxes:
         box = boxes[0]
-        # Check header
-        header = box.select_one('dt')
-        print(f"Box Header (dt): {header.text.strip() if header else 'None'}")
-        
-    # Find a race item
-    items = soup.select('.RaceList_Box .RaceList_DataItem')
+        print("Iterating children of first box:")
+        for child in box.find_all(recursive=False):
+            name = child.name
+            preview = child.text.replace("\n", "").strip()[:50]
+            print(f" - Tag: {name}, Text: {preview}...")
+            
+            if name == 'dt':
+                 # Check encoding/text
+                 print(f"   -> HEADER CANDIDATE: {child.text.strip()}")
+            if name == 'dd':
+                 # Count items
+                 cnt = len(child.select('.RaceList_DataItem'))
+                 print(f"   -> Contains {cnt} races.")
+
     if not items:
         # Try finding via ID
         items = soup.select('.RaceList_DataList .RaceList_DataItem')

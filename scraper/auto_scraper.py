@@ -323,32 +323,46 @@ def scrape_todays_schedule(mode="JRA"):
             venue_item_pairs = []
             
             if mode == "NAR":
-                # NAR: Grouped by .RaceList_Box with Venue in Header
-                boxes = soup.select('.RaceList_Box')
-                if not boxes:
-                     # Fallback if structure is flat (rare but possible)
-                     items = soup.select('.RaceList_DataList .RaceList_DataItem')
-                     for it in items: venue_item_pairs.append(("Unknown", it))
-                else:
-                    for box in boxes:
-                        venue_name = "Unknown"
-                        dt = box.select_one('dt')
-                        if dt:
-                            txt = dt.text.replace("\n", " ").strip()
-                            # e.g. "高知競馬場TOP" -> "高知"
-                            m = re.search(r'(\S+?)競馬場', txt)
-                            if m:
-                                venue_name = m.group(1)
-                            else:
-                                # Fallback: Look for "帯広" "門別" etc in text
-                                # Rough heuristic: Split by space, take parts
-                                match_v = re.search(r'(帯広|門別|盛岡|水沢|浦和|船橋|大井|川崎|金沢|笠松|名古屋|園田|姫路|高知|佐賀)', txt)
-                                if match_v:
-                                    venue_name = match_v.group(1)
+                # NAR: .RaceList_Box is a wrapper containing multiple <dl> (one per venue)
+                # Structure: div.RaceList_Box > dl > dt (Header) + dd (Items)
+                wrapper = soup.select_one('.RaceList_Box')
+                
+                venue_blocks = []
+                if wrapper:
+                    venue_blocks = wrapper.find_all('dl', recursive=False)
+                
+                if not venue_blocks:
+                     # Fallback 1: Maybe .RaceList_Box IS the dl itself (single venue day?)
+                     # If wrapper is dl, treat as list of 1.
+                     if wrapper and wrapper.name == 'dl':
+                         venue_blocks = [wrapper]
+                     else:
+                         # Fallback 2: Flat list
+                         items = soup.select('.RaceList_DataList .RaceList_DataItem')
+                         if not items and wrapper:
+                              # If wrapper exists but no items?
+                              items = wrapper.select('.RaceList_DataItem')
+                         
+                         for it in items: venue_item_pairs.append(("Unknown", it))
 
-                        sub_items = box.select('.RaceList_DataItem')
-                        for it in sub_items:
-                            venue_item_pairs.append((venue_name, it))
+                for block in venue_blocks:
+                    venue_name = "Unknown"
+                    dt = block.select_one('dt')
+                    if dt:
+                        txt = dt.text.replace("\n", " ").strip()
+                        # e.g. "高知競馬場TOP" -> "高知"
+                        m = re.search(r'(\S+?)競馬場', txt)
+                        if m:
+                            venue_name = m.group(1)
+                        else:
+                            # Fallback: Look for known venue names
+                            match_v = re.search(r'(帯広|門別|盛岡|水沢|浦和|船橋|大井|川崎|金沢|笠松|名古屋|園田|姫路|高知|佐賀)', txt)
+                            if match_v:
+                                venue_name = match_v.group(1)
+
+                    sub_items = block.select('.RaceList_DataItem')
+                    for it in sub_items:
+                        venue_item_pairs.append((venue_name, it))
             else:
                 # JRA: Flat list usually, Venue in Item02
                 items = soup.select('.RaceList_DataList .RaceList_DataItem')
