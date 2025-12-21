@@ -242,6 +242,7 @@ if race_id:
 
 
         display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
+
         
         edited_df = df_display[display_cols].copy()
         edited_df.rename(columns=rename_map, inplace=True)
@@ -300,6 +301,13 @@ if race_id:
                     step=0.1,
                     format="%.1f"
                 ),
+                "推奨度(Kelly)": st.column_config.ProgressColumn(
+                    "推奨度(Kelly)",
+                    help="ケリー基準による推奨賭け率 (リスクを考慮した推奨度)",
+                    format="%.1f%%",
+                    min_value=0,
+                    max_value=30, # Max display scale (usually >30% is rare)
+                ),
                 "予想印": st.column_config.SelectboxColumn(
                     "予想印",
                     options=["", "◎", "◯", "▲", "△", "✕"],
@@ -333,23 +341,48 @@ if race_id:
         marks = edited_df['予想印']
         
         evs = []
+        kellys = []
+        
         for p, o, m in zip(probs, odds, marks):
             # Penalize low probability (Safety filter)
             if p < 0.08: # Ignore if AI chance is less than 8%
                 ev = -1.0
+                kelly = 0.0
             else:
                 w = mark_weights.get(m, 1.0)
-                ev = (p * w * o) - 1.0
+                p_weighted = p * w
+                
+                # EV
+                ev = (p_weighted * o) - 1.0
+                
+                # Kelly: (p*o - 1) / (o - 1)
+                if o > 1.0:
+                    k = ((p_weighted * o) - 1.0) / (o - 1.0)
+                    kelly = max(0.0, k * 100) # Convert to %
+                else:
+                    kelly = 0.0
+                    
             evs.append(ev)
+            kellys.append(kelly)
             
         edited_df['期待値(EV)'] = evs
+        edited_df['推奨度(Kelly)'] = kellys
+
         
         # Highlight high EV
         def highlight_ev(s):
             is_high = s > 0
             return ['background-color: #d4edda' if v else '' for v in is_high]
         
-        st.dataframe(edited_df.style.applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)']))
+        # Highlight high EV and Kelly
+        def highlight_ev(s):
+            is_high = s > 0
+            return ['background-color: #d4edda' if v else '' for v in is_high]
+        
+        st.dataframe(
+            edited_df.style.map(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)', '推奨度(Kelly)'])
+        )
+
         
         # Visualization
         st.subheader("📊 詳細分析")
