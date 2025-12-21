@@ -533,7 +533,8 @@ def scrape_odds_for_race(race_id, mode="JRA"):
              return []
              
         rows = target_table.find_all('tr')
-        horses = []
+        horses_map = {} # deduplicate by number
+
         for row in rows:
             if row.find('th'): continue
             cols = row.find_all('td')
@@ -547,25 +548,28 @@ def scrape_odds_for_race(race_id, mode="JRA"):
             
             # Try classes first
             u_el = row.select_one('.Umaban')
-            o_el = row.select_one('.Odds') or row.select_one('.Tan_Odds')
+            # Prefer Tan_Odds specifically to avoid Fuku
+            o_el = row.select_one('.Tan_Odds') or row.select_one('.Odds') 
             
-            if u_el and o_el:
+            if u_el:
                  try:
                      num = int(u_el.text.strip())
-                     ot = o_el.text.strip()
-                     if '---' not in ot and ot:
-                         odds = float(ot)
+                     if o_el:
+                         ot = o_el.text.strip()
+                         if '---' not in ot and ot:
+                             odds = float(ot)
                  except: pass
             
             # If classes failed, try positional
             if num is None and len(cols) >= 5:
                 # Guess index. 
-                # If #Ninki: 2=Umaban
+                # If #Ninki: 2=Umaban, Odds is usually 9 or 10?
                 # If Tanfuku: 1=Umaban? 
                 # Let's check text
                 try:
                     # Clean text
                     texts = [c.text.strip() for c in cols]
+                    
                     # Find Umaban (1-18)
                     for i in [1, 2, 0]: # Priority check
                          if i < len(texts) and texts[i].isdigit() and 1 <= int(texts[i]) <= 18:
@@ -577,15 +581,17 @@ def scrape_odds_for_race(race_id, mode="JRA"):
                     if num is not None:
                         # Look for odds in later columns
                         # Odds often has "."
+                        # Warning: Ninki table might have multiple odds?
                         for i in range(len(texts)-1, 2, -1): # Search backwards
                             if re.match(r'^\d+\.\d+$', texts[i]):
                                 odds = float(texts[i])
                                 break
                 except: pass
             
-            if num is not None:
-                horses.append({"number": num, "odds": odds})
+            if num is not None and num not in horses_map:
+                horses_map[num] = {"number": num, "odds": odds}
                 
+        horses = list(horses_map.values())
         print(f"  Got {len(horses)} odds via Main Page.")
         return horses
 
@@ -832,6 +838,21 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             df['単勝'] = 0.0
             df['Odds'] = 0.0
 
+        # Load History from CSV to avoid scraping
+        csv_path = CSV_FILE_PATH_NAR if mode == "NAR" else CSV_FILE_PATH
+        full_history = pd.DataFrame()
+        
+        if os.path.exists(csv_path):
+             print(f"  Loading local history from {csv_path} for enrichment...")
+             try:
+                 # Read primarily needed columns to save memory/speed, or full if fine
+                 full_history = pd.read_csv(csv_path)
+                 if 'horse_id' in full_history.columns:
+                     full_history['horse_id'] = full_history['horse_id'].astype(str)
+             except Exception as e:
+                 print(f"  Failed to load CSV history: {e}")
+                 full_history = pd.DataFrame()
+
         print(f"  Enriching {len(df)} horses with past data...")
         past_columns = []
         p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather', 'distance', 'course_type']
@@ -848,6 +869,14 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             if hid and str(hid).isdigit():
                 # Use Cache
                 global HORSE_HISTORY_CACHE
+                
+                # Try to fill cache from local CSV if not present
+                if hid not in HORSE_HISTORY_CACHE and not full_history.empty:
+                     if 'horse_id' in full_history.columns:
+                         subset = full_history[full_history['horse_id'] == str(hid)]
+                         if not subset.empty:
+                             HORSE_HISTORY_CACHE[hid] = subset.copy()
+                             
                 if hid in HORSE_HISTORY_CACHE:
                     past_df = HORSE_HISTORY_CACHE[hid].copy()
                 else:
