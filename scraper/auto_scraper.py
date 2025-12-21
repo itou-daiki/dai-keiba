@@ -903,19 +903,25 @@ def scrape_shutuba_data(race_id, mode="JRA"):
                      for i, (p_idx, p_row) in enumerate(past_df.iterrows()):
                          if i >= 5: break
                          n = i + 1
-                         df.at[idx, f"past_{n}_date"] = p_row.get('date')
+                         df.at[idx, f"past_{n}_date"] = p_row.get('date') or p_row.get('日付')
                          # Ensure Rank is extracted
-                         df.at[idx, f"past_{n}_rank"] = p_row.get('rank')
-                         df.at[idx, f"past_{n}_time"] = p_row.get('time')
-                         df.at[idx, f"past_{n}_run_style"] = p_row.get('run_style')
-                         df.at[idx, f"past_{n}_race_name"] = p_row.get('race_name')
-                         df.at[idx, f"past_{n}_last_3f"] = p_row.get('last_3f')
-                         df.at[idx, f"past_{n}_horse_weight"] = p_row.get('horse_weight')
-                         df.at[idx, f"past_{n}_jockey"] = p_row.get('jockey')
-                         df.at[idx, f"past_{n}_condition"] = p_row.get('condition')
-                         df.at[idx, f"past_{n}_weather"] = p_row.get('weather')
-                         df.at[idx, f"past_{n}_distance"] = p_row.get('distance')
-                         df.at[idx, f"past_{n}_course_type"] = p_row.get('course_type')
+                         df.at[idx, f"past_{n}_rank"] = p_row.get('rank') or p_row.get('着 順')
+                         df.at[idx, f"past_{n}_time"] = p_row.get('time') or p_row.get('タイム')
+                         
+                         # run_style equivalent in DB seems to be 'コーナー 通過順' if processed, but usually raw scraper returns 'run_style'.
+                         # If coming from DB, it might be 'コーナー 通過順' or 'run_style' if standardized? 
+                         # DB header actually DOES NOT include 'run_style'. It has 'コーナー 通過順'.
+                         # So if p_row is from DB, we need 'コーナー 通過順'.
+                         df.at[idx, f"past_{n}_run_style"] = p_row.get('run_style') or p_row.get('コーナー 通過順')
+                         
+                         df.at[idx, f"past_{n}_race_name"] = p_row.get('race_name') or p_row.get('レース名')
+                         df.at[idx, f"past_{n}_last_3f"] = p_row.get('last_3f') or p_row.get('後3F')
+                         df.at[idx, f"past_{n}_horse_weight"] = p_row.get('horse_weight') or p_row.get('馬体重(増減)')
+                         df.at[idx, f"past_{n}_jockey"] = p_row.get('jockey') or p_row.get('騎手')
+                         df.at[idx, f"past_{n}_condition"] = p_row.get('condition') or p_row.get('馬場状態')
+                         df.at[idx, f"past_{n}_weather"] = p_row.get('weather') or p_row.get('天候')
+                         df.at[idx, f"past_{n}_distance"] = p_row.get('distance') or p_row.get('距離')
+                         df.at[idx, f"past_{n}_course_type"] = p_row.get('course_type') or p_row.get('コースタイプ')
         
         return df
         
