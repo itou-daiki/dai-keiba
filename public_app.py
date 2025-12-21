@@ -164,56 +164,11 @@ if race_id:
         else:
             with st.spinner("出馬表を取得し、AI予測を実行中..."):
                 # Scrape Shutuba
-                with st.expander("🔍 デバッグ情報 (ファイル確認)"):
-                    st.write(f"Current Dir: {os.getcwd()}")
-                    st.write(f"Files in root: {os.listdir('.')}")
-                    db_exists = os.path.exists("database.csv")
-                    db_nar_exists = os.path.exists("database_nar.csv")
-                    st.write(f"database.csv Exists: {db_exists}")
-                    st.write(f"database_nar.csv Exists: {db_nar_exists}")
-                    st.write(f"Model Path: {os.path.join(os.path.dirname(__file__), 'ml/models/lgbm_model_nar.pkl')}")
-                    
-                    # Deep Match Debug
-                    try:
-                        tgt_csv = "database_nar.csv" if mode_val == "NAR" else "database.csv"
-                        if os.path.exists(tgt_csv):
-                            tdf = pd.read_csv(tgt_csv, dtype={'horse_id': str}, nrows=100)
-                            # Remove .0 if exists
-                            if 'horse_id' in tdf.columns:
-                                tdf['horse_id'] = tdf['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
-                            
-                            st.write(f"--- {tgt_csv} Analysis ---")
-                            st.write(f"Sample IDs in DB: {list(tdf['horse_id'].head(5))}")
-                            st.write(f"ID Type: {tdf['horse_id'].dtype}")
-                    except Exception as e:
-                        st.error(f"Debug Read Error: {e}")
-
                 df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
-                
-                if df is not None and not df.empty and 'horse_id' in df.columns:
-                     with st.expander("🔍 デバッグ情報 (IDマッチング)"):
-                         current_ids = df['horse_id'].astype(str).tolist()
-                         st.write(f"Current Race IDs: {current_ids[:5]}")
-                         
-                         if os.path.exists(tgt_csv):
-                             # Check actual match count in full DB (slow but needed)
-                             try:
-                                full_db = pd.read_csv(tgt_csv, usecols=['horse_id'], dtype={'horse_id': str})
-                                full_db['horse_id'] = full_db['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
-                                db_ids = set(full_db['horse_id'])
-                                match_count = sum(1 for cid in current_ids if cid in db_ids)
-                                st.write(f"Match Count: {match_count} / {len(current_ids)}")
-                                st.write(f"Missing IDs: {[cid for cid in current_ids if cid not in db_ids]}")
-                             except: pass
             
             if df is not None and not df.empty:
                 # 2. FE (use_venue_features=False to match existing model trained with 27 features)
                 X_df = process_data(df, use_venue_features=False)
-                
-                with st.expander("🔍 デバッグ情報 (特徴量)"):
-                    st.write("Prediction Features (Top 5 rows):")
-                    st.dataframe(X_df.head())
-                    st.write("Columns:", list(X_df.columns))
                 
                 # 3. Predict
                 if model:
@@ -226,25 +181,16 @@ if race_id:
                         # We should robustly select.
                         
                         # Identify feature cols from X_df
-                        # Robustly select features matching the model
-                        try:
-                            model_features = model.feature_name()
-                            # Ensure all model features exist in X_df
-                            for f in model_features:
-                                if f not in X_df.columns:
-                                    X_df[f] = 0.0
-                            
-                            X_pred = X_df[model_features].fillna(0.0)
-                            
-                            probs = model.predict(X_pred)
-                            
-                            df['AI_Prob'] = probs
-                            df['AI_Score'] = (probs * 100).astype(int)
-                        except Exception as e:
-                            st.error(f"Prediction Error (Feature Mismatch): {e}")
-                            st.write(f"Model expects: {model.feature_name()}")
-                            st.write(f"Data has: {list(X_df.columns)}")
-                            raise e
+                        # Exclude non-numeric and 'rank'
+                        meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
+                        features = [c for c in X_df.columns if c not in meta_cols and c != 'target_top3']
+                        # Ensure numeric
+                        X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
+                        
+                        probs = model.predict(X_pred)
+                        
+                        df['AI_Prob'] = probs
+                        df['AI_Score'] = (probs * 100).astype(int)
                         
                         # Merge features back to df for display
                         # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
@@ -259,15 +205,13 @@ if race_id:
 
                         
                     except Exception as e:
-                        st.error(f"❌ AI予測エラーが発生しました: {e}")
-                        st.error("考えられる原因: 1. `database.csv`がクラウドに同期されていない（GitHubにpushしてください） 2. モデルファイルが破損または不一致")
+                        st.error(f"Prediction Error: {e}")
                         df['AI_Prob'] = 0.0
-                        df['AI_Score'] = 0
+                        df['AI_Score'] = 0.0
                 else:
-                    st.error("⚠️ AIモデル (`.pkl`) が読み込めませんでした。")
-                    st.info("解決策: ローカルで `git add ml/models/*.pkl` を実行し、pushしてください。")
+                    st.warning("モデルが見つかりません。予測スキップ。")
                     df['AI_Prob'] = 0.0
-                    df['AI_Score'] = 0
+                    df['AI_Score'] = 0.0
 
                 # 4. Display
                 # Store in session state to persist edits
@@ -419,8 +363,8 @@ if race_id:
         )
         
         # Calculate EV with JRA/NAR distinction
-        # Determine race type from venue (Use mode_val as source of truth)
-        race_type = mode_val  # Default to User Selection
+        # Determine race type from venue
+        race_type = 'JRA'  # Default
         venue = ''  # Initialize venue
 
         if '会場' in df_display.columns and len(df_display) > 0:
@@ -536,183 +480,20 @@ if race_id:
                         adjusted_p *= run_compat
 
                 # Apply frame advantage if available
-                if frames is not None:
-                    try:
-                        frame = int(frames.iloc[idx])
-                         
-                        # Default Venue Char adjustments
-                        if venue_char:
-                            outer_advantage = venue_char.get('outer_track_advantage', 1.0)
-                            if frame >= 6:  # 外枠
-                                adjusted_p *= outer_advantage
-                            elif frame <= 3:  # 内枠
-                                adjusted_p *= (2.0 - outer_advantage)
-                        
-                        # Tipster Logic: Mizusawa Specific
-                        # 水沢は「小回り」「先行有利」「内枠有利（特に1300/1400m）」
-                        if '水沢' in venue_info:
-                             # 内枠 (1-3) 有利
-                             if frame <= 3:
-                                 adjusted_p *= 1.15 # 内枠ボーナス
-                             # 外枠 (7-8) 割引
-                             elif frame >= 7:
-                                 adjusted_p *= 0.95
-                        
-                        # Tipster Logic: Kanazawa Specific
-                        # 金沢は「1500mは外枠も自在」「1400mは内枠先行有利」
-                        if '金沢' in venue_info:
-                            # 距離判定
-                            is_1400 = False
-                            if '距離' in edited_df.columns:
-                                try:
-                                    d_val = int(str(edited_df['距離'].iloc[idx]).replace('m',''))
-                                    if d_val == 1400: is_1400 = True
-                                except: pass
-                            
-                            if is_1400:
-                                # 1400m: 内枠（1-3枠）先行有利（基本セオリー）
-                                if frame <= 3:
-                                    adjusted_p *= 1.10
-                                elif frame >= 7:
-                                    adjusted_p *= 0.95
-                                    
-                                # 距離適性一致（1400m得意）の馬（AIスコア高評価馬）へのボーナス
-                                if p > 0.25:
-                                    adjusted_p *= 1.05
-                            else:
-                                # 1500m他: 外枠(5-8)も割引せず、むしろ自在性でプラス評価（特に人気馬）
-                                if frame >= 5:
-                                    adjusted_p *= 1.05 # 外枠の自在性を評価
-                            
-                            # 1. 逃げ・先行（脚質1-2）を大幅プラス（全距離共通）
-                            pass
+                if frames is not None and venue_char:
+                    frame = frames.iloc[idx]
+                    if not pd.isna(frame):
+                        outer_advantage = venue_char.get('outer_track_advantage', 1.0)
+                        frame_num = int(frame)
+                        if frame_num >= 6:  # 外枠
+                            adjusted_p *= outer_advantage
+                        elif frame_num <= 3:  # 内枠
+                            # 外枠有利な会場では内枠は不利
+                            adjusted_p *= (2.0 - outer_advantage)
 
-                        # Tipster Logic: Kawasaki Specific
-                        # 川崎1500mは「コーナー4回の独特なコース」「内枠（特に1-2枠）が圧倒的有利」「外枠は距離ロス大」
-                        if '川崎' in venue_info:
-                            # 1. 内枠（1-2枠）は「聖域」級の有利
-                            if frame <= 2:
-                                adjusted_p *= 1.20 # 強力な内枠ボーナス
-                            
-                            # 2. 外枠（7-8枠）はコーナーきつく距離ロス大
-                            elif frame >= 7:
-                                adjusted_p *= 0.90 # 厳しめの割引
-                            
-                            # 3. 騎手の腕（コーナー巧者）
-                            # jockey_compatibilityが高い場合、少しボーナス
-                            if 'jockey_compatibility' in edited_df.columns:
-                                j_compat = edited_df['jockey_compatibility'].iloc[idx]
-                                if j_compat <= 5.0 and j_compat > 0: # 1に近いほど好成績（平均着順）
-                                     adjusted_p *= 1.05
-
-                        # Tipster Logic: Sonoda Specific
-                        # 園田は「1230mは外枠有利（スムーズに先行）」
-                        if '園田' in venue_info:
-                             # 1230m戦かどうかの判定（距離列があれば）
-                             is_1230 = False
-                             if '距離' in edited_df.columns:
-                                 try:
-                                     d_val = int(str(edited_df['距離'].iloc[idx]).replace('m',''))
-                                     if d_val == 1230: is_1230 = True
-                                 except: pass
-                             
-                             if is_1230:
-                                 # 外枠（6-8枠）有利
-                                 if frame >= 6:
-                                     adjusted_p *= 1.10
-                             else:
-                                 # 園田1400m他: 「内枠の先行馬は被せられるリスクあり」「外枠（特に8枠）が好成績」
-                                 if frame >= 7:
-                                     adjusted_p *= 1.05 # 外枠ボーナス
-                                 elif frame <= 2:
-                                     adjusted_p *= 0.95 # 内枠の被されリスク割引
-                                 
-                                 # スピード絶対主義（持ち時計）
-                                 if p > 0.3: # AIが高評価している場合（＝能力上位）
-                                     adjusted_p *= 1.05 # さらに後押し
-                        
-                        # Tipster Logic: Kasamatsu Specific
-                        # 笠松1400m/1600mは「逃げ・先行圧倒的有利」「内枠の逃げ残りが強い」
-                        if '笠松' in venue_info:
-                             # 1600mも1コーナーまで200mと短く、内枠先行が絶対有利
-                             
-                             # 2. 内枠（1-3枠）有利（特に逃げ馬）
-                             if frame <= 3:
-                                 adjusted_p *= 1.15
-                             # 外枠は割引（被されるリスク大）
-                             elif frame >= 7:
-                                 adjusted_p *= 0.95
-                                 
-                             # 3. 先行力（持ち時計換算）
-                             # 1600m換算などでトップの馬（AI高評価馬）をさらに後押し
-                             if p > 0.25:
-                                 adjusted_p *= 1.05
-
-                        # Tipster Logic: Urawa Specific (Simliar to Kasamatsu/Mizusawa)
-                        # 浦和は「日本一小回り」「先行・内枠絶対有利」
-                        if '浦和' in venue_info:
-                             if frame <= 3:
-                                 adjusted_p *= 1.20 # 強力な内枠ボーナス
-                             elif frame >= 7:
-                                 adjusted_p *= 0.90 # 外枠不利
-
-                        # Tipster Logic: Kochi & Saga Specific
-                        # 高知・佐賀は「内ラチ沿いの砂が深い（死にコース）」ことが多い
-                        # 騎手もあえて内を開けて走るため、1枠は包まれて終了のリスク大
-                        if '高知' in venue_info or '佐賀' in venue_info:
-                             if frame == 1:
-                                 adjusted_p *= 0.85 # 1枠はかなり厳しい
-                             elif frame == 2:
-                                 adjusted_p *= 0.95 # 2枠も少し割引
-                             elif frame >= 5:
-                                 adjusted_p *= 1.05 # 外目からスムーズに走れる馬が有利
-
-                        # Tipster Logic: Ohi (Tokyo City Keiba)
-                        # 大井は広いが、1200mなどの短距離は外枠有利の傾向あり
-                        if '大井' in venue_info:
-                             is_1200 = False
-                             if '距離' in edited_df.columns:
-                                 try:
-                                     d_val = int(str(edited_df['距離'].iloc[idx]).replace('m',''))
-                                     if d_val == 1200: is_1200 = True
-                                 except: pass
-                             
-                             if is_1200 and frame >= 6:
-                                 adjusted_p *= 1.05
-
-                        # Tipster Logic: Funabashi
-                        # 船橋はスパイラルカーブ。マクリが決まりやすく、外枠も不利ではない
-                        if '船橋' in venue_info:
-                             if frame >= 6:
-                                 adjusted_p *= 1.05 # 外枠の自在性
-
-                    except: pass
-
-                # Market Confidence Fallback (Missing Data Safeguard)
-                # オッズ1.0~2.0倍の圧倒的人気馬に対し、AIが極端に低い評価（20%未満）を下している場合、
-                # データ欠落の可能性が高いため、市場評価（オッズ）を一部信頼して補正する。
-                if o > 1.0 and o <= 2.5:
-                     implied_prob = 0.8 / o # 控除率考慮
-                     if adjusted_p < (implied_prob * 0.4): # AIが市場の4割以下しか評価していない場合
-                         adjusted_p = max(adjusted_p, implied_prob * 0.4) # 最低でも市場評価の4割は持たせる
-
-                # EV Calculation: Use w (weight) not m (mark string)
                 ev = (adjusted_p * w * o) - 1.0
-                
-                # Kelly Criterion
-                # f = (p(b+1) - 1) / b  => (p*o - 1) / (o - 1)
-                # p = adjusted_p * mark_bias
-                p_final = adjusted_p * w
-                
-                if o > 1.0 and p_final > 0:
-                    k = ((p_final * o) - 1.0) / (o - 1.0)
-                    kelly = max(0.0, k * 100) # Convert to %
-                    
-                    # Cap Kelly at reasonable amounts (e.g. 50%) to prevent reckless betting
-                    kelly = min(kelly, 50.0)
-                else:
-                    kelly = 0.0
-            
+                # Kelly criterion (placeholder for now)
+                kelly = 0.0
             evs.append(ev)
             kellys.append(kelly)
 
