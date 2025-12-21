@@ -733,12 +733,17 @@ def scrape_shutuba_data(race_id, mode="JRA"):
                 condition = match_cond.group(1)
         
         # Parse Shutuba Table
-        # The table class might be "Shutuba_Table"
-        table = soup.find("table", class_="Shutuba_Table")
-        if not table:
-            # Try RaceTable01
-            table = soup.find("table", class_="RaceTable01")
-            
+        # Robust Selection: Find table with most HorseList rows
+        candidate_tables = soup.find_all("table")
+        table = None
+        max_rows = 0
+        
+        for t in candidate_tables:
+            c = len(t.select("tr.HorseList"))
+            if c > max_rows:
+                max_rows = c
+                table = t
+        
         if not table:
             print("Shutuba table not found.")
             return None
@@ -805,6 +810,8 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             barei = row.select_one(".Barei")
             if barei:
                 entry["性齢"] = barei.text.strip()
+            else:
+                entry["性齢"] = "牡3" # Default fallback
             
             data.append(entry)
             
