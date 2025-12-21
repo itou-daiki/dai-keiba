@@ -167,8 +167,8 @@ if race_id:
                 df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
             
             if df is not None and not df.empty:
-                # 2. FE
-                X_df = process_data(df)
+                # 2. FE (use_venue_features=False to match existing model trained with 27 features)
+                X_df = process_data(df, use_venue_features=False)
                 
                 # 3. Predict
                 if model:
