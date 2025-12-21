@@ -601,6 +601,44 @@ if race_id:
                              if p > 0.25:
                                  adjusted_p *= 1.05
 
+                        # Tipster Logic: Urawa Specific (Simliar to Kasamatsu/Mizusawa)
+                        # 浦和は「日本一小回り」「先行・内枠絶対有利」
+                        if '浦和' in venue_info:
+                             if frame <= 3:
+                                 adjusted_p *= 1.20 # 強力な内枠ボーナス
+                             elif frame >= 7:
+                                 adjusted_p *= 0.90 # 外枠不利
+
+                        # Tipster Logic: Kochi & Saga Specific
+                        # 高知・佐賀は「内ラチ沿いの砂が深い（死にコース）」ことが多い
+                        # 騎手もあえて内を開けて走るため、1枠は包まれて終了のリスク大
+                        if '高知' in venue_info or '佐賀' in venue_info:
+                             if frame == 1:
+                                 adjusted_p *= 0.85 # 1枠はかなり厳しい
+                             elif frame == 2:
+                                 adjusted_p *= 0.95 # 2枠も少し割引
+                             elif frame >= 5:
+                                 adjusted_p *= 1.05 # 外目からスムーズに走れる馬が有利
+
+                        # Tipster Logic: Ohi (Tokyo City Keiba)
+                        # 大井は広いが、1200mなどの短距離は外枠有利の傾向あり
+                        if '大井' in venue_info:
+                             is_1200 = False
+                             if '距離' in edited_df.columns:
+                                 try:
+                                     d_val = int(str(edited_df['距離'].iloc[idx]).replace('m',''))
+                                     if d_val == 1200: is_1200 = True
+                                 except: pass
+                             
+                             if is_1200 and frame >= 6:
+                                 adjusted_p *= 1.05
+
+                        # Tipster Logic: Funabashi
+                        # 船橋はスパイラルカーブ。マクリが決まりやすく、外枠も不利ではない
+                        if '船橋' in venue_info:
+                             if frame >= 6:
+                                 adjusted_p *= 1.05 # 外枠の自在性
+
                     except: pass
 
                 # Market Confidence Fallback (Missing Data Safeguard)
