@@ -183,6 +183,44 @@ def add_history_features(df):
         p_time_col = f'past_{i}_time'
         if p_time_col in df.columns:
              df[f'past_{i}_time_seconds'] = df[p_time_col].apply(parse_time)
+        else:
+             df[f'past_{i}_time_seconds'] = np.nan
+
+        # 7. Parse Distance & Course Type (New)
+        p_dist_col = f'past_{i}_distance'
+        if p_dist_col in df.columns:
+             df[f'past_{i}_distance'] = pd.to_numeric(df[p_dist_col], errors='coerce')
+        else:
+             df[f'past_{i}_distance'] = np.nan
+
+        p_course_col = f'past_{i}_course_type'
+        # If it exists, it might be '芝' or 'ダ' or nan.
+        # We want to maybe keep it as string or map to code?
+        # Helper function to map course type string to code
+        def map_course_type_hist(x):
+            if not isinstance(x, str): return 0 # 0=Unknown
+            if '芝' in x: return 1
+            if 'ダ' in x: return 2
+            if '障' in x: return 3
+            return 0
+            
+        if p_course_col in df.columns:
+             df[f'past_{i}_course_type_code'] = df[p_course_col].apply(map_course_type_hist)
+        else:
+             df[f'past_{i}_course_type_code'] = 0
+
+        # 8. Calculate Speed (New)
+        # Speed = Distance / Time
+        # past_i_speed = past_i_distance / past_i_time_seconds
+        d_col = f'past_{i}_distance'
+        t_col = f'past_{i}_time_seconds'
+        if d_col in df.columns and t_col in df.columns:
+             # Handle division by zero or NaN
+             df[f'past_{i}_speed'] = df[d_col] / df[t_col]
+             # Replace inf with nan
+             df[f'past_{i}_speed'] = df[f'past_{i}_speed'].replace([np.inf, -np.inf], np.nan)
+        else:
+             df[f'past_{i}_speed'] = np.nan
 
     # Clean up current weight change (calculated above)
     # Already done: df['weight_change_num']
@@ -208,10 +246,8 @@ def process_data(df, lambda_decay=0.2):
     norm_weights = [w / sum_weights for w in weights]
     
     # Feature Columns to generate
-    # Feature Columns to generate
-    # Feature Columns to generate
-    # Added interval
-    features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather', 'weight_change', 'interval']
+    # Added interval, speed
+    features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather', 'weight_change', 'interval', 'speed']
     
     # Pre-process columns (Fill NaNs)
     for i in range(1, 6):
@@ -280,12 +316,20 @@ def process_data(df, lambda_decay=0.2):
         else:
             df[col] = 180
 
-        # Weather
         col = f"past_{i}_weather"
         if col in df.columns:
             df[col] = df[col].fillna(2)
         else:
             df[col] = 2
+
+        # Speed
+        col = f"past_{i}_speed"
+        if col in df.columns:
+            # Average speed? ~1000m/60s = 16.6 m/s
+            # 1600m / 95s = 16.8
+            df[col] = df[col].fillna(16.0)
+        else:
+            df[col] = 16.0
 
     # Calculate Weighted Averages
     for feat in features:
@@ -296,36 +340,58 @@ def process_data(df, lambda_decay=0.2):
     # ========== 新規特徴量: コース・馬場適性 ==========
 
     # 1. 芝適性（芝での平均着順）
-    df['turf_compatibility'] = 0.0
-    df['dirt_compatibility'] = 0.0
-    df['turf_count'] = 0
-    df['dirt_count'] = 0
+    df['turf_compatibility'] = 10.0
+    df['dirt_compatibility'] = 10.0
+    
+    # Vectorized calculation using numpy check
+    # We can assume rows are independent
+    # Correct logic: For each row (horse), calculate avg rank in Turf/Dirt
+    
+    # Initialize separate sums/counts for each row
+    turf_sums = pd.Series(0.0, index=df.index)
+    turf_counts = pd.Series(0, index=df.index)
+    dirt_sums = pd.Series(0.0, index=df.index)
+    dirt_counts = pd.Series(0, index=df.index)
 
     for i in range(1, 6):
-        # past_i_race_nameから芝/ダートを判定（簡易版）
-        race_name_col = f'past_{i}_race_name'
+        # Use course_type_code if available (1=Turf, 2=Dirt)
+        # Fallback to race_name string check if needed? 
+        # But we added course_type_code in add_history_features.
+        
+        c_code_col = f'past_{i}_course_type_code'
         rank_col = f'past_{i}_rank'
+        
+        # If code not computed (scraper not run yet, manual update?), fallback to name regex?
+        # Let's rely on c_code_col first, if 0 try regex.
+        
+        # Actually straightforward:
+        code_series = df[c_code_col] if c_code_col in df.columns else pd.Series(0, index=df.index)
+        rank_series = df[rank_col] if rank_col in df.columns else pd.Series(18, index=df.index) # Use filled 18 if missing? existing logic filled it.
 
-        if race_name_col in df.columns and rank_col in df.columns:
-            # 芝レースの判定（レース名に距離が含まれるパターン: 芝1600など）
-            is_turf = df[race_name_col].astype(str).str.contains('芝', na=False)
-            is_dirt = df[race_name_col].astype(str).str.contains('ダ', na=False)
+        # Logic for Turf (1)
+        is_turf = (code_series == 1)
+        # If code is 0 but name has '芝'?
+        race_name_col = f'past_{i}_race_name'
+        if race_name_col in df.columns:
+             # Only fill if 0?
+             is_turf_name = df[race_name_col].astype(str).str.contains('芝', na=False)
+             is_turf = is_turf | ((code_series == 0) & is_turf_name)
 
-            # 芝での成績集計
-            df.loc[is_turf, 'turf_compatibility'] += df.loc[is_turf, rank_col]
-            df.loc[is_turf, 'turf_count'] += 1
+        turf_sums += np.where(is_turf, rank_series, 0)
+        turf_counts += np.where(is_turf, 1, 0)
+        
+        # Logic for Dirt (2)
+        is_dirt = (code_series == 2)
+        if race_name_col in df.columns:
+             is_dirt_name = df[race_name_col].astype(str).str.contains('ダ', na=False)
+             is_dirt = is_dirt | ((code_series == 0) & is_dirt_name)
 
-            # ダートでの成績集計
-            df.loc[is_dirt, 'dirt_compatibility'] += df.loc[is_dirt, rank_col]
-            df.loc[is_dirt, 'dirt_count'] += 1
+        dirt_sums += np.where(is_dirt, rank_series, 0)
+        dirt_counts += np.where(is_dirt, 1, 0)
 
-    # 平均化（0除算回避）
-    df['turf_compatibility'] = df.apply(
-        lambda x: x['turf_compatibility'] / x['turf_count'] if x['turf_count'] > 0 else 10.0, axis=1
-    )
-    df['dirt_compatibility'] = df.apply(
-        lambda x: x['dirt_compatibility'] / x['dirt_count'] if x['dirt_count'] > 0 else 10.0, axis=1
-    )
+    # Calculate Avg
+    df['turf_compatibility'] = np.where(turf_counts > 0, turf_sums / turf_counts, 10.0)
+    df['dirt_compatibility'] = np.where(dirt_counts > 0, dirt_sums / dirt_counts, 10.0)
 
     # 2. 馬場状態適性（良/稍重/重/不良での平均着順）
     df['good_condition_avg'] = 0.0
@@ -360,37 +426,49 @@ def process_data(df, lambda_decay=0.2):
     # 現在の距離に±200m以内の過去レースでの平均着順
     df['distance_compatibility'] = 10.0  # デフォルト
 
+    # 3. 距離適性（現在のレース距離との近さで判定）
+    # 現在の距離に±200m以内の過去レースでの平均着順
+    df['distance_compatibility'] = 10.0  # デフォルト
+
     if '距離' in df.columns:
         current_distance = pd.to_numeric(df['距離'], errors='coerce').fillna(1600)
-
-        distance_sum = 0.0
-        distance_count = 0
+        
+        dist_sums = pd.Series(0.0, index=df.index)
+        dist_counts = pd.Series(0, index=df.index)
 
         for i in range(1, 6):
             rank_col = f'past_{i}_rank'
+            dist_col_hist = f'past_{i}_distance' # New explicit column
             race_name_col = f'past_{i}_race_name'
+            
+            # Use explicit distance if available
+            if dist_col_hist in df.columns:
+                p_dist = df[dist_col_hist]
+            else:
+                 p_dist = pd.Series(np.nan, index=df.index)
 
-            if race_name_col in df.columns and rank_col in df.columns:
-                # レース名から距離を抽出（例: "芝1600" -> 1600）
+            # Fallback to regex
+            if race_name_col in df.columns:
+                # Fill NaNs in p_dist with regex extraction
                 def extract_distance(name):
-                    if not isinstance(name, str):
-                        return np.nan
+                    if not isinstance(name, str): return np.nan
                     match = re.search(r'(\d{3,4})m?', name)
-                    if match:
-                        return float(match.group(1))
+                    if match: return float(match.group(1))
                     return np.nan
+                extracted = df[race_name_col].apply(extract_distance)
+                p_dist = p_dist.fillna(extracted)
 
-                past_distance = df[race_name_col].apply(extract_distance)
+            rank_series = df[rank_col] if rank_col in df.columns else pd.Series(18, index=df.index)
+            
+            # Check diff
+            # We align indices automatically? Series operations align by index.
+            diff = (p_dist - current_distance).abs()
+            is_match = (diff <= 200) & p_dist.notna() & current_distance.notna()
+            
+            dist_sums += np.where(is_match, rank_series, 0)
+            dist_counts += np.where(is_match, 1, 0)
 
-                # ±200m以内のレース
-                for idx in df.index:
-                    if pd.notna(past_distance[idx]) and pd.notna(current_distance[idx]):
-                        if abs(past_distance[idx] - current_distance[idx]) <= 200:
-                            distance_sum += df.loc[idx, rank_col]
-                            distance_count += 1
-
-        if distance_count > 0:
-            df['distance_compatibility'] = distance_sum / distance_count
+        df['distance_compatibility'] = np.where(dist_counts > 0, dist_sums / dist_counts, 10.0)
 
     # ========== 新規特徴量: レース間隔関連 ==========
 
@@ -421,27 +499,36 @@ def process_data(df, lambda_decay=0.2):
     # 7. 現在の騎手との過去成績（過去5走で同じ騎手の時の平均着順）
     df['jockey_compatibility'] = 10.0  # デフォルト
 
-    if '騎手' in df.columns:
-        current_jockey = df['騎手'].astype(str)
+    # 7. 現在の騎手との過去成績（過去5走で同じ騎手の時の平均着順）
+    df['jockey_compatibility'] = 10.0  # デフォルト
 
-        jockey_rank_sum = 0.0
-        jockey_count = 0
+    # Helper to clean jockey name
+    def clean_jockey(name):
+        if not isinstance(name, str): return ""
+        # Remove symbols like ▲, △, ☆, ◇, numbers?
+        # Typically "▲丹内" -> "丹内"
+        return re.sub(r'[▲△☆◇★\d]', '', name).strip()
+
+    if '騎手' in df.columns:
+        current_jockey = df['騎手'].astype(str).apply(clean_jockey)
+        
+        j_sums = pd.Series(0.0, index=df.index)
+        j_counts = pd.Series(0, index=df.index)
 
         for i in range(1, 6):
             past_jockey_col = f'past_{i}_jockey'
             rank_col = f'past_{i}_rank'
+            
+            if past_jockey_col in df.columns:
+                p_jockey = df[past_jockey_col].astype(str).apply(clean_jockey)
+                rank_series = df[rank_col] if rank_col in df.columns else pd.Series(18, index=df.index)
+                
+                is_same = (p_jockey == current_jockey) & (current_jockey != "")
+                
+                j_sums += np.where(is_same, rank_series, 0)
+                j_counts += np.where(is_same, 1, 0)
 
-            if past_jockey_col in df.columns and rank_col in df.columns:
-                # 同じ騎手の過去走
-                same_jockey = df[past_jockey_col].astype(str) == current_jockey
-
-                for idx in df.index:
-                    if same_jockey[idx]:
-                        jockey_rank_sum += df.loc[idx, rank_col]
-                        jockey_count += 1
-
-        if jockey_count > 0:
-            df['jockey_compatibility'] = jockey_rank_sum / jockey_count
+        df['jockey_compatibility'] = np.where(j_counts > 0, j_sums / j_counts, 10.0)
 
     # ========== 新規特徴量: レースクラス・条件 ==========
 

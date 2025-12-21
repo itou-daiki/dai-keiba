@@ -1,0 +1,71 @@
+name: Daily Data Update (JRA & NAR)
+
+on:
+  schedule:
+    # Run at 00:00 JST (15:00 UTC previous day)
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+    env:
+      TZ: 'Asia/Tokyo'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Scrapers
+        run: |
+          # Calculate dates
+          YESTERDAY=$(date -d "yesterday" +%Y-%m-%d)
+          TODAY=$(date +%Y-%m-%d)
+          
+          echo "Running scrapers for Yesterday ($YESTERDAY) and Today ($TODAY)..."
+
+          # 1. Update Results (Yesterday) - JRA
+          echo ">>> [JRA] Scraping Results for $YESTERDAY"
+          python scraper/auto_scraper.py --mode JRA --start $YESTERDAY --end $YESTERDAY || echo "JRA Result Scrape Warning"
+
+          # 2. Update Results (Yesterday) - NAR
+          echo ">>> [NAR] Scraping Results for $YESTERDAY"
+          python scraper/auto_scraper.py --mode NAR --start $YESTERDAY --end $YESTERDAY || echo "NAR Result Scrape Warning"
+
+          # 3. Update Schedule (Today/Future) - JRA
+          echo ">>> [JRA] Scraping Schedule"
+          python scraper/auto_scraper.py --mode JRA --today || echo "JRA Schedule Scrape Warning"
+
+          # 4. Update Schedule (Today/Future) - NAR
+          echo ">>> [NAR] Scraping Schedule"
+          python scraper/auto_scraper.py --mode NAR --today || echo "NAR Schedule Scrape Warning"
+
+      - name: Check for changes and Commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add potentially changed files
+          git add database.csv database_nar.csv todays_data.json todays_data_nar.json
+          
+          # Check if there are changes stashed
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "data: Automatic update for $(date +%Y-%m-%d)"
+            git push
+            echo "Changes pushed successfully."
+          fi

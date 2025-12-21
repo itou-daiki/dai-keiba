@@ -7,6 +7,7 @@ import pickle
 import json
 import plotly.express as px
 import plotly.graph_objects as go
+import time
 
 # Add paths
 sys.path.append(os.path.join(os.path.dirname(__file__), 'scraper'))
@@ -22,17 +23,17 @@ st.set_page_config(page_title="AI Keiba Predictor", layout="wide")
 
 # --- Utils ---
 @st.cache_resource
-def load_model():
-    model_path = os.path.join(os.path.dirname(__file__), 'ml/models/lgbm_model.pkl')
+def load_model(mode="JRA"):
+    model_path = os.path.join(os.path.dirname(__file__), f"ml/models/lgbm_model_nar.pkl" if mode == "NAR" else "ml/models/lgbm_model.pkl")
     if os.path.exists(model_path):
         with open(model_path, 'rb') as f:
             return pickle.load(f)
     return None
 
-def load_schedule_data():
-    path = os.path.join(os.path.dirname(__file__), 'todays_data.json')
-    if os.path.exists(path):
-        with open(path, 'r', encoding='utf-8') as f:
+def load_schedule_data(mode="JRA"):
+    json_path = os.path.join(os.path.dirname(__file__), "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
+    if os.path.exists(json_path):
+        with open(json_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     return None
 
@@ -72,67 +73,104 @@ with st.expander("ℹ️ このAI予想のロジックについて (クリック
     - 特徴: 波乱が多く、人気薄が勝ちやすい
     """)
 
-# Sidebar
-st.sidebar.header("🕹️ コントロールパネル")
+# --- Admin Menu ---
+st.markdown("### 設定")
+mode = st.radio("開催モード (Mode)", ["JRA (中央競馬)", "NAR (地方競馬)"], horizontal=True)
+mode_val = "JRA" if "JRA" in mode else "NAR"
 
-if st.sidebar.button("📅 レース一覧を更新 (今後1週間)"):
-    with st.spinner("最新のレース情報を取得中 (約1分)..."):
-        success, msg = auto_scraper.scrape_todays_schedule()
-        if success:
-            st.sidebar.success(msg)
-            st.rerun()
-        else:
-            st.sidebar.error(f"エラー: {msg}")
+with st.expander("🛠️ 管理ツール (スケジュール更新など)"):
+    col_admin_1, col_admin_2 = st.columns([1, 1])
+    with col_admin_1:
+         if st.button("📅 レース一覧を更新 (今後1週間)"):
+            with st.spinner(f"{mode_val}の最新レース情報を取得中..."):
+                success, msg = auto_scraper.scrape_todays_schedule(mode=mode_val)
+                if success:
+                    st.success(msg)
+                    time.sleep(1)
+                    st.rerun()
+                else:
+                    st.error(f"エラー: {msg}")
+    
+    with col_admin_2:
+         if st.button("🧠 AIモデルを再読み込み"):
+             st.cache_resource.clear()
+             st.success("モデルキャッシュをクリアしました。次回予測時に再ロードされます。")
 
-if st.sidebar.button("🧠 最新モデルを再読み込み"):
-    load_model.clear()
-    st.cache_resource.clear()
-    st.success("モデルを再読み込みしました！")
+st.markdown("---")
 
+# --- Race Selection ---
+st.subheader("📍 レース選択")
 
-schedule_data = load_schedule_data()
+schedule_data = load_schedule_data(mode=mode_val)
 race_id = None
 
 if schedule_data and "races" in schedule_data:
     races = schedule_data['races']
     
     # 1. Filter by Date
-    # Extract available dates
-    # races have "date" field "YYYY-MM-DD"
     dates = sorted(list(set([r.get('date', 'Unknown') for r in races])))
     
-    selected_date = st.sidebar.selectbox("日付を選択", dates)
+    # Layout columns for selection
+    col_date, col_venue, col_race = st.columns(3)
     
-    # Filter races
+    with col_date:
+         selected_date = st.selectbox("1. 日付を選択", dates)
+    
+    # Filter races by date
     todays_races = [r for r in races if r.get('date') == selected_date]
     
     if todays_races:
-        race_options = {f"{r['venue']}{r['number']}R: {r['name']}": r['id'] for r in todays_races}
-        selected_label = st.sidebar.selectbox("レースを選択", list(race_options.keys()))
-        if selected_label:
-            race_id = race_options[selected_label]
+        # 2. Filter by Venue (New)
+        venues = sorted(list(set([r['venue'] for r in todays_races])))
+        
+        with col_venue:
+            selected_venue = st.selectbox("2. 開催地を選択", venues)
+            
+        # Filter races by venue
+        venue_races = [r for r in todays_races if r['venue'] == selected_venue]
+        
+        # 3. Select Race
+        # Sort by race number just in case
+        venue_races.sort(key=lambda x: int(x['number']))
+        
+        race_options = {f"{r['number']}R: {r['name']}": r['id'] for r in venue_races}
+        
+        with col_race:
+            selected_label = st.selectbox("3. レースを選択", list(race_options.keys()))
+            if selected_label:
+                race_id = race_options[selected_label]
     else:
-        st.sidebar.warning(f"{selected_date} のレースはありません。")
+        st.warning(f"{selected_date} のレースはありません。")
         
 else:
-    st.sidebar.warning("レースデータがありません。更新ボタンを押してください。")
-    race_id = st.sidebar.text_input("レースID直接入力 (12桁)", value="202305021211")
+    st.warning("レースデータがありません。管理者メニューから更新ボタンを押してください。")
+    race_id = st.text_input("レースID直接入力 (12桁)", value="202305021211")
+
 
 # Main Analysis
 if race_id:
     st.header(f"レース分析: {race_id}")
     
-    if st.button("🚀 このレースを分析する (データ取得・AI予測)"):
-        with st.spinner("出馬表と過去データを取得中 (20〜30秒かかります)..."):
-            # 1. Scrape
-            df = auto_scraper.scrape_shutuba_data(race_id)
+    # Load Model
+    model = load_model(mode=mode_val)
+
+    button_analyze = st.button("🚀 このレースを分析する (データ取得・AI予測)")
+    
+    if button_analyze:
+        if not race_id:
+             st.error("レースIDが選択されていません。")
+        elif not model:
+             st.error(f"モデル ({mode_val}) が読み込めませんでした。管理画面で学習を実行するか、モデルファイルを確認してください。")
+        else:
+            with st.spinner("出馬表を取得し、AI予測を実行中..."):
+                # Scrape Shutuba
+                df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
             
             if df is not None and not df.empty:
                 # 2. FE
                 X_df = process_data(df)
                 
                 # 3. Predict
-                model = load_model()
                 if model:
                     try:
                         # Drop meta cols for prediction
@@ -153,6 +191,18 @@ if race_id:
                         
                         df['AI_Prob'] = probs
                         df['AI_Score'] = (probs * 100).astype(int)
+                        
+                        # Merge features back to df for display
+                        # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
+                        cols_to_merge = [
+                            'turf_compatibility', 'dirt_compatibility', 
+                            'jockey_compatibility', 'distance_compatibility', 
+                            'weighted_avg_speed', 'weighted_avg_rank'
+                        ]
+                        for c in cols_to_merge:
+                            if c in X_df.columns:
+                                df[c] = X_df[c]
+
                         
                     except Exception as e:
                         st.error(f"Prediction Error: {e}")
@@ -182,14 +232,45 @@ if race_id:
              else:
                  df_display['Odds'] = 0.0
         
-        display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds']
-        # Map nice names
         rename_map = {
             'AI_Score': 'AIスコア(%)',
             'Odds': '現在オッズ',
             '性齢': '年齢',
-            '馬 番': '馬番'
+            '馬 番': '馬番',
+            'jockey_compatibility': '騎手相性',
+            'distance_compatibility': '距離適性',
+            'course_compatibility': 'コース適性',
+            'weighted_avg_speed': '平均スピード'
         }
+        
+        # Select appropriate course compatibility
+        # If 'コースタイプ' contains '芝', use turf, else dirt
+        # Default to turf if unknown
+        is_turf_race = True
+        if 'コースタイプ' in df_display.columns:
+             # Check first row (all same race)
+             c_type = str(df_display['コースタイプ'].iloc[0])
+             if 'ダ' in c_type:
+                 is_turf_race = False
+        
+        if is_turf_race:
+             df_display['course_compatibility'] = df_display.get('turf_compatibility', 10.0)
+        else:
+             df_display['course_compatibility'] = df_display.get('dirt_compatibility', 10.0)
+             
+        # Ensure all display columns exist
+        defaults = {
+            'jockey_compatibility': 10.0,
+            'distance_compatibility': 10.0,
+            'weighted_avg_speed': 16.0
+        }
+        for c, v in defaults.items():
+            if c not in df_display.columns:
+                df_display[c] = v
+
+
+        display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
+
         
         edited_df = df_display[display_cols].copy()
         edited_df.rename(columns=rename_map, inplace=True)
@@ -198,7 +279,40 @@ if race_id:
         edited_df['予想印'] = ""
         
         st.subheader("📝 予想・オッズ入力")
-        st.info("「予想印」や「現在オッズ」を編集すると、リアルタイムで期待値(EV)が計算されます。")
+        
+        col_input_1, col_input_2 = st.columns([3, 1])
+        with col_input_1:
+             st.info("「予想印」や「現在オッズ」を編集すると、リアルタイムで期待値(EV)が計算されます。")
+        with col_input_2:
+             if st.button("🔄 最新オッズを取得"):
+                 with st.spinner("最新オッズを取得中..."):
+                     try:
+                         current_odds = auto_scraper.scrape_odds_for_race(race_id, mode=mode_val)
+                         # Update session state df
+                         if current_odds:
+                             odds_map = {x['number']: x['odds'] for x in current_odds}
+                             
+                             target_df = st.session_state[f'data_{race_id}']
+                             
+                             # Update '単勝' and 'Odds'
+                             def update_odds(row):
+                                 try:
+                                     num = int(row['馬 番'])
+                                     return odds_map.get(num, row.get('Odds', 0.0))
+                                 except:
+                                     return row.get('Odds', 0.0)
+                                 
+                             target_df['Odds'] = target_df.apply(update_odds, axis=1)
+                             target_df['単勝'] = target_df['Odds'] # Sync
+                             
+                             st.session_state[f'data_{race_id}'] = target_df
+                             st.success("オッズを更新しました！")
+                             st.rerun()
+                         else:
+                             st.warning("オッズの取得に失敗したか、データが見つかりませんでした。")
+                     except Exception as e:
+                         st.error(f"オッズ取得エラー: {e}")
+
         
         edited_df = st.data_editor(
             edited_df,
@@ -216,10 +330,32 @@ if race_id:
                     step=0.1,
                     format="%.1f"
                 ),
+                "推奨度(Kelly)": st.column_config.ProgressColumn(
+                    "推奨度(Kelly)",
+                    help="ケリー基準による推奨賭け率 (リスクを考慮した推奨度)",
+                    format="%.1f%%",
+                    min_value=0,
+                    max_value=30, # Max display scale (usually >30% is rare)
+                ),
                 "予想印": st.column_config.SelectboxColumn(
                     "予想印",
                     options=["", "◎", "◯", "▲", "△", "✕"],
                     required=False,
+                ),
+                "騎手相性": st.column_config.NumberColumn(
+                    "騎手相性",
+                    help="この騎手での平均着順 (小さいほど良い)",
+                    format="%.1f"
+                ),
+                "コース適性": st.column_config.NumberColumn(
+                    "コース適性",
+                    help="芝/ダート別 平均着順 (小さいほど良い)",
+                    format="%.1f"
+                ),
+                "距離適性": st.column_config.NumberColumn(
+                    "距離適性",
+                    help="同距離での平均着順 (小さいほど良い)",
+                    format="%.1f"
                 )
             },
             hide_index=True,
@@ -262,10 +398,13 @@ if race_id:
         marks = edited_df['予想印']
 
         evs = []
+        kellys = []
+        
         for p, o, m in zip(probs, odds, marks):
             # Safety filter (race type specific)
             if p < safety_threshold:
                 ev = -1.0
+                kelly = 0.0
             else:
                 w = mark_weights.get(m, 1.0)
 
@@ -279,15 +418,28 @@ if race_id:
 
                 ev = (adjusted_p * w * o) - 1.0
             evs.append(ev)
+            kellys.append(kelly)
             
         edited_df['期待値(EV)'] = evs
+        edited_df['推奨度(Kelly)'] = kellys
+
         
         # Highlight high EV
         def highlight_ev(s):
             is_high = s > 0
             return ['background-color: #d4edda' if v else '' for v in is_high]
         
-        st.dataframe(edited_df.style.applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)']))
+        # Highlight high EV and Kelly
+        def highlight_ev(s):
+            is_high = s > 0
+            return ['background-color: #d4edda' if v else '' for v in is_high]
+        
+        st.dataframe(
+            edited_df.style
+            .format({'推奨度(Kelly)': lambda x: '-' if x <= 0 else f'{x:.1f}%', '期待値(EV)': '{:.2f}'})
+            .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)', '推奨度(Kelly)'])
+        )
+
         
         # Visualization
         st.subheader("📊 詳細分析")
@@ -301,18 +453,38 @@ if race_id:
             row = df_display[df_display['馬名'] == selected_horse_name].iloc[0]
             
             # 2. Radar Chart (5 Axes)
-            # Speed (3F), Stamina (Rank), Power (Weight), Experience (Age), Style (RunStyle)
+            # Speed (Real), Stamina/Form (Rank), Jockey, Course, Distance
             
-            score_speed = max(0, min(10, (40 - row.get('weighted_avg_last_3f', 36)) * 1.5))
-            score_stamina = max(0, min(10, (18 - row.get('weighted_avg_rank', 18)) / 1.8))
-            score_power = max(0, min(10, (row.get('weighted_avg_horse_weight', 470) - 400) / 15))
-            score_exp = max(0, min(10, (row.get('age', 3) - 2) * 2))
-            score_style = row.get('weighted_avg_run_style', 3) * 2.5
+            # --- Scoring Logic (Lower rank is better, so Invert) ---
+            # Rank 1 -> Score 10, Rank 10 -> Score 1, Rank 18 -> 0
+            def rank_to_score(r):
+                if pd.isna(r) or r > 18: return 0
+                return max(0, min(10, (14 - r) * (10/13))) # Approx 1->10, 14->0
+
+            # Speed: 16.0 is baseline. >17 is fast? <15 slow?
+            # 1000m/60s = 16.6. 
+            sp_val = row.get('weighted_avg_speed', 16.0)
+            score_speed = max(0, min(10, (sp_val - 15.0) * 5)) # 17.0->10, 15.0->0
+
+            j_val = row.get('jockey_compatibility', 10.0)
+            score_jockey = rank_to_score(j_val)
             
+            c_val = row.get('course_compatibility', 10.0) # Calculated above but only in display_df... wait, we are accessing df_display row.
+            # We added 'course_compatibility' to df_display in UI section.
+            # Re-calculate here if needed OR ensure row comes from df_display.
+            # row comes from df_display!
+            score_course = rank_to_score(c_val)
+            
+            d_val = row.get('distance_compatibility', 10.0)
+            score_dist = rank_to_score(d_val)
+            
+            rank_val = row.get('weighted_avg_rank', 10.0)
+            score_form = rank_to_score(rank_val)
+
             fig_radar = go.Figure()
             fig_radar.add_trace(go.Scatterpolar(
-                r=[score_speed, score_stamina, score_power, score_exp, score_style, score_speed],
-                theta=['スピード (3F)', 'スタミナ (着順)', 'パワー (馬体重)', '経験 (年齢)', '脚質'],
+                r=[score_speed, score_form, score_jockey, score_course, score_dist, score_speed],
+                theta=['スピード', '実績(着順)', '騎手相性', 'コース適性', '距離適性'],
                 fill='toself',
                 name=selected_horse_name
             ))

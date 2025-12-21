@@ -20,14 +20,16 @@ except ImportError:
 # ==========================================
 # Root directory (parent of scraper) -> database.csv
 CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+CSV_FILE_PATH_NAR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database_nar.csv")
 TARGET_YEARS = [2024, 2025] # Expandable
 HORSE_HISTORY_CACHE = {} # Cache for horse history DataFrames
 
 # ==========================================
 # 1. レース詳細データを取得する関数
 # ==========================================
-def scrape_race_data(race_id):
-    url = f"https://race.netkeiba.com/race/result.html?race_id={race_id}"
+def scrape_race_data(race_id, mode="JRA"):
+    base_domain = "nar.netkeiba.com" if mode == "NAR" else "race.netkeiba.com"
+    url = f"https://{base_domain}/race/result.html?race_id={race_id}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" 
     }
@@ -165,10 +167,6 @@ def scrape_race_data(race_id):
             # But the table has headers. 
             # We can iterate through table rows again.
             
-            rows = target_table.find_all("tr")
-            # Skip header if necessary. pd.read_html usually detects header.
-            # Let's rely on finding "Horse_Name" class or anchor in rows.
-            
             horse_ids = []
             
             # The DF from read_html might have removed some rows or headers.
@@ -176,7 +174,7 @@ def scrape_race_data(race_id):
             # Let's iterate `rows` and extract ID.
             
             found_ids = []
-            for tr in rows:
+            for tr in target_table.find_all("tr"):
                  # Check for horse link
                  a_tag = tr.select_one(".Horse_Name a")
                  if a_tag:
@@ -211,8 +209,8 @@ def scrape_race_data(race_id):
             
             past_columns = []
             # Prepare new columns
-            # Added: last_3f, horse_weight, jockey, weight_carried, condition, odds, weather
-            p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather']
+            # Added: last_3f, horse_weight, jockey, weight_carried, condition, odds, weather, distance, course_type
+            p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather', 'distance', 'course_type']
             
             for i in range(1, 6):
                 for f in p_fields:
@@ -264,8 +262,9 @@ def scrape_race_data(race_id):
                              df.at[idx, f"past_{n}_horse_weight"] = p_row.get('horse_weight')
                              df.at[idx, f"past_{n}_jockey"] = p_row.get('jockey')
                              df.at[idx, f"past_{n}_condition"] = p_row.get('condition')
-                             df.at[idx, f"past_{n}_odds"] = p_row.get('odds')
                              df.at[idx, f"past_{n}_weather"] = p_row.get('weather')
+                             df.at[idx, f"past_{n}_distance"] = p_row.get('distance')
+                             df.at[idx, f"past_{n}_course_type"] = p_row.get('course_type')
             
             return df
         else:
@@ -281,51 +280,103 @@ def scrape_race_data(race_id):
     # ==========================================
 # 2. Upcoming/Today's Race Scraping (JSON for Web App)
 # ==========================================
-def scrape_todays_schedule():
+def scrape_todays_schedule(mode="JRA"):
     """
     Scrapes race list for today + next 7 days (Total 8 days).
-    Saves to 'todays_data.json'.
+    Saves to 'todays_data.json' (JRA) or 'todays_data_nar.json' (NAR).
+    mode: "JRA" or "NAR"
     """
     import json
     
     race_list = []
     today = datetime.now()
     
-    print(f"Fetching schedule for next 8 days...")
+    print(f"Fetching schedule for next 8 days (Mode: {mode})...")
     
-    for i in range(8):
+    today = datetime.now()
+    # Fetch previous 7 days and next 7 days (Total 15 days) as requested
+    date_range = range(-7, 8)
+    
+    race_list = []
+    
+    print(f"Fetching schedule for range [{today + timedelta(days=-7):%Y-%m-%d} to {today + timedelta(days=7):%Y-%m-%d}] (Mode: {mode})...")
+    
+    for i in date_range:
         target_date = today + timedelta(days=i)
-        kaisai_date = target_date.strftime("%Y%m%d")
-        date_str = target_date.strftime("%Y-%m-%d")
+        date_str = target_date.strftime('%Y%m%d')
         
-        # url = f"https://race.netkeiba.com/top/race_list_sub.html?kaisai_date={kaisai_date}"
-        # sub html often returns empty if no race.
-        # Main page: https://race.netkeiba.com/top/race_list.html?kaisai_date=...
-        # But sub is better for parsing usually.
-        url = f"https://race.netkeiba.com/top/race_list_sub.html?kaisai_date={kaisai_date}"
+        # JRA/NAR specific logic if needed for URL? They seem to allow same param.
+        # But JRA base is race.netkeiba, NAR is nar.netkeiba.
+        base_domain = "nar.netkeiba.com" if mode == "NAR" else "race.netkeiba.com"
+        url = f"https://{base_domain}/top/race_list_sub.html?kaisai_date={date_str}"
         headers = { "User-Agent": "Mozilla/5.0" }
         
+        print(f" Checking {target_date.strftime('%Y-%m-%d')}...")
         try:
-            print(f" Checking {date_str}...")
-            # We need a small sleep
-            if i > 0: time.sleep(1)
+            # JRA sub-list also tends to group by venue in dl elements
+            if i != 0: time.sleep(1)
             
             response = requests.get(url, headers=headers, timeout=10)
+            response.encoding = response.apparent_encoding 
+            
             if not response.text: continue
             
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Selectors
-            items = soup.select('.RaceList_DataList .RaceList_DataItem')
-            if not items:
-                items = soup.select('.RaceList_Box .RaceList_DataItem')
-                
-            if not items:
-                continue
-                
-            print(f"  Found {len(items)} races for {date_str}.")
+            # Unified Parsing Logic (Works for both JRA sub-list and NAR)
+            venue_item_pairs = []
             
-            for item in items:
+            wrapper = soup.select_one('.RaceList_Box')
+            venue_blocks = []
+            if wrapper:
+                venue_blocks = wrapper.find_all('dl', recursive=False)
+            
+            # JRA might fallback to .RaceList_DataList if only one venue or older format?
+            # But debug showed JRA using dl too.
+            
+            if not venue_blocks and wrapper and wrapper.name == 'dl':
+                 venue_blocks = [wrapper]
+
+            # If still found nothing but items exist (flat list structure fallback)
+            if not venue_blocks:
+                 items = soup.select('.RaceList_DataList .RaceList_DataItem')
+                 if not items and wrapper: items = wrapper.select('.RaceList_DataItem')
+                 for it in items: venue_item_pairs.append(("Unknown", it))
+            else:
+                for block in venue_blocks:
+                    venue_name = "Unknown"
+                    dt = block.select_one('dt')
+                    if dt:
+                        txt = dt.text.replace("\n", " ").strip()
+                        
+                        # 1. Try NAR pattern "高知競馬場TOP"
+                        m_nar = re.search(r'(\S+?)競馬場', txt)
+                        if m_nar:
+                            venue_name = m_nar.group(1)
+                        else:
+                            # 2. Try JRA pattern "5回 中山 7日目"
+                            # Matches "N回 Venue N日目"
+                            m_jra = re.search(r'\d+回\s*(\S+)\s*\d+日目', txt)
+                            if m_jra:
+                                venue_name = m_jra.group(1)
+                            else:
+                                # 3. Fallback: Search for known venue names
+                                # JRA + NAR
+                                known_venues = r'(札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉|帯広|門別|盛岡|水沢|浦和|船橋|大井|川崎|金沢|笠松|名古屋|園田|姫路|高知|佐賀)'
+                                match_v = re.search(known_venues, txt)
+                                if match_v:
+                                    venue_name = match_v.group(1)
+
+                    sub_items = block.select('.RaceList_DataItem')
+                    for it in sub_items:
+                        venue_item_pairs.append((venue_name, it))
+
+            if not venue_item_pairs:
+                continue # No races today
+                
+            print(f"  Found {len(venue_item_pairs)} races for {target_date.strftime('%Y-%m-%d')}.")
+            
+            for venue_cache, item in venue_item_pairs:
                 link_elem = item.find('a')
                 if not link_elem: continue
                 
@@ -335,43 +386,48 @@ def scrape_todays_schedule():
                 
                 race_id = race_id_match.group(1)
                 
-                # Metadata
-                venue_elem = item.select_one('.JyoName')
-                race_num_elem = item.select_one('.Race_Num')
-                race_name_elem = item.select_one('.RaceName') or item.select_one('.ItemTitle')
+                title_elem = item.select_one('.RaceList_ItemTitle')
+                race_name = title_elem.text.strip() if title_elem else "Unknown Race"
                 
-                venue = venue_elem.text.strip() if venue_elem else ""
-                num = race_num_elem.text.strip() if race_num_elem else ""
-                name = race_name_elem.text.strip() if race_name_elem else ""
+                venue = "Unknown"
+                number = ""
                 
-                if not venue and len(race_id) >= 6:
-                    place_code = race_id[4:6]
-                    venue_map = {
-                        "01": "札幌", "02": "函館", "03": "福島", "04": "新潟", "05": "東京",
-                        "06": "中山", "07": "中京", "08": "京都", "09": "阪神", "10": "小倉"
-                    }
-                    venue = venue_map.get(place_code, "")
+                if venue_cache and venue_cache != "Unknown":
+                    venue = venue_cache
+                else:
+                    # Last resort fallback if header parsing failed (JRA flat list?)
+                    meta_elem = item.select_one('.RaceList_Item02')
+                    if meta_elem:
+                         meta_txt = meta_elem.text.strip()
+                         # e.g. "中山1R"
+                         vm = re.search(r'(\D+)(\d+)R', meta_txt)
+                         if vm:
+                             venue = vm.group(1).strip()
+                             # Update number if found
+                             if not number: number = vm.group(2)
                 
-                # Clean up num (remove 'R' or spaces, keep digits)
-                num = re.sub(r'\D', '', num) # Remove non-digits
+                # Try to extract race number from .Race_Num (Robust for both)
+                num_elem = item.select_one('.Race_Num')
+                if num_elem:
+                    num_txt = num_elem.text.strip()
+                    nm = re.search(r'(\d+)R', num_txt)
+                    if nm: number = nm.group(1)
                 
-                # Don't scrape odds for future dates aggressively (might not exist)
-                # Only scrape odds if it's Today?
-                # or just fetch basics. Providing odds is nice.
-                # If date is today, fetch odds. Else maybe skip to save time.
-                # Let's simple check: if date == today
+                if not number: number = "1" # Default
                 
-                odds_data = []
+                # For odds, only check Today (i==0)
+                horses = []
                 if i == 0:
-                     odds_data = scrape_odds_for_race(race_id)
+                     # Only scrape odds for today to save time
+                     horses = scrape_odds_for_race(race_id, mode=mode)
                 
                 race_info = {
                     "id": race_id,
-                    "date": date_str,
+                    "date": target_date.strftime("%Y-%m-%d"),
                     "venue": venue,
-                    "number": num,
-                    "name": name,
-                    "horses": odds_data
+                    "number": number,
+                    "name": race_name,
+                    "horses": horses
                 }
                 race_list.append(race_info)
                 
@@ -379,14 +435,16 @@ def scrape_todays_schedule():
             print(f" Error fetching {date_str}: {e}")
 
     # Save to JSON
-    output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "todays_data.json")
+    # Save to JSON
+    filename = "todays_data_nar.json" if mode == "NAR" else "todays_data.json"
+    output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump({"date": today.strftime("%Y-%m-%d"), "races": race_list}, f, ensure_ascii=False, indent=2)
         
     print(f"Saved {len(race_list)} future races to {output_path}")
     return True, f"{len(race_list)} races saved (Next 1 week)."
 
-def scrape_odds_for_race(race_id):
+def scrape_odds_for_race(race_id, mode="JRA"):
     """
     Fetches odds for a specific race_id.
     Tries API first, then falls back to Main Odds page.
@@ -395,73 +453,63 @@ def scrape_odds_for_race(race_id):
     horses = []
     headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" }
     
-    print(f"  Scraping odds for {race_id}...")
+    print(f"  Scraping odds for {race_id} (Mode: {mode})...")
+    
+    base_domain = "nar.netkeiba.com" if mode == "NAR" else "race.netkeiba.com"
     
     # 1. Try API (odds_get_form.html)
-    try:
-        url = f"https://race.netkeiba.com/odds/odds_get_form.html?type=b1&race_id={race_id}"
-        response = requests.get(url, headers=headers, timeout=10)
-        response.encoding = response.apparent_encoding
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Selectors for API
-        # Usually #odds_tan_block exists.
-        tan_block = soup.select_one('#odds_tan_block')
-        rows = []
-        if tan_block:
-             rows = tan_block.select('.RaceOdds_HorseList_Table tbody tr')
-        if not rows:
-             rows = soup.select('.RaceOdds_HorseList_Table tbody tr')
-        
-        # If API returned rows, parse
-        temp_horses = []
-        for row in rows:
-            # Check for Umaban and Odds
-            # Header often has th.
-            if row.find('th'): continue
+    # The API might be shared on race.netkeiba.com even for NAR?
+    # Or might be nar.netkeiba.com/odds/...
+    # Let's try standard first, maybe it redirects or works.
+    # Fallback is the main page which definitely uses nar.netkeiba.com for NAR.
+    
+    # Priority: 
+    # 1. New JSON API (Try if JRA, skip if NAR as it says "jra_odds")
+    # 2. Form API (odds_get_form)
+    # 3. Main Page
+    
+    success_via_api = False
+    
+    # 1. Try JSON API (New) - Only for JRA as the endpoint is JRA specific
+    if mode == "JRA":
+        try:
+            # type=1 usually returns Win (Tansho) odds in ['1']
+            url = f"https://race.netkeiba.com/api/api_get_jra_odds.html?race_id={race_id}&type=1&action=init"
+            response = requests.get(url, headers=headers, timeout=10)
             
-            # Waku, Umaban, Mark, ... Name, Odds
-            # Umaban is usually 2nd cell (td:nth-child(2))
-            # Odds is usually 6th cell (td:nth-child(6))
-            
-            # Try finding by class if possible
-            umaban_elem = row.select_one('.Umaban') or row.select_one('td:nth-child(2)')
-            odds_elem = row.select_one('.Odds') or row.select_one('td:nth-child(6)') # API uses td:nth-child(6) for odds usually? No class .Odds?
-            
-            # Use 'id' attribute logic if available? e.g. "td_odds_1"
-            # Actually API often returns simpler table.
-            
-            if umaban_elem and odds_elem:
-                try:
-                    u_txt = umaban_elem.text.strip()
-                    if not u_txt.isdigit(): continue
-                    num = int(u_txt)
+            # Check if JSON
+            if response.status_code == 200 and 'application/json' in response.headers.get('Content-Type', ''):
+                data = response.json()
+                if data.get('status') == 'result':
+                    # Parse Odds
+                    # Structure: data['data']['odds']['1']['01'] = [odds, ?, ?]
+                    odds_data = data.get('data', {}).get('odds', {}).get('1', {})
                     
-                    o_txt = odds_elem.text.strip()
-                    if '---' in o_txt or not o_txt: 
-                        odds = 0.0
-                    else:
-                        odds = float(o_txt)
+                    temp_horses = []
+                    for h_num_str, val_list in odds_data.items():
+                        if not val_list or len(val_list) == 0: continue
+                        
+                        try:
+                            num = int(h_num_str)
+                            odds_str = val_list[0]
+                            if odds_str and '---' not in odds_str:
+                                odds = float(odds_str)
+                                temp_horses.append({"number": num, "odds": odds})
+                        except: continue
                     
-                    temp_horses.append({"number": num, "odds": odds})
-                except: continue
-        
-        # Check if valid
-        if temp_horses and any(h['odds'] > 0 for h in temp_horses):
-            print(f"  Got {len(temp_horses)} odds via API.")
-            return temp_horses
-        else:
-            if temp_horses:
-                 print("  API returned odds but all were 0.0 (or ---).")
-            else:
-                 print("  API returned no rows.")
-
-    except Exception as e:
-        print(f"  API Odds Error: {e}")
+                    if temp_horses:
+                        print(f"  Got {len(temp_horses)} odds via JSON API.")
+                        return temp_horses
+            
+        except Exception as e:
+            print(f"  JSON API Error: {e}")
 
     # 2. Fallback Main Page
     try:
-        url_main = f"https://race.netkeiba.com/odds/index.html?race_id={race_id}"
+        url_main = f"https://{base_domain}/odds/index.html?race_id={race_id}"
+        if mode == "NAR":
+             url_main += "&type=b1"
+             
         response = requests.get(url_main, headers=headers, timeout=10)
         response.encoding = 'EUC-JP' 
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -475,7 +523,7 @@ def scrape_odds_for_race(race_id):
         
         # Heuristic: Look for table with "馬番" in header
         for t in tables:
-            if "馬番" in t.text and "単勝" in t.text:
+            if "馬番" in t.text and ("単勝" in t.text or "オッズ" in t.text):
                 target_table = t
                 break
         
@@ -488,7 +536,8 @@ def scrape_odds_for_race(race_id):
              return []
              
         rows = target_table.find_all('tr')
-        horses = []
+        horses_map = {} # deduplicate by number
+
         for row in rows:
             if row.find('th'): continue
             cols = row.find_all('td')
@@ -502,25 +551,28 @@ def scrape_odds_for_race(race_id):
             
             # Try classes first
             u_el = row.select_one('.Umaban')
-            o_el = row.select_one('.Odds') or row.select_one('.Tan_Odds')
+            # Prefer Tan_Odds specifically to avoid Fuku
+            o_el = row.select_one('.Tan_Odds') or row.select_one('.Odds') 
             
-            if u_el and o_el:
+            if u_el:
                  try:
                      num = int(u_el.text.strip())
-                     ot = o_el.text.strip()
-                     if '---' not in ot and ot:
-                         odds = float(ot)
+                     if o_el:
+                         ot = o_el.text.strip()
+                         if '---' not in ot and ot:
+                             odds = float(ot)
                  except: pass
             
             # If classes failed, try positional
             if num is None and len(cols) >= 5:
                 # Guess index. 
-                # If #Ninki: 2=Umaban
+                # If #Ninki: 2=Umaban, Odds is usually 9 or 10?
                 # If Tanfuku: 1=Umaban? 
                 # Let's check text
                 try:
                     # Clean text
                     texts = [c.text.strip() for c in cols]
+                    
                     # Find Umaban (1-18)
                     for i in [1, 2, 0]: # Priority check
                          if i < len(texts) and texts[i].isdigit() and 1 <= int(texts[i]) <= 18:
@@ -532,15 +584,17 @@ def scrape_odds_for_race(race_id):
                     if num is not None:
                         # Look for odds in later columns
                         # Odds often has "."
+                        # Warning: Ninki table might have multiple odds?
                         for i in range(len(texts)-1, 2, -1): # Search backwards
                             if re.match(r'^\d+\.\d+$', texts[i]):
                                 odds = float(texts[i])
                                 break
                 except: pass
             
-            if num is not None:
-                horses.append({"number": num, "odds": odds})
+            if num is not None and num not in horses_map:
+                horses_map[num] = {"number": num, "odds": odds}
                 
+        horses = list(horses_map.values())
         print(f"  Got {len(horses)} odds via Main Page.")
         return horses
 
@@ -550,24 +604,95 @@ def scrape_odds_for_race(race_id):
 
     return horses
 
+
+def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None):
+    """
+    Scrapes NAR races for a given year.
+    Iterates every day.
+    """
+    print(f"=== Starting NAR Bulk Scraping for {year_str} ===")
+    import time
+    from datetime import timedelta
+    
+    try:
+        y = int(year_str)
+        # Determine range
+        d_start = datetime(y, 1, 1).date()
+        d_end = datetime(y, 12, 31).date()
+        
+        if start_date: d_start = max(d_start, start_date)
+        if end_date: d_end = min(d_end, end_date)
+            
+        current = d_start
+        headers = { "User-Agent": "Mozilla/5.0" }
+        
+        while current <= d_end:
+            kaisai_date = current.strftime("%Y%m%d")
+            url = f"https://nar.netkeiba.com/top/race_list_sub.html?kaisai_date={kaisai_date}"
+            
+            print(f"Checking {current}...")
+            
+            try:
+                resp = requests.get(url, headers=headers, timeout=10)
+                # Parse
+                soup = BeautifulSoup(resp.content, 'html.parser')
+                # Usually .RaceList_DataList -> .RaceList_DataItem
+                items = soup.select('.RaceList_Box .RaceList_DataItem')
+                if not items:
+                    items = soup.select('.RaceList_DataList .RaceList_DataItem')
+                    
+                if items:
+                    race_ids = []
+                    for item in items:
+                        a = item.find('a')
+                        if a and 'href' in a.attrs:
+                            # ../race/result.html?race_id=...
+                             m = re.search(r'race_id=(\d+)', a['href'])
+                             if m:
+                                 race_ids.append(m.group(1))
+                    
+                    race_ids = sorted(list(set(race_ids)))
+                    print(f"  Found {len(race_ids)} races.")
+                    
+                    for rid in race_ids:
+                        # Scrape Result
+                        df = scrape_race_data(rid, mode="NAR")
+                        if df is not None and not df.empty:
+                            if save_callback:
+                                save_callback(df)
+                        time.sleep(0.5)
+                else:
+                    print("  No races.")
+                    
+            except Exception as e:
+                 print(f"  Error on {current}: {e}")
+            
+            current += timedelta(days=1)
+            time.sleep(0.5)
+            
+    except Exception as e:
+        print(f"Error in scrape_nar_year: {e}")
+
 # ==========================================
 # 2.5 Shutuba Scraping (Future Races)
 # ==========================================
-def scrape_shutuba_data(race_id):
+def scrape_shutuba_data(race_id, mode="JRA"):
     """
-    Scrapes the Shutuba Hyo (Race Card) for a given race_id.
-    Enriches with past data using RaceScraper.
-    Returns a DataFrame ready for prediction (no Rank).
+    Scrapes the Shutuba table (Future Race Card) for a given race ID.
+    Enriches with past history from live DB (or local if configured).
+    Returns DataFrame ready for feature engineering/prediction (similar to database.csv schema).
     """
-    url = f"https://race.netkeiba.com/race/shutuba.html?race_id={race_id}"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                      "AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/91.0.4472.124 Safari/537.36" 
+    base_domain = "nar.netkeiba.com" if mode == "NAR" else "race.netkeiba.com"
+    url = f"https://{base_domain}/race/shutuba.html?race_id={race_id}"
+    
+    headers = { 
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" 
     }
     
-    # Initialize Scraper
-    scraper = RaceScraper()
+    print(f"Scraping Shutuba: {url} (Mode: {mode})")
+    
+    scraper = RaceScraper() # Initialize for pulling history later
+
     
     try:
         response = requests.get(url, headers=headers, timeout=10)
@@ -589,13 +714,45 @@ def scrape_shutuba_data(race_id):
         except:
              current_race_date = datetime.now()
 
-        # Parse Shutuba Table
-        # The table class might be "Shutuba_Table"
-        table = soup.find("table", class_="Shutuba_Table")
-        if not table:
-            # Try RaceTable01
-            table = soup.find("table", class_="RaceTable01")
+        # --- Course Data Extraction (RaceData01) ---
+        # Added to ensure feature engineering gets correct distance/surface/weather
+        surface_type = ""
+        distance = ""
+        rotation = ""
+        weather = "曇" # Default
+        condition = "良" # Default
+
+        racedata1 = soup.select_one(".RaceData01")
+        if racedata1:
+            raw_text = racedata1.text.replace("\n", "").strip()
             
+            # Regex similar to scrape_race_data
+            match_course = re.search(r'(芝|ダ|障)(\d+)m(?:\s*\((.*?)\))?', raw_text)
+            if match_course:
+                surface_type = match_course.group(1)
+                distance = match_course.group(2)
+                rotation = match_course.group(3) if match_course.group(3) else ("直線" if "直線" in raw_text else "")
+            
+            match_weather = re.search(r'天候:(\S+)', raw_text)
+            if match_weather:
+                weather = match_weather.group(1)
+            
+            match_cond = re.search(r'馬場:(\S+)', raw_text)
+            if match_cond:
+                condition = match_cond.group(1)
+        
+        # Parse Shutuba Table
+        # Robust Selection: Find table with most HorseList rows
+        candidate_tables = soup.find_all("table")
+        table = None
+        max_rows = 0
+        
+        for t in candidate_tables:
+            c = len(t.select("tr.HorseList"))
+            if c > max_rows:
+                max_rows = c
+                table = t
+        
         if not table:
             print("Shutuba table not found.")
             return None
@@ -642,8 +799,15 @@ def scrape_shutuba_data(race_id):
                 "馬名": horse_name,
                 "horse_id": horse_id,
                 "騎手": jockey,
+                "騎手": jockey,
                 "斤量": weight,
-                "race_id": race_id
+                "race_id": race_id,
+                # Add Metadata for FE
+                "コースタイプ": surface_type,
+                "距離": distance,
+                "回り": rotation,
+                "天候": weather,
+                "馬場状態": condition
                 # Add 性齢 if needed for Age feature
             }
             
@@ -655,6 +819,8 @@ def scrape_shutuba_data(race_id):
             barei = row.select_one(".Barei")
             if barei:
                 entry["性齢"] = barei.text.strip()
+            else:
+                entry["性齢"] = "牡3" # Default fallback
             
             data.append(entry)
             
@@ -663,7 +829,7 @@ def scrape_shutuba_data(race_id):
         # Merge Current Odds
         print(f"  Fetching current odds for {race_id}...")
         try:
-            current_odds_list = scrape_odds_for_race(race_id)
+            current_odds_list = scrape_odds_for_race(race_id, mode=mode)
             # Map by horse number (umaban)
             odds_map = {item['number']: item['odds'] for item in current_odds_list}
             
@@ -675,10 +841,24 @@ def scrape_shutuba_data(race_id):
             df['単勝'] = 0.0
             df['Odds'] = 0.0
 
-        # Enrich
+        # Load History from CSV to avoid scraping
+        csv_path = CSV_FILE_PATH_NAR if mode == "NAR" else CSV_FILE_PATH
+        full_history = pd.DataFrame()
+        
+        if os.path.exists(csv_path):
+             print(f"  Loading local history from {csv_path} for enrichment...")
+             try:
+                 # Read primarily needed columns to save memory/speed, or full if fine
+                 full_history = pd.read_csv(csv_path)
+                 if 'horse_id' in full_history.columns:
+                     full_history['horse_id'] = full_history['horse_id'].astype(str)
+             except Exception as e:
+                 print(f"  Failed to load CSV history: {e}")
+                 full_history = pd.DataFrame()
+
         print(f"  Enriching {len(df)} horses with past data...")
         past_columns = []
-        p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather']
+        p_fields = ['date', 'rank', 'time', 'run_style', 'race_name', 'last_3f', 'horse_weight', 'jockey', 'condition', 'odds', 'weather', 'distance', 'course_type']
         
         for i in range(1, 6):
              for f in p_fields:
@@ -692,6 +872,14 @@ def scrape_shutuba_data(race_id):
             if hid and str(hid).isdigit():
                 # Use Cache
                 global HORSE_HISTORY_CACHE
+                
+                # Try to fill cache from local CSV if not present
+                if hid not in HORSE_HISTORY_CACHE and not full_history.empty:
+                     if 'horse_id' in full_history.columns:
+                         subset = full_history[full_history['horse_id'] == str(hid)]
+                         if not subset.empty:
+                             HORSE_HISTORY_CACHE[hid] = subset.copy()
+                             
                 if hid in HORSE_HISTORY_CACHE:
                     past_df = HORSE_HISTORY_CACHE[hid].copy()
                 else:
@@ -722,8 +910,9 @@ def scrape_shutuba_data(race_id):
                          df.at[idx, f"past_{n}_horse_weight"] = p_row.get('horse_weight')
                          df.at[idx, f"past_{n}_jockey"] = p_row.get('jockey')
                          df.at[idx, f"past_{n}_condition"] = p_row.get('condition')
-                         df.at[idx, f"past_{n}_odds"] = p_row.get('odds')
                          df.at[idx, f"past_{n}_weather"] = p_row.get('weather')
+                         df.at[idx, f"past_{n}_distance"] = p_row.get('distance')
+                         df.at[idx, f"past_{n}_course_type"] = p_row.get('course_type')
         
         return df
         
@@ -741,6 +930,8 @@ def get_start_params(start_args=None, end_args=None, places_args=None):
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
     parser.add_argument("--places", type=str, help="Target places (comma separated, e.g. 6,7)")
+    parser.add_argument("--source", type=str, default="netkeiba", help="Scraping source: 'netkeiba' or 'jra'")
+    parser.add_argument("--mode", type=str, default="JRA", help="Mode: 'JRA' or 'NAR'")
     
     # Only parse args if not provided programmatically or if we want to fallback
     # If called from admin UI, sys.argv might contain streamlit args, so be careful.
@@ -792,20 +983,25 @@ def get_start_params(start_args=None, end_args=None, places_args=None):
          print("既存データなし。デモ用に2025年12月1日から開始します。")
          start_date = datetime(2025, 12, 1)
 
-    return start_date, args.end, target_places
+    return start_date, args.end, target_places, args.source, args.mode
 
 # ==========================================
 # 3. メイン実行処理
 # ==========================================
-def main(start_date_arg=None, end_date_arg=None, places_arg=None, progress_callback=None):
+def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=None, mode_arg=None, progress_callback=None):
     """
     progress_callback: function(str) -> None. If provided, call with status update.
     """
     print("=== 自動スクレイピング開始 ===")
     start_time = time.time()
     
+    
     # Pass arguments to helper
-    start_date, end_arg_cli, places = get_start_params(start_date_arg, end_date_arg, places_arg)
+    start_date, end_arg_cli, places, source_cli, mode_cli = get_start_params(start_date_arg, end_date_arg, places_arg)
+    
+    # Prioritize function arg over CLI
+    source = source_arg if source_arg else source_cli
+    mode = mode_arg if mode_arg else mode_cli
     
     today = datetime.now()
     
@@ -844,7 +1040,86 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, progress_callb
         if progress_callback: progress_callback(msg)
         return
 
+        if progress_callback: progress_callback(msg)
+        return
+
     print(f"対象会場: {list(places)}")
+    print(f"取得元: {source}")
+    print(f"モード: {mode}")
+
+    if mode == "NAR":
+        print("=== NAR (地方競馬) スクレイピング開始 ===")
+        # Callback wrapper to save to database_nar.csv
+        def save_nar_callback(df_new):
+            if df_new is None or df_new.empty: return
+            csv_target = CSV_FILE_PATH_NAR
+            if os.path.exists(csv_target):
+                try:
+                    existing = pd.read_csv(csv_target)
+                    combined = pd.concat([existing, df_new], ignore_index=True)
+                    # Deduplicate based on race_id and horse_number/horse_name
+                    # Or just race_id + horse_number
+                    if 'race_id' in combined.columns and '馬 番' in combined.columns:
+                        combined = combined.drop_duplicates(subset=['race_id', '馬 番'], keep='last')
+                    combined.to_csv(csv_target, index=False)
+                    print(f"Saved {len(df_new)} rows to {csv_target} (Total {len(combined)})")
+                except:
+                    df_new.to_csv(csv_target, index=False)
+            else:
+                df_new.to_csv(csv_target, index=False)
+                print(f"Created {csv_target} with {len(df_new)} rows.")
+
+        # Loop years if range spans multiple years
+        current_y = start_date.year
+        end_y = end_date.year
+        
+        for y in range(current_y, end_y + 1):
+             scrape_nar_year(str(y), start_date=start_date.date(), end_date=end_date.date(), save_callback=save_nar_callback)
+        
+        print("NAR Scraping Completed.")
+        if progress_callback: progress_callback("NAR Scraping Completed.")
+        return
+
+    if source == 'jra':
+        # Use JRA Scraper Bulk Logic
+        # We need to span years
+        years_to_scan = range(start_date.year, end_date.year + 1)
+        
+        # Save Callback Wrapper
+        def save_chunk_wrapper(df_chunk):
+            # Same save logic as existing
+             CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+             if os.path.exists(CSV_FILE_PATH):
+                try:
+                    existing_df = pd.read_csv(CSV_FILE_PATH)
+                    combined_df = pd.concat([existing_df, df_chunk], ignore_index=True)
+                except:
+                    combined_df = df_chunk
+             else:
+                combined_df = df_chunk
+            
+             # Deduplicate
+             subset_cols = ['race_id', '馬名']
+             subset_cols = [c for c in subset_cols if c in combined_df.columns]
+             if subset_cols:
+                 combined_df.drop_duplicates(subset=subset_cols, keep='last', inplace=True)
+            
+             combined_df.to_csv(CSV_FILE_PATH, index=False, encoding="utf-8-sig")
+             msg = f"  -> JRA Save: {len(df_chunk)} rows. Total: {len(combined_df)}"
+             print(msg)
+             if progress_callback: progress_callback(msg)
+
+        for year in years_to_scan:
+             print(f"Starting JRA Scrape for Year {year}...")
+             if progress_callback: progress_callback(f"JRAスクレイピング開始: {year}年")
+             
+             # Adjust start/end for this year chunk if needed, but scrape_jra_year handles full date range filter
+             scrape_jra_year(str(year), start_date=start_date.date(), end_date=end_date.date(), save_callback=save_chunk_wrapper)
+        
+        print(f"所要時間: {(time.time() - start_time)/60:.1f} 分")
+        return
+
+    # === Default: Netkeiba Logic ===
 
     all_data = []
     
@@ -988,11 +1263,14 @@ if __name__ == "__main__":
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
     parser.add_argument("--places", type=str, help="Target places")
+    parser.add_argument("--source", type=str, help="Source: netkeiba or jra")
+    parser.add_argument("--mode", type=str, help="Mode: JRA or NAR")
     
     args, unknown = parser.parse_known_args()
     
     if args.today:
-        scrape_todays_schedule()
+        mode = args.mode if args.mode else "JRA"
+        scrape_todays_schedule(mode=mode)
     elif args.jra_url:
         print(f"Direct JRA Mode: {args.jra_url}")
         df = scrape_jra_race(args.jra_url)
