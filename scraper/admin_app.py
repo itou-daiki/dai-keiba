@@ -43,6 +43,9 @@ col1, col2 = st.columns(2)
 with col1:
     year = st.selectbox("対象年", ["2025", "2024"], index=0, disabled=st.session_state.is_running)
     
+    mode_option = st.radio("開催モード (Mode)", ["JRA (中央競馬)", "NAR (地方競馬)"], index=0, disabled=st.session_state.is_running)
+    mode_val = "JRA" if "JRA" in mode_option else "NAR"
+
     source_option = st.radio(
         "データ取得元",
         ["netkeiba", "JRA"],
@@ -95,7 +98,8 @@ with col_btn_1:
                 sys.executable, "-u", "scraper/auto_scraper.py", 
                 "--start", start_date_str,
                 "--end", end_date_str,
-                "--source", source_val
+                "--source", source_val,
+                "--mode", mode_val
             ]
             
             try:
@@ -169,7 +173,12 @@ if st.session_state.logs:
 
 # --- Data Preview ---
 st.markdown("### 📊 データベースのプレビュー")
-csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "database.csv")
+if mode_val == "NAR":
+    csv_filename = "database_nar.csv"
+else:
+    csv_filename = "database.csv"
+    
+csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), csv_filename)
 
 col_prev_1, col_prev_2 = st.columns([1, 4])
 with col_prev_1:
@@ -182,9 +191,9 @@ if os.path.exists(csv_path):
         st.metric("総データ数 (行)", len(df))
         st.dataframe(df,use_container_width=True)
     except Exception as e:
-        st.error(f"database.csv を読み込めませんでした: {e}")
+        st.error(f"{csv_filename} を読み込めませんでした: {e}")
 else:
-    st.warning("database.csv が見つかりません。")
+    st.warning(f"{csv_filename} が見つかりません。")
 
 st.markdown("---")
 st.caption("使い方: データ取得後、必ず git で変更をコミット＆プッシュして公開サイトに反映させてください。")
@@ -241,11 +250,20 @@ with tab_ml:
 
     if start_process:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        data_path = os.path.join(project_root, "ml", "processed_data.csv")
-        db_path = os.path.join(project_root, "database.csv")
+        
+        # Switch paths based on Mode
+        if mode_val == "NAR":
+            data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
+            db_path = os.path.join(project_root, "database_nar.csv")
+            model_name = "lgbm_model_nar.pkl"
+        else:
+            data_path = os.path.join(project_root, "ml", "processed_data.csv")
+            db_path = os.path.join(project_root, "database.csv")
+            model_name = "lgbm_model.pkl"
+
         model_dir = os.path.join(project_root, "ml", "models")
         os.makedirs(model_dir, exist_ok=True)
-        model_path = os.path.join(model_dir, "lgbm_model.pkl")
+        model_path = os.path.join(model_dir, model_name)
 
         # 1. Preprocess
         with st.spinner("1/3 データ前処理中..."):
@@ -335,7 +353,17 @@ with tab_upload:
     
     if st.button("📤 モデルをアップロード (Git Push)"):
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        model_path_rel = "ml/models/lgbm_model.pkl" # Relative to root
+        
+        # Upload correct model
+        if mode_val == "NAR":
+             model_path_rel = "ml/models/lgbm_model_nar.pkl"
+        else:
+             model_path_rel = "ml/models/lgbm_model.pkl"
+             
+        # Check if exists
+        if not os.path.exists(os.path.join(project_root, model_path_rel)):
+             st.error(f"モデルファイルが見つかりません: {model_path_rel}")
+             st.stop()
         
         cmds = [
             ["git", "add", model_path_rel],

@@ -22,17 +22,17 @@ st.set_page_config(page_title="AI Keiba Predictor", layout="wide")
 
 # --- Utils ---
 @st.cache_resource
-def load_model():
-    model_path = os.path.join(os.path.dirname(__file__), 'ml/models/lgbm_model.pkl')
+def load_model(mode="JRA"):
+    model_path = os.path.join(os.path.dirname(__file__), f"ml/models/lgbm_model_nar.pkl" if mode == "NAR" else "ml/models/lgbm_model.pkl")
     if os.path.exists(model_path):
         with open(model_path, 'rb') as f:
             return pickle.load(f)
     return None
 
-def load_schedule_data():
-    path = os.path.join(os.path.dirname(__file__), 'todays_data.json')
-    if os.path.exists(path):
-        with open(path, 'r', encoding='utf-8') as f:
+def load_schedule_data(mode="JRA"):
+    json_path = os.path.join(os.path.dirname(__file__), "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
+    if os.path.exists(json_path):
+        with open(json_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     return None
 
@@ -60,29 +60,34 @@ with st.expander("ℹ️ このAI予想のロジックについて (クリック
     """)
 
 # --- Admin Menu ---
-with st.expander("🛠 管理者メニュー (データ更新・モデル再読み込み)"):
-    col_admin1, col_admin2 = st.columns(2)
-    
-    with col_admin1:
-        if st.button("📅 レース一覧を更新 (今後1週間)"):
-            with st.spinner("最新のレース情報を取得中 (約1分)..."):
-                success, msg = auto_scraper.scrape_todays_schedule()
+st.markdown("### 設定")
+mode = st.radio("開催モード (Mode)", ["JRA (中央競馬)", "NAR (地方競馬)"], horizontal=True)
+mode_val = "JRA" if "JRA" in mode else "NAR"
+
+with st.expander("🛠️ 管理ツール (スケジュール更新など)"):
+    col_admin_1, col_admin_2 = st.columns([1, 1])
+    with col_admin_1:
+         if st.button("📅 レース一覧を更新 (今後1週間)"):
+            with st.spinner(f"{mode_val}の最新レース情報を取得中..."):
+                success, msg = auto_scraper.scrape_todays_schedule(mode=mode_val)
                 if success:
                     st.success(msg)
+                    time.sleep(1)
                     st.rerun()
                 else:
                     st.error(f"エラー: {msg}")
+    
+    with col_admin_2:
+         if st.button("🧠 AIモデルを再読み込み"):
+             st.cache_resource.clear()
+             st.success("モデルキャッシュをクリアしました。次回予測時に再ロードされます。")
 
-    with col_admin2:
-        if st.button("🧠 最新モデルを再読み込み"):
-            load_model.clear()
-            st.cache_resource.clear()
-            st.success("モデルを再読み込みしました！")
+st.markdown("---")
 
 # --- Race Selection ---
 st.subheader("📍 レース選択")
 
-schedule_data = load_schedule_data()
+schedule_data = load_schedule_data(mode=mode_val)
 race_id = None
 
 if schedule_data and "races" in schedule_data:
@@ -132,17 +137,26 @@ else:
 if race_id:
     st.header(f"レース分析: {race_id}")
     
-    if st.button("🚀 このレースを分析する (データ取得・AI予測)"):
-        with st.spinner("出馬表と過去データを取得中 (20〜30秒かかります)..."):
-            # 1. Scrape
-            df = auto_scraper.scrape_shutuba_data(race_id)
+    # Load Model
+    model = load_model(mode=mode_val)
+
+    button_analyze = st.button("🚀 このレースを分析する (データ取得・AI予測)")
+    
+    if button_analyze:
+        if not race_id:
+             st.error("レースIDが選択されていません。")
+        elif not model:
+             st.error(f"モデル ({mode_val}) が読み込めませんでした。管理画面で学習を実行するか、モデルファイルを確認してください。")
+        else:
+             with st.spinner("出馬表を取得し、AI予測を実行中..."):
+                 # Scrape Shutuba
+                 df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
             
             if df is not None and not df.empty:
                 # 2. FE
                 X_df = process_data(df)
                 
                 # 3. Predict
-                model = load_model()
                 if model:
                     try:
                         # Drop meta cols for prediction
@@ -256,24 +270,23 @@ if race_id:
         with col_input_1:
              st.info("「予想印」や「現在オッズ」を編集すると、リアルタイムで期待値(EV)が計算されます。")
         with col_input_2:
-             if st.button("🔄 現在オッズのみ更新"):
+             if st.button("🔄 最新オッズを取得"):
                  with st.spinner("最新オッズを取得中..."):
-                     new_odds = auto_scraper.scrape_odds_for_race(race_id)
-                     if new_odds:
-                         # Update Session State
-                         # new_odds is list of {number, odds}
-                         odds_map = {x['number']: x['odds'] for x in new_odds}
-                         
-                         target_df = st.session_state[f'data_{race_id}']
-                         
-                         # Update '単勝' and 'Odds'
-                         # Map using '馬 番' (ensure int type matching)
-                         def update_odds(row):
-                             try:
-                                 num = int(row['馬 番'])
-                                 return odds_map.get(num, row.get('Odds', 0.0))
-                             except:
-                                 return row.get('Odds', 0.0)
+                     try:
+                         current_odds = auto_scraper.scrape_odds_for_race(race_id, mode=mode_val)
+                         # Update session state df
+                         if current_odds:
+                             odds_map = {x['number']: x['odds'] for x in current_odds}
+                             
+                             target_df = st.session_state[f'data_{race_id}']
+                             
+                             # Update '単勝' and 'Odds'
+                             def update_odds(row):
+                                 try:
+                                     num = int(row['馬 番'])
+                                     return odds_map.get(num, row.get('Odds', 0.0))
+                                 except:
+                                     return row.get('Odds', 0.0)
                                  
                          target_df['Odds'] = target_df.apply(update_odds, axis=1)
                          target_df['単勝'] = target_df['Odds'] # Sync
