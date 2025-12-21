@@ -293,88 +293,88 @@ def scrape_todays_schedule(mode="JRA"):
     
     print(f"Fetching schedule for next 8 days (Mode: {mode})...")
     
-    for i in range(8):
+    today = datetime.now()
+    # Fetch previous 7 days and next 7 days (Total 15 days) as requested
+    date_range = range(-7, 8)
+    
+    race_list = []
+    
+    print(f"Fetching schedule for range [{today + timedelta(days=-7):%Y-%m-%d} to {today + timedelta(days=7):%Y-%m-%d}] (Mode: {mode})...")
+    
+    for i in date_range:
         target_date = today + timedelta(days=i)
-        kaisai_date = target_date.strftime("%Y%m%d")
-        date_str = target_date.strftime("%Y-%m-%d")
+        date_str = target_date.strftime('%Y%m%d')
         
-        if mode == "NAR":
-            url = f"https://nar.netkeiba.com/top/race_list_sub.html?kaisai_date={kaisai_date}"
-        else:
-            url = f"https://race.netkeiba.com/top/race_list_sub.html?kaisai_date={kaisai_date}"
-            
+        # JRA/NAR specific logic if needed for URL? They seem to allow same param.
+        # But JRA base is race.netkeiba, NAR is nar.netkeiba.
+        base_domain = "nar.netkeiba.com" if mode == "NAR" else "race.netkeiba.com"
+        url = f"https://{base_domain}/top/race_list_sub.html?kaisai_date={date_str}"
         headers = { "User-Agent": "Mozilla/5.0" }
         
+        print(f" Checking {target_date.strftime('%Y-%m-%d')}...")
         try:
-            print(f" Checking {date_str}...")
-            # We need a small sleep
-            if i > 0: time.sleep(1)
+            # JRA sub-list also tends to group by venue in dl elements
+            if i != 0: time.sleep(1)
             
             response = requests.get(url, headers=headers, timeout=10)
-            response.encoding = response.apparent_encoding # Fix encoding
+            response.encoding = response.apparent_encoding 
             
             if not response.text: continue
             
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # ---------------------------------------------------------
-            # Identify Venue & Items
-            # ---------------------------------------------------------
+            # Unified Parsing Logic (Works for both JRA sub-list and NAR)
             venue_item_pairs = []
             
-            if mode == "NAR":
-                # NAR: .RaceList_Box is a wrapper containing multiple <dl> (one per venue)
-                # Structure: div.RaceList_Box > dl > dt (Header) + dd (Items)
-                wrapper = soup.select_one('.RaceList_Box')
-                
-                venue_blocks = []
-                if wrapper:
-                    venue_blocks = wrapper.find_all('dl', recursive=False)
-                
-                if not venue_blocks:
-                     # Fallback 1: Maybe .RaceList_Box IS the dl itself (single venue day?)
-                     # If wrapper is dl, treat as list of 1.
-                     if wrapper and wrapper.name == 'dl':
-                         venue_blocks = [wrapper]
-                     else:
-                         # Fallback 2: Flat list
-                         items = soup.select('.RaceList_DataList .RaceList_DataItem')
-                         if not items and wrapper:
-                              # If wrapper exists but no items?
-                              items = wrapper.select('.RaceList_DataItem')
-                         
-                         for it in items: venue_item_pairs.append(("Unknown", it))
+            wrapper = soup.select_one('.RaceList_Box')
+            venue_blocks = []
+            if wrapper:
+                venue_blocks = wrapper.find_all('dl', recursive=False)
+            
+            # JRA might fallback to .RaceList_DataList if only one venue or older format?
+            # But debug showed JRA using dl too.
+            
+            if not venue_blocks and wrapper and wrapper.name == 'dl':
+                 venue_blocks = [wrapper]
 
+            # If still found nothing but items exist (flat list structure fallback)
+            if not venue_blocks:
+                 items = soup.select('.RaceList_DataList .RaceList_DataItem')
+                 if not items and wrapper: items = wrapper.select('.RaceList_DataItem')
+                 for it in items: venue_item_pairs.append(("Unknown", it))
+            else:
                 for block in venue_blocks:
                     venue_name = "Unknown"
                     dt = block.select_one('dt')
                     if dt:
                         txt = dt.text.replace("\n", " ").strip()
-                        # e.g. "高知競馬場TOP" -> "高知"
-                        m = re.search(r'(\S+?)競馬場', txt)
-                        if m:
-                            venue_name = m.group(1)
+                        
+                        # 1. Try NAR pattern "高知競馬場TOP"
+                        m_nar = re.search(r'(\S+?)競馬場', txt)
+                        if m_nar:
+                            venue_name = m_nar.group(1)
                         else:
-                            # Fallback: Look for known venue names
-                            match_v = re.search(r'(帯広|門別|盛岡|水沢|浦和|船橋|大井|川崎|金沢|笠松|名古屋|園田|姫路|高知|佐賀)', txt)
-                            if match_v:
-                                venue_name = match_v.group(1)
+                            # 2. Try JRA pattern "5回 中山 7日目"
+                            # Matches "N回 Venue N日目"
+                            m_jra = re.search(r'\d+回\s*(\S+)\s*\d+日目', txt)
+                            if m_jra:
+                                venue_name = m_jra.group(1)
+                            else:
+                                # 3. Fallback: Search for known venue names
+                                # JRA + NAR
+                                known_venues = r'(札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉|帯広|門別|盛岡|水沢|浦和|船橋|大井|川崎|金沢|笠松|名古屋|園田|姫路|高知|佐賀)'
+                                match_v = re.search(known_venues, txt)
+                                if match_v:
+                                    venue_name = match_v.group(1)
 
                     sub_items = block.select('.RaceList_DataItem')
                     for it in sub_items:
                         venue_item_pairs.append((venue_name, it))
-            else:
-                # JRA: Flat list usually, Venue in Item02
-                items = soup.select('.RaceList_DataList .RaceList_DataItem')
-                if not items:
-                    items = soup.select('.RaceList_Box .RaceList_DataItem')
-                for it in items:
-                    venue_item_pairs.append((None, it)) # Extract later
 
             if not venue_item_pairs:
-                continue
+                continue # No races today
                 
-            print(f"  Found {len(venue_item_pairs)} races for {date_str}.")
+            print(f"  Found {len(venue_item_pairs)} races for {target_date.strftime('%Y-%m-%d')}.")
             
             for venue_cache, item in venue_item_pairs:
                 link_elem = item.find('a')
@@ -392,17 +392,10 @@ def scrape_todays_schedule(mode="JRA"):
                 venue = "Unknown"
                 number = ""
                 
-                if venue_cache:
+                if venue_cache and venue_cache != "Unknown":
                     venue = venue_cache
-                    # Try to get number from .Race_Num
-                    # <div class="Race_Num"><span>1R</span></div>
-                    num_elem = item.select_one('.Race_Num')
-                    if num_elem:
-                        num_txt = num_elem.text.strip()
-                        nm = re.search(r'(\d+)R', num_txt)
-                        if nm: number = nm.group(1)
                 else:
-                    # JRA Parsing Logic
+                    # Last resort fallback if header parsing failed (JRA flat list?)
                     meta_elem = item.select_one('.RaceList_Item02')
                     if meta_elem:
                          meta_txt = meta_elem.text.strip()
@@ -410,11 +403,18 @@ def scrape_todays_schedule(mode="JRA"):
                          vm = re.search(r'(\D+)(\d+)R', meta_txt)
                          if vm:
                              venue = vm.group(1).strip()
-                             number = vm.group(2)
-                    else:
-                        number = "1" # Placeholder
-
-                    
+                             # Update number if found
+                             if not number: number = vm.group(2)
+                
+                # Try to extract race number from .Race_Num (Robust for both)
+                num_elem = item.select_one('.Race_Num')
+                if num_elem:
+                    num_txt = num_elem.text.strip()
+                    nm = re.search(r'(\d+)R', num_txt)
+                    if nm: number = nm.group(1)
+                
+                if not number: number = "1" # Default
+                
                 # For odds, only check Today (i==0)
                 horses = []
                 if i == 0:
@@ -423,7 +423,7 @@ def scrape_todays_schedule(mode="JRA"):
                 
                 race_info = {
                     "id": race_id,
-                    "date": date_str,
+                    "date": target_date.strftime("%Y-%m-%d"),
                     "venue": venue,
                     "number": number,
                     "name": race_name,
