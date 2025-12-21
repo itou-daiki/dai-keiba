@@ -26,9 +26,11 @@ def train_and_save_model(data_path, model_path, params=None):
     
     # Identify feature columns (numeric)
     meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
+    # Exclude potential targets from features
+    exclude_cols = ['target_top3', 'target_win', 'target_show']
     
-    # Drop valid string columns
-    drop_cols = [c for c in df.columns if c in meta_cols or c == target_col]
+    # Drop valid string columns and targets
+    drop_cols = [c for c in df.columns if c in meta_cols or c in exclude_cols]
     
     X = df.drop(columns=drop_cols, errors='ignore')
     
@@ -421,9 +423,22 @@ def train_with_timeseries_split(data_path, model_path, params=None, n_splits=5):
         }
 
 if __name__ == "__main__":
-    data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "ml", "processed_data.csv")
-    model_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "ml", "models")
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    ml_dir = os.path.join(base_dir, "ml")
+    model_dir = os.path.join(ml_dir, "models")
     os.makedirs(model_dir, exist_ok=True)
-    model_path = os.path.join(model_dir, "lgbm_model.pkl")
 
+    # 1. Train JRA
+    data_path = os.path.join(ml_dir, "processed_data.csv")
+    model_path = os.path.join(model_dir, "lgbm_model.pkl")
+    print(f"Training JRA Model from {data_path}...")
     train_and_save_model(data_path, model_path)
+
+    # 2. Train NAR
+    data_path_nar = os.path.join(ml_dir, "processed_data_nar.csv")
+    model_path_nar = os.path.join(model_dir, "lgbm_model_nar.pkl")
+    if os.path.exists(data_path_nar):
+        print(f"\nTraining NAR Model from {data_path_nar}...")
+        train_and_save_model(data_path_nar, model_path_nar)
+    else:
+        print(f"NAR Data {data_path_nar} not found. Skipping.")

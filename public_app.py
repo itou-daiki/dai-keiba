@@ -181,16 +181,25 @@ if race_id:
                         # We should robustly select.
                         
                         # Identify feature cols from X_df
-                        # Exclude non-numeric and 'rank'
-                        meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
-                        features = [c for c in X_df.columns if c not in meta_cols and c != 'target_top3']
-                        # Ensure numeric
-                        X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
-                        
-                        probs = model.predict(X_pred)
-                        
-                        df['AI_Prob'] = probs
-                        df['AI_Score'] = (probs * 100).astype(int)
+                        # Robustly select features matching the model
+                        try:
+                            model_features = model.feature_name()
+                            # Ensure all model features exist in X_df
+                            for f in model_features:
+                                if f not in X_df.columns:
+                                    X_df[f] = 0.0
+                            
+                            X_pred = X_df[model_features].fillna(0.0)
+                            
+                            probs = model.predict(X_pred)
+                            
+                            df['AI_Prob'] = probs
+                            df['AI_Score'] = (probs * 100).astype(int)
+                        except Exception as e:
+                            st.error(f"Prediction Error (Feature Mismatch): {e}")
+                            st.write(f"Model expects: {model.feature_name()}")
+                            st.write(f"Data has: {list(X_df.columns)}")
+                            raise e
                         
                         # Merge features back to df for display
                         # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
