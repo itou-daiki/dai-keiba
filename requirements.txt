@@ -10,4 +10,4 @@ mlflow
 optuna
 xgboost
 catboost
-shap
+catboost
