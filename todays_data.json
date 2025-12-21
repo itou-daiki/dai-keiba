@@ -1,294 +1,6 @@
 {
-  "date": "2025-12-21",
+  "date": "2025-12-22",
   "races": [
-    {
-      "id": "202506050401",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050402",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "2",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050403",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "3",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050404",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "4",
-      "name": "3歳以上障害未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050405",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202506050406",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "6",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202506050407",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "7",
-      "name": "2歳1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202506050408",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "8",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202506050409",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "9",
-      "name": "霞ヶ浦特別",
-      "horses": []
-    },
-    {
-      "id": "202506050410",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "10",
-      "name": "師走S",
-      "horses": []
-    },
-    {
-      "id": "202506050411",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "11",
-      "name": "カペラS",
-      "horses": []
-    },
-    {
-      "id": "202506050412",
-      "date": "2025-12-14",
-      "venue": "中山",
-      "number": "12",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202509050401",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202509050402",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "2",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202509050403",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "3",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202509050404",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "4",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202509050405",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202509050406",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "6",
-      "name": "2歳1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202509050407",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "7",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202509050408",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "8",
-      "name": "3歳以上2勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202509050409",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "9",
-      "name": "オリオンS",
-      "horses": []
-    },
-    {
-      "id": "202509050410",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "10",
-      "name": "竹田城S",
-      "horses": []
-    },
-    {
-      "id": "202509050411",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "11",
-      "name": "阪神JF",
-      "horses": []
-    },
-    {
-      "id": "202509050412",
-      "date": "2025-12-14",
-      "venue": "阪神",
-      "number": "12",
-      "name": "甲東特別",
-      "horses": []
-    },
-    {
-      "id": "202507050401",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202507050402",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "2",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202507050403",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "3",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050404",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "4",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202507050405",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202507050406",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "6",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050407",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "7",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050408",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "8",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050409",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "9",
-      "name": "大須特別",
-      "horses": []
-    },
-    {
-      "id": "202507050410",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "10",
-      "name": "一宮特別",
-      "horses": []
-    },
-    {
-      "id": "202507050411",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "11",
-      "name": "知立S",
-      "horses": []
-    },
-    {
-      "id": "202507050412",
-      "date": "2025-12-14",
-      "venue": "中京",
-      "number": "12",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
     {
       "id": "202506050501",
       "date": "2025-12-20",
@@ -583,72 +295,7 @@
       "venue": "中山",
       "number": "1",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 7.8
-        },
-        {
-          "number": 2,
-          "odds": 144.7
-        },
-        {
-          "number": 3,
-          "odds": 2.2
-        },
-        {
-          "number": 4,
-          "odds": 7.1
-        },
-        {
-          "number": 5,
-          "odds": 63.4
-        },
-        {
-          "number": 6,
-          "odds": 109.4
-        },
-        {
-          "number": 7,
-          "odds": 8.6
-        },
-        {
-          "number": 8,
-          "odds": 13.1
-        },
-        {
-          "number": 9,
-          "odds": 11.4
-        },
-        {
-          "number": 10,
-          "odds": 64.3
-        },
-        {
-          "number": 11,
-          "odds": 90.7
-        },
-        {
-          "number": 12,
-          "odds": 8.0
-        },
-        {
-          "number": 13,
-          "odds": 226.8
-        },
-        {
-          "number": 14,
-          "odds": 228.3
-        },
-        {
-          "number": 15,
-          "odds": 31.9
-        },
-        {
-          "number": 16,
-          "odds": 29.7
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050602",
@@ -656,72 +303,7 @@
       "venue": "中山",
       "number": "2",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 9.2
-        },
-        {
-          "number": 2,
-          "odds": 285.1
-        },
-        {
-          "number": 3,
-          "odds": 71.9
-        },
-        {
-          "number": 4,
-          "odds": 4.7
-        },
-        {
-          "number": 5,
-          "odds": 3.0
-        },
-        {
-          "number": 6,
-          "odds": 22.6
-        },
-        {
-          "number": 7,
-          "odds": 219.7
-        },
-        {
-          "number": 8,
-          "odds": 284.5
-        },
-        {
-          "number": 9,
-          "odds": 275.8
-        },
-        {
-          "number": 10,
-          "odds": 26.8
-        },
-        {
-          "number": 11,
-          "odds": 70.4
-        },
-        {
-          "number": 12,
-          "odds": 62.0
-        },
-        {
-          "number": 13,
-          "odds": 169.8
-        },
-        {
-          "number": 14,
-          "odds": 2.9
-        },
-        {
-          "number": 15,
-          "odds": 77.9
-        },
-        {
-          "number": 16,
-          "odds": 8.7
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050603",
@@ -729,68 +311,7 @@
       "venue": "中山",
       "number": "3",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 116.1
-        },
-        {
-          "number": 2,
-          "odds": 724.6
-        },
-        {
-          "number": 3,
-          "odds": 400.2
-        },
-        {
-          "number": 4,
-          "odds": 9.9
-        },
-        {
-          "number": 5,
-          "odds": 150.2
-        },
-        {
-          "number": 6,
-          "odds": 320.1
-        },
-        {
-          "number": 7,
-          "odds": 11.1
-        },
-        {
-          "number": 8,
-          "odds": 28.0
-        },
-        {
-          "number": 9,
-          "odds": 6.2
-        },
-        {
-          "number": 10,
-          "odds": 63.3
-        },
-        {
-          "number": 11,
-          "odds": 779.7
-        },
-        {
-          "number": 12,
-          "odds": 5.5
-        },
-        {
-          "number": 13,
-          "odds": 3.1
-        },
-        {
-          "number": 14,
-          "odds": 3.5
-        },
-        {
-          "number": 15,
-          "odds": 19.9
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050604",
@@ -798,64 +319,7 @@
       "venue": "中山",
       "number": "4",
       "name": "3歳以上障害未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 61.9
-        },
-        {
-          "number": 2,
-          "odds": 5.4
-        },
-        {
-          "number": 3,
-          "odds": 28.6
-        },
-        {
-          "number": 4,
-          "odds": 86.4
-        },
-        {
-          "number": 5,
-          "odds": 21.9
-        },
-        {
-          "number": 6,
-          "odds": 5.1
-        },
-        {
-          "number": 7,
-          "odds": 29.3
-        },
-        {
-          "number": 8,
-          "odds": 43.3
-        },
-        {
-          "number": 9,
-          "odds": 38.2
-        },
-        {
-          "number": 10,
-          "odds": 154.2
-        },
-        {
-          "number": 11,
-          "odds": 268.4
-        },
-        {
-          "number": 12,
-          "odds": 3.8
-        },
-        {
-          "number": 13,
-          "odds": 4.7
-        },
-        {
-          "number": 14,
-          "odds": 4.9
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050605",
@@ -863,72 +327,7 @@
       "venue": "中山",
       "number": "5",
       "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 2.7
-        },
-        {
-          "number": 2,
-          "odds": 12.0
-        },
-        {
-          "number": 3,
-          "odds": 67.0
-        },
-        {
-          "number": 4,
-          "odds": 79.3
-        },
-        {
-          "number": 5,
-          "odds": 61.5
-        },
-        {
-          "number": 6,
-          "odds": 38.0
-        },
-        {
-          "number": 7,
-          "odds": 7.1
-        },
-        {
-          "number": 8,
-          "odds": 140.3
-        },
-        {
-          "number": 9,
-          "odds": 61.2
-        },
-        {
-          "number": 10,
-          "odds": 318.0
-        },
-        {
-          "number": 11,
-          "odds": 7.6
-        },
-        {
-          "number": 12,
-          "odds": 210.3
-        },
-        {
-          "number": 13,
-          "odds": 3.6
-        },
-        {
-          "number": 14,
-          "odds": 170.4
-        },
-        {
-          "number": 15,
-          "odds": 25.5
-        },
-        {
-          "number": 16,
-          "odds": 8.4
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050606",
@@ -936,72 +335,7 @@
       "venue": "中山",
       "number": "6",
       "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 6.7
-        },
-        {
-          "number": 2,
-          "odds": 5.0
-        },
-        {
-          "number": 3,
-          "odds": 8.2
-        },
-        {
-          "number": 4,
-          "odds": 6.5
-        },
-        {
-          "number": 5,
-          "odds": 17.8
-        },
-        {
-          "number": 6,
-          "odds": 18.5
-        },
-        {
-          "number": 7,
-          "odds": 158.9
-        },
-        {
-          "number": 8,
-          "odds": 9.5
-        },
-        {
-          "number": 9,
-          "odds": 27.1
-        },
-        {
-          "number": 10,
-          "odds": 111.7
-        },
-        {
-          "number": 11,
-          "odds": 27.0
-        },
-        {
-          "number": 12,
-          "odds": 121.7
-        },
-        {
-          "number": 13,
-          "odds": 115.2
-        },
-        {
-          "number": 14,
-          "odds": 51.7
-        },
-        {
-          "number": 15,
-          "odds": 3.5
-        },
-        {
-          "number": 16,
-          "odds": 155.6
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050607",
@@ -1009,72 +343,7 @@
       "venue": "中山",
       "number": "7",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 3.7
-        },
-        {
-          "number": 2,
-          "odds": 4.5
-        },
-        {
-          "number": 3,
-          "odds": 22.8
-        },
-        {
-          "number": 4,
-          "odds": 3.6
-        },
-        {
-          "number": 5,
-          "odds": 103.8
-        },
-        {
-          "number": 6,
-          "odds": 12.8
-        },
-        {
-          "number": 7,
-          "odds": 445.8
-        },
-        {
-          "number": 8,
-          "odds": 7.4
-        },
-        {
-          "number": 9,
-          "odds": 91.0
-        },
-        {
-          "number": 10,
-          "odds": 153.6
-        },
-        {
-          "number": 11,
-          "odds": 140.3
-        },
-        {
-          "number": 12,
-          "odds": 22.0
-        },
-        {
-          "number": 13,
-          "odds": 20.0
-        },
-        {
-          "number": 14,
-          "odds": 60.8
-        },
-        {
-          "number": 15,
-          "odds": 111.1
-        },
-        {
-          "number": 16,
-          "odds": 13.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050608",
@@ -1082,72 +351,7 @@
       "venue": "中山",
       "number": "8",
       "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 311.6
-        },
-        {
-          "number": 2,
-          "odds": 41.7
-        },
-        {
-          "number": 3,
-          "odds": 9.4
-        },
-        {
-          "number": 4,
-          "odds": 11.9
-        },
-        {
-          "number": 5,
-          "odds": 96.2
-        },
-        {
-          "number": 6,
-          "odds": 46.4
-        },
-        {
-          "number": 7,
-          "odds": 26.6
-        },
-        {
-          "number": 8,
-          "odds": 6.7
-        },
-        {
-          "number": 9,
-          "odds": 52.4
-        },
-        {
-          "number": 10,
-          "odds": 2.4
-        },
-        {
-          "number": 11,
-          "odds": 19.7
-        },
-        {
-          "number": 12,
-          "odds": 7.4
-        },
-        {
-          "number": 13,
-          "odds": 10.6
-        },
-        {
-          "number": 14,
-          "odds": -3.0
-        },
-        {
-          "number": 15,
-          "odds": 30.1
-        },
-        {
-          "number": 16,
-          "odds": 13.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050609",
@@ -1155,52 +359,7 @@
       "venue": "中山",
       "number": "9",
       "name": "チバテレ杯",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 15.3
-        },
-        {
-          "number": 2,
-          "odds": 3.2
-        },
-        {
-          "number": 3,
-          "odds": 12.0
-        },
-        {
-          "number": 4,
-          "odds": 3.6
-        },
-        {
-          "number": 5,
-          "odds": 109.4
-        },
-        {
-          "number": 6,
-          "odds": 27.7
-        },
-        {
-          "number": 7,
-          "odds": 54.9
-        },
-        {
-          "number": 8,
-          "odds": 76.4
-        },
-        {
-          "number": 9,
-          "odds": 6.0
-        },
-        {
-          "number": 10,
-          "odds": 23.9
-        },
-        {
-          "number": 11,
-          "odds": 4.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050610",
@@ -1208,68 +367,7 @@
       "venue": "中山",
       "number": "10",
       "name": "北総S",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 38.2
-        },
-        {
-          "number": 2,
-          "odds": 266.4
-        },
-        {
-          "number": 3,
-          "odds": 16.8
-        },
-        {
-          "number": 4,
-          "odds": 120.8
-        },
-        {
-          "number": 5,
-          "odds": 59.8
-        },
-        {
-          "number": 6,
-          "odds": 91.2
-        },
-        {
-          "number": 7,
-          "odds": 24.1
-        },
-        {
-          "number": 8,
-          "odds": 62.5
-        },
-        {
-          "number": 9,
-          "odds": 4.1
-        },
-        {
-          "number": 10,
-          "odds": 167.0
-        },
-        {
-          "number": 11,
-          "odds": 15.5
-        },
-        {
-          "number": 12,
-          "odds": 23.2
-        },
-        {
-          "number": 13,
-          "odds": 8.1
-        },
-        {
-          "number": 14,
-          "odds": 7.3
-        },
-        {
-          "number": 15,
-          "odds": 2.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050611",
@@ -1277,72 +375,7 @@
       "venue": "中山",
       "number": "11",
       "name": "ディセンバー",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 6.3
-        },
-        {
-          "number": 2,
-          "odds": 16.0
-        },
-        {
-          "number": 3,
-          "odds": 7.3
-        },
-        {
-          "number": 4,
-          "odds": 14.3
-        },
-        {
-          "number": 5,
-          "odds": 257.9
-        },
-        {
-          "number": 6,
-          "odds": 98.7
-        },
-        {
-          "number": 7,
-          "odds": 2.7
-        },
-        {
-          "number": 8,
-          "odds": 18.9
-        },
-        {
-          "number": 9,
-          "odds": 17.9
-        },
-        {
-          "number": 10,
-          "odds": 13.1
-        },
-        {
-          "number": 11,
-          "odds": 146.0
-        },
-        {
-          "number": 12,
-          "odds": 20.1
-        },
-        {
-          "number": 13,
-          "odds": 5.9
-        },
-        {
-          "number": 14,
-          "odds": 133.7
-        },
-        {
-          "number": 15,
-          "odds": 34.8
-        },
-        {
-          "number": 16,
-          "odds": 167.8
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050612",
@@ -1350,72 +383,7 @@
       "venue": "中山",
       "number": "12",
       "name": "3歳以上2勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 240.4
-        },
-        {
-          "number": 2,
-          "odds": 325.1
-        },
-        {
-          "number": 3,
-          "odds": 54.8
-        },
-        {
-          "number": 4,
-          "odds": 6.9
-        },
-        {
-          "number": 5,
-          "odds": 6.6
-        },
-        {
-          "number": 6,
-          "odds": 5.0
-        },
-        {
-          "number": 7,
-          "odds": 4.6
-        },
-        {
-          "number": 8,
-          "odds": 9.4
-        },
-        {
-          "number": 9,
-          "odds": 224.7
-        },
-        {
-          "number": 10,
-          "odds": 47.2
-        },
-        {
-          "number": 11,
-          "odds": 20.7
-        },
-        {
-          "number": 12,
-          "odds": 282.0
-        },
-        {
-          "number": 13,
-          "odds": 36.6
-        },
-        {
-          "number": 14,
-          "odds": 4.3
-        },
-        {
-          "number": 15,
-          "odds": 47.0
-        },
-        {
-          "number": 16,
-          "odds": 16.4
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050601",
@@ -1423,56 +391,7 @@
       "venue": "阪神",
       "number": "1",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 7.6
-        },
-        {
-          "number": 2,
-          "odds": 134.3
-        },
-        {
-          "number": 3,
-          "odds": 431.0
-        },
-        {
-          "number": 4,
-          "odds": 1.2
-        },
-        {
-          "number": 5,
-          "odds": 13.7
-        },
-        {
-          "number": 6,
-          "odds": 5.3
-        },
-        {
-          "number": 7,
-          "odds": 178.0
-        },
-        {
-          "number": 8,
-          "odds": 376.7
-        },
-        {
-          "number": 9,
-          "odds": 153.4
-        },
-        {
-          "number": 10,
-          "odds": 72.9
-        },
-        {
-          "number": 11,
-          "odds": 117.9
-        },
-        {
-          "number": 12,
-          "odds": 32.7
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050602",
@@ -1480,72 +399,7 @@
       "venue": "阪神",
       "number": "2",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 6.3
-        },
-        {
-          "number": 2,
-          "odds": 24.1
-        },
-        {
-          "number": 3,
-          "odds": 8.9
-        },
-        {
-          "number": 4,
-          "odds": 12.8
-        },
-        {
-          "number": 5,
-          "odds": 9.2
-        },
-        {
-          "number": 6,
-          "odds": 4.6
-        },
-        {
-          "number": 7,
-          "odds": 13.7
-        },
-        {
-          "number": 8,
-          "odds": 584.6
-        },
-        {
-          "number": 9,
-          "odds": 466.4
-        },
-        {
-          "number": 10,
-          "odds": 45.0
-        },
-        {
-          "number": 11,
-          "odds": 741.9
-        },
-        {
-          "number": 12,
-          "odds": 76.0
-        },
-        {
-          "number": 13,
-          "odds": 2.4
-        },
-        {
-          "number": 14,
-          "odds": 92.7
-        },
-        {
-          "number": 15,
-          "odds": 425.3
-        },
-        {
-          "number": 16,
-          "odds": 791.6
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050603",
@@ -1553,80 +407,7 @@
       "venue": "阪神",
       "number": "3",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 15.3
-        },
-        {
-          "number": 2,
-          "odds": 452.3
-        },
-        {
-          "number": 3,
-          "odds": 17.9
-        },
-        {
-          "number": 4,
-          "odds": 10.7
-        },
-        {
-          "number": 5,
-          "odds": 71.0
-        },
-        {
-          "number": 6,
-          "odds": 419.4
-        },
-        {
-          "number": 7,
-          "odds": 42.5
-        },
-        {
-          "number": 8,
-          "odds": 41.4
-        },
-        {
-          "number": 9,
-          "odds": 11.5
-        },
-        {
-          "number": 10,
-          "odds": 35.8
-        },
-        {
-          "number": 11,
-          "odds": 3.0
-        },
-        {
-          "number": 12,
-          "odds": 3.5
-        },
-        {
-          "number": 13,
-          "odds": 109.7
-        },
-        {
-          "number": 14,
-          "odds": 700.5
-        },
-        {
-          "number": 15,
-          "odds": 403.6
-        },
-        {
-          "number": 16,
-          "odds": 10.0
-        },
-        {
-          "number": 17,
-          "odds": 7.5
-        },
-        {
-          "number": 18,
-          "odds": 186.9
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050604",
@@ -1634,56 +415,7 @@
       "venue": "阪神",
       "number": "4",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 30.7
-        },
-        {
-          "number": 2,
-          "odds": 132.5
-        },
-        {
-          "number": 3,
-          "odds": 4.9
-        },
-        {
-          "number": 4,
-          "odds": 4.0
-        },
-        {
-          "number": 5,
-          "odds": 273.9
-        },
-        {
-          "number": 6,
-          "odds": 446.9
-        },
-        {
-          "number": 7,
-          "odds": 39.1
-        },
-        {
-          "number": 8,
-          "odds": 119.2
-        },
-        {
-          "number": 9,
-          "odds": 1.9
-        },
-        {
-          "number": 10,
-          "odds": 6.2
-        },
-        {
-          "number": 11,
-          "odds": 24.8
-        },
-        {
-          "number": 12,
-          "odds": 134.3
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050605",
@@ -1691,56 +423,7 @@
       "venue": "阪神",
       "number": "5",
       "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 9.0
-        },
-        {
-          "number": 2,
-          "odds": 5.4
-        },
-        {
-          "number": 3,
-          "odds": 46.4
-        },
-        {
-          "number": 4,
-          "odds": 6.5
-        },
-        {
-          "number": 5,
-          "odds": 116.2
-        },
-        {
-          "number": 6,
-          "odds": 10.5
-        },
-        {
-          "number": 7,
-          "odds": 21.0
-        },
-        {
-          "number": 8,
-          "odds": 52.9
-        },
-        {
-          "number": 9,
-          "odds": 4.4
-        },
-        {
-          "number": 10,
-          "odds": 15.4
-        },
-        {
-          "number": 11,
-          "odds": 24.2
-        },
-        {
-          "number": 12,
-          "odds": 3.5
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050606",
@@ -1748,52 +431,7 @@
       "venue": "阪神",
       "number": "6",
       "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 139.9
-        },
-        {
-          "number": 2,
-          "odds": 4.0
-        },
-        {
-          "number": 3,
-          "odds": 16.0
-        },
-        {
-          "number": 4,
-          "odds": 152.3
-        },
-        {
-          "number": 5,
-          "odds": 77.0
-        },
-        {
-          "number": 6,
-          "odds": 2.3
-        },
-        {
-          "number": 7,
-          "odds": 6.4
-        },
-        {
-          "number": 8,
-          "odds": 7.8
-        },
-        {
-          "number": 9,
-          "odds": 37.7
-        },
-        {
-          "number": 10,
-          "odds": 6.7
-        },
-        {
-          "number": 11,
-          "odds": 37.9
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050607",
@@ -1801,80 +439,7 @@
       "venue": "阪神",
       "number": "7",
       "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 28.5
-        },
-        {
-          "number": 2,
-          "odds": 14.0
-        },
-        {
-          "number": 3,
-          "odds": 53.1
-        },
-        {
-          "number": 4,
-          "odds": 22.7
-        },
-        {
-          "number": 5,
-          "odds": 3.4
-        },
-        {
-          "number": 6,
-          "odds": 7.2
-        },
-        {
-          "number": 7,
-          "odds": 42.1
-        },
-        {
-          "number": 8,
-          "odds": 376.1
-        },
-        {
-          "number": 9,
-          "odds": 14.0
-        },
-        {
-          "number": 10,
-          "odds": 347.4
-        },
-        {
-          "number": 11,
-          "odds": 80.9
-        },
-        {
-          "number": 12,
-          "odds": 55.3
-        },
-        {
-          "number": 13,
-          "odds": 30.6
-        },
-        {
-          "number": 14,
-          "odds": 42.2
-        },
-        {
-          "number": 15,
-          "odds": 5.4
-        },
-        {
-          "number": 16,
-          "odds": 9.8
-        },
-        {
-          "number": 17,
-          "odds": 6.9
-        },
-        {
-          "number": 18,
-          "odds": 26.7
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050608",
@@ -1882,68 +447,7 @@
       "venue": "阪神",
       "number": "8",
       "name": "3歳以上2勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 3.5
-        },
-        {
-          "number": 2,
-          "odds": 158.4
-        },
-        {
-          "number": 3,
-          "odds": 219.1
-        },
-        {
-          "number": 4,
-          "odds": 20.7
-        },
-        {
-          "number": 5,
-          "odds": 179.1
-        },
-        {
-          "number": 6,
-          "odds": 4.6
-        },
-        {
-          "number": 7,
-          "odds": 5.7
-        },
-        {
-          "number": 8,
-          "odds": 297.2
-        },
-        {
-          "number": 9,
-          "odds": 3.1
-        },
-        {
-          "number": 10,
-          "odds": 26.5
-        },
-        {
-          "number": 11,
-          "odds": 81.7
-        },
-        {
-          "number": 12,
-          "odds": 49.6
-        },
-        {
-          "number": 13,
-          "odds": 87.9
-        },
-        {
-          "number": 14,
-          "odds": 29.9
-        },
-        {
-          "number": 15,
-          "odds": 12.8
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050609",
@@ -1951,72 +455,7 @@
       "venue": "阪神",
       "number": "9",
       "name": "御影S",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 9.6
-        },
-        {
-          "number": 2,
-          "odds": 69.6
-        },
-        {
-          "number": 3,
-          "odds": 262.8
-        },
-        {
-          "number": 4,
-          "odds": 13.4
-        },
-        {
-          "number": 5,
-          "odds": 5.9
-        },
-        {
-          "number": 6,
-          "odds": 1.7
-        },
-        {
-          "number": 7,
-          "odds": 201.3
-        },
-        {
-          "number": 8,
-          "odds": 44.7
-        },
-        {
-          "number": 9,
-          "odds": 51.6
-        },
-        {
-          "number": 10,
-          "odds": 11.6
-        },
-        {
-          "number": 11,
-          "odds": 130.9
-        },
-        {
-          "number": 12,
-          "odds": 59.4
-        },
-        {
-          "number": 13,
-          "odds": 49.3
-        },
-        {
-          "number": 14,
-          "odds": 13.7
-        },
-        {
-          "number": 15,
-          "odds": 32.1
-        },
-        {
-          "number": 16,
-          "odds": 36.9
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050610",
@@ -2024,72 +463,7 @@
       "venue": "阪神",
       "number": "10",
       "name": "ベテルギウス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 3.1
-        },
-        {
-          "number": 2,
-          "odds": 9.3
-        },
-        {
-          "number": 3,
-          "odds": 16.9
-        },
-        {
-          "number": 4,
-          "odds": 85.7
-        },
-        {
-          "number": 5,
-          "odds": 7.5
-        },
-        {
-          "number": 6,
-          "odds": 70.2
-        },
-        {
-          "number": 7,
-          "odds": 95.2
-        },
-        {
-          "number": 8,
-          "odds": 8.7
-        },
-        {
-          "number": 9,
-          "odds": 19.9
-        },
-        {
-          "number": 10,
-          "odds": 9.6
-        },
-        {
-          "number": 11,
-          "odds": 52.7
-        },
-        {
-          "number": 12,
-          "odds": 159.8
-        },
-        {
-          "number": 13,
-          "odds": 4.2
-        },
-        {
-          "number": 14,
-          "odds": 41.6
-        },
-        {
-          "number": 15,
-          "odds": 165.4
-        },
-        {
-          "number": 16,
-          "odds": 25.8
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050611",
@@ -2097,64 +471,7 @@
       "venue": "阪神",
       "number": "11",
       "name": "朝日杯FS",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 92.2
-        },
-        {
-          "number": 2,
-          "odds": 124.7
-        },
-        {
-          "number": 3,
-          "odds": 4.9
-        },
-        {
-          "number": 4,
-          "odds": 221.4
-        },
-        {
-          "number": 5,
-          "odds": 240.7
-        },
-        {
-          "number": 6,
-          "odds": 50.7
-        },
-        {
-          "number": 7,
-          "odds": 22.2
-        },
-        {
-          "number": 8,
-          "odds": 3.6
-        },
-        {
-          "number": 9,
-          "odds": 38.6
-        },
-        {
-          "number": 10,
-          "odds": 8.3
-        },
-        {
-          "number": 11,
-          "odds": 82.9
-        },
-        {
-          "number": 12,
-          "odds": 3.1
-        },
-        {
-          "number": 13,
-          "odds": 4.9
-        },
-        {
-          "number": 14,
-          "odds": 206.0
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202509050612",
@@ -2162,64 +479,7 @@
       "venue": "阪神",
       "number": "12",
       "name": "六甲アイラS",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 16.5
-        },
-        {
-          "number": 2,
-          "odds": 7.2
-        },
-        {
-          "number": 3,
-          "odds": 10.3
-        },
-        {
-          "number": 4,
-          "odds": 24.1
-        },
-        {
-          "number": 5,
-          "odds": 25.8
-        },
-        {
-          "number": 6,
-          "odds": 186.3
-        },
-        {
-          "number": 7,
-          "odds": 19.5
-        },
-        {
-          "number": 8,
-          "odds": 65.1
-        },
-        {
-          "number": 9,
-          "odds": 4.5
-        },
-        {
-          "number": 10,
-          "odds": 182.1
-        },
-        {
-          "number": 11,
-          "odds": 2.5
-        },
-        {
-          "number": 12,
-          "odds": 5.5
-        },
-        {
-          "number": 13,
-          "odds": 126.6
-        },
-        {
-          "number": 14,
-          "odds": 359.3
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050601",
@@ -2227,72 +487,7 @@
       "venue": "中京",
       "number": "1",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 83.6
-        },
-        {
-          "number": 2,
-          "odds": 272.8
-        },
-        {
-          "number": 3,
-          "odds": 38.3
-        },
-        {
-          "number": 4,
-          "odds": 4.9
-        },
-        {
-          "number": 5,
-          "odds": 67.2
-        },
-        {
-          "number": 6,
-          "odds": 521.1
-        },
-        {
-          "number": 7,
-          "odds": 42.8
-        },
-        {
-          "number": 8,
-          "odds": 12.2
-        },
-        {
-          "number": 9,
-          "odds": 21.4
-        },
-        {
-          "number": 10,
-          "odds": 63.0
-        },
-        {
-          "number": 11,
-          "odds": 2.4
-        },
-        {
-          "number": 12,
-          "odds": 3.5
-        },
-        {
-          "number": 13,
-          "odds": 153.5
-        },
-        {
-          "number": 14,
-          "odds": 13.1
-        },
-        {
-          "number": 15,
-          "odds": 25.4
-        },
-        {
-          "number": 16,
-          "odds": 218.8
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050602",
@@ -2300,72 +495,7 @@
       "venue": "中京",
       "number": "2",
       "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 4.5
-        },
-        {
-          "number": 2,
-          "odds": 20.9
-        },
-        {
-          "number": 3,
-          "odds": 332.5
-        },
-        {
-          "number": 4,
-          "odds": 3.4
-        },
-        {
-          "number": 5,
-          "odds": 216.1
-        },
-        {
-          "number": 6,
-          "odds": 130.7
-        },
-        {
-          "number": 7,
-          "odds": 21.1
-        },
-        {
-          "number": 8,
-          "odds": 196.7
-        },
-        {
-          "number": 9,
-          "odds": 778.3
-        },
-        {
-          "number": 10,
-          "odds": 6.0
-        },
-        {
-          "number": 11,
-          "odds": 3.9
-        },
-        {
-          "number": 12,
-          "odds": 6.2
-        },
-        {
-          "number": 13,
-          "odds": 253.4
-        },
-        {
-          "number": 14,
-          "odds": 97.4
-        },
-        {
-          "number": 15,
-          "odds": 54.4
-        },
-        {
-          "number": 16,
-          "odds": 141.8
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050603",
@@ -2373,72 +503,7 @@
       "venue": "中京",
       "number": "3",
       "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 10.7
-        },
-        {
-          "number": 2,
-          "odds": 71.0
-        },
-        {
-          "number": 3,
-          "odds": 165.2
-        },
-        {
-          "number": 4,
-          "odds": 32.6
-        },
-        {
-          "number": 5,
-          "odds": 20.5
-        },
-        {
-          "number": 6,
-          "odds": 18.0
-        },
-        {
-          "number": 7,
-          "odds": 15.3
-        },
-        {
-          "number": 8,
-          "odds": 5.4
-        },
-        {
-          "number": 9,
-          "odds": 195.9
-        },
-        {
-          "number": 10,
-          "odds": 7.4
-        },
-        {
-          "number": 11,
-          "odds": 2.4
-        },
-        {
-          "number": 12,
-          "odds": 289.9
-        },
-        {
-          "number": 13,
-          "odds": 57.1
-        },
-        {
-          "number": 14,
-          "odds": 5.9
-        },
-        {
-          "number": 15,
-          "odds": 558.5
-        },
-        {
-          "number": 16,
-          "odds": 67.5
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050604",
@@ -2446,80 +511,7 @@
       "venue": "中京",
       "number": "4",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 58.3
-        },
-        {
-          "number": 2,
-          "odds": 594.4
-        },
-        {
-          "number": 3,
-          "odds": 11.9
-        },
-        {
-          "number": 4,
-          "odds": 294.9
-        },
-        {
-          "number": 5,
-          "odds": 58.1
-        },
-        {
-          "number": 6,
-          "odds": -3.0
-        },
-        {
-          "number": 7,
-          "odds": 5.3
-        },
-        {
-          "number": 8,
-          "odds": 48.3
-        },
-        {
-          "number": 9,
-          "odds": 19.2
-        },
-        {
-          "number": 10,
-          "odds": 11.0
-        },
-        {
-          "number": 11,
-          "odds": 3.0
-        },
-        {
-          "number": 12,
-          "odds": 29.0
-        },
-        {
-          "number": 13,
-          "odds": 4.6
-        },
-        {
-          "number": 14,
-          "odds": 289.6
-        },
-        {
-          "number": 15,
-          "odds": 17.7
-        },
-        {
-          "number": 16,
-          "odds": 199.5
-        },
-        {
-          "number": 17,
-          "odds": 7.6
-        },
-        {
-          "number": 18,
-          "odds": 116.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050605",
@@ -2527,68 +519,7 @@
       "venue": "中京",
       "number": "5",
       "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 45.7
-        },
-        {
-          "number": 2,
-          "odds": 34.6
-        },
-        {
-          "number": 3,
-          "odds": 23.1
-        },
-        {
-          "number": 4,
-          "odds": 18.6
-        },
-        {
-          "number": 5,
-          "odds": 19.4
-        },
-        {
-          "number": 6,
-          "odds": 2.7
-        },
-        {
-          "number": 7,
-          "odds": 6.8
-        },
-        {
-          "number": 8,
-          "odds": 112.1
-        },
-        {
-          "number": 9,
-          "odds": 58.0
-        },
-        {
-          "number": 10,
-          "odds": 6.5
-        },
-        {
-          "number": 11,
-          "odds": 16.4
-        },
-        {
-          "number": 12,
-          "odds": 33.5
-        },
-        {
-          "number": 13,
-          "odds": 5.9
-        },
-        {
-          "number": 14,
-          "odds": 77.0
-        },
-        {
-          "number": 15,
-          "odds": 11.8
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050606",
@@ -2596,72 +527,7 @@
       "venue": "中京",
       "number": "6",
       "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 59.5
-        },
-        {
-          "number": 2,
-          "odds": 13.0
-        },
-        {
-          "number": 3,
-          "odds": 13.5
-        },
-        {
-          "number": 4,
-          "odds": 352.2
-        },
-        {
-          "number": 5,
-          "odds": 35.4
-        },
-        {
-          "number": 6,
-          "odds": 17.6
-        },
-        {
-          "number": 7,
-          "odds": 275.1
-        },
-        {
-          "number": 8,
-          "odds": 27.0
-        },
-        {
-          "number": 9,
-          "odds": 4.6
-        },
-        {
-          "number": 10,
-          "odds": 3.9
-        },
-        {
-          "number": 11,
-          "odds": 3.1
-        },
-        {
-          "number": 12,
-          "odds": 15.2
-        },
-        {
-          "number": 13,
-          "odds": 108.7
-        },
-        {
-          "number": 14,
-          "odds": 19.7
-        },
-        {
-          "number": 15,
-          "odds": 29.9
-        },
-        {
-          "number": 16,
-          "odds": 79.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050607",
@@ -2669,72 +535,7 @@
       "venue": "中京",
       "number": "7",
       "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 9.1
-        },
-        {
-          "number": 2,
-          "odds": 15.2
-        },
-        {
-          "number": 3,
-          "odds": 8.9
-        },
-        {
-          "number": 4,
-          "odds": 158.9
-        },
-        {
-          "number": 5,
-          "odds": 70.8
-        },
-        {
-          "number": 6,
-          "odds": 5.3
-        },
-        {
-          "number": 7,
-          "odds": 50.3
-        },
-        {
-          "number": 8,
-          "odds": 24.0
-        },
-        {
-          "number": 9,
-          "odds": 5.7
-        },
-        {
-          "number": 10,
-          "odds": 424.0
-        },
-        {
-          "number": 11,
-          "odds": 70.4
-        },
-        {
-          "number": 12,
-          "odds": 15.7
-        },
-        {
-          "number": 13,
-          "odds": 127.5
-        },
-        {
-          "number": 14,
-          "odds": 4.0
-        },
-        {
-          "number": 15,
-          "odds": 5.8
-        },
-        {
-          "number": 16,
-          "odds": 69.2
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050608",
@@ -2742,72 +543,7 @@
       "venue": "中京",
       "number": "8",
       "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 23.0
-        },
-        {
-          "number": 2,
-          "odds": 12.8
-        },
-        {
-          "number": 3,
-          "odds": 5.6
-        },
-        {
-          "number": 4,
-          "odds": 65.8
-        },
-        {
-          "number": 5,
-          "odds": 298.3
-        },
-        {
-          "number": 6,
-          "odds": 16.5
-        },
-        {
-          "number": 7,
-          "odds": 3.8
-        },
-        {
-          "number": 8,
-          "odds": 2.8
-        },
-        {
-          "number": 9,
-          "odds": 97.0
-        },
-        {
-          "number": 10,
-          "odds": 71.5
-        },
-        {
-          "number": 11,
-          "odds": 47.6
-        },
-        {
-          "number": 12,
-          "odds": 36.7
-        },
-        {
-          "number": 13,
-          "odds": 7.6
-        },
-        {
-          "number": 14,
-          "odds": 164.0
-        },
-        {
-          "number": 15,
-          "odds": 33.8
-        },
-        {
-          "number": 16,
-          "odds": 54.3
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050609",
@@ -2815,72 +551,7 @@
       "venue": "中京",
       "number": "9",
       "name": "寒椿賞",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 13.3
-        },
-        {
-          "number": 2,
-          "odds": 2.4
-        },
-        {
-          "number": 3,
-          "odds": 25.5
-        },
-        {
-          "number": 4,
-          "odds": 94.9
-        },
-        {
-          "number": 5,
-          "odds": 61.8
-        },
-        {
-          "number": 6,
-          "odds": 11.4
-        },
-        {
-          "number": 7,
-          "odds": 131.6
-        },
-        {
-          "number": 8,
-          "odds": 63.7
-        },
-        {
-          "number": 9,
-          "odds": 47.1
-        },
-        {
-          "number": 10,
-          "odds": 47.3
-        },
-        {
-          "number": 11,
-          "odds": 11.0
-        },
-        {
-          "number": 12,
-          "odds": 141.1
-        },
-        {
-          "number": 13,
-          "odds": 6.5
-        },
-        {
-          "number": 14,
-          "odds": 52.3
-        },
-        {
-          "number": 15,
-          "odds": 4.2
-        },
-        {
-          "number": 16,
-          "odds": 21.2
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050610",
@@ -2888,48 +559,7 @@
       "venue": "中京",
       "number": "10",
       "name": "名古屋日刊S",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 5.1
-        },
-        {
-          "number": 2,
-          "odds": 5.5
-        },
-        {
-          "number": 3,
-          "odds": 108.1
-        },
-        {
-          "number": 4,
-          "odds": 6.1
-        },
-        {
-          "number": 5,
-          "odds": 31.7
-        },
-        {
-          "number": 6,
-          "odds": 11.5
-        },
-        {
-          "number": 7,
-          "odds": 4.4
-        },
-        {
-          "number": 8,
-          "odds": 54.8
-        },
-        {
-          "number": 9,
-          "odds": 49.1
-        },
-        {
-          "number": 10,
-          "odds": 3.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050611",
@@ -2937,72 +567,7 @@
       "venue": "中京",
       "number": "11",
       "name": "コールドムー",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 16.6
-        },
-        {
-          "number": 2,
-          "odds": 384.9
-        },
-        {
-          "number": 3,
-          "odds": 21.3
-        },
-        {
-          "number": 4,
-          "odds": 19.9
-        },
-        {
-          "number": 5,
-          "odds": 18.3
-        },
-        {
-          "number": 6,
-          "odds": 10.9
-        },
-        {
-          "number": 7,
-          "odds": 3.7
-        },
-        {
-          "number": 8,
-          "odds": 7.2
-        },
-        {
-          "number": 9,
-          "odds": 178.9
-        },
-        {
-          "number": 10,
-          "odds": 100.9
-        },
-        {
-          "number": 11,
-          "odds": 52.7
-        },
-        {
-          "number": 12,
-          "odds": 5.8
-        },
-        {
-          "number": 13,
-          "odds": 66.3
-        },
-        {
-          "number": 14,
-          "odds": 168.6
-        },
-        {
-          "number": 15,
-          "odds": 3.2
-        },
-        {
-          "number": 16,
-          "odds": 94.9
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202507050612",
@@ -3010,80 +575,7 @@
       "venue": "中京",
       "number": "12",
       "name": "尾張特別",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 84.4
-        },
-        {
-          "number": 2,
-          "odds": 10.6
-        },
-        {
-          "number": 3,
-          "odds": 61.0
-        },
-        {
-          "number": 4,
-          "odds": 21.7
-        },
-        {
-          "number": 5,
-          "odds": 6.0
-        },
-        {
-          "number": 6,
-          "odds": 93.3
-        },
-        {
-          "number": 7,
-          "odds": 34.7
-        },
-        {
-          "number": 8,
-          "odds": 19.6
-        },
-        {
-          "number": 9,
-          "odds": 21.1
-        },
-        {
-          "number": 10,
-          "odds": 12.6
-        },
-        {
-          "number": 11,
-          "odds": 14.8
-        },
-        {
-          "number": 12,
-          "odds": 5.3
-        },
-        {
-          "number": 13,
-          "odds": 25.2
-        },
-        {
-          "number": 14,
-          "odds": 5.3
-        },
-        {
-          "number": 15,
-          "odds": 176.0
-        },
-        {
-          "number": 16,
-          "odds": 88.2
-        },
-        {
-          "number": 17,
-          "odds": 8.3
-        },
-        {
-          "number": 18,
-          "odds": 12.2
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050709",
