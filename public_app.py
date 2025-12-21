@@ -169,14 +169,32 @@ if race_id:
              else:
                  df_display['Odds'] = 0.0
         
-        display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds']
-        # Map nice names
-        rename_map = {
             'AI_Score': 'AIスコア(%)',
             'Odds': '現在オッズ',
             '性齢': '年齢',
-            '馬 番': '馬番'
+            '馬 番': '馬番',
+            'jockey_compatibility': '騎手相性',
+            'distance_compatibility': '距離適性',
+            'course_compatibility': 'コース適性',
+            'weighted_avg_speed': '平均スピード'
         }
+        
+        # Select appropriate course compatibility
+        # If 'コースタイプ' contains '芝', use turf, else dirt
+        # Default to turf if unknown
+        is_turf_race = True
+        if 'コースタイプ' in df_display.columns:
+             # Check first row (all same race)
+             c_type = str(df_display['コースタイプ'].iloc[0])
+             if 'ダ' in c_type:
+                 is_turf_race = False
+        
+        if is_turf_race:
+             df_display['course_compatibility'] = df_display['turf_compatibility']
+        else:
+             df_display['course_compatibility'] = df_display['dirt_compatibility']
+
+        display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
         
         edited_df = df_display[display_cols].copy()
         edited_df.rename(columns=rename_map, inplace=True)
@@ -207,6 +225,21 @@ if race_id:
                     "予想印",
                     options=["", "◎", "◯", "▲", "△", "✕"],
                     required=False,
+                ),
+                "騎手相性": st.column_config.NumberColumn(
+                    "騎手相性",
+                    help="この騎手での平均着順 (小さいほど良い)",
+                    format="%.1f"
+                ),
+                "コース適性": st.column_config.NumberColumn(
+                    "コース適性",
+                    help="芝/ダート別 平均着順 (小さいほど良い)",
+                    format="%.1f"
+                ),
+                "距離適性": st.column_config.NumberColumn(
+                    "距離適性",
+                    help="同距離での平均着順 (小さいほど良い)",
+                    format="%.1f"
                 )
             },
             hide_index=True,
@@ -251,18 +284,38 @@ if race_id:
             row = df_display[df_display['馬名'] == selected_horse_name].iloc[0]
             
             # 2. Radar Chart (5 Axes)
-            # Speed (3F), Stamina (Rank), Power (Weight), Experience (Age), Style (RunStyle)
+            # Speed (Real), Stamina/Form (Rank), Jockey, Course, Distance
             
-            score_speed = max(0, min(10, (40 - row.get('weighted_avg_last_3f', 36)) * 1.5))
-            score_stamina = max(0, min(10, (18 - row.get('weighted_avg_rank', 18)) / 1.8))
-            score_power = max(0, min(10, (row.get('weighted_avg_horse_weight', 470) - 400) / 15))
-            score_exp = max(0, min(10, (row.get('age', 3) - 2) * 2))
-            score_style = row.get('weighted_avg_run_style', 3) * 2.5
+            # --- Scoring Logic (Lower rank is better, so Invert) ---
+            # Rank 1 -> Score 10, Rank 10 -> Score 1, Rank 18 -> 0
+            def rank_to_score(r):
+                if pd.isna(r) or r > 18: return 0
+                return max(0, min(10, (14 - r) * (10/13))) # Approx 1->10, 14->0
+
+            # Speed: 16.0 is baseline. >17 is fast? <15 slow?
+            # 1000m/60s = 16.6. 
+            sp_val = row.get('weighted_avg_speed', 16.0)
+            score_speed = max(0, min(10, (sp_val - 15.0) * 5)) # 17.0->10, 15.0->0
+
+            j_val = row.get('jockey_compatibility', 10.0)
+            score_jockey = rank_to_score(j_val)
             
+            c_val = row.get('course_compatibility', 10.0) # Calculated above but only in display_df... wait, we are accessing df_display row.
+            # We added 'course_compatibility' to df_display in UI section.
+            # Re-calculate here if needed OR ensure row comes from df_display.
+            # row comes from df_display!
+            score_course = rank_to_score(c_val)
+            
+            d_val = row.get('distance_compatibility', 10.0)
+            score_dist = rank_to_score(d_val)
+            
+            rank_val = row.get('weighted_avg_rank', 10.0)
+            score_form = rank_to_score(rank_val)
+
             fig_radar = go.Figure()
             fig_radar.add_trace(go.Scatterpolar(
-                r=[score_speed, score_stamina, score_power, score_exp, score_style, score_speed],
-                theta=['スピード (3F)', 'スタミナ (着順)', 'パワー (馬体重)', '経験 (年齢)', '脚質'],
+                r=[score_speed, score_form, score_jockey, score_course, score_dist, score_speed],
+                theta=['スピード', '実績(着順)', '騎手相性', 'コース適性', '距離適性'],
                 fill='toself',
                 name=selected_horse_name
             ))

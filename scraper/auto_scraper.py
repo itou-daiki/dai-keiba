@@ -585,11 +585,37 @@ def scrape_shutuba_data(race_id):
         date_match = re.search(r'(\d{4}年\d{1,2}月\d{1,2}日)', title)
         date_text = date_match.group(1) if date_match else datetime.now().strftime('%Y年%m月%d日')
         
-        try:
              current_race_date = datetime.strptime(date_text, '%Y年%m月%d日')
         except:
              current_race_date = datetime.now()
 
+        # --- Course Data Extraction (RaceData01) ---
+        # Added to ensure feature engineering gets correct distance/surface/weather
+        surface_type = ""
+        distance = ""
+        rotation = ""
+        weather = "曇" # Default
+        condition = "良" # Default
+
+        racedata1 = soup.select_one(".RaceData01")
+        if racedata1:
+            raw_text = racedata1.text.replace("\n", "").strip()
+            
+            # Regex similar to scrape_race_data
+            match_course = re.search(r'(芝|ダ|障)(\d+)m(?:\s*\((.*?)\))?', raw_text)
+            if match_course:
+                surface_type = match_course.group(1)
+                distance = match_course.group(2)
+                rotation = match_course.group(3) if match_course.group(3) else ("直線" if "直線" in raw_text else "")
+            
+            match_weather = re.search(r'天候:(\S+)', raw_text)
+            if match_weather:
+                weather = match_weather.group(1)
+            
+            match_cond = re.search(r'馬場:(\S+)', raw_text)
+            if match_cond:
+                condition = match_cond.group(1)
+        
         # Parse Shutuba Table
         # The table class might be "Shutuba_Table"
         table = soup.find("table", class_="Shutuba_Table")
@@ -643,8 +669,15 @@ def scrape_shutuba_data(race_id):
                 "馬名": horse_name,
                 "horse_id": horse_id,
                 "騎手": jockey,
+                "騎手": jockey,
                 "斤量": weight,
-                "race_id": race_id
+                "race_id": race_id,
+                # Add Metadata for FE
+                "コースタイプ": surface_type,
+                "距離": distance,
+                "回り": rotation,
+                "天候": weather,
+                "馬場状態": condition
                 # Add 性齢 if needed for Age feature
             }
             
