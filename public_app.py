@@ -365,9 +365,10 @@ if race_id:
         # Calculate EV with JRA/NAR distinction
         # Determine race type from venue
         race_type = 'JRA'  # Default
+        venue = ''  # Initialize venue
 
         if '会場' in df_display.columns and len(df_display) > 0:
-            venue = df_display['会場'].iloc[0] if '会場' in df_display.columns else ''
+            venue = df_display['会場'].iloc[0]
 
             # Import race classifier
             try:
@@ -383,23 +384,26 @@ if race_id:
 
         # EV calculation with race type AND venue specific parameters
         # Import venue characteristics
+        venue_char = None
         try:
             from ml.venue_characteristics import get_venue_characteristics, get_distance_category
-            venue_char = get_venue_characteristics(venue) if venue else None
-        except:
-            venue_char = None
+            if venue:
+                venue_char = get_venue_characteristics(venue)
+        except Exception as e:
+            # Silently fail if venue characteristics not available
+            pass
 
         # Base parameters by race type
         if race_type == 'JRA':
             # 中央競馬: 信頼性が高いので印の影響を抑える
             mark_weights = {"◎": 1.3, "◯": 1.15, "▲": 1.08, "△": 1.03, "✕": 0.0, "": 1.0}
             safety_threshold = 0.08  # 8%
-            venue_info = f"🏇 中央競馬（JRA）- {venue}"
+            venue_info = f"🏇 中央競馬（JRA）" + (f" - {venue}" if venue else "")
         else:
             # 地方競馬: 波乱が多いので印の重みを大きく
             mark_weights = {"◎": 1.8, "◯": 1.4, "▲": 1.2, "△": 1.1, "✕": 0.0, "": 1.0}
             safety_threshold = 0.05  # 5%（地方は低確率でも狙う価値あり）
-            venue_info = f"🌙 地方競馬（NAR）- {venue}"
+            venue_info = f"🌙 地方競馬（NAR）" + (f" - {venue}" if venue else "")
 
         # Venue-specific adjustments
         venue_features = []
