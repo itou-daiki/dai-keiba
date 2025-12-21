@@ -1175,7 +1175,8 @@ if __name__ == "__main__":
     args, unknown = parser.parse_known_args()
     
     if args.today:
-        scrape_todays_schedule()
+        mode = args.mode if args.mode else "JRA"
+        scrape_todays_schedule(mode=mode)
     elif args.jra_url:
         print(f"Direct JRA Mode: {args.jra_url}")
         df = scrape_jra_race(args.jra_url)

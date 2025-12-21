@@ -7,6 +7,7 @@ import pickle
 import json
 import plotly.express as px
 import plotly.graph_objects as go
+import time
 
 # Add paths
 sys.path.append(os.path.join(os.path.dirname(__file__), 'scraper'))
