@@ -141,6 +141,18 @@ if race_id:
                         df['AI_Prob'] = probs
                         df['AI_Score'] = (probs * 100).astype(int)
                         
+                        # Merge features back to df for display
+                        # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
+                        cols_to_merge = [
+                            'turf_compatibility', 'dirt_compatibility', 
+                            'jockey_compatibility', 'distance_compatibility', 
+                            'weighted_avg_speed', 'weighted_avg_rank'
+                        ]
+                        for c in cols_to_merge:
+                            if c in X_df.columns:
+                                df[c] = X_df[c]
+
+                        
                     except Exception as e:
                         st.error(f"Prediction Error: {e}")
                         df['AI_Prob'] = 0.0
@@ -191,9 +203,20 @@ if race_id:
                  is_turf_race = False
         
         if is_turf_race:
-             df_display['course_compatibility'] = df_display['turf_compatibility']
+             df_display['course_compatibility'] = df_display.get('turf_compatibility', 10.0)
         else:
-             df_display['course_compatibility'] = df_display['dirt_compatibility']
+             df_display['course_compatibility'] = df_display.get('dirt_compatibility', 10.0)
+             
+        # Ensure all display columns exist
+        defaults = {
+            'jockey_compatibility': 10.0,
+            'distance_compatibility': 10.0,
+            'weighted_avg_speed': 16.0
+        }
+        for c, v in defaults.items():
+            if c not in df_display.columns:
+                df_display[c] = v
+
 
         display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
         
