@@ -227,7 +227,7 @@ def add_history_features(df):
 
     return df
 
-def process_data(df, lambda_decay=0.2):
+def process_data(df, lambda_decay=0.2, use_venue_features=False):
     # FIRST: Add history features
     df = add_history_features(df)
     
@@ -751,25 +751,31 @@ def process_data(df, lambda_decay=0.2):
         feature_cols.append('condition_code')
 
     # ========== 会場特性×馬タイプの相性特徴量 ==========
+    # NOTE: これらの特徴量を使用するには、モデルを再学習する必要があります
+    # use_venue_features=True で有効化
 
-    # Import venue and run style analyzers
-    try:
-        from venue_characteristics import (
-            get_venue_characteristics,
-            get_run_style_bias,
-            get_distance_bias,
-            get_distance_category
-        )
-        from run_style_analyzer import (
-            analyze_horse_run_style,
-            get_run_style_code,
-            calculate_run_style_consistency
-        )
-        venue_analysis_available = True
-    except ImportError:
+    if use_venue_features:
+        # Import venue and run style analyzers
+        try:
+            from venue_characteristics import (
+                get_venue_characteristics,
+                get_run_style_bias,
+                get_distance_bias,
+                get_distance_category
+            )
+            from run_style_analyzer import (
+                analyze_horse_run_style,
+                get_run_style_code,
+                calculate_run_style_consistency
+            )
+            venue_analysis_available = True
+        except ImportError:
+            venue_analysis_available = False
+            print("Warning: venue_characteristics or run_style_analyzer not found")
+    else:
         venue_analysis_available = False
 
-    if venue_analysis_available:
+    if use_venue_features and venue_analysis_available:
         # 1. 馬の脚質を判定（過去5走のコーナー通過順から）
         df['run_style'] = 'unknown'
         df['run_style_code'] = 0
