@@ -775,6 +775,7 @@ def get_start_params(start_args=None, end_args=None, places_args=None):
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
     parser.add_argument("--places", type=str, help="Target places (comma separated, e.g. 6,7)")
+    parser.add_argument("--source", type=str, default="netkeiba", help="Scraping source: 'netkeiba' or 'jra'")
     
     # Only parse args if not provided programmatically or if we want to fallback
     # If called from admin UI, sys.argv might contain streamlit args, so be careful.
@@ -826,12 +827,12 @@ def get_start_params(start_args=None, end_args=None, places_args=None):
          print("既存データなし。デモ用に2025年12月1日から開始します。")
          start_date = datetime(2025, 12, 1)
 
-    return start_date, args.end, target_places
+    return start_date, args.end, target_places, args.source
 
 # ==========================================
 # 3. メイン実行処理
 # ==========================================
-def main(start_date_arg=None, end_date_arg=None, places_arg=None, progress_callback=None):
+def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=None, progress_callback=None):
     """
     progress_callback: function(str) -> None. If provided, call with status update.
     """
@@ -839,7 +840,10 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, progress_callb
     start_time = time.time()
     
     # Pass arguments to helper
-    start_date, end_arg_cli, places = get_start_params(start_date_arg, end_date_arg, places_arg)
+    start_date, end_arg_cli, places, source_cli = get_start_params(start_date_arg, end_date_arg, places_arg)
+    
+    # Prioritize function arg over CLI
+    source = source_arg if source_arg else source_cli
     
     today = datetime.now()
     
@@ -878,7 +882,52 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, progress_callb
         if progress_callback: progress_callback(msg)
         return
 
+        if progress_callback: progress_callback(msg)
+        return
+
     print(f"対象会場: {list(places)}")
+    print(f"取得元: {source}")
+
+    if source == 'jra':
+        # Use JRA Scraper Bulk Logic
+        # We need to span years
+        years_to_scan = range(start_date.year, end_date.year + 1)
+        
+        # Save Callback Wrapper
+        def save_chunk_wrapper(df_chunk):
+            # Same save logic as existing
+             CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+             if os.path.exists(CSV_FILE_PATH):
+                try:
+                    existing_df = pd.read_csv(CSV_FILE_PATH)
+                    combined_df = pd.concat([existing_df, df_chunk], ignore_index=True)
+                except:
+                    combined_df = df_chunk
+             else:
+                combined_df = df_chunk
+            
+             # Deduplicate
+             subset_cols = ['race_id', '馬名']
+             subset_cols = [c for c in subset_cols if c in combined_df.columns]
+             if subset_cols:
+                 combined_df.drop_duplicates(subset=subset_cols, keep='last', inplace=True)
+            
+             combined_df.to_csv(CSV_FILE_PATH, index=False, encoding="utf-8-sig")
+             msg = f"  -> JRA Save: {len(df_chunk)} rows. Total: {len(combined_df)}"
+             print(msg)
+             if progress_callback: progress_callback(msg)
+
+        for year in years_to_scan:
+             print(f"Starting JRA Scrape for Year {year}...")
+             if progress_callback: progress_callback(f"JRAスクレイピング開始: {year}年")
+             
+             # Adjust start/end for this year chunk if needed, but scrape_jra_year handles full date range filter
+             scrape_jra_year(str(year), start_date=start_date.date(), end_date=end_date.date(), save_callback=save_chunk_wrapper)
+        
+        print(f"所要時間: {(time.time() - start_time)/60:.1f} 分")
+        return
+
+    # === Default: Netkeiba Logic ===
 
     all_data = []
     
@@ -1021,7 +1070,9 @@ if __name__ == "__main__":
     # Also parse arguments for main() to avoid conflicts if they are passed
     parser.add_argument("--start", type=str, help="Start date YYYY-MM-DD")
     parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
+    parser.add_argument("--end", type=str, help="End date YYYY-MM-DD")
     parser.add_argument("--places", type=str, help="Target places")
+    parser.add_argument("--source", type=str, help="Source: netkeiba or jra")
     
     args, unknown = parser.parse_known_args()
     

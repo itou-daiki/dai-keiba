@@ -169,6 +169,7 @@ if race_id:
              else:
                  df_display['Odds'] = 0.0
         
+        rename_map = {
             'AI_Score': 'AIスコア(%)',
             'Odds': '現在オッズ',
             '性齢': '年齢',

@@ -42,6 +42,15 @@ col1, col2 = st.columns(2)
 
 with col1:
     year = st.selectbox("対象年", ["2025", "2024"], index=0, disabled=st.session_state.is_running)
+    
+    source_option = st.radio(
+        "データ取得元",
+        ["netkeiba", "JRA"],
+        index=0,
+        disabled=st.session_state.is_running,
+        help="通常はnetkeibaを使用します。JRA公式は補完的に使用してください。"
+    )
+    source_val = "netkeiba" if source_option == "netkeiba" else "jra"
 
 with col2:
     default_start = date(int(year), 1, 1)
@@ -85,7 +94,8 @@ with col_btn_1:
             cmd = [
                 sys.executable, "-u", "scraper/auto_scraper.py", 
                 "--start", start_date_str,
-                "--end", end_date_str
+                "--end", end_date_str,
+                "--source", source_val
             ]
             
             try:
