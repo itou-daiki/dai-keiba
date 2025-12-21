@@ -372,8 +372,8 @@ if race_id:
         )
         
         # Calculate EV with JRA/NAR distinction
-        # Determine race type from venue
-        race_type = 'JRA'  # Default
+        # Determine race type from venue (Use mode_val as source of truth)
+        race_type = mode_val  # Default to User Selection
         venue = ''  # Initialize venue
 
         if '会場' in df_display.columns and len(df_display) > 0:
@@ -649,12 +649,13 @@ if race_id:
                      if adjusted_p < (implied_prob * 0.4): # AIが市場の4割以下しか評価していない場合
                          adjusted_p = max(adjusted_p, implied_prob * 0.4) # 最低でも市場評価の4割は持たせる
 
-                ev = (adjusted_p * m * o) - 1.0
+                # EV Calculation: Use w (weight) not m (mark string)
+                ev = (adjusted_p * w * o) - 1.0
                 
                 # Kelly Criterion
                 # f = (p(b+1) - 1) / b  => (p*o - 1) / (o - 1)
                 # p = adjusted_p * mark_bias
-                p_final = adjusted_p * m
+                p_final = adjusted_p * w
                 
                 if o > 1.0 and p_final > 0:
                     k = ((p_final * o) - 1.0) / (o - 1.0)
