@@ -749,7 +749,170 @@ def process_data(df, lambda_decay=0.2):
     else:
         df['condition_code'] = 1
         feature_cols.append('condition_code')
-    
+
+    # ========== 会場特性×馬タイプの相性特徴量 ==========
+
+    # Import venue and run style analyzers
+    try:
+        from venue_characteristics import (
+            get_venue_characteristics,
+            get_run_style_bias,
+            get_distance_bias,
+            get_distance_category
+        )
+        from run_style_analyzer import (
+            analyze_horse_run_style,
+            get_run_style_code,
+            calculate_run_style_consistency
+        )
+        venue_analysis_available = True
+    except ImportError:
+        venue_analysis_available = False
+
+    if venue_analysis_available:
+        # 1. 馬の脚質を判定（過去5走のコーナー通過順から）
+        df['run_style'] = 'unknown'
+        df['run_style_code'] = 0
+        df['run_style_consistency'] = 0.0
+        df['avg_early_position'] = np.nan
+        df['position_change'] = np.nan
+
+        # グループ化して馬ごとに脚質を判定
+        for horse_name in df['馬名'].unique():
+            horse_mask = df['馬名'] == horse_name
+
+            # 過去5走のコーナー通過順を取得
+            past_corners = []
+            for i in range(1, 6):
+                col = f'past_{i}_run_style'
+                if col in df.columns:
+                    # コーナー通過順があれば追加
+                    corners = df.loc[horse_mask, col].iloc[0] if horse_mask.any() else None
+                    if pd.notna(corners) and isinstance(corners, str) and '-' in str(corners):
+                        past_corners.append(str(corners))
+
+            # 脚質分析
+            if past_corners:
+                analysis = analyze_horse_run_style(past_corners)
+
+                df.loc[horse_mask, 'run_style'] = analysis['primary_style']
+                df.loc[horse_mask, 'run_style_code'] = get_run_style_code(analysis['primary_style'])
+                df.loc[horse_mask, 'run_style_consistency'] = max(analysis['style_distribution'].values()) if analysis['style_distribution'] else 0.0
+                df.loc[horse_mask, 'avg_early_position'] = analysis['avg_early_position']
+                df.loc[horse_mask, 'position_change'] = analysis['position_change']
+
+        feature_cols.extend(['run_style_code', 'run_style_consistency', 'avg_early_position', 'position_change'])
+
+        # 2. 会場×脚質の相性スコア
+        df['venue_run_style_compatibility'] = 1.0
+
+        if '会場' in df.columns:
+            for idx, row in df.iterrows():
+                venue = row['会場']
+                run_style = row['run_style']
+
+                if pd.notna(venue) and run_style != 'unknown':
+                    compatibility = get_run_style_bias(venue, run_style)
+                    df.at[idx, 'venue_run_style_compatibility'] = compatibility
+
+        feature_cols.append('venue_run_style_compatibility')
+
+        # 3. 会場×距離の相性スコア
+        df['venue_distance_compatibility'] = 1.0
+
+        if '会場' in df.columns and 'distance_val' in df.columns:
+            for idx, row in df.iterrows():
+                venue = row['会場']
+                distance = row['distance_val']
+
+                if pd.notna(venue) and pd.notna(distance):
+                    compatibility = get_distance_bias(venue, int(distance))
+                    df.at[idx, 'venue_distance_compatibility'] = compatibility
+
+        feature_cols.append('venue_distance_compatibility')
+
+        # 4. 会場特性数値化
+        df['straight_length'] = 300.0  # デフォルト
+        df['track_width_code'] = 1  # 0=narrow, 1=medium, 2=wide
+        df['slope_code'] = 0  # 0=flat, 1=up-down, 2=steep
+
+        if '会場' in df.columns:
+            width_map = {'narrow': 0, 'medium': 1, 'wide': 2}
+            slope_map = {'flat': 0, 'up-down': 1, 'steep': 2}
+
+            for idx, row in df.iterrows():
+                venue = row['会場']
+
+                if pd.notna(venue):
+                    char = get_venue_characteristics(venue)
+
+                    # コースタイプに応じた直線長
+                    course_type = row.get('コースタイプ', '芝')
+                    if '芝' in str(course_type):
+                        df.at[idx, 'straight_length'] = char.get('turf_straight', 300.0) or 300.0
+                    else:
+                        df.at[idx, 'straight_length'] = char['dirt_straight']
+
+                    # 幅と勾配
+                    df.at[idx, 'track_width_code'] = width_map.get(char['track_width'], 1)
+                    df.at[idx, 'slope_code'] = slope_map.get(char['slope'], 0)
+
+        feature_cols.extend(['straight_length', 'track_width_code', 'slope_code'])
+
+        # 5. 馬場状態×会場の相性（会場ごとに馬場の特性が異なる）
+        df['venue_condition_compatibility'] = 1.0
+
+        if '会場' in df.columns and '馬場状態' in df.columns:
+            for idx, row in df.iterrows():
+                venue = row['会場']
+                condition = row['馬場状態']
+
+                if pd.notna(venue) and pd.notna(condition):
+                    char = get_venue_characteristics(venue)
+                    course_type = row.get('コースタイプ', '芝')
+
+                    # 芝質/ダート質に応じた補正
+                    if '芝' in str(course_type):
+                        surface = char.get('turf_surface')
+                        if surface == 'soft' and '重' in str(condition):
+                            # 柔らかい芝で重馬場 -> 相性良い
+                            df.at[idx, 'venue_condition_compatibility'] = 1.1
+                        elif surface == 'firm' and '良' in str(condition):
+                            # 硬い芝で良馬場 -> 相性良い
+                            df.at[idx, 'venue_condition_compatibility'] = 1.1
+                    else:
+                        surface = char.get('dirt_surface')
+                        if surface == 'deep' and '重' in str(condition):
+                            # 深いダートで重馬場 -> やや不利
+                            df.at[idx, 'venue_condition_compatibility'] = 0.95
+                        elif surface == 'shallow' and '良' in str(condition):
+                            # 浅いダートで良馬場 -> 相性良い
+                            df.at[idx, 'venue_condition_compatibility'] = 1.05
+
+        feature_cols.append('venue_condition_compatibility')
+
+        # 6. 枠番の有利度（会場によって外枠/内枠の有利度が異なる）
+        df['frame_advantage'] = 1.0
+
+        if '会場' in df.columns and '枠' in df.columns:
+            for idx, row in df.iterrows():
+                venue = row['会場']
+                frame = row['枠']
+
+                if pd.notna(venue) and pd.notna(frame):
+                    char = get_venue_characteristics(venue)
+                    outer_advantage = char.get('outer_track_advantage', 1.0)
+
+                    # 枠番が大きい（外枠）ほど補正
+                    # frame: 1-8の範囲を想定
+                    frame_num = int(frame)
+                    if frame_num >= 6:  # 外枠
+                        df.at[idx, 'frame_advantage'] = outer_advantage
+                    elif frame_num <= 3:  # 内枠
+                        df.at[idx, 'frame_advantage'] = 2.0 - outer_advantage
+
+        feature_cols.append('frame_advantage')
+
     # Meta cols
     meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
     # Add date string if not exists

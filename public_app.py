@@ -381,26 +381,78 @@ if race_id:
                 jra_venues = ['札幌', '函館', '福島', '新潟', '東京', '中山', '中京', '京都', '阪神', '小倉']
                 race_type = 'JRA' if venue in jra_venues else 'NAR'
 
-        # EV calculation with race type specific parameters
+        # EV calculation with race type AND venue specific parameters
+        # Import venue characteristics
+        try:
+            from ml.venue_characteristics import get_venue_characteristics, get_distance_category
+            venue_char = get_venue_characteristics(venue) if venue else None
+        except:
+            venue_char = None
+
+        # Base parameters by race type
         if race_type == 'JRA':
             # 中央競馬: 信頼性が高いので印の影響を抑える
             mark_weights = {"◎": 1.3, "◯": 1.15, "▲": 1.08, "△": 1.03, "✕": 0.0, "": 1.0}
             safety_threshold = 0.08  # 8%
-            st.info(f"🏇 中央競馬（JRA）モード - より堅実な期待値計算")
+            venue_info = f"🏇 中央競馬（JRA）- {venue}"
         else:
             # 地方競馬: 波乱が多いので印の重みを大きく
             mark_weights = {"◎": 1.8, "◯": 1.4, "▲": 1.2, "△": 1.1, "✕": 0.0, "": 1.0}
             safety_threshold = 0.05  # 5%（地方は低確率でも狙う価値あり）
-            st.info(f"🌙 地方競馬（NAR）モード - 波乱を考慮した期待値計算")
+            venue_info = f"🌙 地方競馬（NAR）- {venue}"
+
+        # Venue-specific adjustments
+        venue_features = []
+        if venue_char:
+            # 直線距離による調整
+            straight = venue_char.get('turf_straight', 300)
+            if straight and straight > 500:  # 長い直線（新潟など）
+                mark_weights["◎"] *= 0.95  # 人気馬やや不利
+                mark_weights["△"] *= 1.05  # 穴馬やや有利
+                venue_features.append("長直線")
+            elif straight and straight < 300:  # 短い直線（中山、函館など）
+                mark_weights["◎"] *= 1.05  # 人気馬有利
+                mark_weights["△"] *= 0.95  # 穴馬不利
+                venue_features.append("短直線")
+
+            # コース幅による調整
+            track_width = venue_char.get('track_width')
+            if track_width == 'narrow':  # 狭いコース
+                mark_weights["◎"] *= 1.03  # 先行有利、人気馬やや有利
+                venue_features.append("小回り")
+            elif track_width == 'wide':  # 広いコース
+                # 馬群が広がりやすく、展開次第
+                pass
+
+            # 勾配による調整
+            slope = venue_char.get('slope')
+            if slope == 'steep':  # 急坂あり（中山など）
+                mark_weights["◎"] *= 1.02  # パワーある人気馬有利
+                venue_features.append("坂あり")
+
+        if venue_features:
+            venue_info += f" ({', '.join(venue_features)})"
+
+        st.info(venue_info)
 
         probs = edited_df['AIスコア(%)'] / 100.0
         odds = edited_df['現在オッズ']
         marks = edited_df['予想印']
 
+        # Get run style compatibility if available
+        run_style_compatibility = None
+        if 'venue_run_style_compatibility' in edited_df.columns:
+            run_style_compatibility = edited_df['venue_run_style_compatibility']
+
+        # Get frame (枠) for venue-specific frame advantage
+        frames = None
+        if '枠' in edited_df.columns:
+            frames = edited_df['枠']
+
         evs = []
         kellys = []
-        
-        for p, o, m in zip(probs, odds, marks):
+
+        for idx, (p, o, m) in enumerate(zip(probs, odds, marks)):
             # Safety filter (race type specific)
             if p < safety_threshold:
                 ev = -1.0
@@ -416,10 +468,31 @@ if race_id:
                 else:
                     adjusted_p = p
 
+                # Apply run style compatibility if available
+                if run_style_compatibility is not None:
+                    run_compat = run_style_compatibility.iloc[idx]
+                    if not pd.isna(run_compat):
+                        # 脚質相性が良い馬は期待値を上げる
+                        adjusted_p *= run_compat
+
+                # Apply frame advantage if available
+                if frames is not None and venue_char:
+                    frame = frames.iloc[idx]
+                    if not pd.isna(frame):
+                        outer_advantage = venue_char.get('outer_track_advantage', 1.0)
+                        frame_num = int(frame)
+                        if frame_num >= 6:  # 外枠
+                            adjusted_p *= outer_advantage
+                        elif frame_num <= 3:  # 内枠
+                            # 外枠有利な会場では内枠は不利
+                            adjusted_p *= (2.0 - outer_advantage)
+
                 ev = (adjusted_p * w * o) - 1.0
+                # Kelly criterion (placeholder for now)
+                kelly = 0.0
             evs.append(ev)
             kellys.append(kelly)
-            
+
         edited_df['期待値(EV)'] = evs
         edited_df['推奨度(Kelly)'] = kellys
 
