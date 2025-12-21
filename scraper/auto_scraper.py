@@ -399,66 +399,41 @@ def scrape_odds_for_race(race_id):
     print(f"  Scraping odds for {race_id}...")
     
     # 1. Try API (odds_get_form.html)
+    # 1. Try JSON API (New)
     try:
-        url = f"https://race.netkeiba.com/odds/odds_get_form.html?type=b1&race_id={race_id}"
+        # type=1 usually returns Win (Tansho) odds in ['1']
+        url = f"https://race.netkeiba.com/api/api_get_jra_odds.html?race_id={race_id}&type=1&action=init"
         response = requests.get(url, headers=headers, timeout=10)
-        response.encoding = response.apparent_encoding
-        soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Selectors for API
-        # Usually #odds_tan_block exists.
-        tan_block = soup.select_one('#odds_tan_block')
-        rows = []
-        if tan_block:
-             rows = tan_block.select('.RaceOdds_HorseList_Table tbody tr')
-        if not rows:
-             rows = soup.select('.RaceOdds_HorseList_Table tbody tr')
-        
-        # If API returned rows, parse
-        temp_horses = []
-        for row in rows:
-            # Check for Umaban and Odds
-            # Header often has th.
-            if row.find('th'): continue
-            
-            # Waku, Umaban, Mark, ... Name, Odds
-            # Umaban is usually 2nd cell (td:nth-child(2))
-            # Odds is usually 6th cell (td:nth-child(6))
-            
-            # Try finding by class if possible
-            umaban_elem = row.select_one('.Umaban') or row.select_one('td:nth-child(2)')
-            odds_elem = row.select_one('.Odds') or row.select_one('td:nth-child(6)') # API uses td:nth-child(6) for odds usually? No class .Odds?
-            
-            # Use 'id' attribute logic if available? e.g. "td_odds_1"
-            # Actually API often returns simpler table.
-            
-            if umaban_elem and odds_elem:
-                try:
-                    u_txt = umaban_elem.text.strip()
-                    if not u_txt.isdigit(): continue
-                    num = int(u_txt)
+        # Check if JSON
+        if response.status_code == 200 and 'application/json' in response.headers.get('Content-Type', ''):
+            data = response.json()
+            if data.get('status') == 'result':
+                # Parse Odds
+                # Structure: data['data']['odds']['1']['01'] = [odds, ?, ?]
+                odds_data = data.get('data', {}).get('odds', {}).get('1', {})
+                
+                temp_horses = []
+                for h_num_str, val_list in odds_data.items():
+                    if not val_list or len(val_list) == 0: continue
                     
-                    o_txt = odds_elem.text.strip()
-                    if '---' in o_txt or not o_txt: 
-                        odds = 0.0
-                    else:
-                        odds = float(o_txt)
-                    
-                    temp_horses.append({"number": num, "odds": odds})
-                except: continue
+                    try:
+                        num = int(h_num_str)
+                        odds_str = val_list[0]
+                        if odds_str and '---' not in odds_str:
+                            odds = float(odds_str)
+                            temp_horses.append({"number": num, "odds": odds})
+                    except: continue
+                
+                if temp_horses:
+                    print(f"  Got {len(temp_horses)} odds via JSON API.")
+                    return temp_horses
         
-        # Check if valid
-        if temp_horses and any(h['odds'] > 0 for h in temp_horses):
-            print(f"  Got {len(temp_horses)} odds via API.")
-            return temp_horses
-        else:
-            if temp_horses:
-                 print("  API returned odds but all were 0.0 (or ---).")
-            else:
-                 print("  API returned no rows.")
-
     except Exception as e:
-        print(f"  API Odds Error: {e}")
+        print(f"  JSON API Error: {e}")
+
+
+
 
     # 2. Fallback Main Page
     try:
