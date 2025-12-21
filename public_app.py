@@ -214,13 +214,15 @@ if race_id:
 
                         
                     except Exception as e:
-                        st.error(f"Prediction Error: {e}")
+                        st.error(f"❌ AI予測エラーが発生しました: {e}")
+                        st.error("考えられる原因: 1. `database.csv`がクラウドに同期されていない（GitHubにpushしてください） 2. モデルファイルが破損または不一致")
                         df['AI_Prob'] = 0.0
-                        df['AI_Score'] = 0.0
+                        df['AI_Score'] = 0
                 else:
-                    st.warning("モデルが見つかりません。予測スキップ。")
+                    st.error("⚠️ AIモデル (`.pkl`) が読み込めませんでした。")
+                    st.info("解決策: ローカルで `git add ml/models/*.pkl` を実行し、pushしてください。")
                     df['AI_Prob'] = 0.0
-                    df['AI_Score'] = 0.0
+                    df['AI_Score'] = 0
 
                 # 4. Display
                 # Store in session state to persist edits
