@@ -380,7 +380,9 @@ if race_id:
             return ['background-color: #d4edda' if v else '' for v in is_high]
         
         st.dataframe(
-            edited_df.style.map(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)', '推奨度(Kelly)'])
+            edited_df.style
+            .format({'推奨度(Kelly)': lambda x: '-' if x <= 0 else f'{x:.1f}%', '期待値(EV)': '{:.2f}'})
+            .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)', '推奨度(Kelly)'])
         )
 
         
