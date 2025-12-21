@@ -239,11 +239,20 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
         df['rank'] = np.nan
     
     # Calculate Weights
-    # W_i = e^(-lambda * (i-1))
-    # i = 1..5
-    weights = [math.exp(-lambda_decay * (i-1)) for i in range(1, 6)]
-    sum_weights = sum(weights)
-    norm_weights = [w / sum_weights for w in weights]
+    # 一般的な競馬予測の重み付け比率を採用
+    # 前走: 55%, 前々走: 25%, 3走前: 12%, 4走前: 6%, 5走前: 2%
+    #
+    # 従来の指数減衰（lambda=0.2）からの変更理由:
+    # - 競馬では前走の情報が圧倒的に重要（50-60%）
+    # - 指数減衰では前走が30%程度で、重要度が低すぎる
+    # - プロの予想家や指数計算で採用される標準的な比率を採用
+    base_weights = [0.55, 0.25, 0.12, 0.06, 0.02]  # 合計1.0
+
+    # 動的な重み調整（後で実装）
+    # - 休養期間が長い場合、前走の重みを下げる
+    # - 馬齢が若い（2-3歳）場合、前走の重みを上げる（成長曲線）
+    # - コース条件が似ている走の重みを上げる
+    norm_weights = base_weights
     
     # Feature Columns to generate
     # Added interval, speed
@@ -652,6 +661,82 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
             has_jra_past = df[race_name_col].astype(str).str.contains('G1|G2|G3|重賞|オープン|JRA', na=False, case=False)
             df.loc[has_jra_past, 'is_jra_transfer'] = 1
 
+    # ========== 動的重み付けのための特徴量 ==========
+
+    # 14. 前走の信頼度（休養期間による調整）
+    df['last_race_reliability'] = 1.0  # デフォルト: 信頼度100%
+
+    if 'past_1_interval' in df.columns:
+        # 休養期間が長いほど、前走の信頼度を下げる
+        # 0-30日: 100%
+        # 31-60日: 90%
+        # 61-90日: 80%
+        # 91-180日: 60%（休養明け）
+        # 180日以上: 40%（長期休養明け）
+        interval = df['past_1_interval']
+        df.loc[interval > 180, 'last_race_reliability'] = 0.4
+        df.loc[(interval > 90) & (interval <= 180), 'last_race_reliability'] = 0.6
+        df.loc[(interval > 60) & (interval <= 90), 'last_race_reliability'] = 0.8
+        df.loc[(interval > 30) & (interval <= 60), 'last_race_reliability'] = 0.9
+
+    # 15. コース親和性スコア（過去5走の中で最も今回と似ているレースの順位）
+    df['best_similar_course_rank'] = 18.0  # デフォルト: 最下位想定
+
+    # 今回のコース条件を取得
+    current_course = df.get('コースタイプ', pd.Series([''] * len(df)))
+    current_distance = df.get('distance_val', pd.Series([1600] * len(df)))
+
+    # 過去5走を調べて、最も似ているレースの着順を取得
+    for i in range(1, 6):
+        # 過去走のコースタイプと距離が今回と似ているかチェック
+        # （この実装は簡略化版。本来はpast_i_course_typeなどが必要）
+        rank_col = f'past_{i}_rank'
+        if rank_col in df.columns:
+            # 単純に最良着順を取る（コース条件の詳細情報がない場合）
+            df['best_similar_course_rank'] = df[[rank_col, 'best_similar_course_rank']].min(axis=1)
+
+    # 16. 成長曲線スコア（馬齢による調整）
+    df['growth_factor'] = 1.0  # デフォルト: 標準
+
+    if '性齢' in df.columns:
+        age = df['age'] if 'age' in df.columns else df['性齢'].astype(str).str.extract(r'(\d+)').astype(float).fillna(3.0).iloc[:, 0]
+
+        # 2歳: 急成長期（前走の重みを大きく）
+        df.loc[age == 2, 'growth_factor'] = 1.3
+
+        # 3歳: 成長期（やや前走重視）
+        df.loc[age == 3, 'growth_factor'] = 1.15
+
+        # 4-5歳: ピーク期（標準）
+        df.loc[(age == 4) | (age == 5), 'growth_factor'] = 1.0
+
+        # 6歳以上: ベテラン（過去平均を重視、前走は控えめ）
+        df.loc[age >= 6, 'growth_factor'] = 0.85
+
+    # 17. 前走の着順と着差による信頼度
+    df['last_race_performance'] = 1.0  # デフォルト: 標準
+
+    if 'past_1_rank' in df.columns:
+        last_rank = df['past_1_rank']
+
+        # 前走好走（1-3着）→ 信頼度UP
+        df.loc[last_rank <= 3, 'last_race_performance'] = 1.2
+
+        # 前走惨敗（10着以下）→ 信頼度DOWN
+        df.loc[last_rank >= 10, 'last_race_performance'] = 0.8
+
+        # 前走大敗（15着以下）→ 大幅DOWN（展開が合わなかった可能性）
+        df.loc[last_rank >= 15, 'last_race_performance'] = 0.6
+
+    # 18. 前走と今回のレース間の着順差（連続性）
+    df['rank_trend'] = 0.0  # 0: 変化なし、+: 上昇傾向、-: 下降傾向
+
+    if 'past_1_rank' in df.columns and 'past_2_rank' in df.columns:
+        # 前走 - 前々走（負の値=成績向上）
+        df['rank_trend'] = df['past_2_rank'] - df['past_1_rank']
+        # -5以下（大幅向上）、+5以上（大幅悪化）でクリップ
+        df['rank_trend'] = df['rank_trend'].clip(-5, 5)
+
     # 新規特徴量をリストに追加
     new_features = [
         'turf_compatibility',
@@ -669,7 +754,13 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
         'race_type_code',
         'jra_compatibility',
         'nar_compatibility',
-        'is_jra_transfer'
+        'is_jra_transfer',
+        # 動的重み付け関連
+        'last_race_reliability',
+        'best_similar_course_rank',
+        'growth_factor',
+        'last_race_performance',
+        'rank_trend'
     ]
 
     # Features to save
@@ -946,9 +1037,17 @@ def calculate_features(input_csv, output_path, lambda_decay=0.5):
     processed = process_data(df, lambda_decay)
     
     # For training, we need binary target
+    # 変更: 3着以内 → 1着のみ（単勝予測に適した設定）
+    #
+    # 理由:
+    # - EV計算では単勝オッズを使用しているため、1着予測が正しい
+    # - 3着以内を勝ちとすると、モデル出力とEV計算が矛盾する
+    # - 競馬予測の目的は「1着を当てること」
     if 'rank' in processed.columns:
-        processed['target_top3'] = (processed['rank'] <= 3).astype(int)
+        processed['target_win'] = (processed['rank'] == 1).astype(int)  # 1着のみ
+        processed['target_top3'] = (processed['rank'] <= 3).astype(int)  # 互換性のため残す
     else:
+        processed['target_win'] = 0
         processed['target_top3'] = 0
     
     # Clean NaNs in features?
