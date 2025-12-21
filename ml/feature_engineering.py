@@ -497,6 +497,74 @@ def process_data(df, lambda_decay=0.2):
 
         df['age_limit'] = df['レース名'].apply(extract_age_limit)
 
+    # ========== 新規特徴量: 中央/地方競馬の区別 ==========
+
+    # 11. レースタイプ（JRA/NAR）
+    df['race_type'] = 'UNKNOWN'
+    df['race_type_code'] = -1
+
+    if '会場' in df.columns:
+        # Import race classifier
+        try:
+            import sys
+            import os
+            sys.path.insert(0, os.path.dirname(__file__))
+            from race_classifier import classify_race_type, get_race_type_code
+
+            df['race_type'] = df['会場'].apply(classify_race_type)
+            df['race_type_code'] = df['race_type'].apply(get_race_type_code)
+        except ImportError:
+            # Fallback: simple classification
+            jra_venues = ['札幌', '函館', '福島', '新潟', '東京', '中山', '中京', '京都', '阪神', '小倉']
+
+            def simple_classify(venue):
+                if not isinstance(venue, str):
+                    return 'UNKNOWN'
+                return 'JRA' if venue in jra_venues else 'NAR'
+
+            df['race_type'] = df['会場'].apply(simple_classify)
+            df['race_type_code'] = df['race_type'].apply(lambda x: 1 if x == 'JRA' else 0)
+
+    # 12. 中央/地方別の過去成績
+    df['jra_compatibility'] = 10.0  # JRAでの平均着順（デフォルト10着）
+    df['nar_compatibility'] = 10.0  # NARでの平均着順（デフォルト10着）
+    df['jra_count'] = 0
+    df['nar_count'] = 0
+
+    for i in range(1, 6):
+        race_name_col = f'past_{i}_race_name'
+        rank_col = f'past_{i}_rank'
+
+        if race_name_col in df.columns and rank_col in df.columns:
+            # JRAレースの判定（重賞、G1/G2/G3などのキーワード）
+            is_jra_race = df[race_name_col].astype(str).str.contains('G1|G2|G3|重賞|オープン|OP|JRA', na=False, case=False)
+
+            # JRA成績集計
+            df.loc[is_jra_race, 'jra_compatibility'] += df.loc[is_jra_race, rank_col]
+            df.loc[is_jra_race, 'jra_count'] += 1
+
+            # NAR成績集計
+            df.loc[~is_jra_race, 'nar_compatibility'] += df.loc[~is_jra_race, rank_col]
+            df.loc[~is_jra_race, 'nar_count'] += 1
+
+    # 平均化
+    df['jra_compatibility'] = df.apply(
+        lambda x: x['jra_compatibility'] / x['jra_count'] if x['jra_count'] > 0 else 10.0, axis=1
+    )
+    df['nar_compatibility'] = df.apply(
+        lambda x: x['nar_compatibility'] / x['nar_count'] if x['nar_count'] > 0 else 10.0, axis=1
+    )
+
+    # 13. 中央からの転入馬フラグ（地方競馬で重要）
+    df['is_jra_transfer'] = 0
+
+    # 過去5走にJRAレースがあれば転入馬
+    for i in range(1, 6):
+        race_name_col = f'past_{i}_race_name'
+        if race_name_col in df.columns:
+            has_jra_past = df[race_name_col].astype(str).str.contains('G1|G2|G3|重賞|オープン|JRA', na=False, case=False)
+            df.loc[has_jra_past, 'is_jra_transfer'] = 1
+
     # 新規特徴量をリストに追加
     new_features = [
         'turf_compatibility',
@@ -510,7 +578,11 @@ def process_data(df, lambda_decay=0.2):
         'jockey_compatibility',
         'race_class',
         'is_graded',
-        'age_limit'
+        'age_limit',
+        'race_type_code',
+        'jra_compatibility',
+        'nar_compatibility',
+        'is_jra_transfer'
     ]
 
     # Features to save

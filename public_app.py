@@ -56,7 +56,20 @@ with st.expander("ℹ️ このAI予想のロジックについて (クリック
     Expected Value = (AI勝率 \\times 予想家の印補正 \\times 現在オッズ) - 1.0
     $$
     - **プラス (緑色)**: 長期的に買ってプラスになる可能性が高い馬
-    - **予想家の印**: あなたの直感（印）を入力することで、AIの確率を補正できます (◎=1.5倍など)。
+    - **予想家の印**: あなたの直感（印）を入力することで、AIの確率を補正できます
+
+    #### 🏇 中央競馬 vs 🌙 地方競馬
+    このシステムは、会場から自動的に中央競馬（JRA）と地方競馬（NAR）を判定し、それぞれに最適化された期待値を計算します。
+
+    **中央競馬（JRA）:**
+    - 印の補正係数: ◎=1.3倍, ◯=1.15倍（控えめ）
+    - 安全フィルタ: AI確率8%未満は除外
+    - 特徴: レベルが高く、予想が堅め
+
+    **地方競馬（NAR）:**
+    - 印の補正係数: ◎=1.8倍, ◯=1.4倍（積極的）
+    - 安全フィルタ: AI確率5%未満は除外
+    - 特徴: 波乱が多く、人気薄が勝ちやすい
     """)
 
 # Sidebar
@@ -213,21 +226,58 @@ if race_id:
             num_rows="fixed"  
         )
         
-        # Calculate EV
-        mark_weights = {"◎": 1.5, "◯": 1.2, "▲": 1.1, "△": 1.05, "✕": 0.0, "": 1.0}
-        
+        # Calculate EV with JRA/NAR distinction
+        # Determine race type from venue
+        race_type = 'JRA'  # Default
+
+        if '会場' in df_display.columns and len(df_display) > 0:
+            venue = df_display['会場'].iloc[0] if '会場' in df_display.columns else ''
+
+            # Import race classifier
+            try:
+                import sys
+                import os
+                sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ml'))
+                from race_classifier import classify_race_type
+                race_type = classify_race_type(venue)
+            except:
+                # Fallback
+                jra_venues = ['札幌', '函館', '福島', '新潟', '東京', '中山', '中京', '京都', '阪神', '小倉']
+                race_type = 'JRA' if venue in jra_venues else 'NAR'
+
+        # EV calculation with race type specific parameters
+        if race_type == 'JRA':
+            # 中央競馬: 信頼性が高いので印の影響を抑える
+            mark_weights = {"◎": 1.3, "◯": 1.15, "▲": 1.08, "△": 1.03, "✕": 0.0, "": 1.0}
+            safety_threshold = 0.08  # 8%
+            st.info(f"🏇 中央競馬（JRA）モード - より堅実な期待値計算")
+        else:
+            # 地方競馬: 波乱が多いので印の重みを大きく
+            mark_weights = {"◎": 1.8, "◯": 1.4, "▲": 1.2, "△": 1.1, "✕": 0.0, "": 1.0}
+            safety_threshold = 0.05  # 5%（地方は低確率でも狙う価値あり）
+            st.info(f"🌙 地方競馬（NAR）モード - 波乱を考慮した期待値計算")
+
         probs = edited_df['AIスコア(%)'] / 100.0
         odds = edited_df['現在オッズ']
         marks = edited_df['予想印']
-        
+
         evs = []
         for p, o, m in zip(probs, odds, marks):
-            # Penalize low probability (Safety filter)
-            if p < 0.08: # Ignore if AI chance is less than 8%
+            # Safety filter (race type specific)
+            if p < safety_threshold:
                 ev = -1.0
             else:
                 w = mark_weights.get(m, 1.0)
-                ev = (p * w * o) - 1.0
+
+                # Adjust probability for NAR (higher uncertainty)
+                if race_type == 'NAR':
+                    # 地方は予測の不確実性を考慮
+                    # 高い確率は少し下げ、低い確率は少し上げる
+                    adjusted_p = p * 0.9 + 0.05
+                else:
+                    adjusted_p = p
+
+                ev = (adjusted_p * w * o) - 1.0
             evs.append(ev)
             
         edited_df['期待値(EV)'] = evs
