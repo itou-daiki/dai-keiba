@@ -59,23 +59,28 @@ with st.expander("ℹ️ このAI予想のロジックについて (クリック
     - **予想家の印**: あなたの直感（印）を入力することで、AIの確率を補正できます (◎=1.5倍など)。
     """)
 
-# Sidebar
-st.sidebar.header("🕹️ コントロールパネル")
+# --- Admin Menu ---
+with st.expander("🛠 管理者メニュー (データ更新・モデル再読み込み)"):
+    col_admin1, col_admin2 = st.columns(2)
+    
+    with col_admin1:
+        if st.button("📅 レース一覧を更新 (今後1週間)"):
+            with st.spinner("最新のレース情報を取得中 (約1分)..."):
+                success, msg = auto_scraper.scrape_todays_schedule()
+                if success:
+                    st.success(msg)
+                    st.rerun()
+                else:
+                    st.error(f"エラー: {msg}")
 
-if st.sidebar.button("📅 レース一覧を更新 (今後1週間)"):
-    with st.spinner("最新のレース情報を取得中 (約1分)..."):
-        success, msg = auto_scraper.scrape_todays_schedule()
-        if success:
-            st.sidebar.success(msg)
-            st.rerun()
-        else:
-            st.sidebar.error(f"エラー: {msg}")
+    with col_admin2:
+        if st.button("🧠 最新モデルを再読み込み"):
+            load_model.clear()
+            st.cache_resource.clear()
+            st.success("モデルを再読み込みしました！")
 
-if st.sidebar.button("🧠 最新モデルを再読み込み"):
-    load_model.clear()
-    st.cache_resource.clear()
-    st.success("モデルを再読み込みしました！")
-
+# --- Race Selection ---
+st.subheader("📍 レース選択")
 
 schedule_data = load_schedule_data()
 race_id = None
@@ -84,26 +89,44 @@ if schedule_data and "races" in schedule_data:
     races = schedule_data['races']
     
     # 1. Filter by Date
-    # Extract available dates
-    # races have "date" field "YYYY-MM-DD"
     dates = sorted(list(set([r.get('date', 'Unknown') for r in races])))
     
-    selected_date = st.sidebar.selectbox("日付を選択", dates)
+    # Layout columns for selection
+    col_date, col_venue, col_race = st.columns(3)
     
-    # Filter races
+    with col_date:
+         selected_date = st.selectbox("1. 日付を選択", dates)
+    
+    # Filter races by date
     todays_races = [r for r in races if r.get('date') == selected_date]
     
     if todays_races:
-        race_options = {f"{r['venue']}{r['number']}R: {r['name']}": r['id'] for r in todays_races}
-        selected_label = st.sidebar.selectbox("レースを選択", list(race_options.keys()))
-        if selected_label:
-            race_id = race_options[selected_label]
+        # 2. Filter by Venue (New)
+        venues = sorted(list(set([r['venue'] for r in todays_races])))
+        
+        with col_venue:
+            selected_venue = st.selectbox("2. 開催地を選択", venues)
+            
+        # Filter races by venue
+        venue_races = [r for r in todays_races if r['venue'] == selected_venue]
+        
+        # 3. Select Race
+        # Sort by race number just in case
+        venue_races.sort(key=lambda x: int(x['number']))
+        
+        race_options = {f"{r['number']}R: {r['name']}": r['id'] for r in venue_races}
+        
+        with col_race:
+            selected_label = st.selectbox("3. レースを選択", list(race_options.keys()))
+            if selected_label:
+                race_id = race_options[selected_label]
     else:
-        st.sidebar.warning(f"{selected_date} のレースはありません。")
+        st.warning(f"{selected_date} のレースはありません。")
         
 else:
-    st.sidebar.warning("レースデータがありません。更新ボタンを押してください。")
-    race_id = st.sidebar.text_input("レースID直接入力 (12桁)", value="202305021211")
+    st.warning("レースデータがありません。管理者メニューから更新ボタンを押してください。")
+    race_id = st.text_input("レースID直接入力 (12桁)", value="202305021211")
+
 
 # Main Analysis
 if race_id:
