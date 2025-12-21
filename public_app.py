@@ -172,8 +172,39 @@ if race_id:
                     st.write(f"database.csv Exists: {db_exists}")
                     st.write(f"database_nar.csv Exists: {db_nar_exists}")
                     st.write(f"Model Path: {os.path.join(os.path.dirname(__file__), 'ml/models/lgbm_model_nar.pkl')}")
+                    
+                    # Deep Match Debug
+                    try:
+                        tgt_csv = "database_nar.csv" if mode_val == "NAR" else "database.csv"
+                        if os.path.exists(tgt_csv):
+                            tdf = pd.read_csv(tgt_csv, dtype={'horse_id': str}, nrows=100)
+                            # Remove .0 if exists
+                            if 'horse_id' in tdf.columns:
+                                tdf['horse_id'] = tdf['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
+                            
+                            st.write(f"--- {tgt_csv} Analysis ---")
+                            st.write(f"Sample IDs in DB: {list(tdf['horse_id'].head(5))}")
+                            st.write(f"ID Type: {tdf['horse_id'].dtype}")
+                    except Exception as e:
+                        st.error(f"Debug Read Error: {e}")
 
                 df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
+                
+                if df is not None and not df.empty and 'horse_id' in df.columns:
+                     with st.expander("🔍 デバッグ情報 (IDマッチング)"):
+                         current_ids = df['horse_id'].astype(str).tolist()
+                         st.write(f"Current Race IDs: {current_ids[:5]}")
+                         
+                         if os.path.exists(tgt_csv):
+                             # Check actual match count in full DB (slow but needed)
+                             try:
+                                full_db = pd.read_csv(tgt_csv, usecols=['horse_id'], dtype={'horse_id': str})
+                                full_db['horse_id'] = full_db['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
+                                db_ids = set(full_db['horse_id'])
+                                match_count = sum(1 for cid in current_ids if cid in db_ids)
+                                st.write(f"Match Count: {match_count} / {len(current_ids)}")
+                                st.write(f"Missing IDs: {[cid for cid in current_ids if cid not in db_ids]}")
+                             except: pass
             
             if df is not None and not df.empty:
                 # 2. FE (use_venue_features=False to match existing model trained with 27 features)
