@@ -2,1480 +2,315 @@
   "date": "2025-12-21",
   "races": [
     {
-      "id": "202536122101",
+      "id": "202506050601",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "C2",
+      "name": "2歳未勝利",
       "horses": [
         {
           "number": 1,
-          "odds": 1.2
-        },
-        {
-          "number": 4,
-          "odds": 7.7
-        },
-        {
-          "number": 5,
-          "odds": 9.0
-        },
-        {
-          "number": 3,
-          "odds": 10.8
-        },
-        {
-          "number": 6,
-          "odds": 30.8
-        },
-        {
-          "number": 8,
-          "odds": 38.5
-        },
-        {
-          "number": 7,
-          "odds": 77.1
-        },
-        {
-          "number": 7,
-          "odds": 85.9
+          "odds": 7.8
         },
         {
           "number": 2,
-          "odds": 106.5
+          "odds": 144.7
         },
         {
-          "number": 8,
-          "odds": 216.0
-        }
-      ]
-    },
-    {
-      "id": "202536122102",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2åä¸çµ",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 1.5
-        },
-        {
-          "number": 6,
-          "odds": 4.6
-        },
-        {
-          "number": 5,
-          "odds": 6.0
-        },
-        {
-          "number": 7,
-          "odds": 17.3
-        },
-        {
-          "number": 8,
-          "odds": 20.7
-        },
-        {
-          "number": 6,
-          "odds": 26.0
-        },
-        {
-          "number": 7,
-          "odds": 31.9
-        },
-        {
-          "number": 1,
-          "odds": 58.5
-        },
-        {
-          "number": 2,
-          "odds": 63.2
+          "number": 3,
+          "odds": 2.2
         },
         {
           "number": 4,
-          "odds": 126.4
-        },
-        {
-          "number": 3,
-          "odds": 249.4
-        }
-      ]
-    },
-    {
-      "id": "202536122103",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2åçµ",
-      "horses": [
-        {
-          "number": 6,
-          "odds": 1.3
-        },
-        {
-          "number": 1,
-          "odds": 3.5
-        },
-        {
-          "number": 8,
-          "odds": 16.2
-        },
-        {
-          "number": 8,
-          "odds": 21.4
+          "odds": 7.1
         },
         {
           "number": 5,
-          "odds": 34.3
-        },
-        {
-          "number": 3,
           "odds": 63.4
         },
         {
-          "number": 7,
-          "odds": 70.5
-        },
-        {
-          "number": 4,
-          "odds": 89.6
-        },
-        {
-          "number": 2,
-          "odds": 100.6
-        },
-        {
-          "number": 7,
-          "odds": 103.1
-        },
-        {
           "number": 6,
-          "odds": 179.3
+          "odds": 109.4
+        },
+        {
+          "number": 7,
+          "odds": 8.6
+        },
+        {
+          "number": 8,
+          "odds": 13.1
+        },
+        {
+          "number": 9,
+          "odds": 11.4
+        },
+        {
+          "number": 10,
+          "odds": 64.3
+        },
+        {
+          "number": 11,
+          "odds": 90.7
+        },
+        {
+          "number": 12,
+          "odds": 8.0
+        },
+        {
+          "number": 13,
+          "odds": 226.8
+        },
+        {
+          "number": 14,
+          "odds": 228.3
+        },
+        {
+          "number": 15,
+          "odds": 31.9
+        },
+        {
+          "number": 16,
+          "odds": 29.7
         }
       ]
     },
     {
-      "id": "202536122104",
+      "id": "202506050602",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "C2ä¹çµ",
+      "name": "2歳未勝利",
       "horses": [
         {
+          "number": 1,
+          "odds": 9.2
+        },
+        {
+          "number": 2,
+          "odds": 285.1
+        },
+        {
+          "number": 3,
+          "odds": 71.9
+        },
+        {
+          "number": 4,
+          "odds": 4.7
+        },
+        {
+          "number": 5,
+          "odds": 3.0
+        },
+        {
           "number": 6,
-          "odds": 1.8
+          "odds": 22.6
         },
         {
           "number": 7,
-          "odds": 4.5
+          "odds": 219.7
+        },
+        {
+          "number": 8,
+          "odds": 284.5
+        },
+        {
+          "number": 9,
+          "odds": 275.8
+        },
+        {
+          "number": 10,
+          "odds": 26.8
+        },
+        {
+          "number": 11,
+          "odds": 70.4
+        },
+        {
+          "number": 12,
+          "odds": 62.0
+        },
+        {
+          "number": 13,
+          "odds": 169.8
+        },
+        {
+          "number": 14,
+          "odds": 2.9
+        },
+        {
+          "number": 15,
+          "odds": 77.9
+        },
+        {
+          "number": 16,
+          "odds": 8.7
+        }
+      ]
+    },
+    {
+      "id": "202506050603",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "2歳未勝利",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 116.1
+        },
+        {
+          "number": 2,
+          "odds": 724.6
+        },
+        {
+          "number": 3,
+          "odds": 400.2
+        },
+        {
+          "number": 4,
+          "odds": 9.9
+        },
+        {
+          "number": 5,
+          "odds": 150.2
+        },
+        {
+          "number": 6,
+          "odds": 320.1
+        },
+        {
+          "number": 7,
+          "odds": 11.1
+        },
+        {
+          "number": 8,
+          "odds": 28.0
+        },
+        {
+          "number": 9,
+          "odds": 6.2
+        },
+        {
+          "number": 10,
+          "odds": 63.3
+        },
+        {
+          "number": 11,
+          "odds": 779.7
+        },
+        {
+          "number": 12,
+          "odds": 5.5
+        },
+        {
+          "number": 13,
+          "odds": 3.1
+        },
+        {
+          "number": 14,
+          "odds": 3.5
+        },
+        {
+          "number": 15,
+          "odds": 19.9
+        }
+      ]
+    },
+    {
+      "id": "202506050604",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "3歳以上障害未勝利",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 61.9
         },
         {
           "number": 2,
           "odds": 5.4
         },
         {
-          "number": 7,
-          "odds": 11.3
-        },
-        {
-          "number": 6,
-          "odds": 16.1
-        },
-        {
-          "number": 8,
-          "odds": 20.5
-        },
-        {
-          "number": 5,
-          "odds": 24.1
-        },
-        {
-          "number": 4,
-          "odds": 50.7
-        },
-        {
-          "number": 1,
-          "odds": 65.6
-        },
-        {
           "number": 3,
-          "odds": 118.5
-        },
-        {
-          "number": 8,
-          "odds": 135.6
-        }
-      ]
-    },
-    {
-      "id": "202536122105",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2å«çµ",
-      "horses": [
-        {
-          "number": 6,
-          "odds": 1.1
-        },
-        {
-          "number": 7,
-          "odds": 7.8
-        },
-        {
-          "number": 5,
-          "odds": 11.2
-        },
-        {
-          "number": 1,
-          "odds": 13.8
-        },
-        {
-          "number": 8,
-          "odds": 22.6
-        },
-        {
-          "number": 8,
-          "odds": 29.0
-        },
-        {
-          "number": 7,
-          "odds": 77.4
-        },
-        {
-          "number": 3,
-          "odds": 92.9
-        },
-        {
-          "number": 2,
-          "odds": 96.7
+          "odds": 28.6
         },
         {
           "number": 4,
-          "odds": 182.3
-        },
-        {
-          "number": 6,
-          "odds": 197.3
-        }
-      ]
-    },
-    {
-      "id": "202536122106",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³",
-      "horses": [
-        {
-          "number": 7,
-          "odds": 3.2
-        },
-        {
-          "number": 7,
-          "odds": 4.1
-        },
-        {
-          "number": 8,
-          "odds": 4.1
-        },
-        {
-          "number": 6,
-          "odds": 6.7
-        },
-        {
-          "number": 6,
-          "odds": 9.2
+          "odds": 86.4
         },
         {
           "number": 5,
-          "odds": 16.0
-        },
-        {
-          "number": 4,
-          "odds": 21.2
-        },
-        {
-          "number": 2,
           "odds": 21.9
         },
         {
-          "number": 8,
-          "odds": 57.3
-        },
-        {
-          "number": 3,
-          "odds": 86.0
-        },
-        {
-          "number": 5,
-          "odds": 92.5
-        },
-        {
-          "number": 1,
-          "odds": 100.0
-        }
-      ]
-    },
-    {
-      "id": "202536122107",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2",
-      "horses": [
-        {
-          "number": 2,
-          "odds": 2.1
-        },
-        {
-          "number": 1,
-          "odds": 4.3
-        },
-        {
-          "number": 7,
-          "odds": 5.3
-        },
-        {
-          "number": 5,
-          "odds": 7.9
-        },
-        {
-          "number": 4,
-          "odds": 11.4
-        },
-        {
-          "number": 7,
-          "odds": 12.9
-        },
-        {
-          "number": 8,
-          "odds": 44.7
-        },
-        {
           "number": 6,
-          "odds": 45.1
-        },
-        {
-          "number": 8,
-          "odds": 46.2
-        },
-        {
-          "number": 3,
-          "odds": 57.8
-        }
-      ]
-    },
-    {
-      "id": "202536122108",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2",
-      "horses": [
-        {
-          "number": 6,
-          "odds": 2.3
-        },
-        {
-          "number": 4,
-          "odds": 4.5
-        },
-        {
-          "number": 5,
-          "odds": 5.0
-        },
-        {
-          "number": 2,
-          "odds": 6.5
-        },
-        {
-          "number": 3,
-          "odds": 9.8
-        },
-        {
-          "number": 7,
-          "odds": 16.9
-        },
-        {
-          "number": 7,
-          "odds": 22.6
-        },
-        {
-          "number": 8,
-          "odds": 48.9
-        },
-        {
-          "number": 8,
-          "odds": 52.8
-        },
-        {
-          "number": 1,
-          "odds": 112.5
-        }
-      ]
-    },
-    {
-      "id": "202536122109",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2",
-      "horses": [
-        {
-          "number": 6,
-          "odds": 2.3
-        },
-        {
-          "number": 1,
-          "odds": 2.7
-        },
-        {
-          "number": 7,
           "odds": 5.1
         },
         {
-          "number": 8,
-          "odds": 15.3
-        },
-        {
           "number": 7,
-          "odds": 25.4
-        },
-        {
-          "number": 5,
-          "odds": 26.1
+          "odds": 29.3
         },
         {
           "number": 8,
-          "odds": 29.9
+          "odds": 43.3
         },
         {
-          "number": 2,
-          "odds": 35.0
+          "number": 9,
+          "odds": 38.2
         },
         {
-          "number": 4,
-          "odds": 48.9
+          "number": 10,
+          "odds": 154.2
         },
         {
-          "number": 6,
-          "odds": 51.8
+          "number": 11,
+          "odds": 268.4
         },
         {
-          "number": 3,
-          "odds": 101.6
-        },
-        {
-          "number": 5,
-          "odds": 163.6
-        }
-      ]
-    },
-    {
-      "id": "202536122110",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B1",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 1.8
-        },
-        {
-          "number": 3,
-          "odds": 6.9
-        },
-        {
-          "number": 1,
-          "odds": 9.8
-        },
-        {
-          "number": 7,
-          "odds": 11.1
-        },
-        {
-          "number": 6,
-          "odds": 11.7
-        },
-        {
-          "number": 2,
-          "odds": 12.7
-        },
-        {
-          "number": 5,
-          "odds": 12.7
-        },
-        {
-          "number": 4,
-          "odds": 18.2
-        },
-        {
-          "number": 5,
-          "odds": 18.2
-        },
-        {
-          "number": 8,
-          "odds": 74.8
-        },
-        {
-          "number": 7,
-          "odds": 95.6
-        },
-        {
-          "number": 6,
-          "odds": 101.7
-        }
-      ]
-    },
-    {
-      "id": "202536122111",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ããã°ã¬ãããã¡ã¼...(B1)",
-      "horses": [
-        {
-          "number": 2,
-          "odds": 1.4
-        },
-        {
-          "number": 7,
-          "odds": 5.1
-        },
-        {
-          "number": 5,
-          "odds": 7.1
-        },
-        {
-          "number": 3,
-          "odds": 10.8
-        },
-        {
-          "number": 6,
-          "odds": 29.8
-        },
-        {
-          "number": 8,
-          "odds": 30.0
-        },
-        {
-          "number": 6,
-          "odds": 35.5
-        },
-        {
-          "number": 7,
-          "odds": 58.9
-        },
-        {
-          "number": 4,
-          "odds": 136.4
-        },
-        {
-          "number": 1,
-          "odds": 170.9
-        },
-        {
-          "number": 8,
-          "odds": 210.4
-        },
-        {
-          "number": 5,
-          "odds": 221.9
-        }
-      ]
-    },
-    {
-      "id": "202536122112",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "éæ¯(2æ­³)\néè³",
-      "horses": [
-        {
-          "number": 2,
-          "odds": 1.3
-        },
-        {
-          "number": 7,
-          "odds": 5.5
-        },
-        {
-          "number": 4,
-          "odds": 5.7
-        },
-        {
-          "number": 7,
-          "odds": 11.7
-        },
-        {
-          "number": 6,
-          "odds": 50.4
-        },
-        {
-          "number": 5,
-          "odds": 53.6
-        },
-        {
-          "number": 1,
-          "odds": 57.6
-        },
-        {
-          "number": 5,
-          "odds": 77.9
-        },
-        {
-          "number": 3,
-          "odds": 103.9
-        },
-        {
-          "number": 6,
-          "odds": 131.3
-        },
-        {
-          "number": 8,
-          "odds": 205.4
-        },
-        {
-          "number": 8,
-          "odds": 325.8
-        }
-      ]
-    },
-    {
-      "id": "202554122101",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ã¼18",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 1.2
-        },
-        {
-          "number": 4,
-          "odds": 5.5
-        },
-        {
-          "number": 1,
-          "odds": 7.3
-        },
-        {
-          "number": 6,
-          "odds": 35.4
-        },
-        {
-          "number": 6,
-          "odds": 41.5
-        },
-        {
-          "number": 7,
-          "odds": 41.7
-        },
-        {
-          "number": 7,
-          "odds": 61.3
-        },
-        {
-          "number": 3,
-          "odds": 106.0
-        },
-        {
-          "number": 2,
-          "odds": 137.6
-        },
-        {
-          "number": 8,
-          "odds": 166.9
-        },
-        {
-          "number": 5,
-          "odds": 0.0
-        }
-      ]
-    },
-    {
-      "id": "202554122102",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ã¼17",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 1.7
-        },
-        {
-          "number": 3,
-          "odds": 3.2
-        },
-        {
-          "number": 4,
-          "odds": 7.4
-        },
-        {
-          "number": 2,
-          "odds": 7.9
-        },
-        {
-          "number": 8,
-          "odds": 20.3
-        },
-        {
-          "number": 6,
-          "odds": 28.7
-        },
-        {
-          "number": 8,
-          "odds": 160.9
-        },
-        {
-          "number": 5,
-          "odds": 164.3
-        },
-        {
-          "number": 6,
-          "odds": 224.4
-        },
-        {
-          "number": 7,
-          "odds": 230.9
-        },
-        {
-          "number": 7,
-          "odds": 455.3
-        }
-      ]
-    },
-    {
-      "id": "202554122103",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ã¼16",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 2.0
-        },
-        {
-          "number": 5,
+          "number": 12,
           "odds": 3.8
         },
         {
-          "number": 1,
-          "odds": 6.2
+          "number": 13,
+          "odds": 4.7
         },
         {
-          "number": 6,
-          "odds": 6.5
-        },
-        {
-          "number": 3,
-          "odds": 9.6
-        },
-        {
-          "number": 7,
-          "odds": 31.7
-        },
-        {
-          "number": 7,
-          "odds": 40.7
-        },
-        {
-          "number": 8,
-          "odds": 72.1
-        },
-        {
-          "number": 2,
-          "odds": 96.7
-        },
-        {
-          "number": 6,
-          "odds": 157.6
-        },
-        {
-          "number": 4,
-          "odds": 444.6
-        }
-      ]
-    },
-    {
-      "id": "202554122104",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å®ç³èª¿æå¸«ãç²ãæ§...(C3)",
-      "horses": [
-        {
-          "number": 6,
-          "odds": 1.8
-        },
-        {
-          "number": 8,
-          "odds": 4.6
-        },
-        {
-          "number": 8,
+          "number": 14,
           "odds": 4.9
-        },
-        {
-          "number": 3,
-          "odds": 9.9
-        },
-        {
-          "number": 2,
-          "odds": 16.5
-        },
-        {
-          "number": 6,
-          "odds": 31.5
-        },
-        {
-          "number": 7,
-          "odds": 33.5
-        },
-        {
-          "number": 4,
-          "odds": 41.5
-        },
-        {
-          "number": 7,
-          "odds": 59.1
-        },
-        {
-          "number": 5,
-          "odds": 65.9
-        },
-        {
-          "number": 1,
-          "odds": 322.7
         }
       ]
     },
     {
-      "id": "202554122105",
+      "id": "202506050605",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "C3ã¼14",
-      "horses": [
-        {
-          "number": 3,
-          "odds": 2.0
-        },
-        {
-          "number": 7,
-          "odds": 3.0
-        },
-        {
-          "number": 8,
-          "odds": 7.0
-        },
-        {
-          "number": 2,
-          "odds": 7.8
-        },
-        {
-          "number": 5,
-          "odds": 7.9
-        },
-        {
-          "number": 8,
-          "odds": 43.4
-        },
-        {
-          "number": 6,
-          "odds": 148.3
-        },
-        {
-          "number": 1,
-          "odds": 182.7
-        },
-        {
-          "number": 4,
-          "odds": 246.3
-        },
-        {
-          "number": 7,
-          "odds": 272.3
-        }
-      ]
-    },
-    {
-      "id": "202554122106",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ABæ··å",
-      "horses": [
-        {
-          "number": 3,
-          "odds": 1.3
-        },
-        {
-          "number": 7,
-          "odds": 3.7
-        },
-        {
-          "number": 6,
-          "odds": 6.1
-        },
-        {
-          "number": 2,
-          "odds": 22.2
-        },
-        {
-          "number": 5,
-          "odds": 44.0
-        },
-        {
-          "number": 1,
-          "odds": 111.1
-        },
-        {
-          "number": 8,
-          "odds": 138.6
-        },
-        {
-          "number": 4,
-          "odds": 148.0
-        },
-        {
-          "number": 8,
-          "odds": 165.5
-        },
-        {
-          "number": 7,
-          "odds": 333.4
-        }
-      ]
-    },
-    {
-      "id": "202554122107",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ã¼13",
-      "horses": [
-        {
-          "number": 4,
-          "odds": 1.4
-        },
-        {
-          "number": 8,
-          "odds": 6.6
-        },
-        {
-          "number": 5,
-          "odds": 7.0
-        },
-        {
-          "number": 7,
-          "odds": 7.6
-        },
-        {
-          "number": 8,
-          "odds": 14.0
-        },
-        {
-          "number": 6,
-          "odds": 32.3
-        },
-        {
-          "number": 1,
-          "odds": 97.3
-        },
-        {
-          "number": 7,
-          "odds": 274.2
-        },
-        {
-          "number": 3,
-          "odds": 391.4
-        },
-        {
-          "number": 2,
-          "odds": 497.8
-        }
-      ]
-    },
-    {
-      "id": "202554122108",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ã¼12",
+      "name": "2歳新馬",
       "horses": [
         {
           "number": 1,
-          "odds": 2.1
-        },
-        {
-          "number": 7,
-          "odds": 3.1
-        },
-        {
-          "number": 8,
-          "odds": 6.4
-        },
-        {
-          "number": 2,
-          "odds": 9.9
-        },
-        {
-          "number": 8,
-          "odds": 13.6
-        },
-        {
-          "number": 6,
-          "odds": 27.1
-        },
-        {
-          "number": 7,
-          "odds": 29.4
-        },
-        {
-          "number": 6,
-          "odds": 29.7
-        },
-        {
-          "number": 4,
-          "odds": 37.0
-        },
-        {
-          "number": 3,
-          "odds": 221.3
-        },
-        {
-          "number": 5,
-          "odds": 499.9
-        }
-      ]
-    },
-    {
-      "id": "202554122109",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "Aã¼2",
-      "horses": [
-        {
-          "number": 4,
-          "odds": 1.5
-        },
-        {
-          "number": 5,
-          "odds": 3.0
-        },
-        {
-          "number": 6,
-          "odds": 6.0
-        },
-        {
-          "number": 7,
-          "odds": 22.1
-        },
-        {
-          "number": 3,
-          "odds": 31.6
-        },
-        {
-          "number": 1,
-          "odds": 68.2
-        },
-        {
-          "number": 2,
-          "odds": 285.0
-        }
-      ]
-    },
-    {
-      "id": "202554122110",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¿ã¼ã³ã¤ãºç¹å¥(A)",
-      "horses": [
-        {
-          "number": 3,
-          "odds": 2.0
-        },
-        {
-          "number": 6,
-          "odds": 4.1
-        },
-        {
-          "number": 5,
-          "odds": 4.4
-        },
-        {
-          "number": 7,
-          "odds": 5.6
-        },
-        {
-          "number": 1,
-          "odds": 13.5
-        },
-        {
-          "number": 2,
-          "odds": 34.4
-        },
-        {
-          "number": 4,
-          "odds": 209.2
-        }
-      ]
-    },
-    {
-      "id": "202554122111",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¡ã¤ãã«ã¬ã¼ã¹(C3)",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 3.0
-        },
-        {
-          "number": 6,
-          "odds": 5.2
-        },
-        {
-          "number": 1,
-          "odds": 6.2
-        },
-        {
-          "number": 4,
-          "odds": 6.8
-        },
-        {
-          "number": 5,
-          "odds": 7.1
-        },
-        {
-          "number": 5,
-          "odds": 15.7
-        },
-        {
-          "number": 2,
-          "odds": 16.1
-        },
-        {
-          "number": 6,
-          "odds": 16.3
-        },
-        {
-          "number": 8,
-          "odds": 17.7
-        },
-        {
-          "number": 7,
-          "odds": 51.0
-        },
-        {
-          "number": 3,
-          "odds": 69.3
-        },
-        {
-          "number": 7,
-          "odds": 114.6
-        }
-      ]
-    },
-    {
-      "id": "202555122101",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ã¼14çµ",
-      "horses": [
-        {
-          "number": 3,
-          "odds": 1.5
-        },
-        {
-          "number": 8,
-          "odds": 2.9
-        },
-        {
-          "number": 5,
-          "odds": 6.8
-        },
-        {
-          "number": 6,
-          "odds": 24.9
-        },
-        {
-          "number": 7,
-          "odds": 30.5
-        },
-        {
-          "number": 8,
-          "odds": 78.3
-        },
-        {
-          "number": 7,
-          "odds": 90.1
-        },
-        {
-          "number": 6,
-          "odds": 93.2
-        },
-        {
-          "number": 1,
-          "odds": 130.1
-        },
-        {
-          "number": 4,
-          "odds": 299.8
-        },
-        {
-          "number": 2,
-          "odds": 444.9
-        }
-      ]
-    },
-    {
-      "id": "202555122102",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ã¼13çµ",
-      "horses": [
-        {
-          "number": 7,
-          "odds": 1.5
-        },
-        {
-          "number": 4,
           "odds": 2.7
         },
         {
           "number": 2,
-          "odds": 12.5
-        },
-        {
-          "number": 7,
-          "odds": 15.6
-        },
-        {
-          "number": 1,
-          "odds": 20.9
-        },
-        {
-          "number": 8,
-          "odds": 95.0
-        },
-        {
-          "number": 6,
-          "odds": 129.9
-        },
-        {
-          "number": 5,
-          "odds": 157.7
-        },
-        {
-          "number": 8,
-          "odds": 193.4
+          "odds": 12.0
         },
         {
           "number": 3,
-          "odds": 285.0
-        }
-      ]
-    },
-    {
-      "id": "202555122103",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "Bã¼4çµ",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 1.4
-        },
-        {
-          "number": 2,
-          "odds": 4.1
-        },
-        {
-          "number": 7,
-          "odds": 4.6
-        },
-        {
-          "number": 1,
-          "odds": 14.9
-        },
-        {
-          "number": 3,
-          "odds": 40.5
-        },
-        {
-          "number": 5,
-          "odds": 107.8
-        },
-        {
-          "number": 6,
-          "odds": 197.5
+          "odds": 67.0
         },
         {
           "number": 4,
-          "odds": 213.7
-        }
-      ]
-    },
-    {
-      "id": "202555122104",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¤§åæ¥è³(A2)",
-      "horses": [
-        {
-          "number": 5,
-          "odds": 2.4
-        },
-        {
-          "number": 8,
-          "odds": 2.8
-        },
-        {
-          "number": 4,
-          "odds": 3.7
-        },
-        {
-          "number": 3,
-          "odds": 14.9
-        },
-        {
-          "number": 2,
-          "odds": 18.9
-        },
-        {
-          "number": 1,
-          "odds": 20.2
-        },
-        {
-          "number": 7,
-          "odds": 32.3
-        },
-        {
-          "number": 8,
-          "odds": 44.3
-        },
-        {
-          "number": 6,
-          "odds": 85.8
-        }
-      ]
-    },
-    {
-      "id": "202555122105",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¢ã«ããã©ã³ç¹å¥(2æ­³)",
-      "horses": [
-        {
-          "number": 4,
-          "odds": 1.6
-        },
-        {
-          "number": 1,
-          "odds": 4.7
-        },
-        {
-          "number": 3,
-          "odds": 5.8
-        },
-        {
-          "number": 6,
-          "odds": 7.3
-        },
-        {
-          "number": 2,
-          "odds": 9.5
+          "odds": 79.3
         },
         {
           "number": 5,
-          "odds": 102.7
-        },
-        {
-          "number": 7,
-          "odds": 143.8
-        }
-      ]
-    },
-    {
-      "id": "202555122106",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ã¼12çµ",
-      "horses": [
-        {
-          "number": 7,
-          "odds": 1.9
-        },
-        {
-          "number": 8,
-          "odds": 2.2
-        },
-        {
-          "number": 1,
-          "odds": 9.1
+          "odds": 61.5
         },
         {
           "number": 6,
-          "odds": 11.5
-        },
-        {
-          "number": 8,
-          "odds": 23.0
-        },
-        {
-          "number": 7,
-          "odds": 40.2
-        },
-        {
-          "number": 6,
-          "odds": 75.9
-        },
-        {
-          "number": 5,
-          "odds": 104.9
-        },
-        {
-          "number": 3,
-          "odds": 107.9
-        },
-        {
-          "number": 2,
-          "odds": 479.4
-        },
-        {
-          "number": 4,
-          "odds": 618.8
-        }
-      ]
-    },
-    {
-      "id": "202555122107",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ããããã°Ãç¼èã¦...(C2)",
-      "horses": [
-        {
-          "number": 3,
-          "odds": 1.1
+          "odds": 38.0
         },
         {
           "number": 7,
@@ -1483,2015 +318,2323 @@
         },
         {
           "number": 8,
-          "odds": 15.0
+          "odds": 140.3
         },
         {
-          "number": 8,
-          "odds": 18.0
+          "number": 9,
+          "odds": 61.2
         },
         {
-          "number": 1,
-          "odds": 36.4
+          "number": 10,
+          "odds": 318.0
         },
         {
-          "number": 6,
-          "odds": 60.9
+          "number": 11,
+          "odds": 7.6
         },
         {
-          "number": 7,
-          "odds": 63.6
+          "number": 12,
+          "odds": 210.3
         },
         {
-          "number": 6,
-          "odds": 75.8
-        },
-        {
-          "number": 2,
-          "odds": 158.7
-        },
-        {
-          "number": 5,
-          "odds": 169.7
-        },
-        {
-          "number": 4,
-          "odds": 176.6
-        },
-        {
-          "number": 5,
-          "odds": 194.1
-        }
-      ]
-    },
-    {
-      "id": "202555122108",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "KYUSHU DR...(C1)",
-      "horses": [
-        {
-          "number": 6,
-          "odds": 1.0
-        },
-        {
-          "number": 8,
-          "odds": 9.7
-        },
-        {
-          "number": 8,
-          "odds": 14.8
-        },
-        {
-          "number": 7,
-          "odds": 17.5
-        },
-        {
-          "number": 7,
-          "odds": 22.7
-        },
-        {
-          "number": 5,
-          "odds": 34.8
-        },
-        {
-          "number": 1,
-          "odds": 44.4
-        },
-        {
-          "number": 4,
-          "odds": 165.1
-        },
-        {
-          "number": 2,
-          "odds": 191.6
-        },
-        {
-          "number": 3,
-          "odds": 229.6
-        }
-      ]
-    },
-    {
-      "id": "202555122109",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã£ã»ã³ãã¼ç¹é¸(C1)",
-      "horses": [
-        {
-          "number": 6,
-          "odds": 2.2
-        },
-        {
-          "number": 7,
-          "odds": 4.4
-        },
-        {
-          "number": 7,
-          "odds": 4.5
-        },
-        {
-          "number": 6,
-          "odds": 6.0
-        },
-        {
-          "number": 8,
-          "odds": 11.0
-        },
-        {
-          "number": 2,
-          "odds": 23.0
-        },
-        {
-          "number": 5,
-          "odds": 46.3
-        },
-        {
-          "number": 3,
-          "odds": 73.0
-        },
-        {
-          "number": 1,
-          "odds": 96.0
-        },
-        {
-          "number": 8,
-          "odds": 97.8
-        },
-        {
-          "number": 4,
-          "odds": 212.1
-        },
-        {
-          "number": 5,
-          "odds": 374.8
-        }
-      ]
-    },
-    {
-      "id": "202555122110",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "SAGAãªãã³ã¸ã£...(C1)",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 2.0
-        },
-        {
-          "number": 5,
+          "number": 13,
           "odds": 3.6
         },
         {
-          "number": 3,
-          "odds": 4.3
+          "number": 14,
+          "odds": 170.4
         },
         {
-          "number": 7,
-          "odds": 8.3
+          "number": 15,
+          "odds": 25.5
         },
         {
-          "number": 1,
-          "odds": 27.3
-        },
-        {
-          "number": 6,
-          "odds": 35.7
-        },
-        {
-          "number": 8,
-          "odds": 41.8
-        },
-        {
-          "number": 4,
-          "odds": 60.9
-        },
-        {
-          "number": 2,
-          "odds": 86.6
-        },
-        {
-          "number": 7,
-          "odds": 196.3
-        },
-        {
-          "number": 5,
-          "odds": 206.9
-        },
-        {
-          "number": 6,
-          "odds": 209.9
+          "number": 16,
+          "odds": 8.4
         }
       ]
     },
     {
-      "id": "202565122101",
+      "id": "202506050606",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ãããã¡ããçèªç¥­",
+      "name": "2歳新馬",
       "horses": [
         {
-          "number": 6,
-          "odds": 2.0
-        },
-        {
           "number": 1,
-          "odds": 4.6
+          "odds": 6.7
         },
         {
-          "number": 7,
-          "odds": 5.1
+          "number": 2,
+          "odds": 5.0
+        },
+        {
+          "number": 3,
+          "odds": 8.2
         },
         {
           "number": 4,
-          "odds": 7.5
+          "odds": 6.5
+        },
+        {
+          "number": 5,
+          "odds": 17.8
+        },
+        {
+          "number": 6,
+          "odds": 18.5
         },
         {
           "number": 7,
+          "odds": 158.9
+        },
+        {
+          "number": 8,
           "odds": 9.5
         },
         {
-          "number": 3,
-          "odds": 23.2
+          "number": 9,
+          "odds": 27.1
         },
         {
-          "number": 8,
-          "odds": 37.9
+          "number": 10,
+          "odds": 111.7
         },
         {
-          "number": 2,
-          "odds": 61.5
+          "number": 11,
+          "odds": 27.0
         },
         {
-          "number": 8,
-          "odds": 70.1
+          "number": 12,
+          "odds": 121.7
         },
         {
-          "number": 5,
-          "odds": 78.3
+          "number": 13,
+          "odds": 115.2
+        },
+        {
+          "number": 14,
+          "odds": 51.7
+        },
+        {
+          "number": 15,
+          "odds": 3.5
+        },
+        {
+          "number": 16,
+          "odds": 155.6
         }
       ]
     },
     {
-      "id": "202565122102",
+      "id": "202506050607",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "FMã¦ã¤ã³ã°ã¯ãã...(2æ­³)",
+      "name": "2歳未勝利",
       "horses": [
         {
-          "number": 4,
-          "odds": 1.8
-        },
-        {
-          "number": 8,
-          "odds": 2.8
-        },
-        {
           "number": 1,
-          "odds": 7.0
-        },
-        {
-          "number": 3,
-          "odds": 13.3
-        },
-        {
-          "number": 7,
-          "odds": 21.7
-        },
-        {
-          "number": 8,
-          "odds": 34.1
-        },
-        {
-          "number": 5,
-          "odds": 38.5
+          "odds": 3.7
         },
         {
           "number": 2,
-          "odds": 45.4
-        },
-        {
-          "number": 6,
-          "odds": 46.5
-        }
-      ]
-    },
-    {
-      "id": "202565122103",
-      "date": "2025-12-21",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ä»æ¥ãç¶ºéº!ã¾ãã...(2æ­³)",
-      "horses": [
-        {
-          "number": 8,
-          "odds": 3.9
-        },
-        {
-          "number": 1,
           "odds": 4.5
         },
         {
-          "number": 8,
-          "odds": 5.1
-        },
-        {
-          "number": 2,
-          "odds": 6.2
+          "number": 3,
+          "odds": 22.8
         },
         {
           "number": 4,
-          "odds": 7.7
+          "odds": 3.6
         },
         {
           "number": 5,
-          "odds": 13.4
-        },
-        {
-          "number": 3,
-          "odds": 15.4
+          "odds": 103.8
         },
         {
           "number": 6,
-          "odds": 19.7
+          "odds": 12.8
         },
         {
           "number": 7,
-          "odds": 19.9
+          "odds": 445.8
         },
         {
-          "number": 7,
-          "odds": 20.2
+          "number": 8,
+          "odds": 7.4
+        },
+        {
+          "number": 9,
+          "odds": 91.0
+        },
+        {
+          "number": 10,
+          "odds": 153.6
+        },
+        {
+          "number": 11,
+          "odds": 140.3
+        },
+        {
+          "number": 12,
+          "odds": 22.0
+        },
+        {
+          "number": 13,
+          "odds": 20.0
+        },
+        {
+          "number": 14,
+          "odds": 60.8
+        },
+        {
+          "number": 15,
+          "odds": 111.1
+        },
+        {
+          "number": 16,
+          "odds": 13.1
         }
       ]
     },
     {
-      "id": "202565122104",
+      "id": "202506050608",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ç¥å¤å¾³é´æçèªã¢ã¼...(2æ­³)",
+      "name": "3歳以上1勝クラス",
       "horses": [
         {
+          "number": 1,
+          "odds": 311.6
+        },
+        {
           "number": 2,
-          "odds": 2.9
+          "odds": 41.7
+        },
+        {
+          "number": 3,
+          "odds": 9.4
+        },
+        {
+          "number": 4,
+          "odds": 11.9
+        },
+        {
+          "number": 5,
+          "odds": 96.2
         },
         {
           "number": 6,
-          "odds": 4.0
+          "odds": 46.4
         },
         {
           "number": 7,
-          "odds": 4.9
+          "odds": 26.6
         },
         {
+          "number": 8,
+          "odds": 6.7
+        },
+        {
+          "number": 9,
+          "odds": 52.4
+        },
+        {
+          "number": 10,
+          "odds": 2.4
+        },
+        {
+          "number": 11,
+          "odds": 19.7
+        },
+        {
+          "number": 12,
+          "odds": 7.4
+        },
+        {
+          "number": 13,
+          "odds": 10.6
+        },
+        {
+          "number": 14,
+          "odds": -3.0
+        },
+        {
+          "number": 15,
+          "odds": 30.1
+        },
+        {
+          "number": 16,
+          "odds": 13.1
+        }
+      ]
+    },
+    {
+      "id": "202506050609",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "チバテレ杯",
+      "horses": [
+        {
           "number": 1,
-          "odds": 6.3
+          "odds": 15.3
+        },
+        {
+          "number": 2,
+          "odds": 3.2
         },
         {
           "number": 3,
           "odds": 12.0
         },
         {
-          "number": 8,
-          "odds": 15.0
-        },
-        {
-          "number": 7,
-          "odds": 17.1
+          "number": 4,
+          "odds": 3.6
         },
         {
           "number": 5,
-          "odds": 19.4
+          "odds": 109.4
+        },
+        {
+          "number": 6,
+          "odds": 27.7
+        },
+        {
+          "number": 7,
+          "odds": 54.9
         },
         {
           "number": 8,
-          "odds": 35.3
+          "odds": 76.4
         },
         {
-          "number": 4,
-          "odds": 62.3
+          "number": 9,
+          "odds": 6.0
+        },
+        {
+          "number": 10,
+          "odds": 23.9
+        },
+        {
+          "number": 11,
+          "odds": 4.1
         }
       ]
     },
     {
-      "id": "202565122105",
+      "id": "202506050610",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ããããããã¹ã«2...(2æ­³)",
+      "name": "北総S",
       "horses": [
         {
           "number": 1,
-          "odds": 2.7
-        },
-        {
-          "number": 4,
-          "odds": 3.8
+          "odds": 38.2
         },
         {
           "number": 2,
-          "odds": 7.6
-        },
-        {
-          "number": 6,
-          "odds": 9.0
-        },
-        {
-          "number": 5,
-          "odds": 9.4
-        },
-        {
-          "number": 8,
-          "odds": 10.0
-        },
-        {
-          "number": 7,
-          "odds": 12.8
-        },
-        {
-          "number": 7,
-          "odds": 14.8
-        },
-        {
-          "number": 8,
-          "odds": 43.5
+          "odds": 266.4
         },
         {
           "number": 3,
-          "odds": 76.6
+          "odds": 16.8
+        },
+        {
+          "number": 4,
+          "odds": 120.8
+        },
+        {
+          "number": 5,
+          "odds": 59.8
+        },
+        {
+          "number": 6,
+          "odds": 91.2
+        },
+        {
+          "number": 7,
+          "odds": 24.1
+        },
+        {
+          "number": 8,
+          "odds": 62.5
+        },
+        {
+          "number": 9,
+          "odds": 4.1
+        },
+        {
+          "number": 10,
+          "odds": 167.0
+        },
+        {
+          "number": 11,
+          "odds": 15.5
+        },
+        {
+          "number": 12,
+          "odds": 23.2
+        },
+        {
+          "number": 13,
+          "odds": 8.1
+        },
+        {
+          "number": 14,
+          "odds": 7.3
+        },
+        {
+          "number": 15,
+          "odds": 2.1
         }
       ]
     },
     {
-      "id": "202565122106",
+      "id": "202506050611",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ããã&ããçµå©ã...",
+      "name": "ディセンバー",
       "horses": [
         {
-          "number": 7,
-          "odds": 3.7
-        },
-        {
-          "number": 8,
-          "odds": 5.2
-        },
-        {
-          "number": 8,
-          "odds": 5.9
-        },
-        {
-          "number": 6,
-          "odds": 6.2
-        },
-        {
-          "number": 3,
-          "odds": 7.7
-        },
-        {
-          "number": 7,
-          "odds": 11.1
+          "number": 1,
+          "odds": 6.3
         },
         {
           "number": 2,
-          "odds": 11.2
+          "odds": 16.0
+        },
+        {
+          "number": 3,
+          "odds": 7.3
+        },
+        {
+          "number": 4,
+          "odds": 14.3
+        },
+        {
+          "number": 5,
+          "odds": 257.9
+        },
+        {
+          "number": 6,
+          "odds": 98.7
+        },
+        {
+          "number": 7,
+          "odds": 2.7
+        },
+        {
+          "number": 8,
+          "odds": 18.9
+        },
+        {
+          "number": 9,
+          "odds": 17.9
+        },
+        {
+          "number": 10,
+          "odds": 13.1
+        },
+        {
+          "number": 11,
+          "odds": 146.0
+        },
+        {
+          "number": 12,
+          "odds": 20.1
+        },
+        {
+          "number": 13,
+          "odds": 5.9
+        },
+        {
+          "number": 14,
+          "odds": 133.7
+        },
+        {
+          "number": 15,
+          "odds": 34.8
+        },
+        {
+          "number": 16,
+          "odds": 167.8
+        }
+      ]
+    },
+    {
+      "id": "202506050612",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "3歳以上2勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 240.4
+        },
+        {
+          "number": 2,
+          "odds": 325.1
+        },
+        {
+          "number": 3,
+          "odds": 54.8
+        },
+        {
+          "number": 4,
+          "odds": 6.9
+        },
+        {
+          "number": 5,
+          "odds": 6.6
+        },
+        {
+          "number": 6,
+          "odds": 5.0
+        },
+        {
+          "number": 7,
+          "odds": 4.6
+        },
+        {
+          "number": 8,
+          "odds": 9.4
+        },
+        {
+          "number": 9,
+          "odds": 224.7
+        },
+        {
+          "number": 10,
+          "odds": 47.2
+        },
+        {
+          "number": 11,
+          "odds": 20.7
+        },
+        {
+          "number": 12,
+          "odds": 282.0
+        },
+        {
+          "number": 13,
+          "odds": 36.6
+        },
+        {
+          "number": 14,
+          "odds": 4.3
+        },
+        {
+          "number": 15,
+          "odds": 47.0
+        },
+        {
+          "number": 16,
+          "odds": 16.4
+        }
+      ]
+    },
+    {
+      "id": "202509050601",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "2歳未勝利",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 7.6
+        },
+        {
+          "number": 2,
+          "odds": 134.3
+        },
+        {
+          "number": 3,
+          "odds": 431.0
+        },
+        {
+          "number": 4,
+          "odds": 1.2
         },
         {
           "number": 5,
           "odds": 13.7
         },
         {
-          "number": 1,
-          "odds": 14.1
+          "number": 6,
+          "odds": 5.3
         },
         {
-          "number": 4,
-          "odds": 58.2
+          "number": 7,
+          "odds": 178.0
+        },
+        {
+          "number": 8,
+          "odds": 376.7
+        },
+        {
+          "number": 9,
+          "odds": 153.4
+        },
+        {
+          "number": 10,
+          "odds": 72.9
+        },
+        {
+          "number": 11,
+          "odds": 117.9
+        },
+        {
+          "number": 12,
+          "odds": 32.7
         }
       ]
     },
     {
-      "id": "202565122107",
+      "id": "202509050602",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ç¬¬12åããã¡ãè¨...",
+      "name": "2歳未勝利",
       "horses": [
         {
-          "number": 8,
-          "odds": 2.7
+          "number": 1,
+          "odds": 6.3
+        },
+        {
+          "number": 2,
+          "odds": 24.1
+        },
+        {
+          "number": 3,
+          "odds": 8.9
+        },
+        {
+          "number": 4,
+          "odds": 12.8
         },
         {
           "number": 5,
-          "odds": 3.8
-        },
-        {
-          "number": 7,
-          "odds": 5.0
-        },
-        {
-          "number": 8,
-          "odds": 6.5
+          "odds": 9.2
         },
         {
           "number": 6,
+          "odds": 4.6
+        },
+        {
+          "number": 7,
+          "odds": 13.7
+        },
+        {
+          "number": 8,
+          "odds": 584.6
+        },
+        {
+          "number": 9,
+          "odds": 466.4
+        },
+        {
+          "number": 10,
+          "odds": 45.0
+        },
+        {
+          "number": 11,
+          "odds": 741.9
+        },
+        {
+          "number": 12,
+          "odds": 76.0
+        },
+        {
+          "number": 13,
+          "odds": 2.4
+        },
+        {
+          "number": 14,
+          "odds": 92.7
+        },
+        {
+          "number": 15,
+          "odds": 425.3
+        },
+        {
+          "number": 16,
+          "odds": 791.6
+        }
+      ]
+    },
+    {
+      "id": "202509050603",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "2歳未勝利",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 15.3
+        },
+        {
+          "number": 2,
+          "odds": 452.3
+        },
+        {
+          "number": 3,
+          "odds": 17.9
+        },
+        {
+          "number": 4,
+          "odds": 10.7
+        },
+        {
+          "number": 5,
+          "odds": 71.0
+        },
+        {
+          "number": 6,
+          "odds": 419.4
+        },
+        {
+          "number": 7,
+          "odds": 42.5
+        },
+        {
+          "number": 8,
+          "odds": 41.4
+        },
+        {
+          "number": 9,
+          "odds": 11.5
+        },
+        {
+          "number": 10,
+          "odds": 35.8
+        },
+        {
+          "number": 11,
+          "odds": 3.0
+        },
+        {
+          "number": 12,
+          "odds": 3.5
+        },
+        {
+          "number": 13,
+          "odds": 109.7
+        },
+        {
+          "number": 14,
+          "odds": 700.5
+        },
+        {
+          "number": 15,
+          "odds": 403.6
+        },
+        {
+          "number": 16,
+          "odds": 10.0
+        },
+        {
+          "number": 17,
           "odds": 7.5
         },
         {
-          "number": 4,
-          "odds": 16.6
-        },
-        {
-          "number": 3,
-          "odds": 24.2
-        },
-        {
-          "number": 2,
-          "odds": 40.1
-        },
-        {
-          "number": 1,
-          "odds": 64.0
+          "number": 18,
+          "odds": 186.9
         }
       ]
     },
     {
-      "id": "202565122108",
+      "id": "202509050604",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ç¬¬å«åå²¡åç°å¤ªéæ¯(2æ­³)",
+      "name": "2歳未勝利",
       "horses": [
         {
-          "number": 8,
-          "odds": 1.6
+          "number": 1,
+          "odds": 30.7
+        },
+        {
+          "number": 2,
+          "odds": 132.5
+        },
+        {
+          "number": 3,
+          "odds": 4.9
+        },
+        {
+          "number": 4,
+          "odds": 4.0
         },
         {
           "number": 5,
-          "odds": 4.4
+          "odds": 273.9
         },
         {
           "number": 6,
-          "odds": 7.9
-        },
-        {
-          "number": 1,
-          "odds": 9.1
+          "odds": 446.9
         },
         {
           "number": 7,
-          "odds": 14.0
-        },
-        {
-          "number": 2,
-          "odds": 16.5
-        },
-        {
-          "number": 4,
-          "odds": 32.3
-        },
-        {
-          "number": 7,
-          "odds": 66.4
-        },
-        {
-          "number": 3,
-          "odds": 138.5
+          "odds": 39.1
         },
         {
           "number": 8,
-          "odds": 148.0
+          "odds": 119.2
+        },
+        {
+          "number": 9,
+          "odds": 1.9
+        },
+        {
+          "number": 10,
+          "odds": 6.2
+        },
+        {
+          "number": 11,
+          "odds": 24.8
+        },
+        {
+          "number": 12,
+          "odds": 134.3
         }
       ]
     },
     {
-      "id": "202565122109",
+      "id": "202509050605",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ãã¡ãã¡ãªã¢ã©ãã...",
+      "name": "2歳新馬",
       "horses": [
         {
+          "number": 1,
+          "odds": 9.0
+        },
+        {
+          "number": 2,
+          "odds": 5.4
+        },
+        {
+          "number": 3,
+          "odds": 46.4
+        },
+        {
+          "number": 4,
+          "odds": 6.5
+        },
+        {
+          "number": 5,
+          "odds": 116.2
+        },
+        {
+          "number": 6,
+          "odds": 10.5
+        },
+        {
           "number": 7,
-          "odds": 2.7
+          "odds": 21.0
+        },
+        {
+          "number": 8,
+          "odds": 52.9
+        },
+        {
+          "number": 9,
+          "odds": 4.4
+        },
+        {
+          "number": 10,
+          "odds": 15.4
+        },
+        {
+          "number": 11,
+          "odds": 24.2
+        },
+        {
+          "number": 12,
+          "odds": 3.5
+        }
+      ]
+    },
+    {
+      "id": "202509050606",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "2歳新馬",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 139.9
+        },
+        {
+          "number": 2,
+          "odds": 4.0
+        },
+        {
+          "number": 3,
+          "odds": 16.0
+        },
+        {
+          "number": 4,
+          "odds": 152.3
+        },
+        {
+          "number": 5,
+          "odds": 77.0
+        },
+        {
+          "number": 6,
+          "odds": 2.3
+        },
+        {
+          "number": 7,
+          "odds": 6.4
+        },
+        {
+          "number": 8,
+          "odds": 7.8
+        },
+        {
+          "number": 9,
+          "odds": 37.7
+        },
+        {
+          "number": 10,
+          "odds": 6.7
+        },
+        {
+          "number": 11,
+          "odds": 37.9
+        }
+      ]
+    },
+    {
+      "id": "202509050607",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "3歳以上1勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 28.5
+        },
+        {
+          "number": 2,
+          "odds": 14.0
+        },
+        {
+          "number": 3,
+          "odds": 53.1
+        },
+        {
+          "number": 4,
+          "odds": 22.7
+        },
+        {
+          "number": 5,
+          "odds": 3.4
+        },
+        {
+          "number": 6,
+          "odds": 7.2
+        },
+        {
+          "number": 7,
+          "odds": 42.1
+        },
+        {
+          "number": 8,
+          "odds": 376.1
+        },
+        {
+          "number": 9,
+          "odds": 14.0
+        },
+        {
+          "number": 10,
+          "odds": 347.4
+        },
+        {
+          "number": 11,
+          "odds": 80.9
+        },
+        {
+          "number": 12,
+          "odds": 55.3
+        },
+        {
+          "number": 13,
+          "odds": 30.6
+        },
+        {
+          "number": 14,
+          "odds": 42.2
+        },
+        {
+          "number": 15,
+          "odds": 5.4
+        },
+        {
+          "number": 16,
+          "odds": 9.8
+        },
+        {
+          "number": 17,
+          "odds": 6.9
+        },
+        {
+          "number": 18,
+          "odds": 26.7
+        }
+      ]
+    },
+    {
+      "id": "202509050608",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "3歳以上2勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 3.5
+        },
+        {
+          "number": 2,
+          "odds": 158.4
+        },
+        {
+          "number": 3,
+          "odds": 219.1
+        },
+        {
+          "number": 4,
+          "odds": 20.7
+        },
+        {
+          "number": 5,
+          "odds": 179.1
+        },
+        {
+          "number": 6,
+          "odds": 4.6
+        },
+        {
+          "number": 7,
+          "odds": 5.7
+        },
+        {
+          "number": 8,
+          "odds": 297.2
+        },
+        {
+          "number": 9,
+          "odds": 3.1
+        },
+        {
+          "number": 10,
+          "odds": 26.5
+        },
+        {
+          "number": 11,
+          "odds": 81.7
+        },
+        {
+          "number": 12,
+          "odds": 49.6
+        },
+        {
+          "number": 13,
+          "odds": 87.9
+        },
+        {
+          "number": 14,
+          "odds": 29.9
+        },
+        {
+          "number": 15,
+          "odds": 12.8
+        }
+      ]
+    },
+    {
+      "id": "202509050609",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "御影S",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 9.6
+        },
+        {
+          "number": 2,
+          "odds": 69.6
+        },
+        {
+          "number": 3,
+          "odds": 262.8
+        },
+        {
+          "number": 4,
+          "odds": 13.4
+        },
+        {
+          "number": 5,
+          "odds": 5.9
+        },
+        {
+          "number": 6,
+          "odds": 1.7
+        },
+        {
+          "number": 7,
+          "odds": 201.3
+        },
+        {
+          "number": 8,
+          "odds": 44.7
+        },
+        {
+          "number": 9,
+          "odds": 51.6
+        },
+        {
+          "number": 10,
+          "odds": 11.6
+        },
+        {
+          "number": 11,
+          "odds": 130.9
+        },
+        {
+          "number": 12,
+          "odds": 59.4
+        },
+        {
+          "number": 13,
+          "odds": 49.3
+        },
+        {
+          "number": 14,
+          "odds": 13.7
+        },
+        {
+          "number": 15,
+          "odds": 32.1
+        },
+        {
+          "number": 16,
+          "odds": 36.9
+        }
+      ]
+    },
+    {
+      "id": "202509050610",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "ベテルギウス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 3.1
+        },
+        {
+          "number": 2,
+          "odds": 9.3
+        },
+        {
+          "number": 3,
+          "odds": 16.9
+        },
+        {
+          "number": 4,
+          "odds": 85.7
+        },
+        {
+          "number": 5,
+          "odds": 7.5
+        },
+        {
+          "number": 6,
+          "odds": 70.2
+        },
+        {
+          "number": 7,
+          "odds": 95.2
+        },
+        {
+          "number": 8,
+          "odds": 8.7
+        },
+        {
+          "number": 9,
+          "odds": 19.9
+        },
+        {
+          "number": 10,
+          "odds": 9.6
+        },
+        {
+          "number": 11,
+          "odds": 52.7
+        },
+        {
+          "number": 12,
+          "odds": 159.8
+        },
+        {
+          "number": 13,
+          "odds": 4.2
+        },
+        {
+          "number": 14,
+          "odds": 41.6
+        },
+        {
+          "number": 15,
+          "odds": 165.4
+        },
+        {
+          "number": 16,
+          "odds": 25.8
+        }
+      ]
+    },
+    {
+      "id": "202509050611",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "朝日杯FS",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 92.2
+        },
+        {
+          "number": 2,
+          "odds": 124.7
+        },
+        {
+          "number": 3,
+          "odds": 4.9
+        },
+        {
+          "number": 4,
+          "odds": 221.4
+        },
+        {
+          "number": 5,
+          "odds": 240.7
+        },
+        {
+          "number": 6,
+          "odds": 50.7
+        },
+        {
+          "number": 7,
+          "odds": 22.2
+        },
+        {
+          "number": 8,
+          "odds": 3.6
+        },
+        {
+          "number": 9,
+          "odds": 38.6
+        },
+        {
+          "number": 10,
+          "odds": 8.3
+        },
+        {
+          "number": 11,
+          "odds": 82.9
+        },
+        {
+          "number": 12,
+          "odds": 3.1
+        },
+        {
+          "number": 13,
+          "odds": 4.9
+        },
+        {
+          "number": 14,
+          "odds": 206.0
+        }
+      ]
+    },
+    {
+      "id": "202509050612",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "六甲アイラS",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 16.5
+        },
+        {
+          "number": 2,
+          "odds": 7.2
+        },
+        {
+          "number": 3,
+          "odds": 10.3
+        },
+        {
+          "number": 4,
+          "odds": 24.1
+        },
+        {
+          "number": 5,
+          "odds": 25.8
+        },
+        {
+          "number": 6,
+          "odds": 186.3
+        },
+        {
+          "number": 7,
+          "odds": 19.5
+        },
+        {
+          "number": 8,
+          "odds": 65.1
+        },
+        {
+          "number": 9,
+          "odds": 4.5
+        },
+        {
+          "number": 10,
+          "odds": 182.1
+        },
+        {
+          "number": 11,
+          "odds": 2.5
+        },
+        {
+          "number": 12,
+          "odds": 5.5
+        },
+        {
+          "number": 13,
+          "odds": 126.6
+        },
+        {
+          "number": 14,
+          "odds": 359.3
+        }
+      ]
+    },
+    {
+      "id": "202507050601",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "2歳未勝利",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 83.6
+        },
+        {
+          "number": 2,
+          "odds": 272.8
+        },
+        {
+          "number": 3,
+          "odds": 38.3
         },
         {
           "number": 4,
           "odds": 4.9
         },
         {
-          "number": 1,
-          "odds": 5.8
-        },
-        {
           "number": 5,
-          "odds": 6.7
-        },
-        {
-          "number": 7,
-          "odds": 8.4
-        },
-        {
-          "number": 8,
-          "odds": 11.7
+          "odds": 67.2
         },
         {
           "number": 6,
-          "odds": 14.5
+          "odds": 521.1
+        },
+        {
+          "number": 7,
+          "odds": 42.8
         },
         {
           "number": 8,
-          "odds": 17.9
+          "odds": 12.2
         },
         {
-          "number": 3,
-          "odds": 37.8
+          "number": 9,
+          "odds": 21.4
         },
         {
-          "number": 2,
-          "odds": 104.6
+          "number": 10,
+          "odds": 63.0
+        },
+        {
+          "number": 11,
+          "odds": 2.4
+        },
+        {
+          "number": 12,
+          "odds": 3.5
+        },
+        {
+          "number": 13,
+          "odds": 153.5
+        },
+        {
+          "number": 14,
+          "odds": 13.1
+        },
+        {
+          "number": 15,
+          "odds": 25.4
+        },
+        {
+          "number": 16,
+          "odds": 218.8
         }
       ]
     },
     {
-      "id": "202565122110",
+      "id": "202507050602",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "æãæãããµããã¼...",
+      "name": "3歳以上1勝クラス",
       "horses": [
         {
-          "number": 6,
-          "odds": 3.2
-        },
-        {
-          "number": 7,
-          "odds": 3.2
-        },
-        {
           "number": 1,
-          "odds": 3.7
-        },
-        {
-          "number": 3,
-          "odds": 6.1
-        },
-        {
-          "number": 8,
-          "odds": 10.2
-        },
-        {
-          "number": 8,
-          "odds": 32.5
-        },
-        {
-          "number": 7,
-          "odds": 34.9
-        },
-        {
-          "number": 5,
-          "odds": 41.7
+          "odds": 4.5
         },
         {
           "number": 2,
-          "odds": 88.9
+          "odds": 20.9
+        },
+        {
+          "number": 3,
+          "odds": 332.5
         },
         {
           "number": 4,
-          "odds": 97.9
+          "odds": 3.4
+        },
+        {
+          "number": 5,
+          "odds": 216.1
+        },
+        {
+          "number": 6,
+          "odds": 130.7
+        },
+        {
+          "number": 7,
+          "odds": 21.1
+        },
+        {
+          "number": 8,
+          "odds": 196.7
+        },
+        {
+          "number": 9,
+          "odds": 778.3
+        },
+        {
+          "number": 10,
+          "odds": 6.0
+        },
+        {
+          "number": 11,
+          "odds": 3.9
+        },
+        {
+          "number": 12,
+          "odds": 6.2
+        },
+        {
+          "number": 13,
+          "odds": 253.4
+        },
+        {
+          "number": 14,
+          "odds": 97.4
+        },
+        {
+          "number": 15,
+          "odds": 54.4
+        },
+        {
+          "number": 16,
+          "odds": 141.8
         }
       ]
     },
     {
-      "id": "202565122111",
+      "id": "202507050603",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "ãã¨ã«ç¹å¥",
+      "name": "3歳以上1勝クラス",
       "horses": [
         {
-          "number": 7,
-          "odds": 2.5
+          "number": 1,
+          "odds": 10.7
         },
         {
           "number": 2,
-          "odds": 3.6
+          "odds": 71.0
         },
         {
-          "number": 8,
-          "odds": 5.8
+          "number": 3,
+          "odds": 165.2
         },
         {
           "number": 4,
-          "odds": 6.6
+          "odds": 32.6
         },
         {
           "number": 5,
+          "odds": 20.5
+        },
+        {
+          "number": 6,
+          "odds": 18.0
+        },
+        {
+          "number": 7,
+          "odds": 15.3
+        },
+        {
+          "number": 8,
+          "odds": 5.4
+        },
+        {
+          "number": 9,
+          "odds": 195.9
+        },
+        {
+          "number": 10,
           "odds": 7.4
         },
         {
-          "number": 3,
-          "odds": 29.9
+          "number": 11,
+          "odds": 2.4
         },
         {
-          "number": 7,
-          "odds": 30.6
+          "number": 12,
+          "odds": 289.9
         },
         {
-          "number": 6,
-          "odds": 34.7
+          "number": 13,
+          "odds": 57.1
         },
         {
-          "number": 1,
-          "odds": 38.3
+          "number": 14,
+          "odds": 5.9
         },
         {
-          "number": 8,
-          "odds": 76.6
+          "number": 15,
+          "odds": 558.5
+        },
+        {
+          "number": 16,
+          "odds": 67.5
         }
       ]
     },
     {
-      "id": "202565122112",
+      "id": "202507050604",
       "date": "2025-12-21",
       "venue": "Unknown",
       "number": "1",
-      "name": "B4ã¼2",
+      "name": "2歳未勝利",
       "horses": [
         {
-          "number": 2,
-          "odds": 2.9
+          "number": 1,
+          "odds": 58.3
         },
         {
-          "number": 8,
-          "odds": 3.6
+          "number": 2,
+          "odds": 594.4
         },
         {
           "number": 3,
-          "odds": 4.8
-        },
-        {
-          "number": 1,
-          "odds": 6.7
-        },
-        {
-          "number": 8,
-          "odds": 8.3
-        },
-        {
-          "number": 6,
-          "odds": 13.9
+          "odds": 11.9
         },
         {
           "number": 4,
-          "odds": 17.2
-        },
-        {
-          "number": 7,
-          "odds": 35.8
+          "odds": 294.9
         },
         {
           "number": 5,
-          "odds": 87.4
+          "odds": 58.1
+        },
+        {
+          "number": 6,
+          "odds": -3.0
+        },
+        {
+          "number": 7,
+          "odds": 5.3
+        },
+        {
+          "number": 8,
+          "odds": 48.3
+        },
+        {
+          "number": 9,
+          "odds": 19.2
+        },
+        {
+          "number": 10,
+          "odds": 11.0
+        },
+        {
+          "number": 11,
+          "odds": 3.0
+        },
+        {
+          "number": 12,
+          "odds": 29.0
+        },
+        {
+          "number": 13,
+          "odds": 4.6
+        },
+        {
+          "number": 14,
+          "odds": 289.6
+        },
+        {
+          "number": 15,
+          "odds": 17.7
+        },
+        {
+          "number": 16,
+          "odds": 199.5
+        },
+        {
+          "number": 17,
+          "odds": 7.6
+        },
+        {
+          "number": 18,
+          "odds": 116.1
         }
       ]
     },
     {
-      "id": "202536122201",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2",
-      "horses": []
-    },
-    {
-      "id": "202536122202",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2",
-      "horses": []
-    },
-    {
-      "id": "202536122203",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸çµ",
-      "horses": []
-    },
-    {
-      "id": "202536122204",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2å­çµ",
-      "horses": []
-    },
-    {
-      "id": "202536122205",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2äºçµ",
-      "horses": []
-    },
-    {
-      "id": "202536122206",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³",
-      "horses": []
-    },
-    {
-      "id": "202536122207",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³",
-      "horses": []
-    },
-    {
-      "id": "202536122208",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2",
-      "horses": []
-    },
-    {
-      "id": "202536122209",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2",
-      "horses": []
-    },
-    {
-      "id": "202536122210",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B1ä¸çµ",
-      "horses": []
-    },
-    {
-      "id": "202536122211",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã©ãã³ã­ã¥ã©ã¹è³(B1)",
-      "horses": []
-    },
-    {
-      "id": "202536122212",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¤¢ã»å¸æ æªæ¥ã¸å...(B1)",
-      "horses": []
-    },
-    {
-      "id": "202542122201",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "3æ­³ä¸",
-      "horses": []
-    },
-    {
-      "id": "202542122202",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã©ã³ãã¿ã¤ã ãã£ã¬...(C3)",
-      "horses": []
-    },
-    {
-      "id": "202542122203",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ããªã¼ã ãã£ã¬ã³ã¸(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202542122204",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ããªã¼ã ãã£ã¬ã³ã¸(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202542122205",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¼çã®ã©çãä¸­!æ±...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122206",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ç·ã¨æ¸æµã®ã¾ã¡ ã¨...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122207",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã²ãªäººå½¢ã®ãµããã¨...(C1C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122208",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¼ã¹ãã¼ã«ç¹å¥(C2C3)",
-      "horses": []
-    },
-    {
-      "id": "202542122209",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å±±ç¾åº§ç¹å¥(C1)",
-      "horses": []
-    },
-    {
-      "id": "202542122210",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¬è³ç¹å¥(B3)",
-      "horses": []
-    },
-    {
-      "id": "202542122211",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¸«èµ°ç¹å¥(B1B2)",
-      "horses": []
-    },
-    {
-      "id": "202542122212",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¬ã®æç¹å¥(C2)",
-      "horses": []
-    },
-    {
-      "id": "202548122201",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³4çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122202",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³3çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122203",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æ¨æ¥ã¯ã«ãã®èªçæ¥...(C)",
-      "horses": []
-    },
-    {
-      "id": "202548122204",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C18çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122205",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C17çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122206",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C16çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122207",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C15çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122208",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B7çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122209",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B6çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122210",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æ­³æµç¹å¥(C)",
-      "horses": []
-    },
-    {
-      "id": "202548122211",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¹´åãé°¤ç¹å¥(A)",
-      "horses": []
-    },
-    {
-      "id": "202548122212",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B5çµ",
-      "horses": []
-    },
-    {
-      "id": "202565122201",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ä¸çä¸å¯æããµã³ã¿...",
-      "horses": []
-    },
-    {
-      "id": "202565122202",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "èµ¤å¸ã»æ©ç¾ã»æå®ã...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202565122203",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ç®±ä¹ãªãã¿3å¨å¹´è¨...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202565122204",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³Cã¼2",
-      "horses": []
-    },
-    {
-      "id": "202565122205",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³Bã¼5",
-      "horses": []
-    },
-    {
-      "id": "202565122206",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã«ã¡ã¤ã«ã³é å¼µã...",
-      "horses": []
-    },
-    {
-      "id": "202565122207",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å®è¤ããªçèªè¨å¿µå...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202565122208",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "GMNã»çµ¶å¯¾ã«è² ã...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202565122209",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "kzmçèª29å¨å¹´...",
-      "horses": []
-    },
-    {
-      "id": "202565122210",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ç¬¬6åå­¤ç¬ã®èå¤æ¯",
-      "horses": []
-    },
-    {
-      "id": "202565122211",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¯ã¤ãã¯ãªã¹ãã¹...",
-      "horses": []
-    },
-    {
-      "id": "202565122212",
-      "date": "2025-12-22",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã°ãããè¨å¿µã¾ã§ã...",
-      "horses": []
-    },
-    {
-      "id": "202536122301",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2åçµ",
-      "horses": []
-    },
-    {
-      "id": "202536122302",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸çµ",
-      "horses": []
-    },
-    {
-      "id": "202536122303",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2äºçµ",
-      "horses": []
-    },
-    {
-      "id": "202536122304",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸çµ",
-      "horses": []
-    },
-    {
-      "id": "202536122305",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³",
-      "horses": []
-    },
-    {
-      "id": "202536122306",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³",
-      "horses": []
-    },
-    {
-      "id": "202536122307",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B1",
-      "horses": []
-    },
-    {
-      "id": "202536122308",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B1",
-      "horses": []
-    },
-    {
-      "id": "202536122309",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2ä¸çµ",
-      "horses": []
-    },
-    {
-      "id": "202536122310",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2äºçµ",
-      "horses": []
-    },
-    {
-      "id": "202536122311",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2ä¸çµ",
-      "horses": []
-    },
-    {
-      "id": "202536122312",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¹ã¤ã¼ãã¢ãªããµã ...(B1B2)",
-      "horses": []
-    },
-    {
-      "id": "202542122301",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³å",
-      "horses": []
-    },
-    {
-      "id": "202542122302",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã©ã³ãã¿ã¤ã ãã£ã¬...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202542122303",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æµ¦å800ã©ã¦ã³ã(3æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202542122304",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³äº",
-      "horses": []
-    },
-    {
-      "id": "202542122305",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¸å¶æ½è¡71å¨å¹´!...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122306",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "é´»å·£å¸ã®é³¥ãã³ã¦ã...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122307",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¢ãã®æ¨ç¹å¥(C3)",
-      "horses": []
-    },
-    {
-      "id": "202542122308",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã«ãã¬ã¢ç¹å¥(B3C1)",
-      "horses": []
-    },
-    {
-      "id": "202542122309",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã£ã»ã³ãã¼ç¹å¥(B2)",
-      "horses": []
-    },
-    {
-      "id": "202542122310",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æµ¦åã¸ã§ãã­ã¼ãºã...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122311",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã´ã¼ã«ãã«ãã(3ä¸)\néè³",
-      "horses": []
-    },
-    {
-      "id": "202542122312",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãµã¤ã¬ã³ããã¤ãç¹...(C2C3)",
-      "horses": []
-    },
-    {
-      "id": "202548122301",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C13çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122302",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C12çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122303",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C11çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122304",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C10çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122305",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãããã¼ã¦ã¨ãã£ã³...(C)",
-      "horses": []
-    },
-    {
-      "id": "202548122306",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "åç¿ç¹å¥(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202548122307",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B10çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122308",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C8çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122309",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "é£èç¹å¥(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202548122310",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B9çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122311",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¬è³æ¢ç¹å¥(A)",
-      "horses": []
-    },
-    {
-      "id": "202548122312",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¢ã¸ã¢ã»ã¢ã¸ã¢ãã©...(B)",
-      "horses": []
-    },
-    {
-      "id": "202550122301",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3å",
-      "horses": []
-    },
-    {
-      "id": "202550122302",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122303",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3äº",
-      "horses": []
-    },
-    {
-      "id": "202550122304",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å³¯ç¸è¨ã¹ããªã³ãC...(C3)",
-      "horses": []
-    },
-    {
-      "id": "202550122305",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "éµ¤åºå¼ä»ãã(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202550122306",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122307",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2äº",
-      "horses": []
-    },
-    {
-      "id": "202550122308",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122309",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C1äº",
-      "horses": []
-    },
-    {
-      "id": "202550122310",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "PLAY!ãªããºã...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202550122311",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å¤ªå­ã²ã¾ããç¹å¥B...(B2)",
-      "horses": []
-    },
-    {
-      "id": "202550122312",
-      "date": "2025-12-23",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¢ããã­è³C2",
-      "horses": []
-    },
-    {
-      "id": "202542122401",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¯ã©ã¤ããã¯ã¹ãªã¬...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202542122402",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¡ãã®ã¾ã¡åè¦è³(3æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202542122403",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ããã£ã!ããã£ã...(C3)",
-      "horses": []
-    },
-    {
-      "id": "202542122404",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "å·è¶è©ã®ãèµç±³è¨å¿µ(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122405",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "è±ã®ã¾ã¡ããã®ãè³(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122406",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æµ¦åÃå¤§äº ã¯ã©ã¤...(B3)",
-      "horses": []
-    },
-    {
-      "id": "202542122407",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã·ã¯ã©ã¡ã³ç¹å¥(C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122408",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¸ã³ã°ã«ãã«ç¹å¥(C1C2)",
-      "horses": []
-    },
-    {
-      "id": "202542122409",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¿ã¼ã³ã¤ãºç¹å¥(C1)",
-      "horses": []
-    },
-    {
-      "id": "202542122410",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æµ¦åã¸ã¥ãã¢ãã£ã³...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202542122411",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¯ãªã¹ãã¹ã¤ã´ç¹å¥(A2)",
-      "horses": []
-    },
-    {
-      "id": "202542122412",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "èå¤ç¹å¥(B2B3)",
-      "horses": []
-    },
-    {
-      "id": "202544122401",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ä¸",
-      "horses": []
-    },
-    {
-      "id": "202544122402",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³é¸æçé¦¬",
-      "horses": []
-    },
-    {
-      "id": "202544122403",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³æ°é¦¬",
-      "horses": []
-    },
-    {
-      "id": "202544122404",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³ä¹å",
-      "horses": []
-    },
-    {
-      "id": "202544122405",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³ä¹å",
-      "horses": []
-    },
-    {
-      "id": "202544122406",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãªãã«ã»ããªã³ã»ã¹...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202544122407",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C21819",
-      "horses": []
-    },
-    {
-      "id": "202544122408",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "è±ååè³(B3)",
-      "horses": []
-    },
-    {
-      "id": "202544122409",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "KRAãã­ãã£ã¼(B1B2)",
-      "horses": []
-    },
-    {
-      "id": "202544122410",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¨ã«ç¹å¥(C1C2)",
-      "horses": []
-    },
-    {
-      "id": "202548122401",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C7çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122402",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C6çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122403",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "åã»èèªçæ¥è¨å¿µ(C)",
-      "horses": []
-    },
-    {
-      "id": "202548122404",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C4çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122405",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122406",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122407",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ã¬ãã£ã¹ã»ã­ã£ã³ã...(B)",
-      "horses": []
-    },
-    {
-      "id": "202548122408",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æç¥ççç£ç¹å¥(C)",
-      "horses": []
-    },
-    {
-      "id": "202548122409",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B12çµ",
-      "horses": []
-    },
-    {
-      "id": "202548122410",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "åå¤å±å¤§è³å¸\nJpn3",
-      "horses": []
-    },
-    {
-      "id": "202548122411",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¼ãªã¼ãã¤ãã»ã¤...(A)",
-      "horses": []
-    },
-    {
-      "id": "202548122412",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2025 éã·ã£ã...(B)",
-      "horses": []
-    },
-    {
-      "id": "202550122401",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3äº",
-      "horses": []
-    },
-    {
-      "id": "202550122402",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122403",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122404",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æ¡§å7ãã­ã³C2äº",
-      "horses": []
-    },
-    {
-      "id": "202550122405",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æå®¤ããã·ã¥C3äº",
-      "horses": []
-    },
-    {
-      "id": "202550122406",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122407",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122408",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C1",
-      "horses": []
-    },
-    {
-      "id": "202550122409",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B1",
-      "horses": []
-    },
-    {
-      "id": "202550122410",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æ¥æ¬è»½ç¨®é¦¬åä¼ç¹å¥...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202550122411",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "æ¥é«è»½ç¨®é¦¬è¾²æ¥­åå...(A2)",
-      "horses": []
-    },
-    {
-      "id": "202550122412",
-      "date": "2025-12-24",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "B2",
-      "horses": []
-    },
-    {
-      "id": "202550122501",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3äº",
-      "horses": []
-    },
-    {
-      "id": "202550122502",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C3ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122503",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "2æ­³æªåå©äº",
-      "horses": []
-    },
-    {
-      "id": "202550122504",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ä¹ãç¥ã¹ããªã³ã2...(2æ­³)",
-      "horses": []
-    },
-    {
-      "id": "202550122505",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "é£æº7ãã­ã³C2äº",
-      "horses": []
-    },
-    {
-      "id": "202550122506",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122507",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2äº",
-      "horses": []
-    },
-    {
-      "id": "202550122508",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C2ä¸",
-      "horses": []
-    },
-    {
-      "id": "202550122509",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "C1",
-      "horses": []
-    },
-    {
-      "id": "202550122510",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¥ã¤ã»ã½ã·ã¨ã¼ã«...(B1)",
-      "horses": []
-    },
-    {
-      "id": "202550122511",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "åµåº«ã´ã¼ã«ããã­ã...(éè³)\nJpn3",
-      "horses": []
-    },
-    {
-      "id": "202550122512",
-      "date": "2025-12-25",
-      "venue": "Unknown",
-      "number": "1",
-      "name": "ãã¥ã¤ã»ã½ã·ã¨ã¼ã«...(C2C3)",
+      "id": "202507050605",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "2歳新馬",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 45.7
+        },
+        {
+          "number": 2,
+          "odds": 34.6
+        },
+        {
+          "number": 3,
+          "odds": 23.1
+        },
+        {
+          "number": 4,
+          "odds": 18.6
+        },
+        {
+          "number": 5,
+          "odds": 19.4
+        },
+        {
+          "number": 6,
+          "odds": 2.7
+        },
+        {
+          "number": 7,
+          "odds": 6.8
+        },
+        {
+          "number": 8,
+          "odds": 112.1
+        },
+        {
+          "number": 9,
+          "odds": 58.0
+        },
+        {
+          "number": 10,
+          "odds": 6.5
+        },
+        {
+          "number": 11,
+          "odds": 16.4
+        },
+        {
+          "number": 12,
+          "odds": 33.5
+        },
+        {
+          "number": 13,
+          "odds": 5.9
+        },
+        {
+          "number": 14,
+          "odds": 77.0
+        },
+        {
+          "number": 15,
+          "odds": 11.8
+        }
+      ]
+    },
+    {
+      "id": "202507050606",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "3歳以上1勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 59.5
+        },
+        {
+          "number": 2,
+          "odds": 13.0
+        },
+        {
+          "number": 3,
+          "odds": 13.5
+        },
+        {
+          "number": 4,
+          "odds": 352.2
+        },
+        {
+          "number": 5,
+          "odds": 35.4
+        },
+        {
+          "number": 6,
+          "odds": 17.6
+        },
+        {
+          "number": 7,
+          "odds": 275.1
+        },
+        {
+          "number": 8,
+          "odds": 27.0
+        },
+        {
+          "number": 9,
+          "odds": 4.6
+        },
+        {
+          "number": 10,
+          "odds": 3.9
+        },
+        {
+          "number": 11,
+          "odds": 3.1
+        },
+        {
+          "number": 12,
+          "odds": 15.2
+        },
+        {
+          "number": 13,
+          "odds": 108.7
+        },
+        {
+          "number": 14,
+          "odds": 19.7
+        },
+        {
+          "number": 15,
+          "odds": 29.9
+        },
+        {
+          "number": 16,
+          "odds": 79.1
+        }
+      ]
+    },
+    {
+      "id": "202507050607",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "3歳以上1勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 9.1
+        },
+        {
+          "number": 2,
+          "odds": 15.2
+        },
+        {
+          "number": 3,
+          "odds": 8.9
+        },
+        {
+          "number": 4,
+          "odds": 158.9
+        },
+        {
+          "number": 5,
+          "odds": 70.8
+        },
+        {
+          "number": 6,
+          "odds": 5.3
+        },
+        {
+          "number": 7,
+          "odds": 50.3
+        },
+        {
+          "number": 8,
+          "odds": 24.0
+        },
+        {
+          "number": 9,
+          "odds": 5.7
+        },
+        {
+          "number": 10,
+          "odds": 424.0
+        },
+        {
+          "number": 11,
+          "odds": 70.4
+        },
+        {
+          "number": 12,
+          "odds": 15.7
+        },
+        {
+          "number": 13,
+          "odds": 127.5
+        },
+        {
+          "number": 14,
+          "odds": 4.0
+        },
+        {
+          "number": 15,
+          "odds": 5.8
+        },
+        {
+          "number": 16,
+          "odds": 69.2
+        }
+      ]
+    },
+    {
+      "id": "202507050608",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "3歳以上1勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 23.0
+        },
+        {
+          "number": 2,
+          "odds": 12.8
+        },
+        {
+          "number": 3,
+          "odds": 5.6
+        },
+        {
+          "number": 4,
+          "odds": 65.8
+        },
+        {
+          "number": 5,
+          "odds": 298.3
+        },
+        {
+          "number": 6,
+          "odds": 16.5
+        },
+        {
+          "number": 7,
+          "odds": 3.8
+        },
+        {
+          "number": 8,
+          "odds": 2.8
+        },
+        {
+          "number": 9,
+          "odds": 97.0
+        },
+        {
+          "number": 10,
+          "odds": 71.5
+        },
+        {
+          "number": 11,
+          "odds": 47.6
+        },
+        {
+          "number": 12,
+          "odds": 36.7
+        },
+        {
+          "number": 13,
+          "odds": 7.6
+        },
+        {
+          "number": 14,
+          "odds": 164.0
+        },
+        {
+          "number": 15,
+          "odds": 33.8
+        },
+        {
+          "number": 16,
+          "odds": 54.3
+        }
+      ]
+    },
+    {
+      "id": "202507050609",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "寒椿賞",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 13.3
+        },
+        {
+          "number": 2,
+          "odds": 2.4
+        },
+        {
+          "number": 3,
+          "odds": 25.5
+        },
+        {
+          "number": 4,
+          "odds": 94.9
+        },
+        {
+          "number": 5,
+          "odds": 61.8
+        },
+        {
+          "number": 6,
+          "odds": 11.4
+        },
+        {
+          "number": 7,
+          "odds": 131.6
+        },
+        {
+          "number": 8,
+          "odds": 63.7
+        },
+        {
+          "number": 9,
+          "odds": 47.1
+        },
+        {
+          "number": 10,
+          "odds": 47.3
+        },
+        {
+          "number": 11,
+          "odds": 11.0
+        },
+        {
+          "number": 12,
+          "odds": 141.1
+        },
+        {
+          "number": 13,
+          "odds": 6.5
+        },
+        {
+          "number": 14,
+          "odds": 52.3
+        },
+        {
+          "number": 15,
+          "odds": 4.2
+        },
+        {
+          "number": 16,
+          "odds": 21.2
+        }
+      ]
+    },
+    {
+      "id": "202507050610",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "名古屋日刊S",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 5.1
+        },
+        {
+          "number": 2,
+          "odds": 5.5
+        },
+        {
+          "number": 3,
+          "odds": 108.1
+        },
+        {
+          "number": 4,
+          "odds": 6.1
+        },
+        {
+          "number": 5,
+          "odds": 31.7
+        },
+        {
+          "number": 6,
+          "odds": 11.5
+        },
+        {
+          "number": 7,
+          "odds": 4.4
+        },
+        {
+          "number": 8,
+          "odds": 54.8
+        },
+        {
+          "number": 9,
+          "odds": 49.1
+        },
+        {
+          "number": 10,
+          "odds": 3.1
+        }
+      ]
+    },
+    {
+      "id": "202507050611",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "コールドムー",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 16.6
+        },
+        {
+          "number": 2,
+          "odds": 384.9
+        },
+        {
+          "number": 3,
+          "odds": 21.3
+        },
+        {
+          "number": 4,
+          "odds": 19.9
+        },
+        {
+          "number": 5,
+          "odds": 18.3
+        },
+        {
+          "number": 6,
+          "odds": 10.9
+        },
+        {
+          "number": 7,
+          "odds": 3.7
+        },
+        {
+          "number": 8,
+          "odds": 7.2
+        },
+        {
+          "number": 9,
+          "odds": 178.9
+        },
+        {
+          "number": 10,
+          "odds": 100.9
+        },
+        {
+          "number": 11,
+          "odds": 52.7
+        },
+        {
+          "number": 12,
+          "odds": 5.8
+        },
+        {
+          "number": 13,
+          "odds": 66.3
+        },
+        {
+          "number": 14,
+          "odds": 168.6
+        },
+        {
+          "number": 15,
+          "odds": 3.2
+        },
+        {
+          "number": 16,
+          "odds": 94.9
+        }
+      ]
+    },
+    {
+      "id": "202507050612",
+      "date": "2025-12-21",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "尾張特別",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 84.4
+        },
+        {
+          "number": 2,
+          "odds": 10.6
+        },
+        {
+          "number": 3,
+          "odds": 61.0
+        },
+        {
+          "number": 4,
+          "odds": 21.7
+        },
+        {
+          "number": 5,
+          "odds": 6.0
+        },
+        {
+          "number": 6,
+          "odds": 93.3
+        },
+        {
+          "number": 7,
+          "odds": 34.7
+        },
+        {
+          "number": 8,
+          "odds": 19.6
+        },
+        {
+          "number": 9,
+          "odds": 21.1
+        },
+        {
+          "number": 10,
+          "odds": 12.6
+        },
+        {
+          "number": 11,
+          "odds": 14.8
+        },
+        {
+          "number": 12,
+          "odds": 5.3
+        },
+        {
+          "number": 13,
+          "odds": 25.2
+        },
+        {
+          "number": 14,
+          "odds": 5.3
+        },
+        {
+          "number": 15,
+          "odds": 176.0
+        },
+        {
+          "number": 16,
+          "odds": 88.2
+        },
+        {
+          "number": 17,
+          "odds": 8.3
+        },
+        {
+          "number": 18,
+          "odds": 12.2
+        }
+      ]
+    },
+    {
+      "id": "202506050709",
+      "date": "2025-12-27",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "ベストウィッ",
+      "horses": []
+    },
+    {
+      "id": "202506050710",
+      "date": "2025-12-27",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "中山大障害",
+      "horses": []
+    },
+    {
+      "id": "202506050711",
+      "date": "2025-12-27",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "ホープフルS",
+      "horses": []
+    },
+    {
+      "id": "202506050712",
+      "date": "2025-12-27",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "グレイトフル",
+      "horses": []
+    },
+    {
+      "id": "202509050709",
+      "date": "2025-12-27",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "万両賞",
+      "horses": []
+    },
+    {
+      "id": "202509050710",
+      "date": "2025-12-27",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "摩耶S",
+      "horses": []
+    },
+    {
+      "id": "202509050711",
+      "date": "2025-12-27",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "阪神C",
+      "horses": []
+    },
+    {
+      "id": "202506050808",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "ハッピーエン",
+      "horses": []
+    },
+    {
+      "id": "202506050809",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "グッドラック",
+      "horses": []
+    },
+    {
+      "id": "202506050810",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "フェアウェル",
+      "horses": []
+    },
+    {
+      "id": "202506050811",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "有馬記念",
+      "horses": []
+    },
+    {
+      "id": "202506050812",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "ファイナルS",
+      "horses": []
+    },
+    {
+      "id": "202509050809",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "フォーチュン",
+      "horses": []
+    },
+    {
+      "id": "202509050810",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "サンクフルS",
+      "horses": []
+    },
+    {
+      "id": "202509050811",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "ギャラクシー",
+      "horses": []
+    },
+    {
+      "id": "202509050812",
+      "date": "2025-12-28",
+      "venue": "Unknown",
+      "number": "1",
+      "name": "カウントDS",
       "horses": []
     }
   ]
