@@ -849,9 +849,12 @@ def scrape_shutuba_data(race_id, mode="JRA"):
              print(f"  Loading local history from {csv_path} for enrichment...")
              try:
                  # Read primarily needed columns to save memory/speed, or full if fine
-                 full_history = pd.read_csv(csv_path)
+                 # Read primarily needed columns to save memory/speed, or full if fine
+                 # Force dtype to string to avoid float conversion (2012.0 -> "2012.0" != "2012")
+                 full_history = pd.read_csv(csv_path, dtype={'horse_id': str, 'race_id': str})
                  if 'horse_id' in full_history.columns:
-                     full_history['horse_id'] = full_history['horse_id'].astype(str)
+                     # Remove .0 if it exists (in case it was saved as float previously)
+                     full_history['horse_id'] = full_history['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
              except Exception as e:
                  print(f"  Failed to load CSV history: {e}")
                  full_history = pd.DataFrame()
