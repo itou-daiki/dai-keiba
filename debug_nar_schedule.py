@@ -1,36 +1,27 @@
-import requests
-from bs4 import BeautifulSoup
 
-def test_nar_schedule():
-    url = "https://nar.netkeiba.com/top/race_list_sub.html?kaisai_date=20241221"
-    headers = { 
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" 
-    }
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), 'scraper'))
+import auto_scraper
+
+def test_nar_schedule_save():
+    print("Testing scrape_todays_schedule(mode='NAR')...")
+    success, msg = auto_scraper.scrape_todays_schedule(mode="NAR")
+    print(f"Success: {success}, Msg: {msg}")
     
-    print(f"Fetching {url}...")
-    try:
-        response = requests.get(url, headers=headers, timeout=10)
-        # NAR often uses EUC-JP
-        response.encoding = response.apparent_encoding
-        
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        if soup.title:
-            print(f"Title: {soup.title.text}")
-        else:
-            print("No <title> tag found.")
-            print("Response snapshot:", response.text[:200])
-
-        # Try selectors
-        # NAR Top Page usually has a different list structure?
-        # Let's try finding any links with race_id
-        links = soup.select('a[href*="race_id"]')
-        print(f"Found {len(links)} race links.")
-        if links:
-            print("Sample:", links[0]['href'])
-            
-    except Exception as e:
-        print(f"Error: {e}")
+    expected_file = "todays_data_nar.json" # Relative to scraper usually.. no, relative to project root in my fix?
+    # Fix in auto_scraper was: os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
+    # auto_scraper is in scraper/, so dirname is scraper/, dirname(dirname) is root.
+    # So it should be in root.
+    
+    if os.path.exists(expected_file):
+        print(f"File {expected_file} created successfully.")
+        import json
+        with open(expected_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            print(f"Loaded {len(data.get('races', []))} races.")
+    else:
+        print(f"File {expected_file} NOT found.")
 
 if __name__ == "__main__":
-    test_nar_schedule()
+    test_nar_schedule_save()

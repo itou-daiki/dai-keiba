@@ -382,7 +382,9 @@ def scrape_todays_schedule(mode="JRA"):
             print(f" Error fetching {date_str}: {e}")
 
     # Save to JSON
-    output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "todays_data.json")
+    # Save to JSON
+    filename = "todays_data_nar.json" if mode == "NAR" else "todays_data.json"
+    output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump({"date": today.strftime("%Y-%m-%d"), "races": race_list}, f, ensure_ascii=False, indent=2)
         
