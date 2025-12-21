@@ -585,6 +585,7 @@ def scrape_shutuba_data(race_id):
         date_match = re.search(r'(\d{4}年\d{1,2}月\d{1,2}日)', title)
         date_text = date_match.group(1) if date_match else datetime.now().strftime('%Y年%m月%d日')
         
+        try:
              current_race_date = datetime.strptime(date_text, '%Y年%m月%d日')
         except:
              current_race_date = datetime.now()
