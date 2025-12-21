@@ -507,6 +507,9 @@ def scrape_odds_for_race(race_id, mode="JRA"):
     # 2. Fallback Main Page
     try:
         url_main = f"https://{base_domain}/odds/index.html?race_id={race_id}"
+        if mode == "NAR":
+             url_main += "&type=b1"
+             
         response = requests.get(url_main, headers=headers, timeout=10)
         response.encoding = 'EUC-JP' 
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -520,7 +523,7 @@ def scrape_odds_for_race(race_id, mode="JRA"):
         
         # Heuristic: Look for table with "馬番" in header
         for t in tables:
-            if "馬番" in t.text and "単勝" in t.text:
+            if "馬番" in t.text and ("単勝" in t.text or "オッズ" in t.text):
                 target_table = t
                 break
         

@@ -17,34 +17,32 @@ def test_odds_fetch(race_id, mode="NAR"):
     for h in odds:
         print(f"  #{h['number']}: {h['odds']}")
         
-    # Manual Request to inspect HTML if empty
-    if not odds:
-        print("\n--- Inspecting HTML ---")
-        base_domain = "nar.netkeiba.com" if mode == "NAR" else "race.netkeiba.com"
-        url = f"https://{base_domain}/odds/index.html?race_id={race_id}"
-        print(f"Fetching {url}")
-        resp = requests.get(url)
-        resp.encoding = 'EUC-JP'
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        
-        # Check tables
-        tables = soup.find_all('table')
-        print(f"Found {len(tables)} tables.")
-        for i, t in enumerate(tables):
-            cls = t.get('class', [])
-            txt = t.text.replace("\n", "").strip()[:50]
-            print(f"Table {i}: Class={cls}, Text={txt}")
-            
-        # Check specific broken selectors
-        ninki = soup.select_one('table#Ninki')
-        print(f"#Ninki table exists: {bool(ninki)}")
-        
-        tanfuku = soup.select('table.RaceOdds_HorseList_Table')
-        print(f".RaceOdds_HorseList_Table count: {len(tanfuku)}")
+    # Manual Request to inspect HTML if empty (or to debug split tables)
+    print("\n--- Inspecting HTML Structure ---")
+    base_domain = "nar.netkeiba.com" if mode == "NAR" else "race.netkeiba.com"
+    url = f"https://{base_domain}/odds/index.html?race_id={race_id}&type=b1"
+    print(f"Fetching {url}")
+    headers = { "User-Agent": "Mozilla/5.0" }
+    resp = requests.get(url, headers=headers)
+    resp.encoding = 'EUC-JP'
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    
+    # Check tables
+    tables = soup.find_all('table')
+    print(f"Found {len(tables)} tables.")
+    for i, t in enumerate(tables):
+        cls = t.get('class', [])
+        txt = t.text.replace("\n", "").strip()[:50]
+        print(f"Table {i}: Class={cls}, Text={txt}")
+                
+    # Check if Ninki table exists
+    ninki = soup.select_one('table#Ninki')
+    if ninki:
+         print(f"  Found #Ninki table with {len(ninki.find_all('tr'))} rows.")
 
 if __name__ == "__main__":
-    # Test with a Mizusawa race from JSON
-    test_odds_fetch("202454122101", mode="NAR") # Use a likely valid recent ID or valid one from file
+    # Test with Kawasaki 11R (Past race, likely many horses)
+    test_odds_fetch("202545121511", mode="NAR")
     # Or confirm the ID from todays_data_nar.json content earlier?
     # actually the user file had 2025 dates? "2025-12-14"? That's future/weird.
     # Ah, system time is 2025-12-21. So 2025-12-14 is past.
