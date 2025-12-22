@@ -18,6 +18,7 @@ except ImportError:
 # ==========================================
 # CONSTANTS
 # ==========================================
+print("DEBUG: auto_scraper module loaded (Version: Fix-Meta-Insert)")
 # Root directory (parent of scraper) -> database.csv
 CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
 CSV_FILE_PATH_NAR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database_nar.csv")
