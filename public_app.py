@@ -92,7 +92,7 @@ st.title("🏇 AI競馬予想システム")
 with st.expander("ℹ️ このAI予想のロジックについて (クリックして開く)"):
     st.markdown("""
     ### 🧠 AI予想の仕組み
-    このシステムは**LightGBM**という機械学習モデルを使用し、過去の膨大なレースデータから「3着以内に入る確率」を算出しています。
+    このシステムは**LightGBM**という機械学習モデルを使用し、過去の膨大なレースデータから「1着（勝利）の確率」を算出しています。
     
     #### 使用しているデータ
     - **基本情報**: 枠番、馬番、馬齢、斤量、騎手
@@ -284,7 +284,7 @@ if race_id:
                         # Identify feature cols from X_df
                         # Exclude non-numeric and 'rank'
                         meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
-                        features = [c for c in X_df.columns if c not in meta_cols and c != 'target_top3']
+                        features = [c for c in X_df.columns if c not in meta_cols and c != 'target_win']
                         # Ensure numeric
                         X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
                         
@@ -425,7 +425,7 @@ if race_id:
             column_config={
                 "AIスコア(%)": st.column_config.ProgressColumn(
                     "AI期待度",
-                    help="3着以内に入るAI予測確率",
+                    help="1着（勝利）の AI予測確率",
                     format="%d%%",
                     min_value=0,
                     max_value=100,
