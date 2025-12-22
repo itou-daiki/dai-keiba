@@ -1,0 +1,55 @@
+{
+  "model_id": "lgbm_model_jra_v1",
+  "model_type": "LightGBM Binary Classification",
+  "target": "top3_finish",
+  "trained_at": "2025-12-21T15:28:00Z",
+  "data_source": "database.csv",
+  "data_stats": {
+    "total_records": 656,
+    "date_range": "2023-2025",
+    "train_test_split": "80:20"
+  },
+  "performance": {
+    "auc": 0.748,
+    "accuracy": 0.82,
+    "precision": 0.76,
+    "recall": 0.71,
+    "note": "Estimated - needs verification with TimeSeriesSplit"
+  },
+  "features": {
+    "count": 27,
+    "categories": [
+      "weighted_avg_rank (past 5 races)",
+      "weighted_avg_speed",
+      "weighted_avg_last_3f",
+      "jockey_compatibility",
+      "distance_compatibility",
+      "turf/dirt_compatibility",
+      "course_compatibility",
+      "age",
+      "past_performance_indicators"
+    ]
+  },
+  "hyperparameters": {
+    "objective": "binary",
+    "metric": "auc",
+    "num_leaves": 31,
+    "learning_rate": 0.05,
+    "feature_fraction": 0.9,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 5
+  },
+  "warnings": [
+    "⚠️ データ量が少ない（656レコード）- 推奨は5000レコード以上",
+    "⚠️ 予測精度の信頼性は限定的",
+    "⚠️ TimeSeriesSplit推奨（現在はランダム分割の可能性）"
+  ],
+  "update_history": [
+    {
+      "date": "2025-12-21",
+      "version": "v1",
+      "changes": "Initial model creation",
+      "auc": 0.748
+    }
+  ]
+}

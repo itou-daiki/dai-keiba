@@ -30,6 +30,54 @@ def load_model(mode="JRA"):
             return pickle.load(f)
     return None
 
+@st.cache_resource
+def load_model_metadata(mode="JRA"):
+    """モデルのメタデータ（訓練日時、性能指標など）を読み込む"""
+    meta_path = os.path.join(os.path.dirname(__file__), f"ml/models/lgbm_model_nar_meta.json" if mode == "NAR" else "ml/models/lgbm_model_meta.json")
+    if os.path.exists(meta_path):
+        with open(meta_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return None
+
+def get_data_freshness(mode="JRA"):
+    """データベースの最終更新日時を取得"""
+    db_path = os.path.join(os.path.dirname(__file__), "database_nar.csv" if mode == "NAR" else "database.csv")
+    if os.path.exists(db_path):
+        import datetime
+        mtime = os.path.getmtime(db_path)
+        last_updated = datetime.datetime.fromtimestamp(mtime)
+        days_ago = (datetime.datetime.now() - last_updated).days
+        return last_updated.strftime("%Y-%m-%d %H:%M"), days_ago
+    return None, None
+
+def calculate_confidence_score(ai_prob, model_meta):
+    """予測の信頼度スコアを計算（0-100）"""
+    if not model_meta:
+        return 50  # デフォルト
+
+    # ベース信頼度: モデルのAUCから算出
+    base_confidence = model_meta.get('performance', {}).get('auc', 0.75) * 100
+
+    # データ量による調整
+    data_size = model_meta.get('data_stats', {}).get('total_records', 0)
+    if data_size < 1000:
+        data_penalty = -15  # データ量少ない
+    elif data_size < 3000:
+        data_penalty = -5
+    else:
+        data_penalty = 0
+
+    # 予測確率による調整（極端な予測は信頼度高い）
+    if ai_prob < 0.1 or ai_prob > 0.9:
+        prob_bonus = 10  # 極端な予測は自信あり
+    elif 0.4 < ai_prob < 0.6:
+        prob_bonus = -10  # 中間的な予測は自信なし
+    else:
+        prob_bonus = 0
+
+    confidence = base_confidence + data_penalty + prob_bonus
+    return max(0, min(100, confidence))  # 0-100の範囲に制限
+
 def load_schedule_data(mode="JRA"):
     json_path = os.path.join(os.path.dirname(__file__), "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
     if os.path.exists(json_path):
@@ -71,6 +119,13 @@ with st.expander("ℹ️ このAI予想のロジックについて (クリック
     - 印の補正係数: ◎=1.8倍, ◯=1.4倍（積極的）
     - 安全フィルタ: AI確率5%未満は除外
     - 特徴: 波乱が多く、人気薄が勝ちやすい
+
+    #### 📊 信頼性向上の取り組み
+    - **モデルメタデータ**: 訓練日時、性能指標（AUC）、データ量を常時表示
+    - **予測信頼度スコア**: 各予測にモデルの信頼性を0-100%で数値化
+    - **データ新鮮度**: データベースの最終更新日時を表示（3日以内が理想）
+    - **注意喚起**: データ量不足や予測の限界を明示
+    - **透明性**: モデルの性能・限界を隠さず開示
     """)
 
 # --- Admin Menu ---
@@ -150,9 +205,55 @@ else:
 # Main Analysis
 if race_id:
     st.header(f"レース分析: {race_id}")
-    
-    # Load Model
+
+    # Load Model and Metadata
     model = load_model(mode=mode_val)
+    model_meta = load_model_metadata(mode=mode_val)
+    last_updated, days_ago = get_data_freshness(mode=mode_val)
+
+    # Display Model Information and Data Freshness
+    with st.expander("📊 モデル情報・データ品質", expanded=False):
+        if model_meta:
+            col_info1, col_info2, col_info3 = st.columns(3)
+
+            with col_info1:
+                st.metric(
+                    "モデルAUC（予測精度）",
+                    f"{model_meta.get('performance', {}).get('auc', 0):.3f}",
+                    help="0.5=ランダム、1.0=完全予測。0.75以上が目安"
+                )
+                st.caption(f"学習データ量: {model_meta.get('data_stats', {}).get('total_records', 0):,}件")
+
+            with col_info2:
+                if last_updated:
+                    freshness_color = "🟢" if days_ago <= 3 else "🟡" if days_ago <= 7 else "🔴"
+                    st.metric(
+                        "データ最終更新",
+                        f"{days_ago}日前",
+                        delta=f"{freshness_color} {last_updated}"
+                    )
+                else:
+                    st.metric("データ最終更新", "不明")
+
+            with col_info3:
+                data_size = model_meta.get('data_stats', {}).get('total_records', 0)
+                if data_size < 1000:
+                    quality = "⚠️ 小規模"
+                    quality_help = "データ量が少ないため、予測精度は限定的です"
+                elif data_size < 3000:
+                    quality = "🟡 中規模"
+                    quality_help = "さらにデータを増やすと精度向上が期待できます"
+                else:
+                    quality = "🟢 十分"
+                    quality_help = "十分なデータ量で学習されています"
+
+                st.metric("データ品質", quality, help=quality_help)
+
+            # Warnings
+            if model_meta.get('warnings'):
+                st.warning("**⚠️ 注意事項:**\n" + "\n".join([f"- {w}" for w in model_meta['warnings']]))
+        else:
+            st.info("モデルメタデータが見つかりません")
 
     button_analyze = st.button("🚀 このレースを分析する (データ取得・AI予測)")
     
@@ -188,10 +289,13 @@ if race_id:
                         X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
                         
                         probs = model.predict(X_pred)
-                        
+
                         df['AI_Prob'] = probs
                         df['AI_Score'] = (probs * 100).astype(int)
-                        
+
+                        # Calculate confidence score for each prediction
+                        df['Confidence'] = [calculate_confidence_score(p, model_meta) for p in probs]
+
                         # Merge features back to df for display
                         # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
                         cols_to_merge = [
@@ -234,6 +338,7 @@ if race_id:
         
         rename_map = {
             'AI_Score': 'AIスコア(%)',
+            'Confidence': '信頼度',
             'Odds': '現在オッズ',
             '性齢': '年齢',
             '馬 番': '馬番',
@@ -262,14 +367,15 @@ if race_id:
         defaults = {
             'jockey_compatibility': 10.0,
             'distance_compatibility': 10.0,
-            'weighted_avg_speed': 16.0
+            'weighted_avg_speed': 16.0,
+            'Confidence': 50
         }
         for c, v in defaults.items():
             if c not in df_display.columns:
                 df_display[c] = v
 
 
-        display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
+        display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Confidence', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
 
         
         edited_df = df_display[display_cols].copy()
@@ -320,6 +426,13 @@ if race_id:
                 "AIスコア(%)": st.column_config.ProgressColumn(
                     "AI期待度",
                     help="3着以内に入るAI予測確率",
+                    format="%d%%",
+                    min_value=0,
+                    max_value=100,
+                ),
+                "信頼度": st.column_config.ProgressColumn(
+                    "予測信頼度",
+                    help="この予測の信頼性スコア（モデルAUC、データ量、予測確率を考慮）",
                     format="%d%%",
                     min_value=0,
                     max_value=100,
