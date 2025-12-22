@@ -177,41 +177,33 @@ def scrape_race_data(race_id, mode="JRA"):
             # 不要な列が含まれることがあるので整理しても良いが、
             # ユーザー要望は「蓄積」なので、基本はそのまま保持する
             
-            # Extract Horse IDs from soup
-            horse_id_map = {} # horse_name -> horse_id (Note: names might strictly not be unique but usually are in a race. Better to map by row index or horse number)
-            # Actually, pd.read_html result index corresponds to table rows.
-            # But the table has headers. 
-            # We can iterate through table rows again.
-            
-            horse_ids = []
-            
-            # The DF from read_html might have removed some rows or headers.
-            # Usually df length == number of horses.
-            # Let's iterate `rows` and extract ID.
-            
-            found_ids = []
+            # Extract Horse IDs via Name Mapping (Robust)
+            horse_name_map = {}
             for tr in target_table.find_all("tr"):
-                 # Check for horse link
-                 a_tag = tr.select_one(".Horse_Name a")
-                 if a_tag:
-                     href = a_tag.get('href')
-                     hid_match = re.search(r'/horse/(\d+)', href)
-                     if hid_match:
-                         found_ids.append(hid_match.group(1))
-                     else:
-                         found_ids.append("")
-                 elif tr.select_one("td"): # If it's a data row but no link?
-                     # Be careful about header rows that don't look like data
-                     pass
-
-            # Align IDs with DF
-            # If len mismatches, we might have issues.
-            if len(found_ids) == len(df):
-                df['horse_id'] = found_ids
+                a_tag = tr.select_one(".Horse_Name a")
+                if a_tag:
+                    h_name = a_tag.text.strip().replace("\n", "")
+                    href = a_tag.get('href')
+                    hid_match = re.search(r'/horse/(\d+)', href)
+                    if hid_match:
+                        horse_name_map[h_name] = hid_match.group(1)
+            
+            
+            # Apply to DF (Mapping by Name)
+            # Ensure df['馬名'] is clean matches key
+            if '馬名' in df.columns:
+                df['horse_id'] = df['馬名'].map(horse_name_map).fillna("")
             else:
-                # Try to fuzzy match or just warn
-                print(f"Warning: ID count {len(found_ids)} != DF len {len(df)} for {race_id}")
                 df['horse_id'] = ""
+                
+            # If mapping largely failed (e.g. name mismatch), warn
+            if len(df) > 0 and (df['horse_id'] == "").sum() > len(df) * 0.5:
+                 print(f"Warning: High ID miss rate for {race_id}. Names might differ.")
+                 # Fallback: Try strict index alignment if map failed? 
+                 # But map is usually safer.
+                 # Debug:
+                 # print("DF Names:", df['馬名'].unique())
+                 # print("Map Keys:", list(horse_name_map.keys()))
 
             # Enrich with Past Data
             # This is slow, so we only do it if we successfully got IDs
