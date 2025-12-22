@@ -363,24 +363,28 @@ if race_id:
         )
         
         # Calculate EV with JRA/NAR distinction
-        # Determine race type from venue
-        race_type = 'JRA'  # Default
+        # Determine race type from user's mode selection (as primary source)
+        race_type = mode_val  # Use user's selected mode (JRA or NAR) as primary source of truth
         venue = ''  # Initialize venue
 
+        # Get venue information if available
         if '会場' in df_display.columns and len(df_display) > 0:
             venue = df_display['会場'].iloc[0]
 
-            # Import race classifier
-            try:
-                import sys
-                import os
-                sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ml'))
-                from race_classifier import classify_race_type
-                race_type = classify_race_type(venue)
-            except:
-                # Fallback
-                jra_venues = ['札幌', '函館', '福島', '新潟', '東京', '中山', '中京', '京都', '阪神', '小倉']
-                race_type = 'JRA' if venue in jra_venues else 'NAR'
+            # If venue is available, use it to verify/override race_type for accuracy
+            if venue:
+                try:
+                    import sys
+                    import os
+                    sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ml'))
+                    from race_classifier import classify_race_type
+                    venue_based_type = classify_race_type(venue)
+                    # Use venue-based classification (more accurate than mode selection)
+                    race_type = venue_based_type
+                except:
+                    # Fallback: manual classification
+                    jra_venues = ['札幌', '函館', '福島', '新潟', '東京', '中山', '中京', '京都', '阪神', '小倉']
+                    race_type = 'JRA' if venue in jra_venues else 'NAR'
 
         # EV calculation with race type AND venue specific parameters
         # Import venue characteristics
@@ -395,14 +399,30 @@ if race_id:
 
         # Base parameters by race type
         if race_type == 'JRA':
-            # 中央競馬: 信頼性が高いので印の影響を抑える
-            mark_weights = {"◎": 1.3, "◯": 1.15, "▲": 1.08, "△": 1.03, "✕": 0.0, "": 1.0}
-            safety_threshold = 0.08  # 8%
+            # === 中央競馬（JRA）設定 ===
+            # 特徴: レベルが高く、予想が堅め。AI予測の信頼性が高い
+            mark_weights = {
+                "◎": 1.3,   # 本命: 控えめに1.3倍
+                "◯": 1.15,  # 対抗: 1.15倍
+                "▲": 1.08,  # 単穴: 1.08倍
+                "△": 1.03,  # 連下: 1.03倍
+                "✕": 0.0,   # 消し: 0倍
+                "": 1.0     # 印なし: 1.0倍
+            }
+            safety_threshold = 0.08  # AI確率8%未満は除外（信頼性重視）
             venue_info = f"🏇 中央競馬（JRA）" + (f" - {venue}" if venue else "")
         else:
-            # 地方競馬: 波乱が多いので印の重みを大きく
-            mark_weights = {"◎": 1.8, "◯": 1.4, "▲": 1.2, "△": 1.1, "✕": 0.0, "": 1.0}
-            safety_threshold = 0.05  # 5%（地方は低確率でも狙う価値あり）
+            # === 地方競馬（NAR）設定 ===
+            # 特徴: 波乱が多く、人気薄が勝ちやすい。大穴狙いも有効
+            mark_weights = {
+                "◎": 1.8,   # 本命: 積極的に1.8倍
+                "◯": 1.4,   # 対抗: 1.4倍
+                "▲": 1.2,   # 単穴: 1.2倍
+                "△": 1.1,   # 連下: 1.1倍
+                "✕": 0.0,   # 消し: 0倍
+                "": 1.0     # 印なし: 1.0倍
+            }
+            safety_threshold = 0.05  # AI確率5%未満は除外（低確率でも狙う価値あり）
             venue_info = f"🌙 地方競馬（NAR）" + (f" - {venue}" if venue else "")
 
         # Venue-specific adjustments
@@ -466,10 +486,15 @@ if race_id:
 
                 # Adjust probability for NAR (higher uncertainty)
                 if race_type == 'NAR':
-                    # 地方は予測の不確実性を考慮
-                    # 高い確率は少し下げ、低い確率は少し上げる
+                    # === 地方競馬の確率調整 ===
+                    # 地方は予測の不確実性が高いため、確率を保守的に調整
+                    # 高確率馬: やや下げる（過信を防ぐ）
+                    # 低確率馬: やや上げる（穴馬チャンスを考慮）
+                    # 例: 10%→14%(+4pt), 30%→32%(+2pt), 50%→50%(±0), 70%→68%(-2pt)
                     adjusted_p = p * 0.9 + 0.05
                 else:
+                    # === 中央競馬の確率調整 ===
+                    # JRAはAI予測の信頼性が高いため、調整なし
                     adjusted_p = p
 
                 # Apply run style compatibility if available
