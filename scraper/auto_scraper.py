@@ -22,7 +22,9 @@ except ImportError:
 CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
 CSV_FILE_PATH_NAR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database_nar.csv")
 TARGET_YEARS = [2024, 2025] # Expandable
+TARGET_YEARS = [2024, 2025] # Expandable
 HORSE_HISTORY_CACHE = {} # Cache for horse history DataFrames
+HORSE_PROFILE_CACHE = {} # Cache for horse profile (pedigree)
 
 # ==========================================
 # 1. レース詳細データを取得する関数
@@ -156,6 +158,13 @@ def scrape_race_data(race_id, mode="JRA"):
             df.insert(7, "回り", rotation)
             df.insert(8, "天候", weather)
             df.insert(9, "馬場状態", condition)
+            df.insert(9, "馬場状態", condition)
+            
+            # Additional Bloodline Columns (Empty init)
+            df["father"] = ""
+            df["mother"] = ""
+            df["bms"] = ""
+            
             df["race_id"] = race_id # IDも保存 (末尾に追加されることが多いが明示的に)
             
             # 不要な列が含まれることがあるので整理しても良いが、
@@ -231,6 +240,20 @@ def scrape_race_data(race_id, mode="JRA"):
                         past_df = scraper.get_past_races(hid, n_samples=None) # Fetch ALL
                         HORSE_HISTORY_CACHE[hid] = past_df
                         past_df = past_df.copy()
+                    
+                    # --- Fetch Bloodline Data ---
+                    global HORSE_PROFILE_CACHE
+                    profile_data = None
+                    if hid in HORSE_PROFILE_CACHE:
+                        profile_data = HORSE_PROFILE_CACHE[hid]
+                    else:
+                         profile_data = scraper.get_horse_profile(hid)
+                         HORSE_PROFILE_CACHE[hid] = profile_data
+                    
+                    if profile_data:
+                        df.at[idx, 'father'] = profile_data.get('father', '')
+                        df.at[idx, 'mother'] = profile_data.get('mother', '')
+                        df.at[idx, 'bms'] = profile_data.get('bms', '')
                         
                     # past_df = scraper.get_past_races(hid, n_samples=20) # Old method
                     
@@ -798,6 +821,9 @@ def scrape_shutuba_data(race_id, mode="JRA"):
                 "馬 番": umaban,
                 "馬名": horse_name,
                 "horse_id": horse_id,
+                "father": "", # Init
+                "mother": "",
+                "bms": "",
                 "騎手": jockey,
                 "騎手": jockey,
                 "斤量": weight,
@@ -816,7 +842,27 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             # It's usually near Horse Name
             # Let's inspect typical structure or ignore for now if not critical (Feature Engineering defaults to 3)
             # Find td with class "Barei" ?
+            # Find td with class "Barei" ?
             barei = row.select_one(".Barei")
+            
+            # --- Fetch Profile for Shutuba ---
+            # Similar to scrape_race_data, use cache
+            if horse_id and horse_id.isdigit():
+                 global HORSE_PROFILE_CACHE
+                 # Initialize if not present (handled at module level)
+                 prof = None
+                 if horse_id in HORSE_PROFILE_CACHE:
+                     prof = HORSE_PROFILE_CACHE[horse_id]
+                 else:
+                     prof = scraper.get_horse_profile(horse_id)
+                     if prof: HORSE_PROFILE_CACHE[horse_id] = prof
+                 
+                 if prof:
+                     entry["father"] = prof.get("father", "")
+                     entry["mother"] = prof.get("mother", "")
+                     entry["bms"] = prof.get("bms", "")
+            
+            data.append(entry)
             if barei:
                 entry["性齢"] = barei.text.strip()
             else:

@@ -3,6 +3,7 @@ import numpy as np
 import os
 import math
 import re
+import zlib
 
 def parse_time(t_str):
     if not isinstance(t_str, str):
@@ -840,6 +841,21 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
     else:
         df['condition_code'] = 1
         feature_cols.append('condition_code')
+
+    # ========== 血統特徴量 (Hashing) ==========
+    # 文字列を数値IDに変換してLightGBMのcategory/int特徴量として使用
+    
+    def hash_str_stable(s):
+        if not isinstance(s, str): return 0
+        return zlib.adler32(s.encode('utf-8')) & 0xffffffff # Ensure unsigned positive
+
+    for col in ['father', 'mother', 'bms']:
+        feat_name = f"{col}_id"
+        if col in df.columns:
+            df[feat_name] = df[col].apply(hash_str_stable)
+        else:
+            df[feat_name] = 0
+        feature_cols.append(feat_name)
 
     # ========== 会場特性×馬タイプの相性特徴量 ==========
     # NOTE: これらの特徴量を使用するには、モデルを再学習する必要があります
