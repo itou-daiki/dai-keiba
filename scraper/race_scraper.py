@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import io
 import re
 import time
 from datetime import datetime
@@ -49,7 +50,7 @@ class RaceScraper:
         # We need to manually parse to get clean data and handle links if needed (though for past data, text is mostly fine)
         # pd.read_html is easier for the table
         try:
-            df = pd.read_html(str(table))[0]
+            df = pd.read_html(io.StringIO(str(table)))[0]
             
             # Basic cleaning
             df = df.dropna(how='all')
