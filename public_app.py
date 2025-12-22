@@ -50,38 +50,93 @@ def get_data_freshness(mode="JRA"):
         return last_updated.strftime("%Y-%m-%d %H:%M"), days_ago
     return None, None
 
-def calculate_confidence_score(ai_prob, model_meta):
-    """予測の信頼度スコアを計算（0-100）"""
+def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None):
+    """
+    予測の信頼度スコアを計算（0-100）
+
+    Args:
+        ai_prob: AI予測確率（0-1）
+        model_meta: モデルメタデータ
+        jockey_compat: 騎手相性スコア（0-10、Noneの場合は考慮しない）
+        course_compat: コース適性スコア（0-10、Noneの場合は考慮しない）
+        distance_compat: 距離適性スコア（0-10、Noneの場合は考慮しない）
+
+    Returns:
+        int: 信頼度スコア（0-100）
+    """
     if not model_meta:
         return 50  # デフォルト
 
-    # ベース信頼度: モデルのAUCから算出
+    # ===== 1. ベース信頼度: モデルのAUCから算出 =====
     base_confidence = model_meta.get('performance', {}).get('auc', 0.75) * 100
 
-    # データ量による調整
+    # ===== 2. データ量による調整 =====
     data_size = model_meta.get('data_stats', {}).get('total_records', 0)
     if data_size < 1000:
-        data_penalty = -15  # データ量少ない
+        data_penalty = -20  # データ量少ない
     elif data_size < 3000:
-        data_penalty = -5
+        data_penalty = -8
+    elif data_size < 5000:
+        data_penalty = -3
     else:
         data_penalty = 0
 
-    # 予測確率による調整（連続的な調整）
+    # ===== 3. 予測確率による調整（連続的な調整） =====
     # 0.5から離れるほど信頼度が高い（モデルが確信を持っている）
     # 0.5に近いほど信頼度が低い（モデルが迷っている）
     distance_from_uncertain = abs(ai_prob - 0.5)
 
-    # 距離に基づく信頼度ボーナス: 0.5離れていると最大+15、0.0だと-15
-    # 式: (distance * 2 - 0.5) * 30 で、0.0→-15、0.25→0、0.5→+15
-    prob_bonus = (distance_from_uncertain * 2 - 0.25) * 30
+    # 距離に基づく信頼度ボーナス: 0.5離れていると最大+20、0.0だと-20
+    # 式を調整して範囲を拡大
+    prob_bonus = (distance_from_uncertain * 2 - 0.25) * 40
 
     # さらに極端な予測（<0.05 or >0.95）には追加ボーナス
     if ai_prob < 0.05 or ai_prob > 0.95:
-        prob_bonus += 8
+        prob_bonus += 12
 
-    confidence = base_confidence + data_penalty + prob_bonus
-    return int(max(0, min(100, confidence)))  # 0-100の範囲に制限、整数化
+    # AI確率が極端に低い場合は信頼度を下げる（データ不足の可能性）
+    if ai_prob < 0.08:
+        prob_bonus -= 10
+
+    # ===== 4. 適性スコアによる調整（新規追加） =====
+    compat_bonus = 0
+
+    # 利用可能な適性スコアを集計
+    compat_scores = []
+    if jockey_compat is not None and not pd.isna(jockey_compat):
+        compat_scores.append(jockey_compat)
+    if course_compat is not None and not pd.isna(course_compat):
+        compat_scores.append(course_compat)
+    if distance_compat is not None and not pd.isna(distance_compat):
+        compat_scores.append(distance_compat)
+
+    if compat_scores:
+        avg_compat = sum(compat_scores) / len(compat_scores)
+        min_compat = min(compat_scores)
+
+        # 平均適性による調整
+        if avg_compat >= 9:
+            compat_bonus = +15  # 全て高適性
+        elif avg_compat >= 7:
+            compat_bonus = +8
+        elif avg_compat >= 5:
+            compat_bonus = 0
+        elif avg_compat >= 3:
+            compat_bonus = -12
+        else:
+            compat_bonus = -25  # データ品質が低い
+
+        # 最低スコアによる追加ペナルティ（いずれかの適性が極端に低い場合）
+        if min_compat < 3:
+            compat_bonus -= 15  # 致命的な不適性
+        elif min_compat < 5:
+            compat_bonus -= 8
+
+    # ===== 最終計算 =====
+    confidence = base_confidence + data_penalty + prob_bonus + compat_bonus
+
+    # 範囲を拡大: 20-95（より差別化）
+    return int(max(20, min(95, confidence)))
 
 def load_schedule_data(mode="JRA"):
     json_path = os.path.join(os.path.dirname(__file__), "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
@@ -298,8 +353,33 @@ if race_id:
                         df['AI_Prob'] = probs
                         df['AI_Score'] = (probs * 100).astype(int)
 
-                        # Calculate confidence score for each prediction
-                        df['Confidence'] = [calculate_confidence_score(p, model_meta) for p in probs]
+                        # Calculate confidence score for each prediction with compatibility data
+                        # コースタイプに応じて芝/ダート適性を選択
+                        confidences = []
+                        for idx, p in enumerate(probs):
+                            # 適性スコアを取得（X_dfから）
+                            jockey_c = X_df['jockey_compatibility'].iloc[idx] if 'jockey_compatibility' in X_df.columns else None
+                            distance_c = X_df['distance_compatibility'].iloc[idx] if 'distance_compatibility' in X_df.columns else None
+
+                            # コース適性: 芝かダートか判定（コースタイプカラムから）
+                            course_c = None
+                            if 'turf_compatibility' in X_df.columns and 'dirt_compatibility' in X_df.columns:
+                                # コースタイプを判定（'芝' or 'ダ'）
+                                # df_displayから取得するか、X_dfに含まれているか確認
+                                if 'コースタイプ' in df.columns:
+                                    course_type = df['コースタイプ'].iloc[idx]
+                                    if course_type == '芝':
+                                        course_c = X_df['turf_compatibility'].iloc[idx]
+                                    elif course_type == 'ダ':
+                                        course_c = X_df['dirt_compatibility'].iloc[idx]
+                                else:
+                                    # デフォルトは芝を使用
+                                    course_c = X_df['turf_compatibility'].iloc[idx]
+
+                            conf = calculate_confidence_score(p, model_meta, jockey_c, course_c, distance_c)
+                            confidences.append(conf)
+
+                        df['Confidence'] = confidences
 
                         # Merge features back to df for display
                         # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
