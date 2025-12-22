@@ -297,7 +297,6 @@ def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None
                         print(f"    Skipping day {current_day_date} (Before start date)")
                         continue
                     if end_date and current_day_date > end_date:
-                    if end_date and current_day_date > end_date:
                         print(f"    Skipping day {current_day_date} (After end date)")
                         continue
                     print(f"    Processing Day: {current_day_date}")
