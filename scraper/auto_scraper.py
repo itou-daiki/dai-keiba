@@ -158,7 +158,6 @@ def scrape_race_data(race_id, mode="JRA"):
             df.insert(7, "回り", rotation)
             df.insert(8, "天候", weather)
             df.insert(9, "馬場状態", condition)
-            df.insert(9, "馬場状態", condition)
             
             # Additional Bloodline Columns (Empty init)
             df["father"] = ""
@@ -1256,6 +1255,10 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
                             df = scrape_race_data(race_id)
                             if df is not None:
                                 all_data.append(df)
+                                # Incremental Save Support (Local/Manual run)
+                                # Note: This 'Netkeiba Logic' block calculates 'all_data' and saves at end.
+                                # To support incremental save here, we would need a callback or logic.
+                                # Check if 'save_nar_callback' is available in scope? No.
                                 print(f".", end="", flush=True) 
                             else:
                                 break

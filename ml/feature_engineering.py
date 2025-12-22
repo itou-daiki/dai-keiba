@@ -4,6 +4,36 @@ import os
 import math
 import re
 import zlib
+try:
+    from .venue_characteristics import (
+        get_venue_characteristics,
+        get_run_style_bias,
+        get_distance_bias,
+        get_distance_category
+    )
+    from .run_style_analyzer import (
+        analyze_horse_run_style,
+        get_run_style_code,
+        calculate_run_style_consistency
+    )
+    VENUE_ANALYSIS_AVAILABLE = True
+except ImportError:
+    try:
+        from venue_characteristics import (
+            get_venue_characteristics,
+            get_run_style_bias,
+            get_distance_bias,
+            get_distance_category
+        )
+        from run_style_analyzer import (
+            analyze_horse_run_style,
+            get_run_style_code,
+            calculate_run_style_consistency
+        )
+        VENUE_ANALYSIS_AVAILABLE = True
+    except ImportError:
+        VENUE_ANALYSIS_AVAILABLE = False
+        print("Warning: venue_characteristics or run_style_analyzer not found.")
 
 def parse_time(t_str):
     if not isinstance(t_str, str):
@@ -258,6 +288,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
     # Feature Columns to generate
     # Added interval, speed
     features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather', 'weight_change', 'interval', 'speed']
+    feature_cols = []
     
     # Pre-process columns (Fill NaNs)
     for i in range(1, 6):
@@ -346,6 +377,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
         df[f'weighted_avg_{feat}'] = 0.0
         for i in range(1, 6):
             df[f'weighted_avg_{feat}'] += df[f"past_{i}_{feat}"] * norm_weights[i-1]
+        feature_cols.append(f'weighted_avg_{feat}')
 
     # ========== 新規特徴量: コース・馬場適性 ==========
 
@@ -571,6 +603,16 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
             return 0
 
         df['race_class'] = df['レース名'].apply(classify_race)
+        feature_cols.append('race_class') # Append single first
+
+    # Register new grouped features to feature_cols
+    feature_cols.extend([
+        'turf_compatibility', 'dirt_compatibility', 
+        'good_condition_avg', 'heavy_condition_avg', 
+        'distance_compatibility', 
+        'is_rest_comeback', 'is_consecutive', 'interval_category',
+        'jockey_compatibility'
+    ])
 
     # 9. 重賞フラグ
     df['is_graded'] = 0
@@ -842,13 +884,25 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
         df['condition_code'] = 1
         feature_cols.append('condition_code')
 
-    # ========== 血統特徴量 (Hashing) ==========
+    # ========== 新規特徴量: 騎手・調教師関連（続き） ==========
+
+    # 8. 乗り替わりフラグ（前走と騎手が違う場合）
+    df['is_jockey_change'] = 0
+    if '騎手' in df.columns and 'past_1_jockey' in df.columns:
+        curr_j = df['騎手'].astype(str).str.replace(r'[▲△☆◇★\d]', '', regex=True).str.strip()
+        past_j = df['past_1_jockey'].astype(str).str.replace(r'[▲△☆◇★\d]', '', regex=True).str.strip()
+        # If past is empty/nan, treat as 0 (no info) or 1? Treat as 0.
+        df['is_jockey_change'] = ((curr_j != past_j) & (past_j != "") & (curr_j != "")).astype(int)
+    feature_cols.append('is_jockey_change')
+
+    # ========== ID特徴量 (Hashing) ==========
     # 文字列を数値IDに変換してLightGBMのcategory/int特徴量として使用
     
     def hash_str_stable(s):
         if not isinstance(s, str): return 0
         return zlib.adler32(s.encode('utf-8')) & 0xffffffff # Ensure unsigned positive
 
+    # 血統
     for col in ['father', 'mother', 'bms']:
         feat_name = f"{col}_id"
         if col in df.columns:
@@ -856,6 +910,15 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
         else:
             df[feat_name] = 0
         feature_cols.append(feat_name)
+    
+    # 騎手・調教師ID
+    if '騎手' in df.columns:
+         df['jockey_id'] = df['騎手'].astype(str).apply(hash_str_stable)
+         feature_cols.append('jockey_id')
+    
+    if '厩舎' in df.columns: # Trainer
+         df['trainer_id'] = df['厩舎'].astype(str).apply(hash_str_stable)
+         feature_cols.append('trainer_id')
 
     # ========== 会場特性×馬タイプの相性特徴量 ==========
     # NOTE: これらの特徴量を使用するには、モデルを再学習する必要があります
@@ -882,50 +945,79 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
     else:
         venue_analysis_available = False
 
-    if use_venue_features and venue_analysis_available:
+    # ========== 脚質分析特徴量 (常に有効化) ==========
+    if VENUE_ANALYSIS_AVAILABLE:
         # 1. 馬の脚質を判定（過去5走のコーナー通過順から）
-        df['run_style'] = 'unknown'
-        df['run_style_code'] = 0
-        df['run_style_consistency'] = 0.0
-        df['avg_early_position'] = np.nan
-        df['position_change'] = np.nan
+        if 'run_style_code' not in df.columns:
+            df['run_style_cls'] = 'unknown' # Internal temp
+            df['run_style_code'] = 0
+            df['run_style_consistency'] = 0.0
+            df['avg_early_position'] = np.nan
+            df['position_change'] = np.nan
 
-        # グループ化して馬ごとに脚質を判定
-        for horse_name in df['馬名'].unique():
-            horse_mask = df['馬名'] == horse_name
+            # 一意な馬ごとに計算（少し重いが特徴量として有効）
+            # GroupBy apply is cleaner
+            def apply_run_style_analysis(sub_df):
+                # Take first row's past corners (since specific race row has past history)
+                # But wait, past_i_run_style columns are present in EACH row.
+                # All rows for the same horse in "database.csv" represent DIFFERENT races.
+                # BUT the "past_i_run_style" columns for a specific row are FOR THAT SNAPSHOT.
+                # So we can calculate row-by-row OR if history is static?
+                # Actually, `add_history_features` builds past_N columns relative to `date_dt`.
+                # So each row has the correct past N run styles for THAT moment.
+                # So we can just iterate rows or use apply on the dataframe columns!
+                pass
+            
+            # Using loop is slow but safe for now given existing logic structure.
+            # But iterating unique horses assumes past history is same? NO. 
+            # In database.csv, "past_1" changes for every race of the horse.
+            # So we must compute PER ROW.
+            
+            # Vectorized approach:
+            # Construct a list of 'corner_strings' for each row: [past_1_rs, past_2_rs, ...]
+            # Then map analyze_horse_run_style.
+            
+            p_cols = [f'past_{i}_run_style' for i in range(1, 6)]
+            # Filter cols that exist
+            p_cols = [c for c in p_cols if c in df.columns]
+            
+            if p_cols:
+                # Helper to process one row's corner list
+                def analyze_row_styles(row):
+                    # Get values
+                    corners = [str(row[c]) for c in p_cols if pd.notna(row[c]) and '-' in str(row[c])]
+                    if not corners: return 0, 0.0
+                    res = analyze_horse_run_style(corners)
+                    return get_run_style_code(res['primary_style']), res.get('style_distribution', {}).get(res['primary_style'], 0.0)
+                
+                # Apply (might catch settingWithCopy warning implies creating new df cols is safer)
+                # For speed, maybe just run_style_code?
+                # Let's use a simplified apply
+                results = df.apply(analyze_row_styles, axis=1, result_type='expand')
+                df['run_style_code'] = results[0].astype(int)
+                df['run_style_consistency'] = results[1]
+                
+                feature_cols.extend(['run_style_code', 'run_style_consistency'])
 
-            # 過去5走のコーナー通過順を取得
-            past_corners = []
-            for i in range(1, 6):
-                col = f'past_{i}_run_style'
-                if col in df.columns:
-                    # コーナー通過順があれば追加
-                    corners = df.loc[horse_mask, col].iloc[0] if horse_mask.any() else None
-                    if pd.notna(corners) and isinstance(corners, str) and '-' in str(corners):
-                        past_corners.append(str(corners))
-
-            # 脚質分析
-            if past_corners:
-                analysis = analyze_horse_run_style(past_corners)
-
-                df.loc[horse_mask, 'run_style'] = analysis['primary_style']
-                df.loc[horse_mask, 'run_style_code'] = get_run_style_code(analysis['primary_style'])
-                df.loc[horse_mask, 'run_style_consistency'] = max(analysis['style_distribution'].values()) if analysis['style_distribution'] else 0.0
-                df.loc[horse_mask, 'avg_early_position'] = analysis['avg_early_position']
-                df.loc[horse_mask, 'position_change'] = analysis['position_change']
-
-        feature_cols.extend(['run_style_code', 'run_style_consistency', 'avg_early_position', 'position_change'])
-
+    # ========== 会場特性×馬タイプの相性特徴量 ==========
+    if use_venue_features and VENUE_ANALYSIS_AVAILABLE:
+        # Load logic requires run_style string which we calculated above?
+        # Re-calc 'run_style' string from code if needed or map back?
+        # get_run_style_bias takes string.
+        # Let's map code to string if needed.
+        code_map = {1: 'nige', 2: 'senko', 3: 'sashi', 4: 'oikomi', 0: 'unknown'}
+        
         # 2. 会場×脚質の相性スコア
         df['venue_run_style_compatibility'] = 1.0
-
-        if '会場' in df.columns:
-            for idx, row in df.iterrows():
+        
+        if '会場' in df.columns and 'run_style_code' in df.columns:
+             for idx, row in df.iterrows():
                 venue = row['会場']
-                run_style = row['run_style']
+                rs_code = row['run_style_code']
+                run_style_str = code_map.get(rs_code, 'unknown')
 
-                if pd.notna(venue) and run_style != 'unknown':
-                    compatibility = get_run_style_bias(venue, run_style)
+                if pd.notna(venue) and run_style_str != 'unknown':
+                    compatibility = get_run_style_bias(venue, run_style_str)
                     df.at[idx, 'venue_run_style_compatibility'] = compatibility
 
         feature_cols.append('venue_run_style_compatibility')
