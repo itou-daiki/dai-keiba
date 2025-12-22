@@ -67,16 +67,21 @@ def calculate_confidence_score(ai_prob, model_meta):
     else:
         data_penalty = 0
 
-    # 予測確率による調整（極端な予測は信頼度高い）
-    if ai_prob < 0.1 or ai_prob > 0.9:
-        prob_bonus = 10  # 極端な予測は自信あり
-    elif 0.4 < ai_prob < 0.6:
-        prob_bonus = -10  # 中間的な予測は自信なし
-    else:
-        prob_bonus = 0
+    # 予測確率による調整（連続的な調整）
+    # 0.5から離れるほど信頼度が高い（モデルが確信を持っている）
+    # 0.5に近いほど信頼度が低い（モデルが迷っている）
+    distance_from_uncertain = abs(ai_prob - 0.5)
+
+    # 距離に基づく信頼度ボーナス: 0.5離れていると最大+15、0.0だと-15
+    # 式: (distance * 2 - 0.5) * 30 で、0.0→-15、0.25→0、0.5→+15
+    prob_bonus = (distance_from_uncertain * 2 - 0.25) * 30
+
+    # さらに極端な予測（<0.05 or >0.95）には追加ボーナス
+    if ai_prob < 0.05 or ai_prob > 0.95:
+        prob_bonus += 8
 
     confidence = base_confidence + data_penalty + prob_bonus
-    return max(0, min(100, confidence))  # 0-100の範囲に制限
+    return int(max(0, min(100, confidence)))  # 0-100の範囲に制限、整数化
 
 def load_schedule_data(mode="JRA"):
     json_path = os.path.join(os.path.dirname(__file__), "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
