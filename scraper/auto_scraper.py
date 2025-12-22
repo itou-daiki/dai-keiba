@@ -147,17 +147,24 @@ def scrape_race_data(race_id, mode="JRA"):
             # Warning if mismatch
             # print("Columns after rename:", df.columns)
 
-            # 列追加
-            df.insert(0, "日付", date_text)
-            df.insert(1, "会場", venue_text)
-            df.insert(2, "レース番号", race_num_text)
-            df.insert(3, "レース名", race_name_text)
-            df.insert(4, "重賞", grade_text)
-            df.insert(5, "コースタイプ", surface_type)
-            df.insert(6, "距離", distance)
-            df.insert(7, "回り", rotation)
-            df.insert(8, "天候", weather)
-            df.insert(9, "馬場状態", condition)
+            # 列追加 (既に存在する場合はスキップまたは上書き)
+            meta_cols = [
+                ("日付", date_text), ("会場", venue_text), ("レース番号", race_num_text),
+                ("レース名", race_name_text), ("重賞", grade_text), ("コースタイプ", surface_type),
+                ("距離", distance), ("回り", rotation), ("天候", weather), ("馬場状態", condition)
+            ]
+            
+            # 挿入位置(0から順に)
+            # insertを使うと既存列は右にずれるため、0番目に順次追加する場合、
+            # 逆順に入れるか、インデックスをずらすか。
+            # 元のコード: df.insert(0, ...), df.insert(1, ...) 
+            # これは 0に入れた後、次のinsert(1)は「新0番目の次」に入れる。つまり先頭から順に並ぶ。
+            
+            for i, (col, val) in enumerate(meta_cols):
+                if col not in df.columns:
+                    df.insert(i, col, val)
+                else:
+                    df[col] = val
             
             # Additional Bloodline Columns (Empty init)
             df["father"] = ""
