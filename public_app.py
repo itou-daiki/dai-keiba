@@ -1043,113 +1043,144 @@ if race_id:
         st.markdown("---")
         st.subheader("🔍 個別馬の詳細分析")
 
-        try:
-            # 1. Select a horse for detailed analysis
-            st.info("💡 下記から馬を選択すると、能力チャートと過去5走の推移グラフが表示されます")
-            horse_options = df_display['馬名'].tolist()
-            selected_horse_name = st.selectbox("🐴 詳細を見る馬を選択", horse_options, key="horse_select")
-            
+        # ヘルパー関数：馬の詳細分析を生成
+        def create_horse_analysis(horse_name, df_display, edited_df):
+            """個別馬の能力チャートと過去5走の推移を生成"""
             # Find row
-            row = df_display[df_display['馬名'] == selected_horse_name].iloc[0]
-            
-            # 2. Radar Chart (5 Axes)
-            # Speed (Real), Stamina/Form (Rank), Jockey, Course, Distance
-            
+            row = df_display[df_display['馬名'] == horse_name].iloc[0]
+
             # --- Scoring Logic (Lower rank is better, so Invert) ---
-            # Rank 1 -> Score 10, Rank 10 -> Score 1, Rank 18 -> 0
             def rank_to_score(r):
                 if pd.isna(r) or r > 18: return 0
-                return max(0, min(10, (14 - r) * (10/13))) # Approx 1->10, 14->0
+                return max(0, min(10, (14 - r) * (10/13)))
 
-            # Speed: 16.0 is baseline. >17 is fast? <15 slow?
-            # 1000m/60s = 16.6. 
+            # Calculate scores
             sp_val = row.get('weighted_avg_speed', 16.0)
-            score_speed = max(0, min(10, (sp_val - 15.0) * 5)) # 17.0->10, 15.0->0
-
+            score_speed = max(0, min(10, (sp_val - 15.0) * 5))
             j_val = row.get('jockey_compatibility', 10.0)
             score_jockey = rank_to_score(j_val)
-            
-            c_val = row.get('course_compatibility', 10.0) # Calculated above but only in display_df... wait, we are accessing df_display row.
-            # We added 'course_compatibility' to df_display in UI section.
-            # Re-calculate here if needed OR ensure row comes from df_display.
-            # row comes from df_display!
+            c_val = row.get('course_compatibility', 10.0)
             score_course = rank_to_score(c_val)
-            
             d_val = row.get('distance_compatibility', 10.0)
             score_dist = rank_to_score(d_val)
-            
             rank_val = row.get('weighted_avg_rank', 10.0)
             score_form = rank_to_score(rank_val)
 
+            # Radar Chart
             fig_radar = go.Figure()
             fig_radar.add_trace(go.Scatterpolar(
                 r=[score_speed, score_form, score_jockey, score_course, score_dist, score_speed],
                 theta=['スピード', '実績(着順)', '騎手相性', 'コース適性', '距離適性'],
                 fill='toself',
-                name=selected_horse_name
+                name=horse_name,
+                line=dict(color='#1f77b4')
             ))
             fig_radar.update_layout(
-                polar=dict(radialaxis=dict(visible=True, range=[0, 10])), 
-                title=f"能力チャート: {selected_horse_name}"
+                polar=dict(radialaxis=dict(visible=True, range=[0, 10])),
+                height=300,
+                margin=dict(l=40, r=40, t=40, b=40)
             )
-            
-            # 3. Multi-Axis Line Chart (Past 5 Runs)
+
+            # Past 5 Runs Line Chart
             history_data = []
-            for i in range(5, 0, -1): # Chronological 5->1 (Oldest to Newest)
+            for i in range(5, 0, -1):
                 if f"past_{i}_rank" in row and pd.notna(row[f"past_{i}_rank"]):
-                     history_data.append({
-                         "Run": f"{i}走前",
-                         "着順": row[f"past_{i}_rank"],
-                         "3Fタイム": row[f"past_{i}_last_3f"],
-                         "馬体重": row[f"past_{i}_horse_weight"]
-                     })
-            
+                    history_data.append({
+                        "Run": f"{i}走前",
+                        "着順": row[f"past_{i}_rank"],
+                        "3Fタイム": row[f"past_{i}_last_3f"]
+                    })
+
             if history_data:
                 hist_df = pd.DataFrame(history_data)
-                
-                # Plotly with Secondary Y
                 from plotly.subplots import make_subplots
                 fig_line = make_subplots(specs=[[{"secondary_y": True}]])
-                
-                # Rank (Left Y, Inverted)
-                fig_line.add_trace(go.Scatter(x=hist_df['Run'], y=hist_df['着順'], name="着順", mode='lines+markers'), secondary_y=False)
-                
-                # 3F (Right Y)
-                fig_line.add_trace(go.Scatter(x=hist_df['Run'], y=hist_df['3Fタイム'], name="上り3F", mode='lines+markers', line=dict(dash='dot')), secondary_y=True)
-                
-                fig_line.update_layout(title="過去5走の推移 (着順 vs 3Fタイム)")
-                fig_line.update_yaxes(title_text="着順 (低い方が良い)", autorange="reversed", secondary_y=False)
-                fig_line.update_yaxes(title_text="上り3Fタイム (秒)", secondary_y=True)
-                
+                fig_line.add_trace(go.Scatter(x=hist_df['Run'], y=hist_df['着順'], name="着順", mode='lines+markers', line=dict(color='#ff7f0e')), secondary_y=False)
+                fig_line.add_trace(go.Scatter(x=hist_df['Run'], y=hist_df['3Fタイム'], name="上り3F", mode='lines+markers', line=dict(dash='dot', color='#2ca02c')), secondary_y=True)
+                fig_line.update_layout(height=300, margin=dict(l=40, r=40, t=40, b=40))
+                fig_line.update_yaxes(title_text="着順", autorange="reversed", secondary_y=False)
+                fig_line.update_yaxes(title_text="上り3F (秒)", secondary_y=True)
             else:
                 fig_line = go.Figure()
-                fig_line.add_annotation(text="詳細な過去データがありません")
+                fig_line.add_annotation(text="過去データなし")
+                fig_line.update_layout(height=300)
 
-            col_viz1, col_viz2 = st.columns(2)
-            with col_viz1:
-                st.markdown("##### 能力チャート")
-                st.plotly_chart(fig_radar, use_container_width=True)
-            with col_viz2:
-                st.markdown("##### 過去5走の推移")
-                st.plotly_chart(fig_line, use_container_width=True)
+            # Get prediction summary
+            pred_row = edited_df[edited_df['馬名'] == horse_name].iloc[0]
 
-            # 馬の基本情報とAI予測結果のサマリー
+            return fig_radar, fig_line, pred_row
+
+        try:
+            # === デフォルトでTOP5を表示 ===
+            st.info("💡 AI期待度（EV）上位5頭の詳細分析を表示しています")
+
+            top5_horses = top5_df['馬名'].tolist()
+
+            for idx, horse_name in enumerate(top5_horses):
+                with st.expander(f"**{idx+1}位: {horse_name}**", expanded=(idx < 2)):  # 1-2位は展開表示
+                    fig_radar, fig_line, pred_row = create_horse_analysis(horse_name, df_display, edited_df)
+
+                    # Prediction Summary
+                    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+                    with col_s1:
+                        st.metric("AI勝率", f"{pred_row['AIスコア(%)']}%")
+                    with col_s2:
+                        st.metric("信頼度", f"{pred_row['信頼度']}%")
+                    with col_s3:
+                        ev_val = pred_row['期待値(EV)']
+                        ev_delta = "買い推奨" if ev_val > 0 else "見送り"
+                        st.metric("期待値(EV)", f"{ev_val:.2f}", delta=ev_delta)
+                    with col_s4:
+                        odds_val = pred_row.get('現在オッズ', 0.0)
+                        st.metric("現在オッズ", f"{odds_val:.1f}倍")
+
+                    # Charts
+                    col_c1, col_c2 = st.columns(2)
+                    with col_c1:
+                        st.markdown("**能力チャート**")
+                        st.plotly_chart(fig_radar, use_container_width=True)
+                    with col_c2:
+                        st.markdown("**過去5走の推移**")
+                        st.plotly_chart(fig_line, use_container_width=True)
+
+            # === その他の馬を選択 ===
             st.markdown("---")
-            st.markdown("##### 📝 予測サマリー")
-            selected_row = edited_df[edited_df['馬名'] == selected_horse_name].iloc[0]
+            st.markdown("#### 🐴 その他の馬を詳しく見る")
 
-            col_s1, col_s2, col_s3, col_s4 = st.columns(4)
-            with col_s1:
-                st.metric("AI勝率", f"{selected_row['AIスコア(%)']}%")
-            with col_s2:
-                st.metric("信頼度", f"{selected_row['信頼度']}%")
-            with col_s3:
-                ev_val = selected_row['期待値(EV)']
-                ev_delta = "買い推奨" if ev_val > 0 else "見送り"
-                st.metric("期待値(EV)", f"{ev_val:.2f}", delta=ev_delta)
-            with col_s4:
-                odds_val = selected_row.get('現在オッズ', 0.0)
-                st.metric("現在オッズ", f"{odds_val:.1f}倍")
+            other_horses = [h for h in df_display['馬名'].tolist() if h not in top5_horses]
+
+            if other_horses:
+                selected_other = st.selectbox("馬を選択", ["選択してください"] + other_horses, key="other_horse_select")
+
+                if selected_other != "選択してください":
+                    fig_radar, fig_line, pred_row = create_horse_analysis(selected_other, df_display, edited_df)
+
+                    st.markdown(f"##### 📝 {selected_other} の詳細")
+
+                    # Prediction Summary
+                    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+                    with col_s1:
+                        st.metric("AI勝率", f"{pred_row['AIスコア(%)']}%")
+                    with col_s2:
+                        st.metric("信頼度", f"{pred_row['信頼度']}%")
+                    with col_s3:
+                        ev_val = pred_row['期待値(EV)']
+                        ev_delta = "買い推奨" if ev_val > 0 else "見送り"
+                        st.metric("期待値(EV)", f"{ev_val:.2f}", delta=ev_delta)
+                    with col_s4:
+                        odds_val = pred_row.get('現在オッズ', 0.0)
+                        st.metric("現在オッズ", f"{odds_val:.1f}倍")
+
+                    # Charts
+                    col_c1, col_c2 = st.columns(2)
+                    with col_c1:
+                        st.markdown("**能力チャート**")
+                        st.plotly_chart(fig_radar, use_container_width=True)
+                    with col_c2:
+                        st.markdown("**過去5走の推移**")
+                        st.plotly_chart(fig_line, use_container_width=True)
+            else:
+                st.info("すべての馬がTOP5に含まれています")
 
         except Exception as e:
             st.warning(f"可視化エラー: {e}")
