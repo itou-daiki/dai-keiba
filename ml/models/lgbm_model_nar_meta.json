@@ -1,55 +1,118 @@
 {
-  "model_id": "lgbm_model_nar_v1",
+  "model_id": "lgbm_model_nar",
   "model_type": "LightGBM Binary Classification",
-  "target": "top3_finish",
-  "trained_at": "2025-12-21T15:28:00Z",
-  "data_source": "database_nar.csv",
+  "target": "target_win",
+  "trained_at": "2025-12-24T05:29:47.243334",
+  "data_source": "processed_data_nar.csv",
   "data_stats": {
-    "total_records": 2175,
-    "date_range": "2023-2025",
-    "train_test_split": "80:20"
+    "total_records": 29504,
+    "train_records": 29504,
+    "test_records": 5901,
+    "win_rate": 0.09629202819956616
   },
   "performance": {
-    "auc": 0.765,
-    "accuracy": 0.84,
-    "precision": 0.79,
-    "recall": 0.73,
-    "note": "Estimated - needs verification with TimeSeriesSplit"
+    "auc": 0.9735916245973987,
+    "accuracy": 0.8625656668361295,
+    "precision": 0.41387024608501116,
+    "recall": 0.9568965517241379,
+    "f1": 0.5778240499739719,
+    "brier_score": 0.09502918029614203,
+    "log_loss": 0.31267497558513097
   },
-  "features": {
-    "count": 27,
-    "categories": [
-      "weighted_avg_rank (past 5 races)",
-      "weighted_avg_speed",
-      "weighted_avg_last_3f",
-      "jockey_compatibility",
-      "distance_compatibility",
-      "turf/dirt_compatibility",
-      "course_compatibility",
-      "age",
-      "past_performance_indicators"
-    ]
+  "cv_results": {
+    "auc": {
+      "mean": 0.714010022755366,
+      "std": 0.015414060321796647
+    },
+    "accuracy": {
+      "mean": 0.7768964815944681,
+      "std": 0.04801621787486785
+    },
+    "precision": {
+      "mean": 0.20047990002071753,
+      "std": 0.014223618346378586
+    },
+    "recall": {
+      "mean": 0.428891105931865,
+      "std": 0.1269028725332007
+    },
+    "f1": {
+      "mean": 0.2639479722210833,
+      "std": 0.026675019719702497
+    },
+    "brier": {
+      "mean": 0.14841005804823762,
+      "std": 0.013157769661547265
+    },
+    "logloss": {
+      "mean": 0.45596452287578987,
+      "std": 0.026582630869100374
+    }
   },
+  "features": [
+    "weighted_avg_rank",
+    "weighted_avg_run_style",
+    "weighted_avg_last_3f",
+    "weighted_avg_horse_weight",
+    "weighted_avg_odds",
+    "weighted_avg_weather",
+    "weighted_avg_weight_change",
+    "weighted_avg_interval",
+    "weighted_avg_speed",
+    "turf_compatibility",
+    "dirt_compatibility",
+    "good_condition_avg",
+    "heavy_condition_avg",
+    "distance_compatibility",
+    "is_rest_comeback",
+    "interval_category",
+    "is_consecutive",
+    "jockey_compatibility",
+    "race_class",
+    "is_graded",
+    "age_limit",
+    "race_type_code",
+    "jra_compatibility",
+    "nar_compatibility",
+    "is_jra_transfer",
+    "last_race_reliability",
+    "best_similar_course_rank",
+    "growth_factor",
+    "last_race_performance",
+    "rank_trend",
+    "age",
+    "course_type_code",
+    "distance_val",
+    "rotation_code",
+    "weather_code",
+    "condition_code",
+    "is_jockey_change",
+    "father_id",
+    "mother_id",
+    "bms_id",
+    "jockey_id",
+    "trainer_id",
+    "run_style_code",
+    "run_style_consistency"
+  ],
   "hyperparameters": {
     "objective": "binary",
     "metric": "auc",
-    "num_leaves": 31,
-    "learning_rate": 0.05,
-    "feature_fraction": 0.9,
-    "bagging_fraction": 0.8,
-    "bagging_freq": 5
+    "boosting_type": "gbdt",
+    "verbose": -1,
+    "num_leaves": 64,
+    "learning_rate": 0.04420531731227218,
+    "feature_fraction": 0.7148086979921427,
+    "bagging_fraction": 0.5353902484364821,
+    "bagging_freq": 2,
+    "is_unbalance": true,
+    "min_child_samples": 49
   },
-  "warnings": [
-    "⚠️ 地方競馬は波乱が多く、予測の不確実性が高い",
-    "⚠️ データ量は中規模（2175レコード）- さらに増やすと精度向上",
-    "⚠️ TimeSeriesSplit推奨（現在はランダム分割の可能性）"
-  ],
-  "update_history": [
-    {
-      "date": "2025-12-21",
-      "version": "v1",
-      "changes": "Initial model creation",
-      "auc": 0.765
-    }
-  ]
+  "training_config": {
+    "use_timeseries_split": true,
+    "n_folds": 5,
+    "num_boost_round": 300,
+    "early_stopping_rounds": 30
+  },
+  "warnings": []
 }
