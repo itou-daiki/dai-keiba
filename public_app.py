@@ -340,9 +340,9 @@ if race_id:
                 status_text.success("✅ ステップ 1/4: 出馬表データを取得しました")
 
                 # ステップ2: 特徴量エンジニアリング
-                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア等）...")
+                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア、会場特性等）...")
                 progress_bar.progress(50)
-                X_df = process_data(df, use_venue_features=False)
+                X_df = process_data(df, use_venue_features=True)
                 status_text.success("✅ ステップ 2/4: 特徴量計算が完了しました")
 
                 # ステップ3: AI予測
