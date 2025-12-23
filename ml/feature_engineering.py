@@ -914,11 +914,15 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
     # 騎手・調教師ID
     if '騎手' in df.columns:
          df['jockey_id'] = df['騎手'].astype(str).apply(hash_str_stable)
-         feature_cols.append('jockey_id')
+    else:
+         df['jockey_id'] = 0
+    feature_cols.append('jockey_id')
     
     if '厩舎' in df.columns: # Trainer
          df['trainer_id'] = df['厩舎'].astype(str).apply(hash_str_stable)
-         feature_cols.append('trainer_id')
+    else:
+         df['trainer_id'] = 0
+    feature_cols.append('trainer_id')
 
     # ========== 会場特性×馬タイプの相性特徴量 ==========
     # NOTE: これらの特徴量を使用するには、モデルを再学習する必要があります
@@ -1142,7 +1146,7 @@ def calculate_features(input_csv, output_path, lambda_decay=0.5):
     print(f"Loading {input_csv}...")
     df = pd.read_csv(input_csv)
     
-    processed = process_data(df, lambda_decay)
+    processed = process_data(df, lambda_decay, use_venue_features=True)
     
     # For training, we need binary target
     # 変更: 3着以内 → 1着のみ（単勝予測に適した設定）
