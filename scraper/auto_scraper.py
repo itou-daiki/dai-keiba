@@ -627,7 +627,7 @@ def scrape_odds_for_race(race_id, mode="JRA"):
     return horses
 
 
-def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None):
+def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None, existing_race_ids=None):
     """
     Scrapes NAR races for a given year.
     Iterates every day.
@@ -677,6 +677,11 @@ def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None
                     print(f"  Found {len(race_ids)} races.")
                     
                     for rid in race_ids:
+                        # Skip if already exists
+                        if existing_race_ids and rid in existing_race_ids:
+                             print(f"    Skipping {rid} (Already exists)")
+                             continue
+
                         # Scrape Result
                         df = scrape_race_data(rid, mode="NAR")
                         if df is not None and not df.empty:
