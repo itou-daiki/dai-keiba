@@ -189,6 +189,10 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
             if params:
                 lgb_params.update(params)
 
+            # Conflict resolution: scale_pos_weight cannot be used with is_unbalance
+            if 'scale_pos_weight' in lgb_params:
+                lgb_params['is_unbalance'] = False
+
             # Train
             bst = lgb.train(
                 lgb_params,
@@ -259,6 +263,10 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
 
     if params:
         lgb_params.update(params)
+
+    # Conflict resolution: scale_pos_weight cannot be used with is_unbalance
+    if 'scale_pos_weight' in lgb_params:
+        lgb_params['is_unbalance'] = False
 
     evals_result = {}
 
