@@ -365,8 +365,11 @@ with tab_upload:
              st.error(f"モデルファイルが見つかりません: {model_path_rel}")
              st.stop()
         
+        # Metadata path
+        meta_path_rel = model_path_rel.replace('.pkl', '_meta.json')
+
         cmds = [
-            ["git", "add", model_path_rel],
+            ["git", "add", model_path_rel, meta_path_rel],
             ["git", "commit", "-m", commit_msg],
             ["git", "push", "origin", "main"] # Start with main
         ]
@@ -381,9 +384,11 @@ with tab_upload:
                 if result.returncode == 0:
                     status_area.success(f"OK: {' '.join(cmd)}")
                 else:
-                    # git commit returns 1 if nothing to commit, which is fine-ish but we should warn
-                    if "nothing to commit" in result.stdout:
-                         status_area.info(f"Info: {result.stdout}")
+                    # git commit returns 1 if nothing to commit
+                    # Check both stdout and stderr for common "clean" messages
+                    out_err = (result.stdout + result.stderr).lower()
+                    if "nothing to commit" in out_err or "working tree clean" in out_err:
+                         status_area.info(f"Info: No changes to commit.")
                     else:
                         status_area.error(f"Error: {' '.join(cmd)}\n{result.stderr}")
                         all_success = False
