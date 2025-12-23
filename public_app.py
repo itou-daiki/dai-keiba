@@ -449,7 +449,23 @@ if race_id:
         # レース基本情報
         col_r1, col_r2, col_r3, col_r4 = st.columns(4)
         with col_r1:
-            venue = df_display['会場'].iloc[0] if '会場' in df_display.columns else "不明"
+            # Try multiple possible column names for venue
+            venue = "不明"
+            for col in ['会場', 'venue', '競馬場', '場所']:
+                if col in df_display.columns and len(df_display) > 0:
+                    venue = df_display[col].iloc[0]
+                    if pd.notna(venue) and venue != "":
+                        break
+
+            # If still unknown, try to extract from race_id (first 4 digits indicate place code)
+            if venue == "不明" and race_id and len(race_id) >= 6:
+                place_code = int(race_id[4:6])
+                place_map = {
+                    1: "札幌", 2: "函館", 3: "福島", 4: "新潟", 5: "東京",
+                    6: "中山", 7: "中京", 8: "京都", 9: "阪神", 10: "小倉"
+                }
+                venue = place_map.get(place_code, "不明")
+
             st.metric("開催場", venue)
         with col_r2:
             race_name = df_display['レース名'].iloc[0] if 'レース名' in df_display.columns else "不明"
@@ -602,15 +618,16 @@ if race_id:
             if c not in df_display.columns:
                 df_display[c] = v
 
+        # Add Mark column BEFORE selecting display columns
+        if '予想印' not in df_display.columns:
+            df_display['予想印'] = ""
 
-        display_cols = ['枠', '馬 番', '馬名', '性齢', 'AI_Score', 'Confidence', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
+        # Display columns with 予想印 next to 馬名
+        display_cols = ['枠', '馬 番', '馬名', '予想印', '性齢', 'AI_Score', 'Confidence', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
 
-        
+
         edited_df = df_display[display_cols].copy()
         edited_df.rename(columns=rename_map, inplace=True)
-        
-        # Add Mark column
-        edited_df['予想印'] = ""
         
         st.subheader("📝 予想・オッズ入力")
         
