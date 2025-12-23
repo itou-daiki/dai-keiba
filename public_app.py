@@ -468,6 +468,93 @@ if race_id:
             max_ai_score = df_display['AI_Score'].max()
             st.info(f"📊 **AI予測サマリー**: 最高AI勝率 {max_ai_score}% | 平均信頼度 {avg_confidence:.0f}%")
 
+        # コース特性の詳細表示
+        venue = df_display['会場'].iloc[0] if '会場' in df_display.columns else None
+        if venue:
+            try:
+                from ml.venue_characteristics import get_venue_characteristics
+                venue_char = get_venue_characteristics(venue)
+
+                if venue_char:
+                    st.markdown("#### 🏟️ コース特性")
+
+                    col_c1, col_c2, col_c3, col_c4 = st.columns(4)
+
+                    # 直線距離
+                    with col_c1:
+                        straight = venue_char.get('turf_straight', 0)
+                        if straight:
+                            straight_label = "長い" if straight > 500 else "短い" if straight < 300 else "標準"
+                            st.metric("直線距離", f"{straight}m", delta=straight_label)
+                        else:
+                            st.metric("直線距離", "不明")
+
+                    # 勾配（傾斜）
+                    with col_c2:
+                        slope = venue_char.get('slope', 'normal')
+                        slope_map = {
+                            'steep': '急坂あり',
+                            'moderate': '緩やかな坂',
+                            'flat': '平坦',
+                            'normal': '標準'
+                        }
+                        slope_label = slope_map.get(slope, slope)
+                        slope_icon = "⛰️" if slope == 'steep' else "🏔️" if slope == 'moderate' else "━"
+                        st.metric("勾配（傾斜）", slope_label, delta=slope_icon)
+
+                    # コース幅
+                    with col_c3:
+                        track_width = venue_char.get('track_width', 'standard')
+                        width_map = {
+                            'narrow': '小回り',
+                            'standard': '標準',
+                            'wide': '広いコース'
+                        }
+                        width_label = width_map.get(track_width, track_width)
+                        st.metric("コース幅", width_label)
+
+                    # 外枠有利度
+                    with col_c4:
+                        outer_advantage = venue_char.get('outer_track_advantage', 1.0)
+                        if outer_advantage > 1.05:
+                            outer_label = "外枠有利"
+                            outer_delta = "↑"
+                        elif outer_advantage < 0.95:
+                            outer_label = "内枠有利"
+                            outer_delta = "↓"
+                        else:
+                            outer_label = "公平"
+                            outer_delta = "="
+                        st.metric("枠番傾向", outer_label, delta=outer_delta)
+
+                    # 特性の影響説明
+                    with st.expander("💡 このコース特性がEV計算に与える影響", expanded=False):
+                        st.markdown(f"""
+                        #### 🏟️ {venue}の特性
+
+                        **1. 直線距離: {straight}m ({straight_label})**
+                        - 長い直線（500m以上）: 人気馬やや不利 (-5%)、穴馬やや有利 (+5%)
+                        - 短い直線（300m未満）: 人気馬有利 (+5%)、穴馬不利 (-5%)
+                        - 理由: 長い直線は差し馬に有利、短い直線は逃げ・先行馬に有利
+
+                        **2. 勾配（傾斜）: {slope_label}**
+                        - 急坂あり: 人気馬（パワーがある馬）が有利 (+2%)
+                        - 理由: 坂を登る際に馬力が必要で、実績馬が優位
+                        - 該当競馬場: 中山、阪神など
+
+                        **3. コース幅: {width_label}**
+                        - 小回り: 人気馬やや有利 (+3%)
+                        - 理由: コーナーが多く、器用さが求められる
+
+                        **4. 枠番傾向: {outer_label}**
+                        - 外枠有利な場合: 6-8枠の馬の確率を調整 (×{outer_advantage:.2f})
+                        - 内枠有利な場合: 1-3枠の馬の確率を調整
+
+                        ⚠️ これらの調整は期待値(EV)計算時に自動的に適用されています。
+                        """)
+            except Exception as e:
+                pass  # venue_characteristics が利用できない場合はスキップ
+
         # Prepare Editor DF
         # Columns: Horse, Prob, Odds, Mark
         if 'Odds' not in df_display.columns:
@@ -906,6 +993,20 @@ if race_id:
             - 5.0以下: 良好
             - 7.0以上: やや不安
             - 10.0: データ不足（デフォルト値）
+
+            **5. コース特性（傾斜・直線距離・コース幅・枠番）**
+            - **勾配（傾斜）**: 急坂ありの競馬場では人気馬が有利（+2%）
+              - 中山、阪神など: 坂でパワーが必要なため実績馬が優位
+            - **直線距離**:
+              - 長い直線（500m以上）: 差し馬有利、穴馬チャンス（人気馬-5%、穴馬+5%）
+              - 短い直線（300m未満）: 逃げ・先行馬有利、人気馬堅い（人気馬+5%）
+            - **コース幅**:
+              - 小回りコース: コーナーが多く器用な馬が有利（人気馬+3%）
+            - **枠番傾向**:
+              - 外枠有利な競馬場: 6-8枠の確率を上方調整
+              - 内枠有利な競馬場: 1-3枠の確率を上方調整
+
+            ⚠️ **これらのコース特性は、レース概要セクションで確認できます**
 
             ### 🎯 推奨される使い方
 
