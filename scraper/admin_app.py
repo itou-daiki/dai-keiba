@@ -310,7 +310,7 @@ with tab_ml:
         m_col1, m_col2, m_col3 = st.columns(3)
         m_col1.metric("Accuracy", f"{res['accuracy']:.4f}")
         m_col2.metric("AUC", f"{res['auc']:.4f}")
-        m_col3.metric("Positive Rate", f"{res['positive_rate']:.2%}")
+        m_col3.metric("Positive Rate", f"{res.get('win_rate', 0.0):.2%}")
         
         p_col1, p_col2 = st.columns(2)
         with p_col1:
