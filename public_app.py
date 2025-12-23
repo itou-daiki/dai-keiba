@@ -339,11 +339,20 @@ if race_id:
             if df is not None and not df.empty:
                 status_text.success("✅ ステップ 1/4: 出馬表データを取得しました")
 
+                # デバッグ: 元のデータサイズを確認
+                st.write(f"DEBUG: スクレイピング後のdf.shape = {df.shape}")
+                st.write(f"DEBUG: 馬名のユニーク数 = {df['馬名'].nunique()}")
+
                 # ステップ2: 特徴量エンジニアリング
                 status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア、会場特性等）...")
                 progress_bar.progress(50)
                 X_df = process_data(df, use_venue_features=True)
                 status_text.success("✅ ステップ 2/4: 特徴量計算が完了しました")
+
+                # デバッグ: 特徴量計算後のサイズを確認
+                st.write(f"DEBUG: process_data後のX_df.shape = {X_df.shape}")
+                st.write(f"DEBUG: X_dfの列数 = {len(X_df.columns)}")
+                st.write(f"DEBUG: X_dfの列名 = {list(X_df.columns)}")
 
                 # ステップ3: AI予測
                 status_text.info("**ステップ 3/4:** AIモデルで勝率を予測中...")
@@ -357,15 +366,24 @@ if race_id:
                         # Model expects features used in training.
                         # Features: weighted_avg_... + age
                         # We should robustly select.
-                        
+
                         # Identify feature cols from X_df
                         # Exclude non-numeric and 'rank'
                         meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
                         features = [c for c in X_df.columns if c not in meta_cols and c != 'target_win']
                         # Ensure numeric
                         X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
-                        
+
+                        # デバッグ: 予測用特徴量の確認
+                        st.write(f"DEBUG: X_pred.shape = {X_pred.shape}")
+                        st.write(f"DEBUG: 特徴量数 = {X_pred.shape[1]}")
+                        st.write(f"DEBUG: 特徴量名 = {list(X_pred.columns)}")
+
                         probs = model.predict(X_pred)
+
+                        # デバッグ: 予測結果の確認
+                        st.write(f"DEBUG: 予測成功！probs.shape = {probs.shape}")
+                        st.write(f"DEBUG: probs = {probs}")
 
                         df['AI_Prob'] = probs
                         df['AI_Score'] = (probs * 100).astype(int)
