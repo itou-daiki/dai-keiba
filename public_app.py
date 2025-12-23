@@ -315,23 +315,40 @@ if race_id:
         else:
             st.info("モデルメタデータが見つかりません")
 
-    button_analyze = st.button("🚀 このレースを分析する (データ取得・AI予測)")
-    
+    button_analyze = st.button("🚀 このレースを分析する (データ取得・AI予測)", type="primary", use_container_width=True)
+
     if button_analyze:
         if not race_id:
              st.error("レースIDが選択されていません。")
         elif not model:
              st.error(f"モデル ({mode_val}) が読み込めませんでした。管理画面で学習を実行するか、モデルファイルを確認してください。")
         else:
-            with st.spinner("出馬表を取得し、AI予測を実行中..."):
-                # Scrape Shutuba
-                df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
-            
+            # === 処理フローの可視化 ===
+            st.markdown("---")
+            st.subheader("🔄 AI予測処理フロー")
+
+            # ステップ表示用のプログレスバー
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+
+            # ステップ1: データ取得
+            status_text.info("**ステップ 1/4:** 出馬表データを取得中...")
+            progress_bar.progress(25)
+            df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
+
             if df is not None and not df.empty:
-                # 2. FE (use_venue_features=False to match existing model trained with 27 features)
+                status_text.success("✅ ステップ 1/4: 出馬表データを取得しました")
+
+                # ステップ2: 特徴量エンジニアリング
+                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア等）...")
+                progress_bar.progress(50)
                 X_df = process_data(df, use_venue_features=False)
-                
-                # 3. Predict
+                status_text.success("✅ ステップ 2/4: 特徴量計算が完了しました")
+
+                # ステップ3: AI予測
+                status_text.info("**ステップ 3/4:** AIモデルで勝率を予測中...")
+                progress_bar.progress(75)
+
                 if model:
                     try:
                         # Drop meta cols for prediction
@@ -381,6 +398,12 @@ if race_id:
 
                         df['Confidence'] = confidences
 
+                        status_text.success("✅ ステップ 3/4: AI予測が完了しました")
+
+                        # ステップ4: 信頼度スコア計算
+                        status_text.info("**ステップ 4/4:** 予測信頼度を計算中...")
+                        progress_bar.progress(100)
+
                         # Merge features back to df for display
                         # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
                         cols_to_merge = [
@@ -392,26 +415,59 @@ if race_id:
                             if c in X_df.columns:
                                 df[c] = X_df[c]
 
-                        
+
+                        status_text.success("✅ ステップ 4/4: すべての処理が完了しました！")
+                        progress_bar.progress(100)
+
                     except Exception as e:
-                        st.error(f"Prediction Error: {e}")
+                        status_text.error(f"❌ 予測エラー: {e}")
                         df['AI_Prob'] = 0.0
                         df['AI_Score'] = 0.0
                 else:
-                    st.warning("モデルが見つかりません。予測スキップ。")
+                    status_text.warning("モデルが見つかりません。予測スキップ。")
                     df['AI_Prob'] = 0.0
                     df['AI_Score'] = 0.0
 
                 # 4. Display
                 # Store in session state to persist edits
                 st.session_state[f'data_{race_id}'] = df
+
+                # 完了メッセージ
+                st.markdown("---")
+                st.success("🎉 **AI分析が完了しました！** 下記の結果をご確認ください。")
             else:
                 st.error("データの取得に失敗しました。")
 
     # Show Data if available
     if f'data_{race_id}' in st.session_state:
         df_display = st.session_state[f'data_{race_id}'].copy()
-        
+
+        # === レース概要の表示 ===
+        st.markdown("---")
+        st.subheader("🏇 レース概要")
+
+        # レース基本情報
+        col_r1, col_r2, col_r3, col_r4 = st.columns(4)
+        with col_r1:
+            venue = df_display['会場'].iloc[0] if '会場' in df_display.columns else "不明"
+            st.metric("開催場", venue)
+        with col_r2:
+            race_name = df_display['レース名'].iloc[0] if 'レース名' in df_display.columns else "不明"
+            st.metric("レース名", race_name if len(str(race_name)) < 20 else str(race_name)[:17] + "...")
+        with col_r3:
+            course_type = df_display['コースタイプ'].iloc[0] if 'コースタイプ' in df_display.columns else "不明"
+            distance = df_display['距離'].iloc[0] if '距離' in df_display.columns else "不明"
+            st.metric("コース", f"{course_type} {distance}m")
+        with col_r4:
+            num_horses = len(df_display)
+            st.metric("出走頭数", f"{num_horses}頭")
+
+        # AI予測サマリー
+        if 'AI_Score' in df_display.columns and 'Confidence' in df_display.columns:
+            avg_confidence = df_display['Confidence'].mean()
+            max_ai_score = df_display['AI_Score'].max()
+            st.info(f"📊 **AI予測サマリー**: 最高AI勝率 {max_ai_score}% | 平均信頼度 {avg_confidence:.0f}%")
+
         # Prepare Editor DF
         # Columns: Horse, Prob, Odds, Mark
         if 'Odds' not in df_display.columns:
@@ -723,31 +779,174 @@ if race_id:
         edited_df['期待値(EV)'] = evs
         edited_df['推奨度(Kelly)'] = kellys
 
-        
-        # Highlight high EV
-        def highlight_ev(s):
-            is_high = s > 0
-            return ['background-color: #d4edda' if v else '' for v in is_high]
-        
+        # === AI期待度TOP5のグラフ（デフォルト表示） ===
+        st.markdown("---")
+        st.subheader("📊 AI期待度 TOP5 分析")
+
+        # TOP5を期待値(EV)でソート
+        top5_df = edited_df.nlargest(5, '期待値(EV)')
+
+        # 1. 横棒グラフ: AI確率 vs 期待値(EV)
+        import plotly.graph_objects as go
+        from plotly.subplots import make_subplots
+
+        fig_top5 = make_subplots(
+            rows=1, cols=2,
+            subplot_titles=("AI勝率予測 TOP5", "期待値(EV) TOP5"),
+            specs=[[{"type": "bar"}, {"type": "bar"}]]
+        )
+
+        # 左: AI勝率
+        fig_top5.add_trace(
+            go.Bar(
+                y=top5_df['馬名'],
+                x=top5_df['AIスコア(%)'],
+                orientation='h',
+                name='AI勝率',
+                marker=dict(color='lightblue'),
+                text=top5_df['AIスコア(%)'].apply(lambda x: f'{x}%'),
+                textposition='auto'
+            ),
+            row=1, col=1
+        )
+
+        # 右: 期待値(EV)
+        colors = ['green' if ev > 0 else 'red' for ev in top5_df['期待値(EV)']]
+        fig_top5.add_trace(
+            go.Bar(
+                y=top5_df['馬名'],
+                x=top5_df['期待値(EV)'],
+                orientation='h',
+                name='期待値',
+                marker=dict(color=colors),
+                text=top5_df['期待値(EV)'].apply(lambda x: f'{x:.2f}'),
+                textposition='auto'
+            ),
+            row=1, col=2
+        )
+
+        fig_top5.update_xaxes(title_text="AI勝率 (%)", row=1, col=1)
+        fig_top5.update_xaxes(title_text="期待値 (EV)", row=1, col=2)
+        fig_top5.update_yaxes(autorange="reversed", row=1, col=1)
+        fig_top5.update_yaxes(autorange="reversed", row=1, col=2)
+        fig_top5.update_layout(height=400, showlegend=False)
+
+        st.plotly_chart(fig_top5, use_container_width=True)
+
+        # 2. 適性スコア比較（ヒートマップ）
+        st.markdown("#### 🎯 TOP5 適性スコア比較")
+
+        compatibility_cols = ['騎手相性', 'コース適性', '距離適性']
+        compat_data = []
+        for idx, row in top5_df.iterrows():
+            compat_data.append({
+                '馬名': row['馬名'],
+                '騎手相性': row.get('騎手相性', 10.0),
+                'コース適性': row.get('コース適性', 10.0),
+                '距離適性': row.get('距離適性', 10.0)
+            })
+
+        compat_df = pd.DataFrame(compat_data)
+
+        # ヒートマップ用に値を反転（10 - 値で、小さい方が良い→大きい方が良い に変換）
+        heatmap_data = []
+        for col in compatibility_cols:
+            heatmap_data.append([10 - val if val <= 10 else 0 for val in compat_df[col]])
+
+        fig_heatmap = go.Figure(data=go.Heatmap(
+            z=heatmap_data,
+            x=compat_df['馬名'],
+            y=compatibility_cols,
+            colorscale='RdYlGn',
+            text=[[f'{val:.1f}' for val in compat_df[col]] for col in compatibility_cols],
+            texttemplate='%{text}',
+            textfont={"size": 12},
+            colorbar=dict(title="適性度<br>(高い方が良い)")
+        ))
+
+        fig_heatmap.update_layout(
+            title="適性スコア（数値が小さい方が良い成績）",
+            xaxis_title="馬名",
+            height=300
+        )
+
+        st.plotly_chart(fig_heatmap, use_container_width=True)
+
+        # 3. 予測結果の解釈ガイド
+        with st.expander("💡 予測結果の見方・解釈ガイド", expanded=False):
+            st.markdown("""
+            ### 📈 各指標の意味
+
+            **1. AIスコア（AI勝率予測）**
+            - AIが予測した1着になる確率（%）
+            - **目安**: 10%以上なら有力候補、15%以上なら本命候補
+            - ⚠️ 注意: 現在のモデルは古い可能性があります（管理ページで再学習推奨）
+
+            **2. 信頼度（予測信頼度）**
+            - この予測の信頼性スコア（20-95%）
+            - 以下の要素を考慮:
+              - モデルAUC（予測精度）
+              - 学習データ量
+              - AI予測確率（極端な値ほど信頼度高）
+              - 適性スコア（騎手・コース・距離）
+            - **目安**: 70%以上なら高信頼、50%以下なら要注意
+
+            **3. 期待値（EV: Expected Value）**
+            - 賭けの期待リターン（1.0 = 損益分岐点）
+            - **計算式**: `(調整後AI確率 × オッズ × 印補正) - 1.0`
+            - **目安**:
+              - EV > 0.2 → 強い買い推奨
+              - EV > 0.0 → 買い推奨
+              - EV < 0.0 → 見送り推奨
+
+            **4. 適性スコア（騎手・コース・距離）**
+            - 過去のデータから計算した平均着順
+            - **数値が小さいほど良い** (1.0=常に1着、10.0=平均10着)
+            - 3.0以下: 抜群の相性
+            - 5.0以下: 良好
+            - 7.0以上: やや不安
+            - 10.0: データ不足（デフォルト値）
+
+            ### 🎯 推奨される使い方
+
+            1. **TOP5グラフ**でAI期待度の高い馬を確認
+            2. **期待値(EV)がプラス**の馬に注目
+            3. **信頼度が70%以上**の予測を優先
+            4. **適性スコア**で相性を確認（特に騎手相性は重要）
+            5. **現在オッズ**と**予想印**を入力してEVを最終調整
+
+            ### ⚠️ 重要な注意事項
+
+            - **モデルの再学習が必要**: 現在のモデルは「3着以内」を予測している可能性があります
+            - 管理ページで両モデル（JRA/NAR）を再学習してください
+            - 再学習後、AI確率は5-15%の範囲（1着確率として妥当）になります
+            """)
+
+        st.markdown("---")
+        st.subheader("📋 詳細データテーブル")
+
         # Highlight high EV and Kelly
         def highlight_ev(s):
             is_high = s > 0
             return ['background-color: #d4edda' if v else '' for v in is_high]
-        
+
         st.dataframe(
             edited_df.style
             .format({'推奨度(Kelly)': lambda x: '-' if x <= 0 else f'{x:.1f}%', '期待値(EV)': '{:.2f}'})
             .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)', '推奨度(Kelly)'])
         )
 
-        
+
+
         # Visualization
-        st.subheader("📊 詳細分析")
-        
+        st.markdown("---")
+        st.subheader("🔍 個別馬の詳細分析")
+
         try:
             # 1. Select a horse for detailed analysis
+            st.info("💡 下記から馬を選択すると、能力チャートと過去5走の推移グラフが表示されます")
             horse_options = df_display['馬名'].tolist()
-            selected_horse_name = st.selectbox("詳細を見る馬を選択", horse_options)
+            selected_horse_name = st.selectbox("🐴 詳細を見る馬を選択", horse_options, key="horse_select")
             
             # Find row
             row = df_display[df_display['馬名'] == selected_horse_name].iloc[0]
@@ -826,9 +1025,31 @@ if race_id:
                 fig_line.add_annotation(text="詳細な過去データがありません")
 
             col_viz1, col_viz2 = st.columns(2)
-            col_viz1.plotly_chart(fig_radar, use_container_width=True)
-            col_viz2.plotly_chart(fig_line, use_container_width=True)
-            
+            with col_viz1:
+                st.markdown("##### 能力チャート")
+                st.plotly_chart(fig_radar, use_container_width=True)
+            with col_viz2:
+                st.markdown("##### 過去5走の推移")
+                st.plotly_chart(fig_line, use_container_width=True)
+
+            # 馬の基本情報とAI予測結果のサマリー
+            st.markdown("---")
+            st.markdown("##### 📝 予測サマリー")
+            selected_row = edited_df[edited_df['馬名'] == selected_horse_name].iloc[0]
+
+            col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+            with col_s1:
+                st.metric("AI勝率", f"{selected_row['AIスコア(%)']}%")
+            with col_s2:
+                st.metric("信頼度", f"{selected_row['信頼度']}%")
+            with col_s3:
+                ev_val = selected_row['期待値(EV)']
+                ev_delta = "買い推奨" if ev_val > 0 else "見送り"
+                st.metric("期待値(EV)", f"{ev_val:.2f}", delta=ev_delta)
+            with col_s4:
+                odds_val = selected_row.get('現在オッズ', 0.0)
+                st.metric("現在オッズ", f"{odds_val:.1f}倍")
+
         except Exception as e:
             st.warning(f"可視化エラー: {e}")
             import traceback
