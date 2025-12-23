@@ -688,6 +688,16 @@ if race_id:
                     step=0.1,
                     format="%.1f"
                 ),
+                "AI期待値": st.column_config.NumberColumn(
+                    "AI期待値",
+                    help="純粋な期待値（印補正なし）= (AI確率 × オッズ) - 1.0",
+                    format="%.2f"
+                ),
+                "調整後期待値": st.column_config.NumberColumn(
+                    "調整後期待値",
+                    help="印補正を含めた期待値（主観を反映）= (AI確率 × 印補正 × オッズ) - 1.0",
+                    format="%.2f"
+                ),
                 "推奨度(Kelly)": st.column_config.ProgressColumn(
                     "推奨度(Kelly)",
                     help="ケリー基準による推奨賭け率 (リスクを考慮した推奨度)",
@@ -699,6 +709,7 @@ if race_id:
                     "予想印",
                     options=["", "◎", "◯", "▲", "△", "✕"],
                     required=False,
+                    help="予想印を入力すると、調整後期待値に反映されます"
                 ),
                 "騎手相性": st.column_config.NumberColumn(
                     "騎手相性",
@@ -831,13 +842,15 @@ if race_id:
         if '枠' in edited_df.columns:
             frames = edited_df['枠']
 
-        evs = []
+        evs_pure = []      # 純粋EV（印補正なし）
+        evs_adjusted = []  # 調整後EV（印補正あり）
         kellys = []
 
         for idx, (p, o, m) in enumerate(zip(probs, odds, marks)):
             # Safety filter (race type specific)
             if p < safety_threshold:
-                ev = -1.0
+                ev_pure = -1.0
+                ev_adj = -1.0
                 kelly = 0.0
             else:
                 w = mark_weights.get(m, 1.0)
@@ -874,29 +887,37 @@ if race_id:
                             # 外枠有利な会場では内枠は不利
                             adjusted_p *= (2.0 - outer_advantage)
 
-                ev = (adjusted_p * w * o) - 1.0
+                # 純粋EV: 印補正なし（統計的に正しい）
+                ev_pure = (adjusted_p * o) - 1.0
+
+                # 調整後EV: 印補正あり（ユーザーの主観を反映）
+                ev_adj = (adjusted_p * w * o) - 1.0
+
                 # Kelly criterion (placeholder for now)
                 kelly = 0.0
-            evs.append(ev)
+
+            evs_pure.append(ev_pure)
+            evs_adjusted.append(ev_adj)
             kellys.append(kelly)
 
-        edited_df['期待値(EV)'] = evs
+        edited_df['AI期待値'] = evs_pure
+        edited_df['調整後期待値'] = evs_adjusted
         edited_df['推奨度(Kelly)'] = kellys
 
         # === AI期待度TOP5のグラフ（デフォルト表示） ===
         st.markdown("---")
         st.subheader("📊 AI期待度 TOP5 分析")
 
-        # TOP5を期待値(EV)でソート
-        top5_df = edited_df.nlargest(5, '期待値(EV)')
+        # TOP5を調整後期待値でソート（印補正を含む）
+        top5_df = edited_df.nlargest(5, '調整後期待値')
 
-        # 1. 横棒グラフ: AI確率 vs 期待値(EV)
+        # 1. 横棒グラフ: AI確率 vs 期待値
         import plotly.graph_objects as go
         from plotly.subplots import make_subplots
 
         fig_top5 = make_subplots(
             rows=1, cols=2,
-            subplot_titles=("AI勝率予測 TOP5", "期待値(EV) TOP5"),
+            subplot_titles=("AI勝率予測 TOP5", "調整後期待値 TOP5"),
             specs=[[{"type": "bar"}, {"type": "bar"}]]
         )
 
@@ -914,23 +935,23 @@ if race_id:
             row=1, col=1
         )
 
-        # 右: 期待値(EV)
-        colors = ['green' if ev > 0 else 'red' for ev in top5_df['期待値(EV)']]
+        # 右: 調整後期待値
+        colors = ['green' if ev > 0 else 'red' for ev in top5_df['調整後期待値']]
         fig_top5.add_trace(
             go.Bar(
                 y=top5_df['馬名'],
-                x=top5_df['期待値(EV)'],
+                x=top5_df['調整後期待値'],
                 orientation='h',
-                name='期待値',
+                name='調整後期待値',
                 marker=dict(color=colors),
-                text=top5_df['期待値(EV)'].apply(lambda x: f'{x:.2f}'),
+                text=top5_df['調整後期待値'].apply(lambda x: f'{x:.2f}'),
                 textposition='auto'
             ),
             row=1, col=2
         )
 
         fig_top5.update_xaxes(title_text="AI勝率 (%)", row=1, col=1)
-        fig_top5.update_xaxes(title_text="期待値 (EV)", row=1, col=2)
+        fig_top5.update_xaxes(title_text="調整後期待値", row=1, col=2)
         fig_top5.update_yaxes(autorange="reversed", row=1, col=1)
         fig_top5.update_yaxes(autorange="reversed", row=1, col=2)
         fig_top5.update_layout(height=400, showlegend=False)
@@ -996,12 +1017,25 @@ if race_id:
             - **目安**: 70%以上なら高信頼、50%以下なら要注意
 
             **3. 期待値（EV: Expected Value）**
-            - 賭けの期待リターン（1.0 = 損益分岐点）
-            - **計算式**: `(調整後AI確率 × オッズ × 印補正) - 1.0`
-            - **目安**:
+
+            **AI期待値（純粋EV）:**
+            - 統計的に正しい期待値（印補正なし）
+            - **計算式**: `(調整後AI確率 × オッズ) - 1.0`
+            - 長期的な収益性を評価する客観的指標
+
+            **調整後期待値（印補正あり）:**
+            - 予想印を反映した期待値
+            - **計算式**: `(調整後AI確率 × 印補正 × オッズ) - 1.0`
+            - ユーザーの主観的判断を含む
+
+            **目安**:
               - EV > 0.2 → 強い買い推奨
               - EV > 0.0 → 買い推奨
               - EV < 0.0 → 見送り推奨
+
+            **使い分け**:
+              - **AI期待値**: 客観的な判断に使用（統計的に正しい）
+              - **調整後期待値**: 印を付けた馬の最終判断に使用
 
             **4. 適性スコア（騎手・コース・距離）**
             - 過去のデータから計算した平均着順
@@ -1050,8 +1084,12 @@ if race_id:
 
         st.dataframe(
             edited_df.style
-            .format({'推奨度(Kelly)': lambda x: '-' if x <= 0 else f'{x:.1f}%', '期待値(EV)': '{:.2f}'})
-            .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['期待値(EV)', '推奨度(Kelly)'])
+            .format({
+                '推奨度(Kelly)': lambda x: '-' if x <= 0 else f'{x:.1f}%',
+                'AI期待値': '{:.2f}',
+                '調整後期待値': '{:.2f}'
+            })
+            .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['AI期待値', '調整後期待値', '推奨度(Kelly)'])
         )
 
 
@@ -1138,18 +1176,21 @@ if race_id:
                     fig_radar, fig_line, pred_row = create_horse_analysis(horse_name, df_display, edited_df)
 
                     # Prediction Summary
-                    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+                    col_s1, col_s2, col_s3, col_s4, col_s5 = st.columns(5)
                     with col_s1:
                         st.metric("AI勝率", f"{pred_row['AIスコア(%)']}%")
                     with col_s2:
                         st.metric("信頼度", f"{pred_row['信頼度']}%")
                     with col_s3:
-                        ev_val = pred_row['期待値(EV)']
-                        ev_delta = "買い推奨" if ev_val > 0 else "見送り"
-                        st.metric("期待値(EV)", f"{ev_val:.2f}", delta=ev_delta)
+                        ai_ev_val = pred_row['AI期待値']
+                        st.metric("AI期待値", f"{ai_ev_val:.2f}")
                     with col_s4:
+                        adj_ev_val = pred_row['調整後期待値']
+                        ev_delta = "買い推奨" if adj_ev_val > 0 else "見送り"
+                        st.metric("調整後EV", f"{adj_ev_val:.2f}", delta=ev_delta)
+                    with col_s5:
                         odds_val = pred_row.get('現在オッズ', 0.0)
-                        st.metric("現在オッズ", f"{odds_val:.1f}倍")
+                        st.metric("オッズ", f"{odds_val:.1f}倍")
 
                     # Charts
                     col_c1, col_c2 = st.columns(2)
@@ -1175,18 +1216,21 @@ if race_id:
                     st.markdown(f"##### 📝 {selected_other} の詳細")
 
                     # Prediction Summary
-                    col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+                    col_s1, col_s2, col_s3, col_s4, col_s5 = st.columns(5)
                     with col_s1:
                         st.metric("AI勝率", f"{pred_row['AIスコア(%)']}%")
                     with col_s2:
                         st.metric("信頼度", f"{pred_row['信頼度']}%")
                     with col_s3:
-                        ev_val = pred_row['期待値(EV)']
-                        ev_delta = "買い推奨" if ev_val > 0 else "見送り"
-                        st.metric("期待値(EV)", f"{ev_val:.2f}", delta=ev_delta)
+                        ai_ev_val = pred_row['AI期待値']
+                        st.metric("AI期待値", f"{ai_ev_val:.2f}")
                     with col_s4:
+                        adj_ev_val = pred_row['調整後期待値']
+                        ev_delta = "買い推奨" if adj_ev_val > 0 else "見送り"
+                        st.metric("調整後EV", f"{adj_ev_val:.2f}", delta=ev_delta)
+                    with col_s5:
                         odds_val = pred_row.get('現在オッズ', 0.0)
-                        st.metric("現在オッズ", f"{odds_val:.1f}倍")
+                        st.metric("オッズ", f"{odds_val:.1f}倍")
 
                     # Charts
                     col_c1, col_c2 = st.columns(2)
