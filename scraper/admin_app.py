@@ -387,7 +387,7 @@ with tab_upload:
                     # git commit returns 1 if nothing to commit
                     # Check both stdout and stderr for common "clean" messages
                     out_err = (result.stdout + result.stderr).lower()
-                    if "nothing to commit" in out_err or "working tree clean" in out_err:
+                    if "nothing to commit" in out_err or "working tree clean" in out_err or "no changes added to commit" in out_err:
                          status_area.info(f"Info: No changes to commit.")
                     else:
                         status_area.error(f"Error: {' '.join(cmd)}\n{result.stderr}")
