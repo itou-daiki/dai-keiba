@@ -340,9 +340,9 @@ if race_id:
                 status_text.success("✅ ステップ 1/4: 出馬表データを取得しました")
 
                 # ステップ2: 特徴量エンジニアリング
-                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア等）...")
+                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア、会場特性等）...")
                 progress_bar.progress(50)
-                X_df = process_data(df, use_venue_features=False)
+                X_df = process_data(df, use_venue_features=True)
                 status_text.success("✅ ステップ 2/4: 特徴量計算が完了しました")
 
                 # ステップ3: AI予測
@@ -580,18 +580,6 @@ if race_id:
              else:
                  df_display['Odds'] = 0.0
         
-        rename_map = {
-            'AI_Score': 'AIスコア(%)',
-            'Confidence': '信頼度',
-            'Odds': '現在オッズ',
-            '性齢': '年齢',
-            '馬 番': '馬番',
-            'jockey_compatibility': '騎手相性',
-            'distance_compatibility': '距離適性',
-            'course_compatibility': 'コース適性',
-            'weighted_avg_speed': '平均スピード'
-        }
-        
         # Select appropriate course compatibility
         # If 'コースタイプ' contains '芝', use turf, else dirt
         # Default to turf if unknown
@@ -601,11 +589,34 @@ if race_id:
              c_type = str(df_display['コースタイプ'].iloc[0])
              if 'ダ' in c_type:
                  is_turf_race = False
-        
+
         if is_turf_race:
              df_display['course_compatibility'] = df_display.get('turf_compatibility', 10.0)
         else:
              df_display['course_compatibility'] = df_display.get('dirt_compatibility', 10.0)
+
+        # === 適性スコアを適性度に変換（10点満点、高い方が良い） ===
+        # 元の値は「平均着順」（小さい方が良い）
+        # 適性度 = 10 - 平均着順（0-10点、高い方が良い）
+
+        for compat_col in ['jockey_compatibility', 'distance_compatibility', 'course_compatibility']:
+            if compat_col in df_display.columns:
+                # 10 - 値 で反転（ただし、0-10の範囲に制限）
+                df_display[compat_col] = df_display[compat_col].apply(
+                    lambda x: max(0, min(10, 10 - x)) if pd.notna(x) else 5.0
+                )
+
+        rename_map = {
+            'AI_Score': 'AIスコア(%)',
+            'Confidence': '信頼度',
+            'Odds': '現在オッズ',
+            '性齢': '年齢',
+            '馬 番': '馬番',
+            'jockey_compatibility': '騎手適性度',
+            'distance_compatibility': '距離適性度',
+            'course_compatibility': 'コース適性度',
+            'weighted_avg_speed': '平均スピード'
+        }
              
         # Ensure all display columns exist
         defaults = {
@@ -711,20 +722,26 @@ if race_id:
                     required=False,
                     help="予想印を入力すると、調整後期待値に反映されます"
                 ),
-                "騎手相性": st.column_config.NumberColumn(
-                    "騎手相性",
-                    help="この騎手での平均着順 (小さいほど良い)",
-                    format="%.1f"
+                "騎手適性度": st.column_config.ProgressColumn(
+                    "騎手適性度",
+                    help="この騎手との相性（10点満点、高いほど良い）",
+                    format="%.1f",
+                    min_value=0,
+                    max_value=10
                 ),
-                "コース適性": st.column_config.NumberColumn(
-                    "コース適性",
-                    help="芝/ダート別 平均着順 (小さいほど良い)",
-                    format="%.1f"
+                "コース適性度": st.column_config.ProgressColumn(
+                    "コース適性度",
+                    help="芝/ダート別 相性（10点満点、高いほど良い）",
+                    format="%.1f",
+                    min_value=0,
+                    max_value=10
                 ),
-                "距離適性": st.column_config.NumberColumn(
-                    "距離適性",
-                    help="同距離での平均着順 (小さいほど良い)",
-                    format="%.1f"
+                "距離適性度": st.column_config.ProgressColumn(
+                    "距離適性度",
+                    help="この距離での相性（10点満点、高いほど良い）",
+                    format="%.1f",
+                    min_value=0,
+                    max_value=10
                 )
             },
             hide_index=True,
@@ -959,24 +976,24 @@ if race_id:
         st.plotly_chart(fig_top5, use_container_width=True)
 
         # 2. 適性スコア比較（ヒートマップ）
-        st.markdown("#### 🎯 TOP5 適性スコア比較")
+        st.markdown("#### 🎯 TOP5 適性度比較")
 
-        compatibility_cols = ['騎手相性', 'コース適性', '距離適性']
+        compatibility_cols = ['騎手適性度', 'コース適性度', '距離適性度']
         compat_data = []
         for idx, row in top5_df.iterrows():
             compat_data.append({
                 '馬名': row['馬名'],
-                '騎手相性': row.get('騎手相性', 10.0),
-                'コース適性': row.get('コース適性', 10.0),
-                '距離適性': row.get('距離適性', 10.0)
+                '騎手適性度': row.get('騎手適性度', 5.0),
+                'コース適性度': row.get('コース適性度', 5.0),
+                '距離適性度': row.get('距離適性度', 5.0)
             })
 
         compat_df = pd.DataFrame(compat_data)
 
-        # ヒートマップ用に値を反転（10 - 値で、小さい方が良い→大きい方が良い に変換）
+        # ヒートマップ用データ（既に10点満点に変換済み）
         heatmap_data = []
         for col in compatibility_cols:
-            heatmap_data.append([10 - val if val <= 10 else 0 for val in compat_df[col]])
+            heatmap_data.append([val for val in compat_df[col]])
 
         fig_heatmap = go.Figure(data=go.Heatmap(
             z=heatmap_data,
@@ -986,11 +1003,11 @@ if race_id:
             text=[[f'{val:.1f}' for val in compat_df[col]] for col in compatibility_cols],
             texttemplate='%{text}',
             textfont={"size": 12},
-            colorbar=dict(title="適性度<br>(高い方が良い)")
+            colorbar=dict(title="適性度<br>(10点満点)")
         ))
 
         fig_heatmap.update_layout(
-            title="適性スコア（数値が小さい方が良い成績）",
+            title="適性度（10点満点、高いほど良い）",
             xaxis_title="馬名",
             height=300
         )
@@ -1037,13 +1054,13 @@ if race_id:
               - **AI期待値**: 客観的な判断に使用（統計的に正しい）
               - **調整後期待値**: 印を付けた馬の最終判断に使用
 
-            **4. 適性スコア（騎手・コース・距離）**
-            - 過去のデータから計算した平均着順
-            - **数値が小さいほど良い** (1.0=常に1着、10.0=平均10着)
-            - 3.0以下: 抜群の相性
-            - 5.0以下: 良好
-            - 7.0以上: やや不安
-            - 10.0: データ不足（デフォルト値）
+            **4. 適性度（騎手・コース・距離）**
+            - 過去のデータから計算した適性度（10点満点）
+            - **数値が高いほど良い** (10点=抜群の相性、0点=相性悪い)
+            - 7点以上: 抜群の相性
+            - 5点以上: 良好
+            - 3点以下: やや不安
+            - 5点前後: データ不足（標準値）
 
             **5. コース特性（傾斜・直線距離・コース幅・枠番）**
             - **勾配（傾斜）**: 急坂ありの競馬場では人気馬が有利（+2%）
@@ -1064,7 +1081,7 @@ if race_id:
             1. **TOP5グラフ**でAI期待度の高い馬を確認
             2. **期待値(EV)がプラス**の馬に注目
             3. **信頼度が70%以上**の予測を優先
-            4. **適性スコア**で相性を確認（特に騎手相性は重要）
+            4. **適性度**で相性を確認（特に騎手適性度は重要）
             5. **現在オッズ**と**予想印**を入力してEVを最終調整
 
             ### ⚠️ 重要な注意事項
