@@ -861,7 +861,6 @@ def scrape_shutuba_data(race_id, mode="JRA"):
                      entry["mother"] = prof.get("mother", "")
                      entry["bms"] = prof.get("bms", "")
             
-            data.append(entry)
             if barei:
                 entry["性齢"] = barei.text.strip()
             else:
