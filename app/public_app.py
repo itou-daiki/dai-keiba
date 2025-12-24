@@ -55,7 +55,7 @@ def get_data_freshness(mode="JRA"):
     return "DBなし", -1
     return None, None
 
-def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None):
+def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None, is_rest_comeback=0):
     """
     予測の信頼度スコアを計算（0-100）
 
@@ -65,6 +65,7 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
         jockey_compat: 騎手相性スコア（0-10、Noneの場合は考慮しない）
         course_compat: コース適性スコア（0-10、Noneの場合は考慮しない）
         distance_compat: 距離適性スコア（0-10、Noneの場合は考慮しない）
+        is_rest_comeback: 休養明けフラグ（1=True, 0=False）
 
     Returns:
         int: 信頼度スコア（0-100）
@@ -137,8 +138,13 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
         elif min_compat < 5:
             compat_bonus -= 8
 
+    # ===== 5. 休養明け・間隔による調整 (新規追加) =====
+    interval_penalty = 0
+    if is_rest_comeback == 1:
+        interval_penalty = -10 # 長期休養明けは不確定要素が多い
+
     # ===== 最終計算 =====
-    confidence = base_confidence + data_penalty + prob_bonus + compat_bonus
+    confidence = base_confidence + data_penalty + prob_bonus + compat_bonus + interval_penalty
 
     # 範囲を拡大: 20-95（より差別化）
     return int(max(20, min(95, confidence)))
@@ -190,7 +196,9 @@ def predict_race_logic(df, model, model_meta):
                 else:
                     course_c = X_df['turf_compatibility'].iloc[idx] # Default
 
-            conf = calculate_confidence_score(p, model_meta, jockey_c, course_c, distance_c)
+            is_rest = X_df['is_rest_comeback'].iloc[idx] if 'is_rest_comeback' in X_df.columns else 0
+
+            conf = calculate_confidence_score(p, model_meta, jockey_c, course_c, distance_c, is_rest)
             confidences.append(conf)
 
         df['Confidence'] = confidences
