@@ -976,64 +976,73 @@ if race_id:
 
         st.info(venue_info)
 
-        probs = edited_df['AIスコア(%)'] / 100.0
-        odds = edited_df['現在オッズ']
-        marks = edited_df['予想印']
+                # === 確率較正のチェック ===
+                is_calibrated = False
+                if model_meta and 'training_config' in model_meta:
+                     is_calibrated = model_meta['training_config'].get('calibrated', False)
 
-        # Get run style compatibility if available
-        run_style_compatibility = None
-        if 'venue_run_style_compatibility' in edited_df.columns:
-            run_style_compatibility = edited_df['venue_run_style_compatibility']
+                # Uncalibrated NAR Correction (Global application for consistency)
+                if race_type == 'NAR' and not is_calibrated:
+                     # 地方競馬かつ未較正の場合のみ、保守的な調整を行う
+                     # これにより、表示されるAIスコアとEV計算に使われる確率が一致する
+                     def adjust_nar_prob_row(row):
+                         p = row['AIスコア(%)'] / 100.0
+                         new_p = p * 0.9 + 0.05
+                         return int(new_p * 100)
+                     
+                     edited_df['AIスコア(%)'] = edited_df.apply(adjust_nar_prob_row, axis=1)
+                     st.caption("ℹ️ NAR調整: AIスコアと期待値を保守的に補正しました（未較正モデルのため）")
 
-        # Get frame (枠) for venue-specific frame advantage
-        frames = None
-        if '枠' in edited_df.columns:
-            frames = edited_df['枠']
+                probs = edited_df['AIスコア(%)'] / 100.0
+                odds = edited_df['現在オッズ']
+                marks = edited_df['予想印']
 
-        evs_pure = []      # 純粋EV（印補正なし）
-        evs_adjusted = []  # 調整後EV（印補正あり）
-        kellys = []
+                # Get run style compatibility if available
+                run_style_compatibility = None
+                if 'venue_run_style_compatibility' in edited_df.columns:
+                    run_style_compatibility = edited_df['venue_run_style_compatibility']
 
-        for idx, (p, o, m) in enumerate(zip(probs, odds, marks)):
-            # Safety filter (race type specific)
-            if p < safety_threshold:
-                ev_pure = -1.0
-                ev_adj = -1.0
-                kelly = 0.0
-            else:
-                w = mark_weights.get(m, 1.0)
+                # Get frame (枠) for venue-specific frame advantage
+                frames = None
+                if '枠' in edited_df.columns:
+                    frames = edited_df['枠']
 
-                # Adjust probability for NAR (higher uncertainty)
-                if race_type == 'NAR':
-                    # === 地方競馬の確率調整 ===
-                    # 地方は予測の不確実性が高いため、確率を保守的に調整
-                    # 高確率馬: やや下げる（過信を防ぐ）
-                    # 低確率馬: やや上げる（穴馬チャンスを考慮）
-                    # 例: 10%→14%(+4pt), 30%→32%(+2pt), 50%→50%(±0), 70%→68%(-2pt)
-                    adjusted_p = p * 0.9 + 0.05
-                else:
-                    # === 中央競馬の確率調整 ===
-                    # JRAはAI予測の信頼性が高いため、調整なし
-                    adjusted_p = p
+                evs_pure = []      # 純粋EV（印補正なし）
+                evs_adjusted = []  # 調整後EV（印補正あり）
+                kellys = []
 
-                # Apply run style compatibility if available
-                if run_style_compatibility is not None:
-                    run_compat = run_style_compatibility.iloc[idx]
-                    if not pd.isna(run_compat):
-                        # 脚質相性が良い馬は期待値を上げる
-                        adjusted_p *= run_compat
+                for idx, (p, o, m) in enumerate(zip(probs, odds, marks)):
+                    # Safety filter (race type specific)
+                    if p < safety_threshold:
+                        ev_pure = -1.0
+                        ev_adj = -1.0
+                        kelly = 0.0
+                    else:
+                        w = mark_weights.get(m, 1.0)
+                        
+                        # Already adjusted in Dataframe if needed
+                        adjusted_p = p
 
-                # Apply frame advantage if available
-                if frames is not None and venue_char:
-                    frame = frames.iloc[idx]
-                    if not pd.isna(frame):
-                        outer_advantage = venue_char.get('outer_track_advantage', 1.0)
-                        frame_num = int(frame)
-                        if frame_num >= 6:  # 外枠
-                            adjusted_p *= outer_advantage
-                        elif frame_num <= 3:  # 内枠
-                            # 外枠有利な会場では内枠は不利
-                            adjusted_p *= (2.0 - outer_advantage)
+                        # Apply run style compatibility if available
+                        if run_style_compatibility is not None:
+                            run_compat = run_style_compatibility.iloc[idx]
+                            if not pd.isna(run_compat):
+                                # 脚質相性が良い馬は期待値を上げる
+                                adjusted_p *= run_compat
+
+                        # Apply frame advantage if available
+                        if frames is not None and venue_char:
+                            frame = frames.iloc[idx]
+                            if not pd.isna(frame):
+                                outer_advantage = venue_char.get('outer_track_advantage', 1.0)
+                                try:
+                                    frame_num = int(frame)
+                                    if frame_num >= 6:  # 外枠
+                                        adjusted_p *= outer_advantage
+                                    elif frame_num <= 3:  # 内枠
+                                        # 外枠有利な会場では内枠は不利
+                                        adjusted_p *= (2.0 - outer_advantage)
+                                except: pass
 
                 # 純粋EV: 印補正なし（統計的に正しい）
                 ev_pure = (adjusted_p * o) - 1.0
@@ -1314,12 +1323,23 @@ if race_id:
             return fig_radar, fig_line, pred_row
 
         try:
-            # === デフォルトでTOP5を表示 ===
-            st.info("💡 AI期待度（EV）上位5頭の詳細分析を表示しています")
+            # === 分析対象の馬を選択 ===
+            st.info("💡 分析対象の馬を選択してください（デフォルトはAI期待度上位5頭）")
 
-            top5_horses = top5_df['馬名'].tolist()
+            # Get all horses sorted by AI Score
+            all_horses = edited_df.sort_values('AIスコア(%)', ascending=False)['馬名'].tolist()
+            default_horses = top5_df['馬名'].tolist()
+            
+            # Ensure default horses are in the options (sanity check)
+            default_horses = [h for h in default_horses if h in all_horses]
 
-            for idx, horse_name in enumerate(top5_horses):
+            selected_horses = st.multiselect(
+                "分析対象の馬を選択",
+                options=all_horses,
+                default=default_horses
+            )
+
+            for idx, horse_name in enumerate(selected_horses):
                 with st.expander(f"**{idx+1}位: {horse_name}**", expanded=(idx < 2)):  # 1-2位は展開表示
                     fig_radar, fig_line, pred_row = create_horse_analysis(horse_name, df_display, edited_df)
 
