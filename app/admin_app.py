@@ -278,14 +278,14 @@ with tab_ml:
                     del st.session_state['best_params']
                     st.rerun()
             else:
-                st.info("デフォルト設定で学習します。")
+        is_calibrate = st.checkbox("確率較正 (Calibration) を行う", value=False, help="Brier Scoreが高い場合に有効にしてください。")
 
     with col_conf_2:
         st.markdown(f"""
         **実行内容:**
         1. データ前処理 (最新データの反映)
         2. {'チューニング (最適化)' if is_tuning else '設定の確認'}
-        3. モデル学習 (LightGBM)
+        3. モデル学習 (LightGBM) {' + 確率較正' if is_calibrate else ''}
         """)
         
         btn_label = "🧪 チューニング ＆ 学習開始" if is_tuning else "🧠 学習開始"
@@ -392,7 +392,7 @@ with tab_ml:
             params = st.session_state.get('best_params', None)
             
             try:
-                results = train_model.train_and_save_model(data_path, model_path, params=params)
+                results = train_model.train_and_save_model(data_path, model_path, params=params, calibrate=is_calibrate)
                 if results:
                     st.success("学習完了！")
                     st.session_state['ml_results'] = results
