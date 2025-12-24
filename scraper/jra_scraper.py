@@ -359,13 +359,16 @@ def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None
                         if not txt and img and 'alt' in img.attrs:
                             txt = img['alt']
                         
+                        r_num = -1
                         r_num_match = re.search(r'(\d+)R', txt)
                         if r_num_match:
                              r_num = int(r_num_match.group(1))
-                             race_list_items.append((final_url, r_num))
+                             
+                        # Append even if Race Num is not found (fix for missing races)
+                        race_list_items.append((final_url, r_num))
                 
                 # Deduplicate by URL (keep first found usually fine)
-                # Sort by Race Number
+                # Sort by Race Number (unknowns (-1) first or last?)
                 seen_urls = set()
                 unique_races = []
                 for url, r_num in race_list_items:
@@ -373,14 +376,15 @@ def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None
                         unique_races.append((url, r_num))
                         seen_urls.add(url)
                 
-                unique_races.sort(key=lambda x: x[1]) # Sort by race num
+                unique_races.sort(key=lambda x: x[1]) # Sort by race num (-1 will be first)
                 
                 print(f"      -> {len(unique_races)} races found.")
 
                 for r_link, r_num in unique_races:
                     # PRE-FETCH OPTIMIZATION
                     # Construct ID
-                    if p_code != "00" and current_day_date:
+                    # Only if we successfully extracted Race Num and Venue info
+                    if r_num != -1 and p_code != "00" and current_day_date:
                          # ID: YYYY PP KK DD RR
                          # y is from match_day_date loop var (int)
                          # p_code, kai_str, day_str strings
