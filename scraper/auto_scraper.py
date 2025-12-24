@@ -28,6 +28,139 @@ HORSE_HISTORY_CACHE = {} # Cache for horse history DataFrames
 HORSE_PROFILE_CACHE = {} # Cache for horse profile (pedigree)
 
 # ==========================================
+# ユーティリティ関数: 既存race_idの取得
+# ==========================================
+def get_existing_race_ids(mode="JRA", db_path=None, csv_path=None):
+    """
+    既存のrace_idを取得（SQLiteまたはCSVから）
+
+    Args:
+        mode: "JRA" または "NAR"
+        db_path: SQLiteデータベースのパス（優先）
+        csv_path: CSVファイルのパス（フォールバック）
+
+    Returns:
+        set: 既存のrace_idのセット
+    """
+    existing_ids = set()
+
+    # SQLiteから取得を試みる
+    if db_path and os.path.exists(db_path):
+        try:
+            import sqlite3
+            conn = sqlite3.connect(db_path)
+            table_name = f"processed_data_{mode.lower()}"
+
+            # テーブルの存在確認
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+                (table_name,)
+            )
+
+            if cursor.fetchone():
+                query = f"SELECT DISTINCT race_id FROM {table_name}"
+                df = pd.read_sql_query(query, conn)
+                existing_ids = set(df['race_id'].astype(str))
+                print(f"✅ SQLiteから既存race_id取得: {len(existing_ids)}件")
+            else:
+                print(f"⚠️ テーブル '{table_name}' が見つかりません")
+
+            conn.close()
+            return existing_ids
+        except Exception as e:
+            print(f"⚠️ SQLiteからの取得に失敗: {e}")
+            print("   CSVファイルから取得を試みます...")
+
+    # CSVから取得（フォールバック）
+    if csv_path is None:
+        csv_path = CSV_FILE_PATH_NAR if mode == "NAR" else CSV_FILE_PATH
+
+    if os.path.exists(csv_path):
+        try:
+            df = pd.read_csv(csv_path)
+            if 'race_id' in df.columns:
+                existing_ids = set(df['race_id'].astype(str))
+                print(f"✅ CSVから既存race_id取得: {len(existing_ids)}件")
+            else:
+                print(f"⚠️ CSVに'race_id'カラムが見つかりません")
+        except Exception as e:
+            print(f"⚠️ CSVからの取得に失敗: {e}")
+    else:
+        print(f"ℹ️ 既存データが見つかりません（初回スクレイピング）")
+
+    return existing_ids
+
+
+def find_missing_races(start_date, end_date, existing_race_ids, mode="JRA"):
+    """
+    指定期間内で欠落しているレースを検出
+
+    Args:
+        start_date: 開始日（datetime.date or datetime）
+        end_date: 終了日（datetime.date or datetime）
+        existing_race_ids: 既存のrace_idのセット
+        mode: "JRA" または "NAR"
+
+    Returns:
+        dict: {
+            'total_expected': 推定レース数,
+            'total_existing': 既存レース数,
+            'missing_dates': 欠落している可能性のある日付リスト
+        }
+    """
+    if isinstance(start_date, datetime):
+        start_date = start_date.date()
+    if isinstance(end_date, datetime):
+        end_date = end_date.date()
+
+    # 既存race_idから日付パターンを抽出
+    # race_id format: YYYYMMDDKKPPRRNN (例: 2024112303051201)
+    # YYYY: 年, MM: 月, DD: 日, KK: 開催, PP: 場所, RR: レース番号, NN: 不明
+
+    existing_dates = set()
+    for race_id in existing_race_ids:
+        if len(race_id) >= 8:
+            try:
+                date_str = race_id[:8]  # YYYYMMDD
+                race_date = datetime.strptime(date_str, "%Y%m%d").date()
+                if start_date <= race_date <= end_date:
+                    existing_dates.add(race_date)
+            except:
+                pass
+
+    # 全期間の日数
+    total_days = (end_date - start_date).days + 1
+
+    # 土日の日数を概算（レースは主に週末）
+    weekend_days = 0
+    current = start_date
+    while current <= end_date:
+        if current.weekday() in [5, 6]:  # 土曜日=5, 日曜日=6
+            weekend_days += 1
+        current += timedelta(days=1)
+
+    # 欠落している可能性のある週末を検出
+    missing_dates = []
+    current = start_date
+    while current <= end_date:
+        if current.weekday() in [5, 6]:  # 週末のみチェック
+            if current not in existing_dates:
+                missing_dates.append(current)
+        current += timedelta(days=1)
+
+    result = {
+        'total_days': total_days,
+        'weekend_days': weekend_days,
+        'existing_race_dates': len(existing_dates),
+        'missing_weekend_dates': missing_dates,
+        'coverage_rate': len(existing_dates) / weekend_days if weekend_days > 0 else 0
+    }
+
+    return result
+
+
+# ==========================================
 # 1. レース詳細データを取得する関数
 # ==========================================
 def scrape_race_data(race_id, mode="JRA"):
@@ -1106,6 +1239,29 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
 
     if mode == "NAR":
         print("=== NAR (地方競馬) スクレイピング開始 ===")
+
+        # 既存race_idの取得
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "keiba_data.db")
+        existing_race_ids = get_existing_race_ids(mode="NAR", db_path=db_path, csv_path=CSV_FILE_PATH_NAR)
+
+        # 欠落レースの分析
+        if existing_race_ids:
+            missing_info = find_missing_races(start_date, end_date, existing_race_ids, mode="NAR")
+            print(f"📊 データカバレッジ分析:")
+            print(f"   対象期間: {missing_info['total_days']}日間（週末: {missing_info['weekend_days']}日）")
+            print(f"   既存レース日: {missing_info['existing_race_dates']}日")
+            print(f"   カバレッジ率: {missing_info['coverage_rate']:.1%}")
+            if missing_info['missing_weekend_dates']:
+                print(f"   欠落している可能性のある週末: {len(missing_info['missing_weekend_dates'])}日")
+                # 最初の5日のみ表示
+                for d in missing_info['missing_weekend_dates'][:5]:
+                    print(f"     - {d}")
+                if len(missing_info['missing_weekend_dates']) > 5:
+                    print(f"     ... 他 {len(missing_info['missing_weekend_dates']) - 5}日")
+
+            if progress_callback:
+                progress_callback(f"既存データ: {len(existing_race_ids)}レース、スキップして欠落分のみ取得")
+
         # Callback wrapper to save to database_nar.csv
         def save_nar_callback(df_new):
             if df_new is None or df_new.empty: return
@@ -1129,19 +1285,49 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
         # Loop years if range spans multiple years
         current_y = start_date.year
         end_y = end_date.year
-        
+
         for y in range(current_y, end_y + 1):
-             scrape_nar_year(str(y), start_date=start_date.date(), end_date=end_date.date(), save_callback=save_nar_callback)
-        
+             scrape_nar_year(
+                 str(y),
+                 start_date=start_date.date(),
+                 end_date=end_date.date(),
+                 save_callback=save_nar_callback,
+                 existing_race_ids=existing_race_ids  # 既存IDを渡す
+             )
+
         print("NAR Scraping Completed.")
         if progress_callback: progress_callback("NAR Scraping Completed.")
         return
 
     if source == 'jra':
         # Use JRA Scraper Bulk Logic
+        print("=== JRA (中央競馬) スクレイピング開始 ===")
+
+        # 既存race_idの取得
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "keiba_data.db")
+        existing_race_ids = get_existing_race_ids(mode="JRA", db_path=db_path, csv_path=CSV_FILE_PATH)
+
+        # 欠落レースの分析
+        if existing_race_ids:
+            missing_info = find_missing_races(start_date, end_date, existing_race_ids, mode="JRA")
+            print(f"📊 データカバレッジ分析:")
+            print(f"   対象期間: {missing_info['total_days']}日間（週末: {missing_info['weekend_days']}日）")
+            print(f"   既存レース日: {missing_info['existing_race_dates']}日")
+            print(f"   カバレッジ率: {missing_info['coverage_rate']:.1%}")
+            if missing_info['missing_weekend_dates']:
+                print(f"   欠落している可能性のある週末: {len(missing_info['missing_weekend_dates'])}日")
+                # 最初の5日のみ表示
+                for d in missing_info['missing_weekend_dates'][:5]:
+                    print(f"     - {d}")
+                if len(missing_info['missing_weekend_dates']) > 5:
+                    print(f"     ... 他 {len(missing_info['missing_weekend_dates']) - 5}日")
+
+            if progress_callback:
+                progress_callback(f"既存データ: {len(existing_race_ids)}レース、スキップして欠落分のみ取得")
+
         # We need to span years
         years_to_scan = range(start_date.year, end_date.year + 1)
-        
+
         # Save Callback Wrapper
         def save_chunk_wrapper(df_chunk):
             # Same save logic as existing
@@ -1154,13 +1340,13 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
                     combined_df = df_chunk
              else:
                 combined_df = df_chunk
-            
+
              # Deduplicate
              subset_cols = ['race_id', '馬名']
              subset_cols = [c for c in subset_cols if c in combined_df.columns]
              if subset_cols:
                  combined_df.drop_duplicates(subset=subset_cols, keep='last', inplace=True)
-            
+
              combined_df.to_csv(CSV_FILE_PATH, index=False, encoding="utf-8-sig")
              msg = f"  -> JRA Save: {len(df_chunk)} rows. Total: {len(combined_df)}"
              print(msg)
@@ -1169,10 +1355,16 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
         for year in years_to_scan:
              print(f"Starting JRA Scrape for Year {year}...")
              if progress_callback: progress_callback(f"JRAスクレイピング開始: {year}年")
-             
+
              # Adjust start/end for this year chunk if needed, but scrape_jra_year handles full date range filter
-             scrape_jra_year(str(year), start_date=start_date.date(), end_date=end_date.date(), save_callback=save_chunk_wrapper)
-        
+             scrape_jra_year(
+                 str(year),
+                 start_date=start_date.date(),
+                 end_date=end_date.date(),
+                 save_callback=save_chunk_wrapper,
+                 existing_race_ids=existing_race_ids  # 既存IDを渡す
+             )
+
         print(f"所要時間: {(time.time() - start_time)/60:.1f} 分")
         return
 
