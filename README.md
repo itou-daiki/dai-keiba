@@ -3,7 +3,10 @@
 ## 📌 概要
 本アプリケーションは、**LightGBM**を用いた機械学習モデルにより、中央競馬（JRA）および地方競馬（NAR）のレース結果を予測し、期待値（Expected Value: EV）の高い馬を自動抽出する**AI予想システム**です。
 
-管理画面での「データ収集・モデル学習」から、公開画面での「リアルタイム予想・分析」までを一貫して提供します。
+**新アーキテクチャ（2025-12-24）:**
+- 🔄 **Google Colab**: スクレイピング + 前処理 + 特徴量生成 → SQLite
+- 🧠 **管理ページ**: モデル学習専用（スクレイピング機能は Colab に移行）
+- 🌐 **公開ページ**: SQLiteから読み込み + 予測 + 表示
 
 **主な特徴:**
 - ✅ **TimeSeriesSplit**: Look-ahead bias完全排除
@@ -11,9 +14,27 @@
 - ✅ **JRA/NAR別モデル**: 中央・地方それぞれに最適化
 - ✅ **信頼度スコア**: 各予測の信頼性を0-100%で数値化
 - ✅ **確率較正**: 予測確率と実際の確率を一致させる
+- ✅ **SQLiteデータベース**: 高速アクセス、一元管理
+- ✅ **Google Colab対応**: 無料GPUでスケーラブルな処理
 
-python -m streamlit run scraper/admin_app.py
-python -m streamlit run public_app.py
+## 🚀 クイックスタート
+
+```bash
+# 1. Google Colabでデータ準備
+# colab_data_pipeline.ipynb をGoogle Colabで実行
+# → keiba_data.db をダウンロード
+
+# 2. データベースを配置
+mv ~/Downloads/keiba_data.db ./
+
+# 3. 管理ページでモデル学習
+streamlit run scraper/admin_app_simple.py --server.port 8501
+
+# 4. 公開ページで予測
+streamlit run public_app.py --server.port 8502
+```
+
+詳細は [MIGRATION_TO_COLAB_SQL.md](MIGRATION_TO_COLAB_SQL.md) を参照してください。
 
 ---
 
