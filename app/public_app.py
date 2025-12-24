@@ -564,12 +564,18 @@ if race_id:
 
             # If still unknown, try to extract from race_id (first 4 digits indicate place code)
             if venue == "不明" and race_id and len(race_id) >= 6:
-                place_code = int(race_id[4:6])
-                place_map = {
-                    1: "札幌", 2: "函館", 3: "福島", 4: "新潟", 5: "東京",
-                    6: "中山", 7: "中京", 8: "京都", 9: "阪神", 10: "小倉"
-                }
-                venue = place_map.get(place_code, "不明")
+                try:
+                    place_code = int(race_id[4:6])
+                    place_map = {
+                        1: "札幌", 2: "函館", 3: "福島", 4: "新潟", 5: "東京",
+                        6: "中山", 7: "中京", 8: "京都", 9: "阪神", 10: "小倉",
+                        30: "門別", 35: "盛岡", 36: "水沢", 42: "浦和", 43: "船橋",
+                        44: "大井", 45: "川崎", 46: "金沢", 47: "笠松", 48: "名古屋",
+                        50: "園田", 51: "姫路", 54: "高知", 55: "佐賀", 3: "帯広"
+                    }
+                    venue = place_map.get(place_code, "不明")
+                except:
+                    pass
 
             st.metric("開催場", venue)
         with col_r2:

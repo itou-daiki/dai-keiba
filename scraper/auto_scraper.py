@@ -928,6 +928,33 @@ def scrape_shutuba_data(race_id, mode="JRA"):
         except:
              current_race_date = datetime.now()
 
+        # Venue extraction (similar to scrape_race_data)
+        venue_elem = soup.select_one(".RaceKaisaiWrap .Active")
+        venue_text = venue_elem.text.strip() if venue_elem else ""
+        
+        # Fallback if Active class not found (sometimes Just .RaceKaisaiWrap span?)
+        if not venue_text:
+             venue_wrap = soup.select_one(".RaceKaisaiWrap")
+             if venue_wrap:
+                 # Try to find the one without "a" tag or with active style?
+                 # Or just parse the text.
+                 venue_text = venue_wrap.text.strip().split("\n")[0] # Heuristic
+
+        # If still empty, try parsing from Race ID (NAR logic)
+        if not venue_text and race_id and len(race_id) >= 6:
+             # Basic Map for NAR/JRA
+             # This is a fallback map. Ideally should use a centralized helper.
+             place_code = int(race_id[4:6])
+             # Standard JRA/NAR map (Partial)
+             place_map = {
+                 42: "浦和", 43: "船橋", 44: "大井", 45: "川崎",
+                 46: "金沢", 47: "笠松", 48: "名古屋", 50: "園田", 51: "姫路",
+                 54: "高知", 55: "佐賀", 3: "帯広", 30: "門別", 35: "盛岡", 36: "水沢",
+                 1: "札幌", 2: "函館", 3: "福島", 4: "新潟", 5: "東京", 6: "中山",
+                 7: "中京", 8: "京都", 9: "阪神", 10: "小倉"
+             }
+             venue_text = place_map.get(place_code, "不明")
+
         # --- Course Data Extraction (RaceData01) ---
         # Added to ensure feature engineering gets correct distance/surface/weather
         surface_type = ""
@@ -1007,6 +1034,7 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             
             entry = {
                 "日付": date_text,
+                "会場": venue_text, # Added Venue
                 "レース名": race_name,
                 "枠": waku,
                 "馬 番": umaban,

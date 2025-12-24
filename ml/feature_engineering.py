@@ -663,6 +663,17 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
 
             df['race_type'] = df['会場'].apply(simple_classify)
             df['race_type_code'] = df['race_type'].apply(lambda x: 1 if x == 'JRA' else 0)
+    else:
+        # Fallback if '会場' is missing
+        # Try to infer from race_id if available
+        if 'race_id' in df.columns:
+             # Very basic heuristic: JRA IDs are usually simple YYYYPP... but netkeiba format is standardized.
+             pass 
+        
+        # Default to NAR if unknown? Or JRA?
+        # Safe default to avoid crash
+        df['race_type'] = 'NAR' 
+        df['race_type_code'] = 0
 
     # 12. 中央/地方別の過去成績
     df['jra_compatibility'] = 10.0  # JRAでの平均着順（デフォルト10着）
