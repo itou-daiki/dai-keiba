@@ -143,6 +143,65 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
     # 範囲を拡大: 20-95（より差別化）
     return int(max(20, min(95, confidence)))
 
+def predict_race_logic(df, model, model_meta):
+    """
+    データフレームに対してAI予測と信頼度計算を行う
+    """
+    try:
+        # 特徴量エンジニアリング（会場特性あり）
+        X_df = process_data(df, use_venue_features=True)
+
+        # Meta cols to exclude
+        meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
+        features = [c for c in X_df.columns if c not in meta_cols and c != 'target_win']
+        
+        # Ensure numeric and fillna
+        X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
+
+        # Predict
+        probs = model.predict(X_pred)
+
+        df['AI_Prob'] = probs
+        df['AI_Score'] = (probs * 100).astype(int)
+
+        # Calculate Confidence
+        confidences = []
+        for idx, p in enumerate(probs):
+            jockey_c = X_df['jockey_compatibility'].iloc[idx] if 'jockey_compatibility' in X_df.columns else None
+            distance_c = X_df['distance_compatibility'].iloc[idx] if 'distance_compatibility' in X_df.columns else None
+            
+            # Course compatibility
+            course_c = None
+            if 'turf_compatibility' in X_df.columns and 'dirt_compatibility' in X_df.columns:
+                if 'コースタイプ' in df.columns:
+                    course_type = df['コースタイプ'].iloc[idx]
+                    if '芝' in str(course_type):
+                        course_c = X_df['turf_compatibility'].iloc[idx]
+                    elif 'ダ' in str(course_type):
+                        course_c = X_df['dirt_compatibility'].iloc[idx]
+                else:
+                    course_c = X_df['turf_compatibility'].iloc[idx] # Default
+
+            conf = calculate_confidence_score(p, model_meta, jockey_c, course_c, distance_c)
+            confidences.append(conf)
+
+        df['Confidence'] = confidences
+
+        # Merge relevant features back to df
+        cols_to_merge = [
+            'turf_compatibility', 'dirt_compatibility', 
+            'jockey_compatibility', 'distance_compatibility', 
+            'weighted_avg_speed', 'weighted_avg_rank'
+        ]
+        for c in cols_to_merge:
+            if c in X_df.columns:
+                df[c] = X_df[c]
+                
+        return df
+    except Exception as e:
+        print(f"Prediction Error: {e}")
+        return None
+
 def load_schedule_data(mode="JRA"):
     json_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "temp", "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
     if os.path.exists(json_path):
@@ -221,6 +280,12 @@ with st.expander("🛠️ 管理ツール (スケジュール更新など)"):
 
 st.markdown("---")
 
+# --- Analysis Mode Selection ---
+st.markdown("### 分析モード")
+analysis_mode = st.radio("機能を選択", ["🔍 個別レース分析", "💎 堅いレースを探す (一括分析)"], horizontal=True)
+
+st.markdown("---")
+
 # --- Race Selection ---
 st.subheader("📍 レース選択")
 
@@ -233,41 +298,131 @@ if schedule_data and "races" in schedule_data:
     # 1. Filter by Date
     dates = sorted(list(set([r.get('date', 'Unknown') for r in races])))
     
-    # Layout columns for selection
-    col_date, col_venue, col_race = st.columns(3)
-    
-    with col_date:
-         selected_date = st.selectbox("1. 日付を選択", dates)
-    
-    # Filter races by date
-    todays_races = [r for r in races if r.get('date') == selected_date]
-    
-    if todays_races:
-        # 2. Filter by Venue (New)
-        venues = sorted(list(set([r['venue'] for r in todays_races])))
+    if analysis_mode == "🔍 個別レース分析":
+        # Layout columns for selection
+        col_date, col_venue, col_race = st.columns(3)
         
-        with col_venue:
-            selected_venue = st.selectbox("2. 開催地を選択", venues)
+        with col_date:
+             selected_date = st.selectbox("1. 日付を選択", dates)
+        
+        # Filter races by date
+        todays_races = [r for r in races if r.get('date') == selected_date]
+        
+        if todays_races:
+            # 2. Filter by Venue
+            venues = sorted(list(set([r['venue'] for r in todays_races])))
             
-        # Filter races by venue
-        venue_races = [r for r in todays_races if r['venue'] == selected_venue]
+            with col_venue:
+                selected_venue = st.selectbox("2. 開催地を選択", venues)
+                
+            # Filter races by venue
+            venue_races = [r for r in todays_races if r['venue'] == selected_venue]
+            
+            # 3. Select Race
+            # Sort by race number
+            venue_races.sort(key=lambda x: int(x['number']) if str(x['number']).isdigit() else 0)
+            
+            race_options = {f"{r['number']}R: {r['name']}": r['id'] for r in venue_races}
+            
+            with col_race:
+                selected_label = st.selectbox("3. レースを選択", list(race_options.keys()))
+                if selected_label:
+                    race_id = race_options[selected_label]
+        else:
+            st.warning(f"{selected_date} のレースはありません。")
+
+    elif analysis_mode == "💎 堅いレースを探す (一括分析)":
+        st.info("💡 **機能説明**: 指定した日の全レースをAIが分析し、信頼度が高い「堅いレース」のみを抽出します。")
         
-        # 3. Select Race
-        # Sort by race number just in case
-        venue_races.sort(key=lambda x: int(x['number']))
+        col_date, col_venue_multi = st.columns([1, 2])
+        with col_date:
+             selected_date = st.selectbox("1. 日付を選択", dates)
         
-        race_options = {f"{r['number']}R: {r['name']}": r['id'] for r in venue_races}
-        
-        with col_race:
-            selected_label = st.selectbox("3. レースを選択", list(race_options.keys()))
-            if selected_label:
-                race_id = race_options[selected_label]
-    else:
-        st.warning(f"{selected_date} のレースはありません。")
+        todays_races = [r for r in races if r.get('date') == selected_date]
+        if todays_races:
+            venues = sorted(list(set([r.get('venue', 'Unknown') for r in todays_races])))
+            
+            with col_venue_multi:
+                 selected_venues = st.multiselect("2. 開催地を選択 (空欄で全会場)", venues, default=venues)
+            
+            target_races = [r for r in todays_races if not selected_venues or r.get('venue') in selected_venues]
+            st.write(f"対象レース数: {len(target_races)} レース")
+            
+            confidence_threshold = st.slider("信頼度フィルター (これ以上の信頼度のレースを表示)", 0, 100, 80)
+            
+            if st.button("🚀 一括分析を開始する", type="primary"):
+                 if not target_races:
+                     st.warning("対象レースがありません。")
+                 else:
+                     with st.spinner("モデルを読み込み中..."):
+                         # from app.public_app import load_model, load_model_metadata
+                         model = load_model(mode_val)
+                         model_meta = load_model_metadata(mode_val)
+                     
+                     if not model:
+                         st.error("モデルの読み込みに失敗しました。")
+                     else:
+                         results_container = st.container()
+                         progress_bar = st.progress(0)
+                         status_text = st.empty()
+                         
+                         solid_races_data = []
+                         
+                         for i, race in enumerate(target_races):
+                             r_name = f"{race['venue']}{race['number']}R: {race['name']}"
+                             status_text.text(f"分析中 ({i+1}/{len(target_races)}): {r_name}...")
+                             
+                             try:
+                                 # 1. Scrape
+                                 if i > 0: time.sleep(1) 
+                                 df_race = auto_scraper.scrape_shutuba_data(race['id'], mode=mode_val)
+                                 
+                                 if df_race is not None and not df_race.empty:
+                                     # 2. Predict
+                                     processed_df = predict_race_logic(df_race, model, model_meta)
+                                     
+                                     if processed_df is not None:
+                                         # 3. Find Top Horse
+                                         processed_df = processed_df.sort_values('AI_Score', ascending=False)
+                                         top_horse = processed_df.iloc[0]
+                                         
+                                         conf = top_horse['Confidence']
+                                         score = top_horse['AI_Score']
+                                         
+                                         if conf >= confidence_threshold:
+                                             solid_races_data.append({
+                                                 "会場": race['venue'],
+                                                 "R": f"{race['number']}R",
+                                                 "レース名": race['name'],
+                                                 "本命馬": top_horse['馬名'],
+                                                 "AI指数": f"{score}%",
+                                                 "信頼度": f"{conf}%",
+                                                 "race_id": race['id']
+                                             })
+                             
+                             except Exception as e:
+                                 print(f"Error analyzing {race['id']}: {e}")
+                                 
+                             progress_bar.progress((i + 1) / len(target_races))
+                         
+                         status_text.success(f"完了！ {len(target_races)}レース中、条件を満たすレースは {len(solid_races_data)} 件でした。")
+                         
+                         if solid_races_data:
+                             st.markdown("### 💎 堅いレース候補")
+                             res_df = pd.DataFrame(solid_races_data)
+                             st.dataframe(res_df, use_container_width=True)
+                             st.info("詳細を見たい場合は、上の「個別レース分析」モードで該当レースを選択してください。")
+                         else:
+                             st.warning("条件を満たす堅いレースは見つかりませんでした。信頼度基準を下げてみてください。")
+        else:
+             st.warning(f"{selected_date} のレースはありません。")
         
 else:
     st.warning("レースデータがありません。管理者メニューから更新ボタンを押してください。")
-    race_id = st.text_input("レースID直接入力 (12桁)", value="202305021211")
+    # No fallback text input for now to keep it clean, or keep it inside Individual mode if needed.
+    # But existing code had it. Let's omitting it for Batch mode safety.
+    if analysis_mode == "🔍 個別レース分析":
+         race_id = st.text_input("レースID直接入力 (12桁)", value="202305021211")
 
 
 # Main Analysis
@@ -347,94 +502,25 @@ if race_id:
             if df is not None and not df.empty:
                 status_text.success("✅ ステップ 1/4: 出馬表データを取得しました")
 
-                # ステップ2: 特徴量エンジニアリング
-                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走、適性スコア、会場特性等）...")
-                progress_bar.progress(50)
-                X_df = process_data(df, use_venue_features=True)  # 会場特性特徴量を使用（モデルと一致）
-                status_text.success("✅ ステップ 2/4: 特徴量計算が完了しました")
-
-                # ステップ3: AI予測
-                status_text.info("**ステップ 3/4:** AIモデルで勝率を予測中...")
-                progress_bar.progress(75)
-
+                # ステップ2-4: AI予測プロセス（共通関数化）
+                status_text.info("**ステップ 2-4:** 特徴量計算・AI予測・信頼度算出を実行中...")
+                progress_bar.progress(60)
+                
                 if model:
-                    try:
-                        # Drop meta cols for prediction
-                        # Meta cols are handled in process_data, but result has meta + features + rank
-                        # We need to filter only numeric features matching model
-                        # Model expects features used in training.
-                        # Features: weighted_avg_... + age
-                        # We should robustly select.
-
-                        # Identify feature cols from X_df
-                        # Exclude non-numeric and 'rank'
-                        meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
-                        features = [c for c in X_df.columns if c not in meta_cols and c != 'target_win']
-                        # Ensure numeric
-                        X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
-
-                        probs = model.predict(X_pred)
-
-                        df['AI_Prob'] = probs
-                        df['AI_Score'] = (probs * 100).astype(int)
-
-                        # Calculate confidence score for each prediction with compatibility data
-                        # コースタイプに応じて芝/ダート適性を選択
-                        confidences = []
-                        for idx, p in enumerate(probs):
-                            # 適性スコアを取得（X_dfから）
-                            jockey_c = X_df['jockey_compatibility'].iloc[idx] if 'jockey_compatibility' in X_df.columns else None
-                            distance_c = X_df['distance_compatibility'].iloc[idx] if 'distance_compatibility' in X_df.columns else None
-
-                            # コース適性: 芝かダートか判定（コースタイプカラムから）
-                            course_c = None
-                            if 'turf_compatibility' in X_df.columns and 'dirt_compatibility' in X_df.columns:
-                                # コースタイプを判定（'芝' or 'ダ'）
-                                # df_displayから取得するか、X_dfに含まれているか確認
-                                if 'コースタイプ' in df.columns:
-                                    course_type = df['コースタイプ'].iloc[idx]
-                                    if course_type == '芝':
-                                        course_c = X_df['turf_compatibility'].iloc[idx]
-                                    elif course_type == 'ダ':
-                                        course_c = X_df['dirt_compatibility'].iloc[idx]
-                                else:
-                                    # デフォルトは芝を使用
-                                    course_c = X_df['turf_compatibility'].iloc[idx]
-
-                            conf = calculate_confidence_score(p, model_meta, jockey_c, course_c, distance_c)
-                            confidences.append(conf)
-
-                        df['Confidence'] = confidences
-
-                        status_text.success("✅ ステップ 3/4: AI予測が完了しました")
-
-                        # ステップ4: 信頼度スコア計算
-                        status_text.info("**ステップ 4/4:** 予測信頼度を計算中...")
-                        progress_bar.progress(100)
-
-                        # Merge features back to df for display
-                        # We need: turf_compatibility, dirt_compatibility, jockey_compatibility, distance_compatibility, weighted_avg_speed, weighted_avg_rank
-                        cols_to_merge = [
-                            'turf_compatibility', 'dirt_compatibility', 
-                            'jockey_compatibility', 'distance_compatibility', 
-                            'weighted_avg_speed', 'weighted_avg_rank'
-                        ]
-                        for c in cols_to_merge:
-                            if c in X_df.columns:
-                                df[c] = X_df[c]
-
-
-                        status_text.success("✅ ステップ 4/4: すべての処理が完了しました！")
-                        progress_bar.progress(100)
-
-                    except Exception as e:
-                        status_text.error(f"❌ 予測エラー: {e}")
-                        df['AI_Prob'] = 0.0
-                        df['AI_Score'] = 0.0
+                    processed_df = predict_race_logic(df, model, model_meta)
+                    
+                    if processed_df is not None:
+                         df = processed_df
+                         status_text.success("✅ AI分析が完了しました！")
+                         progress_bar.progress(100)
+                    else:
+                         status_text.error("❌ 予測処理中にエラーが発生しました。")
+                         df['AI_Prob'] = 0.0
+                         df['AI_Score'] = 0.0
                 else:
-                    status_text.warning("モデルが見つかりません。予測スキップ。")
-                    df['AI_Prob'] = 0.0
-                    df['AI_Score'] = 0.0
+                     status_text.warning("モデルが見つかりません。予測スキップ。")
+                     df['AI_Prob'] = 0.0
+                     df['AI_Score'] = 0.0
 
                 # 4. Display
                 # Store in session state to persist edits
