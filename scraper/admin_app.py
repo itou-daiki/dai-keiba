@@ -247,6 +247,25 @@ with tab_ml:
         
         btn_label = "🧪 チューニング ＆ 学習開始" if is_tuning else "🧠 学習開始"
         start_process = st.button(btn_label, type="primary")
+        
+        st.write("---")
+        if st.button("⚙️ データ加工 (前処理) のみ実行"):
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            # Switch paths based on Mode
+            if mode_val == "NAR":
+                data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
+                db_path = os.path.join(project_root, "database_nar.csv")
+            else:
+                data_path = os.path.join(project_root, "ml", "processed_data.csv")
+                db_path = os.path.join(project_root, "database.csv")
+            
+            with st.spinner("データ加工作業中..."):
+                if os.path.exists(db_path):
+                   # Import logic matches train_model call
+                   feature_engineering.calculate_features(db_path, data_path)
+                   st.success(f"完了！ 保存先: {os.path.basename(data_path)}")
+                else:
+                   st.error("database.csvが見つかりません。")
 
     if start_process:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

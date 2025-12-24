@@ -293,7 +293,16 @@ def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None
                 d_h1 = soup_day.select_one("div.header_line h1 .txt")
                 full_d_text = d_h1.text.strip() if d_h1 else (soup_day.h1.text.strip() if soup_day.h1 else "")
                 
-                # Parse date from "2025年1月5日（日曜）..."
+                # Parse date from "2025年1月5日（日曜）1回中山1日"
+                # Need to match Date AND Venue/Kai/Day info for ID generation
+                # Pattern: YYYY年M月D日 ... K回VenueD日
+                
+                current_day_date = None
+                kai_str = "01"
+                day_str = "01"
+                venue_str = ""
+                p_code = "00"
+                
                 match_day_date = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', full_d_text)
                 if match_day_date:
                     y, mo, d_day = map(int, match_day_date.groups())
@@ -306,155 +315,94 @@ def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None
                     if end_date and current_day_date > end_date:
                         print(f"    Skipping day {current_day_date} (After end date)")
                         continue
-                    print(f"    Processing Day: {current_day_date}")
+                    print(f"    Processing Day: {current_day_date} ({full_d_text})")
                 else:
                     print(f"    Processing Day (Date unknown): {full_d_text[:20]}...")
 
-                race_links_set = set()
+                # Parse Venue Info for ID Generation
+                venues_ptn = "札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉"
+                match_meta = re.search(rf'(\d+)回({venues_ptn})(\d+)日', full_d_text)
+                if match_meta:
+                    kai_str = f"{int(match_meta.group(1)):02}"
+                    venue_str = match_meta.group(2)
+                    day_str = f"{int(match_meta.group(3)):02}"
+                    
+                    place_map = {
+                        "札幌": "01", "函館": "02", "福島": "03", "新潟": "04", "東京": "05",
+                        "中山": "06", "中京": "07", "京都": "08", "阪神": "09", "小倉": "10"
+                    }
+                    p_code = place_map.get(venue_str, "00")
+                
+                # Collect Race Links AND Race Numbers
+                # Need to pair Link with Race Number
+                race_list_items = []
+
                 all_anchors = soup_day.find_all('a')
                 for a in all_anchors:
-                    href = a.get('href', '')
-                    if 'CNAME=' in href and 'pw01sde' in href:
-                        race_links_set.add(urllib.parse.urljoin(base_url, href))
-                        
-                for a in all_anchors:
                     onclick = a.get('onclick', '')
+                    # Check for doAction
                     match_sde = re.search(r"doAction\('[^']+',\s*'(pw01sde[^']+)'\)", onclick)
+                    href = a.get('href', '')
+                    
+                    final_url = ""
                     if match_sde:
-                        full_l = f"{base_url}?CNAME={match_sde.group(1)}"
-                        race_links_set.add(full_l)
-
-                sorted_race_links = sorted(list(race_links_set))
-                print(f"      -> {len(sorted_race_links)} races.")
+                        final_url = f"{base_url}?CNAME={match_sde.group(1)}"
+                    elif 'CNAME=' in href and 'pw01sde' in href:
+                        final_url = urllib.parse.urljoin(base_url, href)
+                    
+                    if final_url:
+                        # Extract Race Number from anchor text (e.g. "1R", "11R")
+                        # Or generic image alt?
+                        # Usually text is "1R" or img alt="1R"
+                        txt = a.text.strip()
+                        img = a.find('img')
+                        if not txt and img and 'alt' in img.attrs:
+                            txt = img['alt']
+                        
+                        r_num_match = re.search(r'(\d+)R', txt)
+                        if r_num_match:
+                             r_num = int(r_num_match.group(1))
+                             race_list_items.append((final_url, r_num))
                 
-                for r_link in sorted_race_links:
-                    # Check ID from link? JRA scrape_jra_race generates ID internally based on content.
-                    # ID format: YYYY Venue Kai Day Num (e.g., 202506010811)
-                    # We can try to parse r_link CNAME to guess ID but generated ID is safer.
-                    # BUT scrape_jra_race pulls the page first.
-                    # To skip WITHOUT fetching, we need to guess ID from CNAME/Link.
-                    # CNAME=pw01sde... is not directly ID.
-                    # However, typical JRA ID is Year+Place+Times+Day+RaceNum
-                    # We might not be able to skip 100% accurately without fetching if logic is complex.
-                    # But wait, scrape_jra_race returns None if fail.
+                # Deduplicate by URL (keep first found usually fine)
+                # Sort by Race Number
+                seen_urls = set()
+                unique_races = []
+                for url, r_num in race_list_items:
+                    if url not in seen_urls:
+                        unique_races.append((url, r_num))
+                        seen_urls.add(url)
+                
+                unique_races.sort(key=lambda x: x[1]) # Sort by race num
+                
+                print(f"      -> {len(unique_races)} races found.")
+
+                for r_link, r_num in unique_races:
+                    # PRE-FETCH OPTIMIZATION
+                    # Construct ID
+                    if p_code != "00" and current_day_date:
+                         # ID: YYYY PP KK DD RR
+                         # y is from match_day_date loop var (int)
+                         # p_code, kai_str, day_str strings
+                         
+                         # Ensure year is from the day page date
+                         y_str = str(y)
+                         r_num_str = f"{r_num:02}"
+                         
+                         generated_id = f"{y_str}{p_code}{kai_str}{day_str}{r_num_str}"
+                         
+                         if existing_race_ids and generated_id in existing_race_ids:
+                             # print(f"        [Skip] {generated_id} (Pre-check)")
+                             continue
                     
-                    # Optimization:
-                    # If we really want to skip, we need to know the ID before scraping.
-                    # In JRA scraper, ID is generated: f"{year}{p_code}{kai}{day}{r_num}"
-                    # Can we parse these from r_link?
-                    # r_link is just a CNAME post key. Impossible to know details without fetching "day" page (which we did).
-                    # We are in the loop of races for a day.
-                    # We don't have race num in the loop variable easily?
-                    # Actually, day page lists races.
-                    # But we are iterating sorted_race_links which are just links.
-                    
-                    # Strategy: We must fetch the page to get metadata and generate ID.
-                    # So we can't save bandwidth on generating ID, but we can save parsing/saving time?
-                    # Or maybe we can't skip JRA easily without refactoring race link parsing?
-                    # Actually, scrape_jra_race prints "Accessing...".
-                    # Let's add skipping INSIDE scrape_jra_race if we pass existing_ids?
-                    # No, scrape_jra_race usually just returns DF.
-                    
-                    # Compromise: We have to scrape to generate ID.
-                    # But we can check before saving?
-                    # No, user wants to skip *scraping*.
-                    
-                    # Wait, JRA scraping is "Post to get list" -> "Scrape each race".
-                    # If we want to skip, we need to identify the race from the link/list.
-                    # On the "Day Page", the links are generic "Selection List".
-                    # However, usually the anchor text says "1R", "2R"...
-                    # We parsed `all_anchors` to get links.
-                    # We can try to extract Race Num from anchor text?
-                    
-                    # Let's try to extract race num effectively.
-                    # In the loop `for a in all_anchors`, we can associate Race Num.
-                    
-                    # For now, to be safe and simple:
-                    # We will fetch the page (lightweight compared to full browser), generate ID, and THEN if separate check in save_callback?
-                    # No, the user wants "skip scraping".
-                    
-                    # Actually, let's look at `scrape_jra_race`.
-                    # It fetches, parses, then generates ID.
-                    # If we want to skip network, we need ID before fetch.
-                    # JRA site structure makes this hard without parsing the day page more deeply.
-                    # But we ARE parsing the day page.
-                    # `soup_day` has the links.
-                    # The links usually are in a table or list with "1R", "2R"...
-                    
-                    # Let's assume we can't easily skip JRA without logic change.
-                    # BUT, we can add a check: if we scraped and generated ID, and it exists, we return None or Empty?
-                    # That saves "processing" but not "fetching".
-                    # But `scrape_jra_race` is the fetcher.
-                    
-                    # Alternative:
-                    # Verify ID generation logic in `scrape_jra_year` loop?
-                    # We know Year (year_str), Month (m), Day (d_day).
-                    # Venue is usually consistent for the day.
-                    # If we parse Venue once from Day Page title ("2回中山8日"), we know Venue/Kai/Day.
-                    # Then we just need Race Num.
-                    # Race Num corresponds to the link order? usually 1..12.
-                    # `sorted_race_links` might sort by CNAME which might not be order.
-                    
-                    # Let's just implement explicit skip in `scrape_jra_race` call?
-                    # Passing `existing_ids` to `scrape_jra_race` is weird.
-                    
-                    # Let's try to parse the Day Page better in `scrape_jra_year` to allow skipping.
-                    # `full_d_text` has "1回中山1日".
-                    # Match `(\d+)回(\S+)(\d+)日`
-                    # If we match this, we have Kai, Venue, Day.
-                    # Then for each link, if we can find "1R", "2R" in the anchor text...
-                    
-                    # Current logic matches `doAction` in `onclick`.
-                    # Let's look at `scrape_jra_year` again.
-                    # It iterates `all_anchors` and adds to set.
-                    # We lose the relationship between Link and Race Num.
-                    
-                    # PLAN:
-                    # Since JRA skipping is hard without heavy refactor, I will add `existing_race_ids` to `scrape_jra_year` signature
-                    # and pass it to `scrape_jra_race`.
-                    # Inside `scrape_jra_race`, we fetch (unavoidable potentially), generate ID.
-                    # IF ID exists, we return None immediately before detailed parsing?
-                    # Or we just check after DF creation.
-                    # The user wants "Speed up".
-                    # If we fetch, we lose speed.
-                    
-                    # Refined Plan:
-                    # Trust the Loop.
-                    # Modify `scrape_jra_year` to parse metadata from the Day Page header ONCE.
-                    # (Venue, Kai, Day).
-                    # Then iterate links. If we can map link to Race Num (1..12), we build ID.
-                    # If ID exists, skip `scrape_jra_race`.
-                    
-                    # But mapping link to Race Num is risky if structure changes.
-                    # Let's stick to "Fetch, Generate ID, Check, Return".
-                    # It still saves the overhead of creating DF?
-                    # Actually `scrape_jra_race` creates DF.
-                    
-                    # Let's just add the param to `scrape_jra_year` but mostly use it for NAR (which iterates ID 1..12 easily if we wanted, but valid list is better).
-                    # Wait, allow NAR logic to be applied.
-                    # For JRA, I will leave it as "Partial Skip" (Fetch happens, but maybe we can optimize `scrape_jra_race`?).
-                    
-                    # Actually, let's keep it simple.
-                    # Just add the param to signature for consistency.
-                    # Even if JRA doesn't fully utilize it for pre-fetch skipping yet,
-                    # we can implement "Check after fetch" to avoid duplicate data processing?
-                    # The user asked "Is there a skip function?".
-                    # For NAR there is now. JRA is harder.
-                    
-                    # Ok, I will add the param to `scrape_jra_year` signature but mostly ignore it for now or just check after DF?
-                    # No, check `scrape_jra_race` return.
-                    # Actually, if I update `colab/JRA_Scraper`, I can load existing IDs.
-                    # If JRA scraper doesn't support skipping, it will re-scrape.
-                    # I should try to support it.
-                    
-                    # In `scrape_jra_year` loop:
-                    # ...
-                    df = scrape_jra_race(r_link, existing_race_ids=existing_race_ids) 
-                    # I need to update `scrape_jra_race` signature too.
+                    # If not skipped, fetch
+                    df = scrape_jra_race(r_link, existing_race_ids=existing_race_ids)
                     
                     if df is not None and not df.empty:
-                        # ...
-                        pass
-
+                        if save_callback:
+                            save_callback(df)
+                        time.sleep(1)
+        
         except Exception as e:
             print(f"Error processing month {month}: {e}")
+
