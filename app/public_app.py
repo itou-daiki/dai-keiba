@@ -382,21 +382,32 @@ if schedule_data and "races" in schedule_data:
                                      processed_df = predict_race_logic(df_race, model, model_meta)
                                      
                                      if processed_df is not None:
-                                         # 3. Find Top Horse
+                                         # 3. Find Top Horses (Top 3)
                                          processed_df = processed_df.sort_values('AI_Score', ascending=False)
+                                         
                                          top_horse = processed_df.iloc[0]
-                                         
                                          conf = top_horse['Confidence']
-                                         score = top_horse['AI_Score']
                                          
+                                         # Construct Multi-Horse String
+                                         picks_str = []
+                                         marks = ["◎", "◯", "▲"]
+                                         
+                                         for rank in range(min(3, len(processed_df))):
+                                             h = processed_df.iloc[rank]
+                                             m = marks[rank]
+                                             picks_str.append(f"{m} {h['馬名']} ({h['AI_Score']}%)")
+                                         
+                                         picks_display = " / ".join(picks_str)
+
                                          if conf >= confidence_threshold:
                                              solid_races_data.append({
                                                  "会場": race['venue'],
                                                  "R": f"{race['number']}R",
                                                  "レース名": race['name'],
-                                                 "本命馬": top_horse['馬名'],
-                                                 "AI指数": f"{score}%",
+                                                 "AI予想 (◎/◯/▲)": picks_display,
+                                                  # "本命馬": top_horse['馬名'], # Removed in favor of multi-display
                                                  "信頼度": f"{conf}%",
+                                                 # "AI指数": f"{score}%", # Included in string
                                                  "race_id": race['id']
                                              })
                              
