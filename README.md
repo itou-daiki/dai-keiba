@@ -55,6 +55,7 @@ streamlit run app/public_app.py --server.port 8502
 - **収集データ**:
   - レース基本情報（日付、会場、距離、馬場状態、天気）
   - 出走馬情報（馬名、枠番、馬番、年齢、斤量、騎手）
+  - 血統情報（父、母、母父）
   - 過去走履歴（最大全履歴、着順、タイム、上がり3F、通過順、馬体重、オッズ）
   - 結果情報（着順、走破タイム）
 
@@ -88,6 +89,7 @@ streamlit run app/public_app.py --server.port 8502
     ├─ ml/feature_engineering.py 実行
     ├─ 時間減衰加重平均（過去5走）
     │   └─ Weight = [55%, 25%, 12%, 6%, 2%]  # 前走を重視（プロ仕様）
+    ├─ 血統情報（父、母、母父）のID化
     ├─ 騎手相性、距離適性、コース適性の計算
     ├─ 芝/ダート適性の分離
     └─ processed_data.csv / processed_data_nar.csv 生成
