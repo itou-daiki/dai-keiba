@@ -16,6 +16,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'ml'))
 try:
     import auto_scraper
     from feature_engineering import process_data
+    from db_helper import KeibaDatabase
 except ImportError as e:
     st.error(f"Import Error: {e}")
 
@@ -40,14 +41,17 @@ def load_model_metadata(mode="JRA"):
     return None
 
 def get_data_freshness(mode="JRA"):
-    """データベースの最終更新日時を取得"""
-    db_path = os.path.join(os.path.dirname(__file__), "database_nar.csv" if mode == "NAR" else "database.csv")
+    """データベースの最終更新日時を取得（SQL対応）"""
+    db_path = os.path.join(os.path.dirname(__file__), "keiba_data.db")
     if os.path.exists(db_path):
-        import datetime
-        mtime = os.path.getmtime(db_path)
-        last_updated = datetime.datetime.fromtimestamp(mtime)
-        days_ago = (datetime.datetime.now() - last_updated).days
-        return last_updated.strftime("%Y-%m-%d %H:%M"), days_ago
+        try:
+            db = KeibaDatabase(db_path)
+            freshness = db.get_data_freshness(mode)
+            return freshness, 0  # 鮮度情報を文字列で返す
+        except Exception as e:
+            st.warning(f"データ鮮度の取得に失敗: {e}")
+            return "不明", -1
+    return "DBなし", -1
     return None, None
 
 def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None):
@@ -342,20 +346,11 @@ if race_id:
             if df is not None and not df.empty:
                 status_text.success("✅ ステップ 1/4: 出馬表データを取得しました")
 
-                # デバッグ: 元のデータサイズを確認
-                st.write(f"DEBUG: スクレイピング後のdf.shape = {df.shape}")
-                st.write(f"DEBUG: 馬名のユニーク数 = {df['馬名'].nunique()}")
-
                 # ステップ2: 特徴量エンジニアリング
-                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア等）...")
+                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走、適性スコア、会場特性等）...")
                 progress_bar.progress(50)
-                X_df = process_data(df, use_venue_features=False)  # 学習時と一致させる（デフォルト）
+                X_df = process_data(df, use_venue_features=True)  # 会場特性特徴量を使用（モデルと一致）
                 status_text.success("✅ ステップ 2/4: 特徴量計算が完了しました")
-
-                # デバッグ: 特徴量計算後のサイズを確認
-                st.write(f"DEBUG: process_data後のX_df.shape = {X_df.shape}")
-                st.write(f"DEBUG: X_dfの列数 = {len(X_df.columns)}")
-                st.write(f"DEBUG: X_dfの列名 = {list(X_df.columns)}")
 
                 # ステップ3: AI予測
                 status_text.info("**ステップ 3/4:** AIモデルで勝率を予測中...")
@@ -377,16 +372,7 @@ if race_id:
                         # Ensure numeric
                         X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
 
-                        # デバッグ: 予測用特徴量の確認
-                        st.write(f"DEBUG: X_pred.shape = {X_pred.shape}")
-                        st.write(f"DEBUG: 特徴量数 = {X_pred.shape[1]}")
-                        st.write(f"DEBUG: 特徴量名 = {list(X_pred.columns)}")
-
                         probs = model.predict(X_pred)
-
-                        # デバッグ: 予測結果の確認
-                        st.write(f"DEBUG: 予測成功！probs.shape = {probs.shape}")
-                        st.write(f"DEBUG: probs = {probs}")
 
                         df['AI_Prob'] = probs
                         df['AI_Score'] = (probs * 100).astype(int)
