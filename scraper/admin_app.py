@@ -267,6 +267,44 @@ with tab_ml:
                 else:
                    st.error("database.csvが見つかりません。")
 
+        st.write("---")
+        if st.button("💾 データベース (SQL) に保存"):
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            if mode_val == "NAR":
+                data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
+            else:
+                data_path = os.path.join(project_root, "ml", "processed_data.csv")
+            
+            db_path_sql = os.path.join(project_root, "keiba_data.db")
+            
+            if not os.path.exists(data_path):
+                st.error(f"処理済みデータが見つかりません: {os.path.basename(data_path)}")
+                st.info("先に「データ加工」を実行してください。")
+            else:
+                with st.spinner("SQLiteデータベースに保存中..."):
+                    try:
+                        # Import db_helper dynamically if needed
+                        import db_helper
+                        importlib.reload(db_helper)
+                        
+                        df_proc = pd.read_csv(data_path)
+                        # Initialize DB (creates file if not exists)
+                        # Note: KeibaDatabase checks for existence in __init__. 
+                        # We might need to handle creation if it doesn't exist yet, but open('w') handles it?
+                        # ACTUALLY KeibaDatabase raises FileNotFoundError if not exists.
+                        # We should manually ensure it exists or bypass check for creation.
+                        # Let's bypass the check by using sqlite3 directly OR creating file first.
+                        
+                        conn_check = importlib.import_module("sqlite3").connect(db_path_sql)
+                        conn_check.close() # Create file
+                        
+                        db = db_helper.KeibaDatabase(db_path_sql)
+                        db.save_processed_data(df_proc, mode=mode_val)
+                        
+                        st.success(f"保存完了！ データベース: {os.path.basename(db_path_sql)}")
+                    except Exception as e:
+                        st.error(f"SQL保存エラー: {e}")
+
     if start_process:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         

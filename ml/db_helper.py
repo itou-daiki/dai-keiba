@@ -211,19 +211,45 @@ class KeibaDatabase:
     def execute_query(self, query: str, params: tuple = ()) -> pd.DataFrame:
         """
         カスタムクエリを実行
-
+        
         Args:
             query: SQLクエリ
             params: クエリパラメータ
-
+            
         Returns:
             クエリ結果のDataFrame
         """
         conn = self.get_connection()
         df = pd.read_sql_query(query, conn, params=params)
         conn.close()
-
+        
         return df
+
+    def save_processed_data(self, df: pd.DataFrame, mode: str = "JRA"):
+        """
+        処理済みデータを保存
+        
+        Args:
+            df: 保存するDataFrame
+            mode: "JRA" または "NAR"
+        """
+        table_name = f"processed_data_{mode.lower()}"
+        conn = self.get_connection()
+        
+        # Save to SQL
+        df.to_sql(table_name, conn, if_exists='replace', index=False, chunksize=1000)
+        
+        # Create indices for speed
+        cursor = conn.cursor()
+        indices = ['race_id', 'horse_id', 'date']
+        for idx in indices:
+            try:
+                cursor.execute(f"CREATE INDEX IF NOT EXISTS idx_{idx} ON {table_name}({idx})")
+            except Exception as e:
+                print(f"Index creation failed for {idx}: {e}")
+        
+        conn.commit()
+        conn.close()
 
 
 # 便利関数
