@@ -94,7 +94,7 @@ def get_existing_race_ids(mode="JRA", db_path=None, csv_path=None):
 
 def find_missing_races(start_date, end_date, existing_race_ids, mode="JRA"):
     """
-    指定期間内で欠落しているレースを検出
+    指定期間内で欠落しているレースを検出（年度別分析を含む）
 
     Args:
         start_date: 開始日（datetime.date or datetime）
@@ -104,9 +104,13 @@ def find_missing_races(start_date, end_date, existing_race_ids, mode="JRA"):
 
     Returns:
         dict: {
-            'total_expected': 推定レース数,
-            'total_existing': 既存レース数,
-            'missing_dates': 欠落している可能性のある日付リスト
+            'total_days': 全日数,
+            'weekend_days': 週末日数,
+            'existing_race_dates': 既存レース日数,
+            'missing_weekend_dates': 欠落週末リスト,
+            'coverage_rate': カバレッジ率,
+            'yearly_coverage': 年度別カバレッジ情報,
+            'missing_years': 完全に欠けている年度リスト
         }
     """
     if isinstance(start_date, datetime):
@@ -119,6 +123,8 @@ def find_missing_races(start_date, end_date, existing_race_ids, mode="JRA"):
     # YYYY: 年, MM: 月, DD: 日, KK: 開催, PP: 場所, RR: レース番号, NN: 不明
 
     existing_dates = set()
+    existing_dates_by_year = {}  # 年度別の既存日付
+
     for race_id in existing_race_ids:
         if len(race_id) >= 8:
             try:
@@ -126,11 +132,56 @@ def find_missing_races(start_date, end_date, existing_race_ids, mode="JRA"):
                 race_date = datetime.strptime(date_str, "%Y%m%d").date()
                 if start_date <= race_date <= end_date:
                     existing_dates.add(race_date)
+
+                    # 年度別にグループ化
+                    year = race_date.year
+                    if year not in existing_dates_by_year:
+                        existing_dates_by_year[year] = set()
+                    existing_dates_by_year[year].add(race_date)
             except:
                 pass
 
     # 全期間の日数
     total_days = (end_date - start_date).days + 1
+
+    # 年度別の統計情報を計算
+    yearly_coverage = {}
+    target_years = range(start_date.year, end_date.year + 1)
+
+    for year in target_years:
+        # その年の範囲を決定
+        year_start = date(year, 1, 1)
+        year_end = date(year, 12, 31)
+
+        # 期間との重なりを考慮
+        actual_start = max(year_start, start_date)
+        actual_end = min(year_end, end_date)
+
+        # その年の週末日数をカウント
+        year_weekends = 0
+        current = actual_start
+        while current <= actual_end:
+            if current.weekday() in [5, 6]:
+                year_weekends += 1
+            current += timedelta(days=1)
+
+        # その年の既存レース日数
+        year_existing = len(existing_dates_by_year.get(year, set()))
+
+        # カバレッジ率
+        coverage = year_existing / year_weekends if year_weekends > 0 else 0
+
+        yearly_coverage[year] = {
+            'weekend_days': year_weekends,
+            'existing_race_dates': year_existing,
+            'coverage_rate': coverage,
+            'start_date': actual_start,
+            'end_date': actual_end
+        }
+
+    # 完全に欠けている年度を検出（カバレッジ0%の年）
+    missing_years = [year for year, info in yearly_coverage.items()
+                     if info['coverage_rate'] == 0 and info['weekend_days'] > 0]
 
     # 土日の日数を概算（レースは主に週末）
     weekend_days = 0
@@ -154,7 +205,9 @@ def find_missing_races(start_date, end_date, existing_race_ids, mode="JRA"):
         'weekend_days': weekend_days,
         'existing_race_dates': len(existing_dates),
         'missing_weekend_dates': missing_dates,
-        'coverage_rate': len(existing_dates) / weekend_days if weekend_days > 0 else 0
+        'coverage_rate': len(existing_dates) / weekend_days if weekend_days > 0 else 0,
+        'yearly_coverage': yearly_coverage,
+        'missing_years': missing_years
     }
 
     return result
@@ -1250,14 +1303,31 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
             print(f"📊 データカバレッジ分析:")
             print(f"   対象期間: {missing_info['total_days']}日間（週末: {missing_info['weekend_days']}日）")
             print(f"   既存レース日: {missing_info['existing_race_dates']}日")
-            print(f"   カバレッジ率: {missing_info['coverage_rate']:.1%}")
+            print(f"   全体カバレッジ率: {missing_info['coverage_rate']:.1%}")
+
+            # 年度別カバレッジを表示
+            if missing_info['yearly_coverage']:
+                print(f"\n   📅 年度別カバレッジ:")
+                for year in sorted(missing_info['yearly_coverage'].keys()):
+                    info = missing_info['yearly_coverage'][year]
+                    status_icon = "✅" if info['coverage_rate'] >= 0.8 else ("⚠️" if info['coverage_rate'] > 0 else "❌")
+                    print(f"      {status_icon} {year}年: {info['coverage_rate']:.1%} " +
+                          f"({info['existing_race_dates']}/{info['weekend_days']}日)")
+
+            # 完全に欠けている年度を警告
+            if missing_info['missing_years']:
+                print(f"\n   ❌ 警告: 以下の年度のデータが完全に欠けています:")
+                for year in sorted(missing_info['missing_years']):
+                    print(f"      • {year}年")
+                print(f"   💡 これらの年度を含めてスクレイピングを実行してください")
+
             if missing_info['missing_weekend_dates']:
-                print(f"   欠落している可能性のある週末: {len(missing_info['missing_weekend_dates'])}日")
+                print(f"\n   ⚠️ 欠落している可能性のある週末: {len(missing_info['missing_weekend_dates'])}日")
                 # 最初の5日のみ表示
                 for d in missing_info['missing_weekend_dates'][:5]:
-                    print(f"     - {d}")
+                    print(f"      - {d}")
                 if len(missing_info['missing_weekend_dates']) > 5:
-                    print(f"     ... 他 {len(missing_info['missing_weekend_dates']) - 5}日")
+                    print(f"      ... 他 {len(missing_info['missing_weekend_dates']) - 5}日")
 
             if progress_callback:
                 progress_callback(f"既存データ: {len(existing_race_ids)}レース、スキップして欠落分のみ取得")
@@ -1313,14 +1383,31 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
             print(f"📊 データカバレッジ分析:")
             print(f"   対象期間: {missing_info['total_days']}日間（週末: {missing_info['weekend_days']}日）")
             print(f"   既存レース日: {missing_info['existing_race_dates']}日")
-            print(f"   カバレッジ率: {missing_info['coverage_rate']:.1%}")
+            print(f"   全体カバレッジ率: {missing_info['coverage_rate']:.1%}")
+
+            # 年度別カバレッジを表示
+            if missing_info['yearly_coverage']:
+                print(f"\n   📅 年度別カバレッジ:")
+                for year in sorted(missing_info['yearly_coverage'].keys()):
+                    info = missing_info['yearly_coverage'][year]
+                    status_icon = "✅" if info['coverage_rate'] >= 0.8 else ("⚠️" if info['coverage_rate'] > 0 else "❌")
+                    print(f"      {status_icon} {year}年: {info['coverage_rate']:.1%} " +
+                          f"({info['existing_race_dates']}/{info['weekend_days']}日)")
+
+            # 完全に欠けている年度を警告
+            if missing_info['missing_years']:
+                print(f"\n   ❌ 警告: 以下の年度のデータが完全に欠けています:")
+                for year in sorted(missing_info['missing_years']):
+                    print(f"      • {year}年")
+                print(f"   💡 これらの年度を含めてスクレイピングを実行してください")
+
             if missing_info['missing_weekend_dates']:
-                print(f"   欠落している可能性のある週末: {len(missing_info['missing_weekend_dates'])}日")
+                print(f"\n   ⚠️ 欠落している可能性のある週末: {len(missing_info['missing_weekend_dates'])}日")
                 # 最初の5日のみ表示
                 for d in missing_info['missing_weekend_dates'][:5]:
-                    print(f"     - {d}")
+                    print(f"      - {d}")
                 if len(missing_info['missing_weekend_dates']) > 5:
-                    print(f"     ... 他 {len(missing_info['missing_weekend_dates']) - 5}日")
+                    print(f"      ... 他 {len(missing_info['missing_weekend_dates']) - 5}日")
 
             if progress_callback:
                 progress_callback(f"既存データ: {len(existing_race_ids)}レース、スキップして欠落分のみ取得")
