@@ -87,7 +87,7 @@ streamlit run app/public_app.py --server.port 8502
 3. 特徴量エンジニアリング
     ├─ ml/feature_engineering.py 実行
     ├─ 時間減衰加重平均（過去5走）
-    │   └─ Weight = exp(-0.5 * (i-1))  # 直近ほど重視
+    │   └─ Weight = [55%, 25%, 12%, 6%, 2%]  # 前走を重視（プロ仕様）
     ├─ 騎手相性、距離適性、コース適性の計算
     ├─ 芝/ダート適性の分離
     └─ processed_data.csv / processed_data_nar.csv 生成
@@ -208,6 +208,7 @@ target_col = 'target_win'  # rank == 1 のとき1、それ以外0
     ├─ ml/feature_engineering.py の関数を呼び出し
     ├─ 各馬の過去走データから特徴量を計算:
     │   ├─ 時間減衰加重平均（過去5走）
+    │   │   ├─ Weight: 0.55, 0.25, 0.12, 0.06, 0.02
     │   │   ├─ weighted_avg_rank（加重平均着順）
     │   │   ├─ weighted_avg_speed（加重平均スピード）
     │   │   ├─ weighted_avg_agari3f（加重平均上がり3F）

@@ -1323,48 +1323,76 @@ if race_id:
                         st.markdown("**過去5走の推移**")
                         st.plotly_chart(fig_line, use_container_width=True)
 
-            # === その他の馬を選択 ===
+            # === おすすめの買い方提案 ===
             st.markdown("---")
-            st.markdown("#### 🐴 その他の馬を詳しく見る")
+            st.subheader("🎫 AIおすすめの買い方")
 
-            other_horses = [h for h in df_display['馬名'].tolist() if h not in top5_horses]
+            # Logic for betting recommendations using 'edited_df' (which includes updated Odds/Marks)
+            sorted_df = edited_df.sort_values('調整後期待値', ascending=False)
+            top1 = sorted_df.iloc[0]
+            top2 = sorted_df.iloc[1] if len(sorted_df) > 1 else None
+            top3 = sorted_df.iloc[2] if len(sorted_df) > 2 else None
+            
+            # Cards Layout
+            col_bet1, col_bet2, col_bet3 = st.columns(3)
 
-            if other_horses:
-                selected_other = st.selectbox("馬を選択", ["選択してください"] + other_horses, key="other_horse_select")
+            # 1. 🎯 Tankei (Tansho/Fukusho)
+            with col_bet1:
+                st.markdown("#### 🎯 単系 (WIN/PLACE)")
+                if top1['AIスコア(%)'] >= 10 and top1['信頼度'] >= 60 and top1['調整後期待値'] > 0:
+                    bet_type = "単勝 (WIN)" if top1['AIスコア(%)'] >= 20 else "複勝 (PLACE)"
+                    st.success(f"**{bet_type}**")
+                    st.metric(top1['馬名'], f"EV: {top1['調整後期待値']:.2f}")
+                    st.caption(f"信頼度: {top1['信頼度']}%")
+                else:
+                    st.info("条件に合う軸馬がいません")
+                    st.caption("見送り (No Bet)")
 
-                if selected_other != "選択してください":
-                    fig_radar, fig_line, pred_row = create_horse_analysis(selected_other, df_display, edited_df)
+            # 2. 🔄 Renkei (Umaren/Wide)
+            with col_bet2:
+                st.markdown("#### 🔄 連系 (EXACTA/WIDE)")
+                if top1['AIスコア(%)'] >= 30:
+                    # Solid Favorite -> Nagashi
+                    st.success("**馬連・ワイド 流し**")
+                    targets = []
+                    if top2 is not None: targets.append(top2['馬名'])
+                    if top3 is not None: targets.append(top3['馬名'])
+                    st.write(f"軸: **{top1['馬名']}**")
+                    st.write(f"紐: {', '.join(targets)}")
+                elif top1['AIスコア(%)'] < 20:
+                     # Confused -> Box
+                     st.warning("**馬連・ワイド BOX**")
+                     box_horses = sorted_df.head(5)['馬名'].tolist()
+                     st.write(f"推奨: {', '.join(box_horses[:4])}")
+                     st.caption("混戦模様です")
+                else:
+                     st.info("**馬連 フォーメーション**")
+                     st.write(f"1列目: {top1['馬名']}")
+                     targets = []
+                     if top2 is not None: targets.append(top2['馬名'])
+                     if top3 is not None: targets.append(top3['馬名'])
+                     st.write(f"2列目: {', '.join(targets)}")
 
-                    st.markdown(f"##### 📝 {selected_other} の詳細")
-
-                    # Prediction Summary
-                    col_s1, col_s2, col_s3, col_s4, col_s5 = st.columns(5)
-                    with col_s1:
-                        st.metric("AI勝率", f"{pred_row['AIスコア(%)']}%")
-                    with col_s2:
-                        st.metric("信頼度", f"{pred_row['信頼度']}%")
-                    with col_s3:
-                        ai_ev_val = pred_row['AI期待値']
-                        st.metric("AI期待値", f"{ai_ev_val:.2f}")
-                    with col_s4:
-                        adj_ev_val = pred_row['調整後期待値']
-                        ev_delta = "買い推奨" if adj_ev_val > 0 else "見送り"
-                        st.metric("調整後EV", f"{adj_ev_val:.2f}", delta=ev_delta)
-                    with col_s5:
-                        odds_val = pred_row.get('現在オッズ', 0.0)
-                        st.metric("オッズ", f"{odds_val:.1f}倍")
-
-                    # Charts
-                    col_c1, col_c2 = st.columns(2)
-                    with col_c1:
-                        st.markdown("**能力チャート**")
-                        st.plotly_chart(fig_radar, use_container_width=True)
-                    with col_c2:
-                        st.markdown("**過去5走の推移**")
-                        st.plotly_chart(fig_line, use_container_width=True)
-            else:
-                st.info("すべての馬がTOP5に含まれています")
-
+            # 3. 🧨 Aname (Longshot)
+            with col_bet3:
+                st.markdown("#### 🧨 穴目 (LONGSHOT)")
+                # Find high EV but low probability (Score < 15%)
+                longshots = sorted_df[
+                    (sorted_df['AIスコア(%)'] < 15) & 
+                    (sorted_df['調整後期待値'] > 0.3) &
+                    (sorted_df['信頼度'] >= 40)
+                ]
+                
+                if not longshots.empty:
+                    ls_horse = longshots.iloc[0]
+                    st.error(f"**狙い目: {ls_horse['馬名']}**")
+                    st.metric("期待値", f"{ls_horse['調整後期待値']:.2f}", delta="High EV")
+                    st.write(f"単オッズ: {ls_horse.get('現在オッズ', 0)}倍")
+                    st.caption("ワイド・複勝の紐に推奨")
+                else:
+                    st.info("推奨できる穴馬なし")
+                    st.caption("堅い決着の可能性大")
+                    
         except Exception as e:
             st.warning(f"可視化エラー: {e}")
             import traceback
