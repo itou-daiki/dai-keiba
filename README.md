@@ -514,6 +514,25 @@ plot_calibration_curve(y_test, y_pred, model_name="LightGBM")
 ### Q5: Look-ahead biasが心配
 **A:** TimeSeriesSplitで完全に対応済みです。日付順にソートして時系列分割しています。
 
+### Q6: 予測時に「特徴量の数が一致しない」エラー
+**A:** 学習時と予測時で`use_venue_features`パラメータが一致していません（2025-12-24修正）。
+
+**現在の仕様:**
+- 学習時: `use_venue_features=False`（デフォルト、27個の特徴量）
+- 予測時: `use_venue_features=False`（同期済み）
+
+**会場特性特徴量を使いたい場合（将来の拡張）:**
+1. `ml/feature_engineering.py`の`calculate_features`関数に`use_venue_features=True`を指定
+2. 管理画面で特徴量を再生成
+3. モデルを再学習（JRA/NAR両方）
+4. `public_app.py`でも`use_venue_features=True`に変更
+
+会場特性特徴量（11個）:
+- 脚質コード、脚質一貫性、序盤位置、位置変化
+- 会場×脚質相性、会場×距離相性
+- 直線距離、コース幅、勾配
+- 会場×馬場状態相性、枠番有利度
+
 ---
 
 ## 📚 参考資料

@@ -344,9 +344,9 @@ if race_id:
                 st.write(f"DEBUG: 馬名のユニーク数 = {df['馬名'].nunique()}")
 
                 # ステップ2: 特徴量エンジニアリング
-                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア、会場特性等）...")
+                status_text.info("**ステップ 2/4:** 特徴量を計算中（過去5走の成績、適性スコア等）...")
                 progress_bar.progress(50)
-                X_df = process_data(df, use_venue_features=True)
+                X_df = process_data(df, use_venue_features=False)  # 学習時と一致させる（デフォルト）
                 status_text.success("✅ ステップ 2/4: 特徴量計算が完了しました")
 
                 # デバッグ: 特徴量計算後のサイズを確認
