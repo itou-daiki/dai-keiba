@@ -196,6 +196,49 @@ else:
     st.warning(f"{csv_filename} が見つかりません。")
 
 st.markdown("---")
+
+# --- Data Maintenance ---
+st.markdown("### 🔧 データメンテナンス")
+st.info("データに欠損がある場合、以下のボタンで補完を試みます。")
+
+col_mnt_1, col_mnt_2 = st.columns(2)
+
+with col_mnt_1:
+    if st.button("🔄 補完: レース情報 (距離・馬場など-Netkeiba)"):
+        with st.spinner("レース情報を補完中... (Netkeibaから取得)"):
+             try:
+                 # Run script
+                 cmd = [sys.executable, "scripts/backfill_metadata.py"]
+                 result = subprocess.run(cmd, capture_output=True, text=True)
+                 if result.returncode == 0:
+                     st.success("完了しました！")
+                     with st.expander("詳細ログ"):
+                         st.code(result.stdout)
+                 else:
+                     st.error("エラーが発生しました。")
+                     with st.expander("エラーログ"):
+                         st.code(result.stderr + "\n" + result.stdout)
+             except Exception as e:
+                 st.error(f"実行エラー: {e}")
+
+with col_mnt_2:
+    if st.button("🔄 補完: 過去データ (Horse History)"):
+         with st.spinner("過去データを補完中..."):
+             try:
+                 cmd = [sys.executable, "scripts/fill_past_data.py"]
+                 result = subprocess.run(cmd, capture_output=True, text=True)
+                 if result.returncode == 0:
+                     st.success("完了しました！")
+                     with st.expander("詳細ログ"):
+                         st.code(result.stdout)
+                 else:
+                     st.error("エラーが発生しました。")
+                     with st.expander("エラーログ"):
+                         st.code(result.stderr + "\n" + result.stdout)
+             except Exception as e:
+                 st.error(f"実行エラー: {e}")
+
+st.markdown("---")
 st.caption("使い方: データ取得後、必ず git で変更をコミット＆プッシュして公開サイトに反映させてください。")
 
 # --- ML Management Section ---

@@ -59,7 +59,9 @@ def fetch_horse_history(horse_id):
         print(f"Error fetching horse {horse_id}: {e}")
         return (horse_id, pd.DataFrame())
 
-def fill_missing_past_data(csv_path="database.csv"):
+def fill_missing_past_data(csv_path=None):
+    if csv_path is None:
+        csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'raw', 'database.csv')
     if not os.path.exists(csv_path):
         print(f"Error: {csv_path} not found.")
         return

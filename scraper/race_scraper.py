@@ -322,6 +322,91 @@ class RaceScraper:
             
         return data
 
+    def get_race_metadata(self, race_id):
+        """
+        Fetches metadata for a specific race ID from Netkeiba.
+        Returns dict with: race_name, date, venue, course_type, distance, weather, condition
+        """
+        url = f"https://race.netkeiba.com/race/result.html?race_id={race_id}"
+        soup = self._get_soup(url)
+        if not soup:
+            return None
+            
+        data = {
+            "race_name": "",
+            "date": "",
+            "venue": "",
+            "course_type": "",
+            "distance": "",
+            "weather": "",
+            "condition": "",
+            "race_id": race_id
+        }
+        
+        try:
+            # Race Name
+            title_elem = soup.select_one(".RaceName")
+            if title_elem:
+                data["race_name"] = title_elem.text.strip()
+                
+            # Date & Venue
+            # <div class="RaceData01">... 2023年1月5日 ... 1回中山1日 ...</div>
+            # Structure: 
+            # <dd class="RaceData01">
+            #   HH:MM  天候:晴  芝1600m  良
+            # </dd>
+            
+            # Actually Main Race Data is usually in .RaceData01
+            rd1 = soup.select_one(".RaceData01")
+            
+            if rd1:
+                txt = rd1.text.strip()
+                # Text: "15:35  天候:晴  芝1600m  良"
+                
+                # Weather
+                if "天候:晴" in txt: data["weather"] = "晴"
+                elif "天候:曇" in txt: data["weather"] = "曇"
+                elif "天候:小雨" in txt: data["weather"] = "小雨"
+                elif "天候:雨" in txt: data["weather"] = "雨"
+                elif "天候:雪" in txt: data["weather"] = "雪"
+                
+                # Condition
+                if "良" in txt: data["condition"] = "良"
+                elif "稍重" in txt: data["condition"] = "稍重"
+                elif "重" in txt: data["condition"] = "重"
+                elif "不良" in txt: data["condition"] = "不良"
+                
+                # Course & Distance ("芝1600m")
+                # Regex
+                match = re.search(r'(芝|ダ|障)(\d+)m', txt)
+                if match:
+                    ctype_map = {"芝": "芝", "ダ": "ダート", "障": "障害"}
+                    data["course_type"] = ctype_map.get(match.group(1), match.group(1))
+                    data["distance"] = match.group(2)
+            
+            # Date is likely in header or another div
+            # <div class="RaceList_Date">
+            #   <dl><dd>2023年1月5日</dd></dl>
+            # </div>
+            date_elem = soup.select_one("dl#RaceList_DateList dd.Active") 
+            if not date_elem:
+                 # Fallback: find any date string in Title/Meta
+                 meta_title = soup.title.text if soup.title else ""
+                 # "2023年1月5日 ..."
+                 match_date = re.search(r'(\d{4}年\d{1,2}月\d{1,2}日)', meta_title)
+                 if match_date:
+                     data["date"] = match_date.group(1)
+            else:
+                 # Usually pure text "1月5日" or link with params
+                 # Try finding full date from query or other element.
+                 # Let's rely on fallback or existing date in DB usually.
+                 pass
+
+        except Exception as e:
+            print(f"Error parsing metadata for {race_id}: {e}")
+            
+        return data
+
 if __name__ == "__main__":
     # Test
     scraper = RaceScraper()

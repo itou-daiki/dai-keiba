@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 def fix_database():
-    target_file = 'database.csv'
+    target_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'raw', 'database.csv')
     
     if not os.path.exists(target_file):
         print(f"Error: {target_file} not found.")
@@ -14,9 +14,10 @@ def fix_database():
         df = pd.read_csv(target_file)
         
         # Check for duplicated columns (with spaces)
+        # Check for duplicated columns (with spaces)
         columns_to_fix = {
-            'コーナー 通過順': 'コーナー通過順',
-            '馬体重 (増減)': '馬体重(増減)'
+            'コーナー通過順': 'コーナー 通過順',
+            '馬体重(増減)': '馬体重 (増減)'
         }
         
         changed = False

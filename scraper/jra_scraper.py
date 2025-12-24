@@ -75,6 +75,52 @@ def scrape_jra_race(url, existing_race_ids=None):
         elif "G2" in str(soup) or "ＧⅡ" in str(soup): grade_text = "G2"
         elif "G3" in str(soup) or "ＧⅢ" in str(soup): grade_text = "G3"
 
+        # --- Added: Course, Distance, Weather, Condition ---
+        # JRA HTML structure varies, but often contained in specific divs or text lines.
+        # We will scan the entire header text or specific class for these patterns.
+        
+        # 1. Course & Distance (e.g., "芝2000メートル", "ダート1800メートル")
+        # Usually in the same block as race name or just below.
+        # We search the whole header area text.
+        header_text = soup.select_one("div.header_line").text if soup.select_one("div.header_line") else soup.text
+        
+        dist_type_match = re.search(r'(芝|ダ|ダート|障害)\s*(\d+)', header_text)
+        course_type = ""
+        distance = ""
+        
+        if dist_type_match:
+            c_val = dist_type_match.group(1)
+            d_val = dist_type_match.group(2)
+            
+            if "芝" in c_val: course_type = "芝"
+            elif "ダ" in c_val: course_type = "ダート"
+            elif "障" in c_val: course_type = "障害"
+            
+            distance = int(d_val)
+        
+        # 2. Weather (e.g., "天候：晴")
+        weather = ""
+        w_match = re.search(r'天候\s*[:：]\s*(\S+)', soup.text)
+        if w_match:
+            weather = w_match.group(1).strip()
+            
+        # 3. Condition (e.g., "芝：良", "ダート：稍重")
+        # Note: A race can have both if it's mixed, but usually we care about the main one or the one matching course_type.
+        condition = ""
+        
+        # Try specific pattern based on course type
+        if course_type == "芝":
+             c_match = re.search(r'芝\s*[:：]\s*(\S+)', soup.text)
+             if c_match: condition = c_match.group(1).strip()
+        elif course_type == "ダート":
+             c_match = re.search(r'ダート\s*[:：]\s*(\S+)', soup.text)
+             if c_match: condition = c_match.group(1).strip()
+        
+        # Fallback if generic or course type unknown, grab first one found
+        if not condition:
+             c_match_gen = re.search(r'(?:芝|ダート)\s*[:：]\s*(\S+)', soup.text)
+             if c_match_gen: condition = c_match_gen.group(1).strip()
+
         # --- Table Extraction (Custom BS4 Parsing) ---
         # Find table with "着順"
         tables = soup.find_all('table')
@@ -164,6 +210,10 @@ def scrape_jra_race(url, existing_race_ids=None):
         df['レース番号'] = race_num_text
         df['レース名'] = race_name_text
         df['重賞'] = grade_text
+        df['距離'] = distance
+        df['コースタイプ'] = course_type
+        df['天候'] = weather
+        df['馬場状態'] = condition
         
         # ID Generation
         place_map = {
@@ -191,7 +241,8 @@ def scrape_jra_race(url, existing_race_ids=None):
 
         standard_columns = [
             "日付","会場","レース番号","レース名","重賞","着 順","枠","馬 番","馬名","性齢","斤量","騎手",
-            "タイム","着差","人 気","単勝 オッズ","後3F","コーナー 通過順","厩舎","馬体重 (増減)","race_id"
+            "タイム","着差","人 気","単勝 オッズ","後3F","コーナー 通過順","厩舎","馬体重 (増減)","race_id",
+            "距離","コースタイプ","天候","馬場状態"
         ]
         
         for col in standard_columns:
