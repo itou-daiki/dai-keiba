@@ -999,6 +999,11 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             return None
             
         rows = table.find_all("tr", class_="HorseList")
+        if not rows:
+             # Fallback for NAR or different structure
+             rows = table.select(".RaceTable01 tr")
+             # Filter out headers (usually have th)
+             rows = [r for r in rows if not r.find('th')]
         
         data = []
         
@@ -1029,9 +1034,12 @@ def scrape_shutuba_data(race_id, mode="JRA"):
                 if hm: horse_id = hm.group(1)
             
             # Basic info
-            jockey = row.select_one(".Jockey a").text.strip() if row.select_one(".Jockey a") else ""
-            weight = row.select_one(".Txt_C").text.strip() if row.select_one(".Txt_C") else "57.0" # Txt_C is usually weight? Or .Weight
+            jockey_elem = row.select_one(".Jockey a")
+            jockey = jockey_elem.text.strip() if jockey_elem else (row.select_one("td:nth-child(7) a").text.strip() if row.select_one("td:nth-child(7) a") else "")
             
+            weight_elem = row.select_one(".Txt_C")
+            weight = weight_elem.text.strip() if weight_elem else (row.select_one("td:nth-child(6)").text.strip() if row.select_one("td:nth-child(6)") else "57.0")
+
             entry = {
                 "日付": date_text,
                 "会場": venue_text, # Added Venue
@@ -1056,12 +1064,13 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             }
             
             # Age extraction usually in .Barei or similar
-            # Example: "牡3"
-            # It's usually near Horse Name
-            # Let's inspect typical structure or ignore for now if not critical (Feature Engineering defaults to 3)
-            # Find td with class "Barei" ?
-            # Find td with class "Barei" ?
+            # If explicit class fails, use column index (NAR: 5th col => index 4)
             barei = row.select_one(".Barei")
+            if not barei:
+                 # Fallback by index (Col 4: 性齢)
+                 tds = row.find_all("td")
+                 if len(tds) > 4:
+                     barei = tds[4]
             
             # --- Fetch Profile for Shutuba ---
             # Similar to scrape_race_data, use cache

@@ -278,6 +278,9 @@ with tab_ml:
                     del st.session_state['best_params']
                     st.rerun()
             else:
+                st.info("デフォルト設定で学習します。")
+
+        st.markdown("---")
         is_calibrate = st.checkbox("確率較正 (Calibration) を行う", value=False, help="Brier Scoreが高い場合に有効にしてください。")
 
     with col_conf_2:
