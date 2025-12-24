@@ -9,6 +9,7 @@ import streamlit as st
 import sys
 import os
 import pandas as pd
+import numpy as np
 from datetime import datetime
 
 # パスの追加
@@ -17,10 +18,11 @@ sys.path.append(os.path.join(project_root, 'ml'))
 
 # モジュールのインポート
 try:
-    import train_model
     from db_helper import KeibaDatabase, get_data_stats
+    import train_model  # 学習ロジック
 except ImportError as e:
     st.error(f"モジュールのインポートエラー: {e}")
+    st.info("train_model.py が見つからない場合、ml/ディレクトリにあるか確認してください")
     st.stop()
 
 st.set_page_config(page_title="AI競馬 管理画面（学習専用）", layout="wide", page_icon="🏇")
@@ -140,59 +142,114 @@ with tab1:
             st.info(f"📊 特徴量数: {len(feature_cols)}")
             st.info(f"🎯 目的変数: target_win（勝率: {y.mean():.2%}）")
 
+            # 一時的にCSVファイルを作成（train_model.pyがCSVを期待するため）
+            import tempfile
+            temp_csv = tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8')
+            temp_csv_path = temp_csv.name
+            df_train.to_csv(temp_csv_path, index=False)
+            temp_csv.close()
+
+            st.info(f"📝 一時CSVファイル作成: {len(df_train):,}件のデータ")
+
             # ハイパーパラメータ最適化
             best_params = None
             if is_tuning:
                 with st.spinner(f"⚙️ ハイパーパラメータ最適化中（{n_trials}試行）..."):
                     st.warning("これには数十分かかる場合があります...")
-                    # Optuna最適化の実行
-                    # 注: train_model.pyに最適化関数が必要
-                    # opt_result = train_model.optimize_hyperparameters(X, y, n_trials=n_trials)
-                    # best_params = opt_result['best_params']
-                    st.info("⚠️ Optuna最適化は train_model.py に実装が必要です")
+                    try:
+                        # Optuna最適化の実行
+                        opt_result = train_model.optimize_hyperparameters(
+                            temp_csv_path,
+                            n_trials=n_trials,
+                            use_timeseries_split=True
+                        )
+
+                        if opt_result:
+                            best_params = opt_result['best_params']
+                            st.success(f"✅ 最適化完了: AUC={opt_result['best_auc']:.4f}")
+
+                            # 最適パラメータを表示
+                            with st.expander("🔍 最適化されたパラメータを表示"):
+                                st.json(best_params)
+                        else:
+                            st.warning("⚠️ 最適化に失敗しました。デフォルトパラメータで学習します")
+                    except Exception as e:
+                        st.error(f"❌ 最適化エラー: {e}")
+                        import traceback
+                        st.code(traceback.format_exc())
 
             # モデル学習
-            with st.spinner("🧠 モデル学習中..."):
-                # TimeSeriesSplit CV + 学習
-                # 注: train_model.pyに学習関数が必要
-                # result = train_model.train_and_save_model(
-                #     X, y,
-                #     model_path=model_path,
-                #     params=best_params
-                # )
-                st.info("⚠️ モデル学習は train_model.py に実装が必要です")
+            with st.spinner("🧠 モデル学習中（TimeSeriesSplit 5-fold CV + 全データ学習）..."):
+                try:
+                    # TimeSeriesSplit CV + 学習
+                    result = train_model.train_and_save_model(
+                        data_path=temp_csv_path,
+                        model_path=model_path,
+                        params=best_params,
+                        use_timeseries_split=True,
+                        optimize_hyperparams=False,  # 既に最適化済みの場合はFalse
+                        find_threshold=True,
+                        calibrate=False
+                    )
 
-                # 仮の成功メッセージ
-                st.success(f"✅ モデル学習完了: {model_path}")
+                    if result:
+                        st.success(f"✅ モデル学習完了: {model_path}")
 
-            # メタデータの保存
-            meta_path = model_path.replace('.pkl', '_meta.json')
-            import json
+                        # 学習結果を表示
+                        st.markdown("### 📊 学習結果")
 
-            metadata = {
-                "model_id": f"lgbm_model_{mode_val.lower()}",
-                "model_type": "LightGBM Binary Classification",
-                "target": "target_win",
-                "trained_at": datetime.now().isoformat(),
-                "data_source": db_path,
-                "data_stats": {
-                    "total_records": len(df_train),
-                    "win_rate": float(y.mean())
-                },
-                "features": feature_cols,
-                "hyperparameters": best_params or {},
-                "training_config": {
-                    "use_timeseries_split": True,
-                    "n_folds": 5,
-                    "hyperparameter_optimization": is_tuning,
-                    "n_trials": n_trials if is_tuning else None
-                }
-            }
+                        col1, col2, col3, col4 = st.columns(4)
+                        with col1:
+                            st.metric("AUC", f"{result['auc']:.4f}")
+                        with col2:
+                            st.metric("Accuracy", f"{result['accuracy']:.4f}")
+                        with col3:
+                            st.metric("F1 Score", f"{result['f1']:.4f}")
+                        with col4:
+                            st.metric("勝率", f"{result['win_rate']:.2%}")
 
-            with open(meta_path, 'w', encoding='utf-8') as f:
-                json.dump(metadata, f, ensure_ascii=False, indent=2)
+                        # CV結果を表示（TimeSeriesSplitの場合）
+                        if result.get('cv_scores'):
+                            st.markdown("#### 📈 交差検証結果（TimeSeriesSplit 5-fold）")
+                            cv_df = pd.DataFrame({
+                                'Metric': ['AUC', 'Accuracy', 'Precision', 'Recall', 'F1'],
+                                'Mean': [
+                                    f"{np.mean(result['cv_scores']['auc']):.4f}" if result['cv_scores'].get('auc') else 'N/A',
+                                    f"{np.mean(result['cv_scores']['accuracy']):.4f}" if result['cv_scores'].get('accuracy') else 'N/A',
+                                    f"{np.mean(result['cv_scores']['precision']):.4f}" if result['cv_scores'].get('precision') else 'N/A',
+                                    f"{np.mean(result['cv_scores']['recall']):.4f}" if result['cv_scores'].get('recall') else 'N/A',
+                                    f"{np.mean(result['cv_scores']['f1']):.4f}" if result['cv_scores'].get('f1') else 'N/A',
+                                ],
+                                'Std': [
+                                    f"±{np.std(result['cv_scores']['auc']):.4f}" if result['cv_scores'].get('auc') else 'N/A',
+                                    f"±{np.std(result['cv_scores']['accuracy']):.4f}" if result['cv_scores'].get('accuracy') else 'N/A',
+                                    f"±{np.std(result['cv_scores']['precision']):.4f}" if result['cv_scores'].get('precision') else 'N/A',
+                                    f"±{np.std(result['cv_scores']['recall']):.4f}" if result['cv_scores'].get('recall') else 'N/A',
+                                    f"±{np.std(result['cv_scores']['f1']):.4f}" if result['cv_scores'].get('f1') else 'N/A',
+                                ]
+                            })
+                            st.dataframe(cv_df, use_container_width=True)
 
-            st.success(f"✅ メタデータ保存完了: {meta_path}")
+                        # Feature Importanceを表示
+                        if result.get('feature_importance'):
+                            with st.expander("🔍 重要な特徴量 TOP 20"):
+                                fi_df = pd.DataFrame(result['feature_importance'])
+                                st.dataframe(fi_df, use_container_width=True)
+                    else:
+                        st.error("❌ モデル学習に失敗しました")
+
+                except Exception as e:
+                    st.error(f"❌ 学習エラー: {e}")
+                    import traceback
+                    st.code(traceback.format_exc())
+                finally:
+                    # 一時ファイルを削除
+                    try:
+                        os.remove(temp_csv_path)
+                    except:
+                        pass
+
+            # メタデータは train_model.train_and_save_model() 内で自動保存されます
 
             # 完了メッセージ
             st.balloons()
