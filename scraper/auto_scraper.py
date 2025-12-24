@@ -1208,23 +1208,30 @@ def get_start_params(start_args=None, end_args=None, places_args=None):
             
     # Auto-detect start if still None
     if start_date is None:
+        # ⚠️ 重要: 最終日の翌日からではなく、固定の開始日から始める
+        # 既存race_idは個別にスキップされるため、途中の欠落も検出できる
+        # デフォルト: 2023年1月1日から（十分に古い日付）
+        print("開始日が指定されていません。デフォルト: 2023-01-01")
+        start_date = datetime(2023, 1, 1)
+
+        # 既存データの最新日を参考情報として表示（ただし開始日には使わない）
         if os.path.exists(CSV_FILE_PATH):
             try:
                 df_existing = pd.read_csv(CSV_FILE_PATH)
                 if '日付' in df_existing.columns and not df_existing.empty:
                     df_existing['date_obj'] = pd.to_datetime(df_existing['日付'], format='%Y年%m月%d日', errors='coerce')
                     last_date = df_existing['date_obj'].max()
-                    
+
                     if pd.notna(last_date):
-                        print(f"既存データが見つかりました。最終データ日時: {last_date}")
-                        start_date = last_date + timedelta(days=1)
+                        print(f"ℹ️ 既存データの最終日: {last_date.strftime('%Y-%m-%d')}")
+                        print(f"💡 既存race_idは自動的にスキップされるため、欠落分のみ取得します")
             except Exception as e:
                 print(f"既存CSV読み込みエラー: {e}")
-    
+
     if start_date is None:
-         # デフォルト：最近の結果を取得しやすくするため、2025年12月頭にしておく（デモ用）
-         print("既存データなし。デモ用に2025年12月1日から開始します。")
-         start_date = datetime(2025, 12, 1)
+         # フォールバック
+         print("デフォルト開始日: 2023-01-01")
+         start_date = datetime(2023, 1, 1)
 
     return start_date, args.end, target_places, args.source, args.mode
 
