@@ -1369,7 +1369,7 @@ if race_id:
 
             # Helper to format horse name with circle num
             def fmt_horse(row):
-                num = row.get('馬 番', '')
+                num = row.get('馬番', '')
                 name = row['馬名']
                 c_num = to_circled_num(num)
                 return f"{c_num} {name}".strip()
