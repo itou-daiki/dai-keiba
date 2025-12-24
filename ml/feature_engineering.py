@@ -1142,11 +1142,22 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
     
     return df[keep_cols].copy()
 
-def calculate_features(input_csv, output_path, lambda_decay=0.5):
+def calculate_features(input_csv, output_path, lambda_decay=0.5, use_venue_features=False):
+    """
+    特徴量を計算してCSVに保存
+
+    Args:
+        input_csv: 入力CSVパス（database.csvまたはdatabase_nar.csv）
+        output_path: 出力CSVパス（processed_data.csvまたはprocessed_data_nar.csv）
+        lambda_decay: 時間減衰パラメータ（デフォルト0.5）
+        use_venue_features: 会場特性特徴量を使用するか（デフォルトFalse）
+                           Trueにすると11個の会場関連特徴量が追加される
+    """
     print(f"Loading {input_csv}...")
     df = pd.read_csv(input_csv)
-    
-    processed = process_data(df, lambda_decay, use_venue_features=True)
+
+    print(f"  use_venue_features={use_venue_features}")
+    processed = process_data(df, lambda_decay, use_venue_features=use_venue_features)
     
     # For training, we need binary target
     # 変更: 3着以内 → 1着のみ（単勝予測に適した設定）

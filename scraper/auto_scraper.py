@@ -829,7 +829,6 @@ def scrape_shutuba_data(race_id, mode="JRA"):
                 "mother": "",
                 "bms": "",
                 "騎手": jockey,
-                "騎手": jockey,
                 "斤量": weight,
                 "race_id": race_id,
                 # Add Metadata for FE
