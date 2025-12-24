@@ -178,7 +178,7 @@ if mode_val == "NAR":
 else:
     csv_filename = "database.csv"
     
-csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), csv_filename)
+csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "raw", csv_filename)
 
 col_prev_1, col_prev_2 = st.columns([1, 4])
 with col_prev_1:
@@ -254,10 +254,10 @@ with tab_ml:
             # Switch paths based on Mode
             if mode_val == "NAR":
                 data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
-                db_path = os.path.join(project_root, "database_nar.csv")
+                db_path = os.path.join(project_root, "data", "raw", "database_nar.csv")
             else:
                 data_path = os.path.join(project_root, "ml", "processed_data.csv")
-                db_path = os.path.join(project_root, "database.csv")
+                db_path = os.path.join(project_root, "data", "raw", "database.csv")
             
             with st.spinner("データ加工作業中..."):
                 if os.path.exists(db_path):
@@ -311,11 +311,11 @@ with tab_ml:
         # Switch paths based on Mode
         if mode_val == "NAR":
             data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
-            db_path = os.path.join(project_root, "database_nar.csv")
+            db_path = os.path.join(project_root, "data", "raw", "database_nar.csv")
             model_name = "lgbm_model_nar.pkl"
         else:
             data_path = os.path.join(project_root, "ml", "processed_data.csv")
-            db_path = os.path.join(project_root, "database.csv")
+            db_path = os.path.join(project_root, "data", "raw", "database.csv")
             model_name = "lgbm_model.pkl"
 
         model_dir = os.path.join(project_root, "ml", "models")

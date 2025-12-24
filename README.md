@@ -28,10 +28,10 @@
 mv ~/Downloads/keiba_data.db ./
 
 # 3. 管理ページでモデル学習
-streamlit run scraper/admin_app_simple.py --server.port 8501
+streamlit run app/admin_app.py --server.port 8501
 
 # 4. 公開ページで予測
-streamlit run public_app.py --server.port 8502
+streamlit run app/public_app.py --server.port 8502
 ```
 
 詳細は [MIGRATION_TO_COLAB_SQL.md](MIGRATION_TO_COLAB_SQL.md) を参照してください。
@@ -42,7 +42,7 @@ streamlit run public_app.py --server.port 8502
 
 システムは大きく分けて以下の2つのアプリケーションと、バックエンドのMLパイプラインで構成されています。
 
-### 1. 🛠️ 管理アプリケーション (`scraper/admin_app.py`)
+### 1. 🛠️ 管理アプリケーション (`app/admin_app.py`)
 
 **役割**: データ収集、モデル学習、運用管理
 
@@ -376,31 +376,36 @@ EV = (adjusted_prob * odds) - 1.0
 
 ```
 dai-keiba/
-├── public_app.py                    # 公開アプリ（ユーザー向け予想画面）
+├── app/
+│   ├── public_app.py                    # 公開アプリ（ユーザー向け予想画面）
+│   └── admin_app.py                     # 管理アプリ（データ収集・学習）
+├── data/
+│   ├── raw/
+│   │   ├── database.csv                 # JRA生データ
+│   │   └── database_nar.csv             # NAR生データ
+│   └── temp/
+│       ├── todays_data.json             # 本日のJRAレース一覧
+│       └── todays_data_nar.json         # 本日のNARレース一覧
 ├── scraper/
-│   ├── admin_app.py                 # 管理アプリ（データ収集・学習）
-│   ├── auto_scraper.py              # スクレイピング統括（キャッシュ機能）
-│   ├── jra_scraper.py               # JRA専用スクレイパー
-│   ├── nar_scraper.py               # NAR専用スクレイパー
-│   └── race_classifier.py           # JRA/NAR自動判定
+│   ├── auto_scraper.py                  # スクレイピング統括（キャッシュ機能）
+│   ├── jra_scraper.py                   # JRA専用スクレイパー
+│   ├── nar_scraper.py                   # NAR専用スクレイパー
+│   └── race_classifier.py               # JRA/NAR自動判定
 ├── ml/
-│   ├── feature_engineering.py       # 特徴量生成・前処理
-│   ├── train_model.py               # 学習・推論ロジック（最適化版）
-│   ├── calibration_plot.py          # キャリブレーション曲線可視化
-│   ├── performance_tracker.py       # パフォーマンス追跡
-│   ├── explainability.py            # SHAP値による説明性
-│   ├── scrape_historical_data.py    # 過去3年分データ収集スクリプト
+│   ├── feature_engineering.py           # 特徴量生成・前処理
+│   ├── train_model.py                   # 学習・推論ロジック（最適化版）
+│   ├── calibration_plot.py              # キャリブレーション曲線可視化
+│   ├── performance_tracker.py           # パフォーマンス追跡
+│   ├── explainability.py                # SHAP値による説明性
+│   ├── scrape_historical_data.py        # 過去3年分データ収集スクリプト
 │   └── models/
-│       ├── lgbm_model.pkl           # JRAモデル
-│       ├── lgbm_model_meta.json     # JRAメタデータ
-│       ├── lgbm_model_nar.pkl       # NARモデル
-│       └── lgbm_model_nar_meta.json # NARメタデータ
-├── database.csv                     # JRA生データ
-├── database_nar.csv                 # NAR生データ
-├── processed_data.csv               # JRA学習用データ
-├── processed_data_nar.csv           # NAR学習用データ
-├── todays_data.json                 # 本日のJRAレース一覧
-└── todays_data_nar.json             # 本日のNARレース一覧
+│       ├── lgbm_model.pkl               # JRAモデル
+│       ├── lgbm_model_meta.json         # JRAメタデータ
+│       ├── lgbm_model_nar.pkl           # NARモデル
+│       └── lgbm_model_nar_meta.json     # NARメタデータ
+├── notebooks/                           # Colabノートブック等
+├── scripts/                             # ユーティリティスクリプト
+└── keiba_data.db                        # SQLiteデータベース
 ```
 
 ---
@@ -421,10 +426,10 @@ mlflow ui --port 5000
 
 ```bash
 # 管理画面（ポート 8501）
-streamlit run scraper/admin_app.py --server.port 8501
+streamlit run app/admin_app.py --server.port 8501
 
 # 公開画面（ポート 8502）
-streamlit run public_app.py --server.port 8502
+streamlit run app/public_app.py --server.port 8502
 ```
 
 ### 3. 基本的な運用フロー

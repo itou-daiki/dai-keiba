@@ -19,9 +19,10 @@ except ImportError:
 # CONSTANTS
 # ==========================================
 print("DEBUG: auto_scraper module loaded (Version: Fix-Meta-Insert)")
-# Root directory (parent of scraper) -> database.csv
-CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
-CSV_FILE_PATH_NAR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database_nar.csv")
+# Root directory (parent of scraper) -> data/raw/database.csv
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CSV_FILE_PATH = os.path.join(PROJECT_ROOT, "data", "raw", "database.csv")
+CSV_FILE_PATH_NAR = os.path.join(PROJECT_ROOT, "data", "raw", "database_nar.csv")
 TARGET_YEARS = [2024, 2025] # Expandable
 TARGET_YEARS = [2024, 2025] # Expandable
 HORSE_HISTORY_CACHE = {} # Cache for horse history DataFrames
@@ -645,7 +646,7 @@ def scrape_todays_schedule(mode="JRA"):
     # Save to JSON
     # Save to JSON
     filename = "todays_data_nar.json" if mode == "NAR" else "todays_data.json"
-    output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
+    output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "temp", filename)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump({"date": today.strftime("%Y-%m-%d"), "races": race_list}, f, ensure_ascii=False, indent=2)
         
@@ -1626,7 +1627,7 @@ if __name__ == "__main__":
             # We can reuse the save logic but it's embedded in main()
             # Let's minimal-copy the save logic here for simplicity or refactor
             # For now, append to CSV directly
-            CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+            CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw", "database.csv")
             
             if os.path.exists(CSV_FILE_PATH):
                 try:
@@ -1669,7 +1670,7 @@ if __name__ == "__main__":
 
         # Define save callback to handle incremental saves
         def save_chunk(df_chunk):
-            CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+            CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw", "database.csv")
             
             if os.path.exists(CSV_FILE_PATH):
                 try:

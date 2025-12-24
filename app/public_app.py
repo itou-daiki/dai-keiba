@@ -10,8 +10,9 @@ import plotly.graph_objects as go
 import time
 
 # Add paths
-sys.path.append(os.path.join(os.path.dirname(__file__), 'scraper'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'ml'))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(PROJECT_ROOT, 'scraper'))
+sys.path.append(os.path.join(PROJECT_ROOT, 'ml'))
 
 try:
     import auto_scraper
@@ -25,7 +26,7 @@ st.set_page_config(page_title="AI Keiba Predictor", layout="wide")
 # --- Utils ---
 @st.cache_resource
 def load_model(mode="JRA"):
-    model_path = os.path.join(os.path.dirname(__file__), f"ml/models/lgbm_model_nar.pkl" if mode == "NAR" else "ml/models/lgbm_model.pkl")
+    model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), f"ml/models/lgbm_model_nar.pkl" if mode == "NAR" else "ml/models/lgbm_model.pkl")
     if os.path.exists(model_path):
         with open(model_path, 'rb') as f:
             return pickle.load(f)
@@ -34,7 +35,7 @@ def load_model(mode="JRA"):
 @st.cache_resource
 def load_model_metadata(mode="JRA"):
     """モデルのメタデータ（訓練日時、性能指標など）を読み込む"""
-    meta_path = os.path.join(os.path.dirname(__file__), f"ml/models/lgbm_model_nar_meta.json" if mode == "NAR" else "ml/models/lgbm_model_meta.json")
+    meta_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), f"ml/models/lgbm_model_nar_meta.json" if mode == "NAR" else "ml/models/lgbm_model_meta.json")
     if os.path.exists(meta_path):
         with open(meta_path, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -42,7 +43,7 @@ def load_model_metadata(mode="JRA"):
 
 def get_data_freshness(mode="JRA"):
     """データベースの最終更新日時を取得（SQL対応）"""
-    db_path = os.path.join(os.path.dirname(__file__), "keiba_data.db")
+    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "keiba_data.db")
     if os.path.exists(db_path):
         try:
             db = KeibaDatabase(db_path)
@@ -143,7 +144,7 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
     return int(max(20, min(95, confidence)))
 
 def load_schedule_data(mode="JRA"):
-    json_path = os.path.join(os.path.dirname(__file__), "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
+    json_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "temp", "todays_data_nar.json" if mode == "NAR" else "todays_data.json")
     if os.path.exists(json_path):
         with open(json_path, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -769,7 +770,7 @@ if race_id:
                 try:
                     import sys
                     import os
-                    sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ml'))
+                    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ml'))
                     from race_classifier import classify_race_type
                     venue_based_type = classify_race_type(venue)
                     # Use venue-based classification (more accurate than mode selection)

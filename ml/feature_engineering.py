@@ -1180,6 +1180,6 @@ def calculate_features(input_csv, output_path, lambda_decay=0.5, use_venue_featu
     print(f"Saved processed data to {output_path} ({len(processed)} rows)")
 
 if __name__ == "__main__":
-    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
+    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw", "database.csv")
     out_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "ml", "processed_data.csv")
     calculate_features(db_path, out_path)

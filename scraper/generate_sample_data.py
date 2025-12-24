@@ -37,7 +37,7 @@ if all_data:
     new_df = pd.concat(all_data, ignore_index=True)
     
     # Path to database.csv
-    csv_path = os.path.join(os.path.dirname(__file__), "database.csv")
+    csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw", "database.csv")
     
     if os.path.exists(csv_path):
         try:
