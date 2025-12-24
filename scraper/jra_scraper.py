@@ -342,15 +342,22 @@ def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None
                 all_anchors = soup_day.find_all('a')
                 for a in all_anchors:
                     onclick = a.get('onclick', '')
-                    # Check for doAction
-                    match_sde = re.search(r"doAction\('[^']+',\s*'(pw01sde[^']+)'\)", onclick)
+                    # Check for doAction with robust regex (handles single/double quotes, whitespace)
+                    # Pattern: doAction('FormName', 'CNAME')
+                    match_sde = re.search(r"doAction\s*\(\s*['\"][^'\"]+['\"]\s*,\s*['\"](pw01sde[^'\"]+)['\"]\s*\)", onclick)
                     href = a.get('href', '')
                     
                     final_url = ""
                     if match_sde:
                         final_url = f"{base_url}?CNAME={match_sde.group(1)}"
-                    elif 'CNAME=' in href and 'pw01sde' in href:
-                        final_url = urllib.parse.urljoin(base_url, href)
+                    elif 'pw01sde' in href:
+                        # Fallback for simple hrefs
+                        if 'CNAME=' in href:
+                             final_url = urllib.parse.urljoin(base_url, href)
+                        else:
+                             # If href="accessS.html?CNAME=..."
+                             # or just "?CNAME=..."
+                             final_url = urllib.parse.urljoin(base_url, href)
                     
                     if final_url:
                         # Extract Race Number from anchor text (e.g. "1R", "11R")
