@@ -18,11 +18,14 @@ except ImportError:
 # ==========================================
 # CONSTANTS
 # ==========================================
+print("DEBUG: auto_scraper module loaded (Version: Fix-Meta-Insert)")
 # Root directory (parent of scraper) -> database.csv
 CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database.csv")
 CSV_FILE_PATH_NAR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database_nar.csv")
 TARGET_YEARS = [2024, 2025] # Expandable
+TARGET_YEARS = [2024, 2025] # Expandable
 HORSE_HISTORY_CACHE = {} # Cache for horse history DataFrames
+HORSE_PROFILE_CACHE = {} # Cache for horse profile (pedigree)
 
 # ==========================================
 # 1. レース詳細データを取得する関数
@@ -145,57 +148,62 @@ def scrape_race_data(race_id, mode="JRA"):
             # Warning if mismatch
             # print("Columns after rename:", df.columns)
 
-            # 列追加
-            df.insert(0, "日付", date_text)
-            df.insert(1, "会場", venue_text)
-            df.insert(2, "レース番号", race_num_text)
-            df.insert(3, "レース名", race_name_text)
-            df.insert(4, "重賞", grade_text)
-            df.insert(5, "コースタイプ", surface_type)
-            df.insert(6, "距離", distance)
-            df.insert(7, "回り", rotation)
-            df.insert(8, "天候", weather)
-            df.insert(9, "馬場状態", condition)
+            # 列追加 (既に存在する場合はスキップまたは上書き)
+            meta_cols = [
+                ("日付", date_text), ("会場", venue_text), ("レース番号", race_num_text),
+                ("レース名", race_name_text), ("重賞", grade_text), ("コースタイプ", surface_type),
+                ("距離", distance), ("回り", rotation), ("天候", weather), ("馬場状態", condition)
+            ]
+            
+            # 挿入位置(0から順に)
+            # insertを使うと既存列は右にずれるため、0番目に順次追加する場合、
+            # 逆順に入れるか、インデックスをずらすか。
+            # 元のコード: df.insert(0, ...), df.insert(1, ...) 
+            # これは 0に入れた後、次のinsert(1)は「新0番目の次」に入れる。つまり先頭から順に並ぶ。
+            
+            for i, (col, val) in enumerate(meta_cols):
+                if col not in df.columns:
+                    df.insert(i, col, val)
+                else:
+                    df[col] = val
+            
+            # Additional Bloodline Columns (Empty init)
+            df["father"] = ""
+            df["mother"] = ""
+            df["bms"] = ""
+            
             df["race_id"] = race_id # IDも保存 (末尾に追加されることが多いが明示的に)
             
             # 不要な列が含まれることがあるので整理しても良いが、
             # ユーザー要望は「蓄積」なので、基本はそのまま保持する
             
-            # Extract Horse IDs from soup
-            horse_id_map = {} # horse_name -> horse_id (Note: names might strictly not be unique but usually are in a race. Better to map by row index or horse number)
-            # Actually, pd.read_html result index corresponds to table rows.
-            # But the table has headers. 
-            # We can iterate through table rows again.
-            
-            horse_ids = []
-            
-            # The DF from read_html might have removed some rows or headers.
-            # Usually df length == number of horses.
-            # Let's iterate `rows` and extract ID.
-            
-            found_ids = []
+            # Extract Horse IDs via Name Mapping (Robust)
+            horse_name_map = {}
             for tr in target_table.find_all("tr"):
-                 # Check for horse link
-                 a_tag = tr.select_one(".Horse_Name a")
-                 if a_tag:
-                     href = a_tag.get('href')
-                     hid_match = re.search(r'/horse/(\d+)', href)
-                     if hid_match:
-                         found_ids.append(hid_match.group(1))
-                     else:
-                         found_ids.append("")
-                 elif tr.select_one("td"): # If it's a data row but no link?
-                     # Be careful about header rows that don't look like data
-                     pass
-
-            # Align IDs with DF
-            # If len mismatches, we might have issues.
-            if len(found_ids) == len(df):
-                df['horse_id'] = found_ids
+                a_tag = tr.select_one(".Horse_Name a")
+                if a_tag:
+                    h_name = a_tag.text.strip().replace("\n", "")
+                    href = a_tag.get('href')
+                    hid_match = re.search(r'/horse/(\d+)', href)
+                    if hid_match:
+                        horse_name_map[h_name] = hid_match.group(1)
+            
+            
+            # Apply to DF (Mapping by Name)
+            # Ensure df['馬名'] is clean matches key
+            if '馬名' in df.columns:
+                df['horse_id'] = df['馬名'].map(horse_name_map).fillna("")
             else:
-                # Try to fuzzy match or just warn
-                print(f"Warning: ID count {len(found_ids)} != DF len {len(df)} for {race_id}")
                 df['horse_id'] = ""
+                
+            # If mapping largely failed (e.g. name mismatch), warn
+            if len(df) > 0 and (df['horse_id'] == "").sum() > len(df) * 0.5:
+                 print(f"Warning: High ID miss rate for {race_id}. Names might differ.")
+                 # Fallback: Try strict index alignment if map failed? 
+                 # But map is usually safer.
+                 # Debug:
+                 # print("DF Names:", df['馬名'].unique())
+                 # print("Map Keys:", list(horse_name_map.keys()))
 
             # Enrich with Past Data
             # This is slow, so we only do it if we successfully got IDs
@@ -231,6 +239,20 @@ def scrape_race_data(race_id, mode="JRA"):
                         past_df = scraper.get_past_races(hid, n_samples=None) # Fetch ALL
                         HORSE_HISTORY_CACHE[hid] = past_df
                         past_df = past_df.copy()
+                    
+                    # --- Fetch Bloodline Data ---
+                    global HORSE_PROFILE_CACHE
+                    profile_data = None
+                    if hid in HORSE_PROFILE_CACHE:
+                        profile_data = HORSE_PROFILE_CACHE[hid]
+                    else:
+                         profile_data = scraper.get_horse_profile(hid)
+                         HORSE_PROFILE_CACHE[hid] = profile_data
+                    
+                    if profile_data:
+                        df.at[idx, 'father'] = profile_data.get('father', '')
+                        df.at[idx, 'mother'] = profile_data.get('mother', '')
+                        df.at[idx, 'bms'] = profile_data.get('bms', '')
                         
                     # past_df = scraper.get_past_races(hid, n_samples=20) # Old method
                     
@@ -605,7 +627,7 @@ def scrape_odds_for_race(race_id, mode="JRA"):
     return horses
 
 
-def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None):
+def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None, existing_race_ids=None):
     """
     Scrapes NAR races for a given year.
     Iterates every day.
@@ -655,6 +677,11 @@ def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None
                     print(f"  Found {len(race_ids)} races.")
                     
                     for rid in race_ids:
+                        # Skip if already exists
+                        if existing_race_ids and rid in existing_race_ids:
+                             print(f"    Skipping {rid} (Already exists)")
+                             continue
+
                         # Scrape Result
                         df = scrape_race_data(rid, mode="NAR")
                         if df is not None and not df.empty:
@@ -798,6 +825,9 @@ def scrape_shutuba_data(race_id, mode="JRA"):
                 "馬 番": umaban,
                 "馬名": horse_name,
                 "horse_id": horse_id,
+                "father": "", # Init
+                "mother": "",
+                "bms": "",
                 "騎手": jockey,
                 "斤量": weight,
                 "race_id": race_id,
@@ -815,7 +845,26 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             # It's usually near Horse Name
             # Let's inspect typical structure or ignore for now if not critical (Feature Engineering defaults to 3)
             # Find td with class "Barei" ?
+            # Find td with class "Barei" ?
             barei = row.select_one(".Barei")
+            
+            # --- Fetch Profile for Shutuba ---
+            # Similar to scrape_race_data, use cache
+            if horse_id and horse_id.isdigit():
+                 global HORSE_PROFILE_CACHE
+                 # Initialize if not present (handled at module level)
+                 prof = None
+                 if horse_id in HORSE_PROFILE_CACHE:
+                     prof = HORSE_PROFILE_CACHE[horse_id]
+                 else:
+                     prof = scraper.get_horse_profile(horse_id)
+                     if prof: HORSE_PROFILE_CACHE[horse_id] = prof
+                 
+                 if prof:
+                     entry["father"] = prof.get("father", "")
+                     entry["mother"] = prof.get("mother", "")
+                     entry["bms"] = prof.get("bms", "")
+            
             if barei:
                 entry["性齢"] = barei.text.strip()
             else:
@@ -1209,6 +1258,10 @@ def main(start_date_arg=None, end_date_arg=None, places_arg=None, source_arg=Non
                             df = scrape_race_data(race_id)
                             if df is not None:
                                 all_data.append(df)
+                                # Incremental Save Support (Local/Manual run)
+                                # Note: This 'Netkeiba Logic' block calculates 'all_data' and saves at end.
+                                # To support incremental save here, we would need a callback or logic.
+                                # Check if 'save_nar_callback' is available in scope? No.
                                 print(f".", end="", flush=True) 
                             else:
                                 break

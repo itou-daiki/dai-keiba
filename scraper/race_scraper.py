@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import io
 import re
 import time
 from datetime import datetime
@@ -49,7 +50,7 @@ class RaceScraper:
         # We need to manually parse to get clean data and handle links if needed (though for past data, text is mostly fine)
         # pd.read_html is easier for the table
         try:
-            df = pd.read_html(str(table))[0]
+            df = pd.read_html(io.StringIO(str(table)))[0]
             
             # Basic cleaning
             df = df.dropna(how='all')
@@ -267,6 +268,59 @@ class RaceScraper:
             result_data.append(entry)
             
         return result_data
+
+    def get_horse_profile(self, horse_id):
+        """
+        Fetches horse profile to get pedigree (Father, Mother, Grandfather(BMS)).
+        Returns a dictionary or None.
+        """
+        # Use pedigree page for reliable bloodline data
+        url = f"https://db.netkeiba.com/horse/ped/{horse_id}/"
+        soup = self._get_soup(url)
+        if not soup:
+            return None
+        
+        # Parse Blood Table
+        # table class="blood_table"
+        
+        data = {
+            "father": "",
+            "mother": "",
+            "bms": ""
+        }
+        
+        try:
+            table = soup.select_one("table.blood_table")
+            if table:
+                rows = table.find_all("tr")
+                # 5-generation table has 32 rows usually
+                # Father at Row 0 (rowspan 16)
+                # Mother at Row 16 (rowspan 16)
+                
+                if len(rows) >= 17:
+                    # Father: Row 0, Col 0
+                    r0 = rows[0].find_all("td")
+                    if r0:
+                        txt = r0[0].text.strip()
+                        # Clean: "スクリーンヒーロー\n2004 栗毛..." -> "スクリーンヒーロー"
+                        # Take first line
+                        data["father"] = txt.split('\n')[0].strip()
+                        
+                    # Mother & BMS: Row 16
+                    r16 = rows[16].find_all("td")
+                    if len(r16) >= 2:
+                        # Mother
+                        m_txt = r16[0].text.strip()
+                        data["mother"] = m_txt.split('\n')[0].strip()
+                        
+                        # BMS (Mother's Father)
+                        bms_txt = r16[1].text.strip()
+                        data["bms"] = bms_txt.split('\n')[0].strip()
+                        
+        except Exception as e:
+            print(f"Error parsing profile for {horse_id}: {e}")
+            
+        return data
 
 if __name__ == "__main__":
     # Test

@@ -35,5 +35,11 @@ if df is not None and not df.empty:
         print(df['単勝'].head())
     else:
         print("\n--- No Odds Column Found ---")
+        
+    print("\n--- Bloodline Data ---")
+    if 'father' in df.columns:
+        print(df[['馬名', 'father', 'mother', 'bms']].head())
+    else:
+        print("Bloodline columns NOT found.")
 else:
     print("No data returned from scrape_shutuba_data")
