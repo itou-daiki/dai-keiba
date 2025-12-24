@@ -282,6 +282,8 @@ with tab_ml:
 
         st.markdown("---")
         is_calibrate = st.checkbox("確率較正 (Calibration) を行う", value=False, help="Brier Scoreが高い場合に有効にしてください。")
+        st.markdown("---")
+        auto_push = st.checkbox("学習完了後、リポジトリを自動更新 (Git Push)", value=True, help="学習成功時に変更を自動的にコミット＆プッシュします")
 
     with col_conf_2:
         st.markdown(f"""
@@ -289,13 +291,22 @@ with tab_ml:
         1. データ前処理 (最新データの反映)
         2. {'チューニング (最適化)' if is_tuning else '設定の確認'}
         3. モデル学習 (LightGBM) {' + 確率較正' if is_calibrate else ''}
+        4. {'リポジトリ更新 (Git Push)' if auto_push else '(リポジトリ更新なし)'}
         """)
         
         btn_label = "🧪 チューニング ＆ 学習開始" if is_tuning else "🧠 学習開始"
         start_process = st.button(btn_label, type="primary")
         
-        st.write("---")
-        if st.button("⚙️ データ加工 (前処理) のみ実行"):
+
+
+    # --- Data Operations Section ---
+    st.markdown("---")
+    st.markdown("### 🛠️ データ管理 (Data Ops)")
+    
+    col_ops_1, col_ops_2 = st.columns(2)
+    
+    with col_ops_1:
+        if st.button("⚙️ データ加工 (前処理) のみ実行", help="rawデータから特徴量を計算し、processed_dataを作成します"):
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             # Switch paths based on Mode
             if mode_val == "NAR":
@@ -313,8 +324,8 @@ with tab_ml:
                 else:
                    st.error("database.csvが見つかりません。")
 
-        st.write("---")
-        if st.button("💾 データベース (SQL) に保存"):
+    with col_ops_2:
+        if st.button("💾 データベース (SQL) に保存", help="processed_dataをSQLiteデータベースに保存します"):
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             if mode_val == "NAR":
                 data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
@@ -334,13 +345,6 @@ with tab_ml:
                         importlib.reload(db_helper)
                         
                         df_proc = pd.read_csv(data_path)
-                        # Initialize DB (creates file if not exists)
-                        # Note: KeibaDatabase checks for existence in __init__. 
-                        # We might need to handle creation if it doesn't exist yet, but open('w') handles it?
-                        # ACTUALLY KeibaDatabase raises FileNotFoundError if not exists.
-                        # We should manually ensure it exists or bypass check for creation.
-                        # Let's bypass the check by using sqlite3 directly OR creating file first.
-                        
                         conn_check = importlib.import_module("sqlite3").connect(db_path_sql)
                         conn_check.close() # Create file
                         
@@ -399,6 +403,40 @@ with tab_ml:
                 if results:
                     st.success("学習完了！")
                     st.session_state['ml_results'] = results
+                    
+                    # 4. Auto Push
+                    if auto_push:
+                        st.markdown("---")
+                        with st.spinner("🔄 リポジトリを更新中 (Git Push)..."):
+                            try:
+                                # Relative paths for git
+                                if mode_val == "NAR":
+                                    model_path_rel = "ml/models/lgbm_model_nar.pkl"
+                                else:
+                                    model_path_rel = "ml/models/lgbm_model.pkl"
+                                
+                                meta_path_rel = model_path_rel.replace('.pkl', '_meta.json')
+                                
+                                commit_msg = f"Auto-update model ({mode_val}): {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+                                
+                                cmds = [
+                                    ["git", "add", model_path_rel, meta_path_rel],
+                                    # Add processed data if exists? Maybe too large. Skip for now.
+                                    ["git", "commit", "-m", commit_msg],
+                                    ["git", "push", "origin", "main"]
+                                ]
+                                
+                                for cmd in cmds:
+                                    res = subprocess.run(cmd, cwd=project_root, capture_output=True, text=True)
+                                    if res.returncode != 0:
+                                        # Ignore clean working tree error
+                                        if "nothing to commit" not in (res.stdout + res.stderr).lower():
+                                            st.warning(f"Git Warning: {res.stderr}")
+                                
+                                st.success("✅ リポジトリ更新完了！")
+                            except Exception as e:
+                                st.error(f"Git Push Error: {e}")
+                                
                 else:
                     st.error("学習に失敗しました。")
             except Exception as e:
