@@ -1349,6 +1349,23 @@ if race_id:
             top2 = sorted_df.iloc[1] if len(sorted_df) > 1 else None
             top3 = sorted_df.iloc[2] if len(sorted_df) > 2 else None
             
+            # Helper for circled numbers
+            def to_circled_num(n):
+                try:
+                    n = int(n)
+                    if 1 <= n <= 20:
+                        return chr(9311 + n)
+                    return f"({n})"
+                except:
+                    return ""
+
+            # Helper to format horse name with circle num
+            def fmt_horse(row):
+                num = row.get('馬 番', '')
+                name = row['馬名']
+                c_num = to_circled_num(num)
+                return f"{c_num} {name}".strip()
+
             # Cards Layout
             col_bet1, col_bet2, col_bet3 = st.columns(3)
 
@@ -1358,7 +1375,7 @@ if race_id:
                 if top1['AIスコア(%)'] >= 10 and top1['信頼度'] >= 60 and top1['調整後期待値'] > 0:
                     bet_type = "単勝 (WIN)" if top1['AIスコア(%)'] >= 20 else "複勝 (PLACE)"
                     st.success(f"**{bet_type}**")
-                    st.metric(top1['馬名'], f"EV: {top1['調整後期待値']:.2f}")
+                    st.metric(fmt_horse(top1), f"EV: {top1['調整後期待値']:.2f}")
                     st.caption(f"信頼度: {top1['信頼度']}%")
                 else:
                     st.info("条件に合う軸馬がいません")
@@ -1371,22 +1388,22 @@ if race_id:
                     # Solid Favorite -> Nagashi
                     st.success("**馬連・ワイド 流し**")
                     targets = []
-                    if top2 is not None: targets.append(top2['馬名'])
-                    if top3 is not None: targets.append(top3['馬名'])
-                    st.write(f"軸: **{top1['馬名']}**")
+                    if top2 is not None: targets.append(fmt_horse(top2))
+                    if top3 is not None: targets.append(fmt_horse(top3))
+                    st.write(f"軸: **{fmt_horse(top1)}**")
                     st.write(f"紐: {', '.join(targets)}")
                 elif top1['AIスコア(%)'] < 20:
                      # Confused -> Box
                      st.warning("**馬連・ワイド BOX**")
-                     box_horses = sorted_df.head(5)['馬名'].tolist()
+                     box_horses = [fmt_horse(row) for i, row in sorted_df.head(5).iterrows()]
                      st.write(f"推奨: {', '.join(box_horses[:4])}")
                      st.caption("混戦模様です")
                 else:
                      st.info("**馬連 フォーメーション**")
-                     st.write(f"1列目: {top1['馬名']}")
+                     st.write(f"1列目: {fmt_horse(top1)}")
                      targets = []
-                     if top2 is not None: targets.append(top2['馬名'])
-                     if top3 is not None: targets.append(top3['馬名'])
+                     if top2 is not None: targets.append(fmt_horse(top2))
+                     if top3 is not None: targets.append(fmt_horse(top3))
                      st.write(f"2列目: {', '.join(targets)}")
 
             # 3. 🧨 Aname (Longshot)
@@ -1401,7 +1418,7 @@ if race_id:
                 
                 if not longshots.empty:
                     ls_horse = longshots.iloc[0]
-                    st.error(f"**狙い目: {ls_horse['馬名']}**")
+                    st.error(f"**狙い目: {fmt_horse(ls_horse)}**")
                     st.metric("期待値", f"{ls_horse['調整後期待値']:.2f}", delta="High EV")
                     st.write(f"単オッズ: {ls_horse.get('現在オッズ', 0)}倍")
                     st.caption("ワイド・複勝の紐に推奨")
