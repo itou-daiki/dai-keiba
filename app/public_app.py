@@ -151,12 +151,20 @@ def predict_race_logic(df, model, model_meta):
         # 特徴量エンジニアリング（会場特性あり）
         X_df = process_data(df, use_venue_features=True)
 
-        # Meta cols to exclude
-        meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
-        features = [c for c in X_df.columns if c not in meta_cols and c != 'target_win']
-        
-        # Ensure numeric and fillna
-        X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
+        # Align features with model
+        if hasattr(model, 'feature_name'):
+             model_features = model.feature_name()
+             # Ensure all features exist
+             for f in model_features:
+                 if f not in X_df.columns:
+                     X_df[f] = 0
+             
+             X_pred = X_df[model_features].fillna(0)
+        else:
+             # Fallback for older sklearn models or if feature_name not available
+             meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
+             features = [c for c in X_df.columns if c not in meta_cols and c != 'target_win']
+             X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
 
         # Predict
         probs = model.predict(X_pred)
@@ -199,7 +207,9 @@ def predict_race_logic(df, model, model_meta):
                 
         return df
     except Exception as e:
-        print(f"Prediction Error: {e}")
+        import traceback
+        st.error(f"Prediction Error: {e}")
+        st.code(traceback.format_exc())
         return None
 
 def load_schedule_data(mode="JRA"):
