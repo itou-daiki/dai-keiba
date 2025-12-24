@@ -2,51 +2,51 @@
   "model_id": "lgbm_model_nar",
   "model_type": "LightGBM Binary Classification",
   "target": "target_win",
-  "trained_at": "2025-12-24T05:53:03.406925",
+  "trained_at": "2025-12-25T01:26:01.535954",
   "data_source": "processed_data_nar.csv",
   "data_stats": {
-    "total_records": 29504,
-    "train_records": 29504,
-    "test_records": 5901,
-    "win_rate": 0.09629202819956616
+    "total_records": 47882,
+    "train_records": 47882,
+    "test_records": 9577,
+    "win_rate": 0.09753143143561255
   },
   "performance": {
-    "auc": 0.8080288576816648,
-    "accuracy": 0.829012031859007,
-    "precision": 0.29706717123935666,
-    "recall": 0.5413793103448276,
-    "f1": 0.3836285888821014,
-    "brier_score": 0.14183344610955925,
-    "log_loss": 0.4425385445799809
+    "auc": 0.8294002411887238,
+    "accuracy": 0.5561240471964081,
+    "precision": 0.17149615612063868,
+    "recall": 0.9477124183006536,
+    "f1": 0.2904356534802203,
+    "brier_score": 0.24025815427495517,
+    "log_loss": 0.6679446082375072
   },
   "cv_results": {
     "auc": {
-      "mean": 0.7242265161371562,
-      "std": 0.01790139465198358
+      "mean": 0.7247267624822966,
+      "std": 0.00793094013798998
     },
     "accuracy": {
-      "mean": 0.8099654260728087,
-      "std": 0.007318825339966634
+      "mean": 0.6548621553884711,
+      "std": 0.15097675296982627
     },
     "precision": {
-      "mean": 0.2239914052242317,
-      "std": 0.012289241176543474
+      "mean": 0.13039892177192414,
+      "std": 0.06753687108439084
     },
     "recall": {
-      "mean": 0.3991924858204884,
-      "std": 0.026222117353534167
+      "mean": 0.5812006579048505,
+      "std": 0.31480737140491283
     },
     "f1": {
-      "mean": 0.28681256577739306,
-      "std": 0.015532054927584603
+      "mean": 0.2095119763033378,
+      "std": 0.1054640565988165
     },
     "brier": {
-      "mean": 0.1518744405036363,
-      "std": 0.004692421083934439
+      "mean": 0.20524039188785373,
+      "std": 0.052429868941948586
     },
     "logloss": {
-      "mean": 0.470290356149812,
-      "std": 0.012550242493899464
+      "mean": 0.5929698205825145,
+      "std": 0.11363753653391315
     }
   },
   "features": [
@@ -93,32 +93,25 @@
     "jockey_id",
     "trainer_id",
     "run_style_code",
-    "run_style_consistency",
-    "venue_run_style_compatibility",
-    "venue_distance_compatibility",
-    "straight_length",
-    "track_width_code",
-    "slope_code",
-    "venue_condition_compatibility",
-    "frame_advantage"
+    "run_style_consistency"
   ],
   "hyperparameters": {
     "objective": "binary",
     "metric": "auc",
     "boosting_type": "gbdt",
     "verbose": -1,
-    "num_leaves": 32,
-    "learning_rate": 0.05990612320582006,
-    "feature_fraction": 0.6986117636035961,
-    "bagging_fraction": 0.6682850044218565,
-    "bagging_freq": 1,
+    "num_leaves": 29,
+    "learning_rate": 0.02417052328174952,
+    "feature_fraction": 0.5554745115359823,
+    "bagging_fraction": 0.8376355603981694,
+    "bagging_freq": 8,
     "is_unbalance": false,
-    "max_depth": 3,
-    "min_child_samples": 24,
-    "min_gain_to_split": 0.5724559257568862,
-    "lambda_l1": 0.49879017476510296,
-    "lambda_l2": 2.3539928790046815e-06,
-    "scale_pos_weight": 6.14861172710706
+    "max_depth": 10,
+    "min_child_samples": 84,
+    "min_gain_to_split": 0.8089594456091382,
+    "lambda_l1": 0.010864115889922617,
+    "lambda_l2": 0.0006616212306050803,
+    "scale_pos_weight": 14.085889121878054
   },
   "training_config": {
     "use_timeseries_split": true,
@@ -127,9 +120,11 @@
     "early_stopping_rounds": 30,
     "hyperparameter_optimization": false,
     "n_trials": null,
-    "optimal_threshold": 0.5,
+    "optimal_threshold": 0.7000000000000001,
     "calibrated": false,
     "trained_on_all_data": true
   },
-  "warnings": []
+  "warnings": [
+    "💡 Brier Scoreが高い - 確率較正を推奨（calibrate=True）"
+  ]
 }
