@@ -425,7 +425,7 @@ if schedule_data and "races" in schedule_data:
                                          for rank in range(min(4, len(processed_df))):
                                              h = processed_df.iloc[rank]
                                              m = marks[rank]
-                                             h_num = h.get('馬番', '')
+                                             h_num = h.get('馬 番', '')
                                              c_num = to_circled_num_local(h_num)
                                              picks_str.append(f"{m} {c_num} {h['馬名']} ({h['AI_Score']}%)")
                                          
@@ -1407,7 +1407,7 @@ if race_id:
 
             # Helper to format horse name with circle num
             def fmt_horse(row):
-                num = row.get('馬番', '')
+                num = row.get('馬 番', '')
                 name = row['馬名']
                 c_num = to_circled_num(num)
                 return f"{c_num} {name}".strip()
