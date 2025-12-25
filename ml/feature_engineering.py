@@ -435,6 +435,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
     df['turf_compatibility'] = np.where(turf_counts > 0, turf_sums / turf_counts, 10.0)
     df['dirt_compatibility'] = np.where(dirt_counts > 0, dirt_sums / dirt_counts, 10.0)
 
+    # Defragment before adding more columns
+    df = df.copy()
+
     # 2. 馬場状態適性（良/稍重/重/不良での平均着順）
     df['good_condition_avg'] = 0.0
     df['heavy_condition_avg'] = 0.0
