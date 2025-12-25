@@ -410,7 +410,7 @@ if schedule_data and "races" in schedule_data:
                                          
                                          # Construct Multi-Horse String
                                          picks_str = []
-                                         marks = ["◎", "◯", "▲", "△"]
+                                         marks = ["◎", "◯", "▲", "△", "☆"]
                                          
                                          # Helper for circled numbers (local scope)
                                          def to_circled_num_local(n):
@@ -422,7 +422,7 @@ if schedule_data and "races" in schedule_data:
                                              except:
                                                  return ""
 
-                                         for rank in range(min(4, len(processed_df))):
+                                         for rank in range(min(5, len(processed_df))):
                                              h = processed_df.iloc[rank]
                                              m = marks[rank]
                                              h_num = h.get('馬 番', '')
@@ -436,7 +436,7 @@ if schedule_data and "races" in schedule_data:
                                                  "会場": race['venue'],
                                                  "R": f"{race['number']}R",
                                                  "レース名": race['name'],
-                                                 "AI予想 (◎/◯/▲/△)": picks_display,
+                                                 "AI予想 (◎/◯/▲/△/☆)": picks_display,
                                                   # "本命馬": top_horse['馬名'], # Removed in favor of multi-display
                                                  "信頼度": f"{conf}%",
                                                  # "AI指数": f"{score}%", # Included in string
