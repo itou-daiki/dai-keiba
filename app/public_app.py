@@ -412,10 +412,22 @@ if schedule_data and "races" in schedule_data:
                                          picks_str = []
                                          marks = ["◎", "◯", "▲"]
                                          
+                                         # Helper for circled numbers (local scope)
+                                         def to_circled_num_local(n):
+                                             try:
+                                                 n = int(n)
+                                                 if 1 <= n <= 20:
+                                                     return chr(9311 + n)
+                                                 return f"({n})"
+                                             except:
+                                                 return ""
+
                                          for rank in range(min(3, len(processed_df))):
                                              h = processed_df.iloc[rank]
                                              m = marks[rank]
-                                             picks_str.append(f"{m} {h['馬名']} ({h['AI_Score']}%)")
+                                             h_num = h.get('馬番', '')
+                                             c_num = to_circled_num_local(h_num)
+                                             picks_str.append(f"{m} {c_num} {h['馬名']} ({h['AI_Score']}%)")
                                          
                                          picks_display = " / ".join(picks_str)
 
