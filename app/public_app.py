@@ -1373,6 +1373,9 @@ if race_id:
             # === おすすめの買い方提案 ===
             st.markdown("---")
             st.subheader("🎫 AIおすすめの買い方")
+            
+            # Budget Input
+            budget = st.number_input("💰 予算 (円)", min_value=100, step=100, value=1000, help="この予算に合わせて購入金額を配分します")
 
             # Logic for betting recommendations using 'edited_df' (which includes updated Odds/Marks)
             sorted_df = edited_df.sort_values('調整後期待値', ascending=False)
@@ -1405,8 +1408,13 @@ if race_id:
                 st.markdown("#### 🎯 単系 (WIN/PLACE)")
                 if top1['AIスコア(%)'] >= 10 and top1['信頼度'] >= 60 and top1['調整後期待値'] > 0:
                     bet_type = "単勝 (WIN)" if top1['AIスコア(%)'] >= 20 else "複勝 (PLACE)"
+                    
+                    # Allocation: 50% of budget for Tankei focus
+                    amount = int((budget * 0.5) / 100) * 100
+                    if amount < 100: amount = 100
+                    
                     st.success(f"**{bet_type}**")
-                    st.metric(fmt_horse(top1), f"EV: {top1['調整後期待値']:.2f}")
+                    st.metric(fmt_horse(top1), f"{amount}円", delta=f"EV: {top1['調整後期待値']:.2f}")
                     st.caption(f"信頼度: {top1['信頼度']}%")
                 else:
                     st.info("条件に合う軸馬がいません")
@@ -1421,16 +1429,32 @@ if race_id:
                     targets = []
                     if top2 is not None: targets.append(fmt_horse(top2))
                     if top3 is not None: targets.append(fmt_horse(top3))
-                    st.write(f"軸: **{fmt_horse(top1)}**")
-                    st.write(f"紐: {', '.join(targets)}")
+                    
+                    # Allocation: Budget / points
+                    points = len(targets)
+                    if points > 0:
+                        amount_per_point = int((budget / points) / 100) * 100 
+                        if amount_per_point < 100: amount_per_point = 100
+                        st.write(f"軸: **{fmt_horse(top1)}**")
+                        st.write(f"紐: {', '.join(targets)}")
+                        st.metric("1点あたり", f"{amount_per_point}円", help=f"合計 {(amount_per_point * points)}円")
+                    else:
+                        st.write("相手馬不足")
                 elif top1['AIスコア(%)'] < 20:
                      # Confused -> Box
                      st.warning("**馬連・ワイド BOX**")
-                     box_horses = [fmt_horse(row) for i, row in sorted_df.head(5).iterrows()]
-                     st.write(f"推奨: {', '.join(box_horses[:4])}")
+                     box_horses = [fmt_horse(row) for i, row in sorted_df.head(5).iterrows()][:4] # Top 4 box = 6 points
+                     
+                     points = 6 # 4C2
+                     amount_per_point = int((budget / points) / 100) * 100
+                     if amount_per_point < 100: amount_per_point = 100
+                     
+                     st.write(f"推奨: {', '.join(box_horses)}")
                      st.caption("混戦模様です")
+                     st.metric("1点あたり", f"{amount_per_point}円", help=f"4頭BOX (6点): {amount_per_point * 6}円")
                 else:
                      st.info("**馬連 フォーメーション**")
+                     st.caption("適宜調整してください")
                      st.write(f"1列目: {fmt_horse(top1)}")
                      targets = []
                      if top2 is not None: targets.append(fmt_horse(top2))
