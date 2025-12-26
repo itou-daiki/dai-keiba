@@ -116,10 +116,15 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
             logger.warning(f"  - {col}: {count} ({count/len(df)*100:.1f}%)")
 
     # 5. 特徴量の準備
-    meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
+    meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順', 'run_style']
     exclude_cols = ['target_top3', 'target_win', 'target_show']
+    leakage_cols = [
+        'タイム', 'time_seconds', '着差', '後3F', 'last_3f_num', 
+        '単勝 オッズ', 'odds_num', '人 気', 'popularity', 
+        'コーナー 通過順', 'コーナー通過順', 'weight_change_num', '馬体重(増減)'
+    ]
 
-    drop_cols = [c for c in df.columns if c in meta_cols or c in exclude_cols]
+    drop_cols = [c for c in df.columns if c in meta_cols or c in exclude_cols or c in leakage_cols]
 
     X = df.drop(columns=drop_cols, errors='ignore')
 
@@ -496,9 +501,14 @@ def optimize_hyperparameters(data_path, n_trials=50, use_timeseries_split=True):
         return None
 
     # データ準備
-    meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
+    meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順', 'run_style']
     exclude_cols = ['target_top3', 'target_win', 'target_show']
-    drop_cols = [c for c in df.columns if c in meta_cols or c in exclude_cols]
+    leakage_cols = [
+        'タイム', 'time_seconds', '着差', '後3F', 'last_3f_num', 
+        '単勝 オッズ', 'odds_num', '人 気', 'popularity', 
+        'コーナー 通過順', 'コーナー通過順', 'weight_change_num', '馬体重(増減)'
+    ]
+    drop_cols = [c for c in df.columns if c in meta_cols or c in exclude_cols or c in leakage_cols]
 
     X = df.drop(columns=drop_cols, errors='ignore').select_dtypes(include=['number'])
     y = df[target_col]
