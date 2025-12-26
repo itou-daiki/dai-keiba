@@ -1438,10 +1438,10 @@ if race_id:
                     col_c1, col_c2 = st.columns(2)
                     with col_c1:
                         st.markdown("**能力チャート**")
-                        st.plotly_chart(fig_radar, use_container_width=True)
+                        st.plotly_chart(fig_radar, use_container_width=True, key=f"radar_{idx}_{horse_name}")
                     with col_c2:
                         st.markdown("**過去5走の推移**")
-                        st.plotly_chart(fig_line, use_container_width=True)
+                        st.plotly_chart(fig_line, use_container_width=True, key=f"line_{idx}_{horse_name}")
 
             # === おすすめの買い方提案 ===
             st.markdown("---")
