@@ -1038,14 +1038,24 @@ if race_id:
         evs_adjusted = []  # 調整後EV（印補正あり）
         kellys = []
 
+        evs_pure = []      # 純粋EV（印補正なし）
+        evs_adjusted = []  # 調整後EV（印補正あり）
+        kellys = []
+        bias_reasons_list = [] # 補正理由リスト
+
         for idx, (p, o, m) in enumerate(zip(probs, odds, marks)):
+            reasons = [] # この馬の補正理由
+            
             # Safety filter (race type specific)
             if p < safety_threshold:
                 ev_pure = -1.0
                 ev_adj = -1.0
                 kelly = 0.0
+                reasons.append("確率過低(除外)")
             else:
                 w = mark_weights.get(m, 1.0)
+                if w != 1.0:
+                     reasons.append(f"印{m} (x{w:.2f})")
                 
                 # Already adjusted in Dataframe if needed
                 adjusted_p = p
@@ -1053,9 +1063,10 @@ if race_id:
                 # Apply run style compatibility if available
                 if run_style_compatibility is not None:
                     run_compat = run_style_compatibility.iloc[idx]
-                    if not pd.isna(run_compat):
+                    if not pd.isna(run_compat) and run_compat != 1.0:
                         # 脚質相性が良い馬は期待値を上げる
                         adjusted_p *= run_compat
+                        reasons.append(f"脚質適性 (x{run_compat:.2f})")
 
                 # Apply frame advantage if available
                 if frames is not None and venue_char:
@@ -1064,11 +1075,23 @@ if race_id:
                         outer_advantage = venue_char.get('outer_track_advantage', 1.0)
                         try:
                             frame_num = int(frame)
-                            if frame_num >= 6:  # 外枠
+                            if frame_num >= 6 and outer_advantage > 1.0:  # 外枠有利
                                 adjusted_p *= outer_advantage
-                            elif frame_num <= 3:  # 内枠
-                                # 外枠有利な会場では内枠は不利
-                                adjusted_p *= (2.0 - outer_advantage)
+                                reasons.append(f"外枠有利 (x{outer_advantage:.2f})")
+                            elif frame_num <= 3 and outer_advantage > 1.0:  # 内枠不利
+                                penalty = 2.0 - outer_advantage
+                                adjusted_p *= penalty
+                                reasons.append(f"内枠不利 (x{penalty:.2f})")
+                            
+                            # 内枠有利な場合(outer_advantage < 1.0)
+                            elif frame_num <= 3 and outer_advantage < 1.0:
+                                bonus = 2.0 - outer_advantage
+                                adjusted_p *= bonus
+                                reasons.append(f"内枠有利 (x{bonus:.2f})")
+                            elif frame_num >= 6 and outer_advantage < 1.0:
+                                adjusted_p *= outer_advantage
+                                reasons.append(f"外枠不利 (x{outer_advantage:.2f})")
+                                
                         except: pass
 
                 # 純粋EV: 印補正なし（統計的に正しい）
@@ -1079,14 +1102,16 @@ if race_id:
 
                 # Kelly criterion (placeholder for now)
                 kelly = 0.0
-
+            
             evs_pure.append(ev_pure)
             evs_adjusted.append(ev_adj)
             kellys.append(kelly)
+            bias_reasons_list.append(", ".join(reasons) if reasons else "-")
 
         edited_df['AI期待値'] = evs_pure
         edited_df['調整後期待値'] = evs_adjusted
         edited_df['推奨度(Kelly)'] = kellys
+        edited_df['補正内容'] = bias_reasons_list
 
         # === AI期待度TOP5のグラフ（デフォルト表示） ===
         st.markdown("---")
@@ -1141,6 +1166,18 @@ if race_id:
         fig_top5.update_layout(height=400, showlegend=False)
 
         st.plotly_chart(fig_top5, use_container_width=True)
+
+        # 補正内容の表示
+        st.markdown("##### ℹ️ 期待値調整の詳細 (TOP5)")
+        st.dataframe(
+            top5_df[['予想印', '馬名', '現在オッズ', '調整後期待値', '補正内容']],
+            column_config={
+                "調整後期待値": st.column_config.NumberColumn(format="%.2f"),
+                "推奨度(Kelly)": st.column_config.ProgressColumn(format="%.1f%%", max_value=30),
+            },
+            hide_index=True,
+            use_container_width=True
+        )
 
         # 2. 適性スコア比較（ヒートマップ）
         st.markdown("#### 🎯 TOP5 適性度比較")
