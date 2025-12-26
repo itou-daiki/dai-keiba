@@ -891,7 +891,7 @@ def scrape_nar_year(year_str, start_date=None, end_date=None, save_callback=None
 # ==========================================
 # 2.5 Shutuba Scraping (Future Races)
 # ==========================================
-def scrape_shutuba_data(race_id, mode="JRA"):
+def scrape_shutuba_data(race_id, mode="JRA", history_df=None):
     """
     Scrapes the Shutuba table (Future Race Card) for a given race ID.
     Enriches with past history from live DB (or local if configured).
@@ -1114,23 +1114,24 @@ def scrape_shutuba_data(race_id, mode="JRA"):
             df['単勝'] = 0.0
             df['Odds'] = 0.0
 
-        # Load History from CSV to avoid scraping
-        csv_path = CSV_FILE_PATH_NAR if mode == "NAR" else CSV_FILE_PATH
+        # Load History
         full_history = pd.DataFrame()
         
-        if os.path.exists(csv_path):
-             print(f"  Loading local history from {csv_path} for enrichment...")
-             try:
-                 # Read primarily needed columns to save memory/speed, or full if fine
-                 # Read primarily needed columns to save memory/speed, or full if fine
-                 # Force dtype to string to avoid float conversion (2012.0 -> "2012.0" != "2012")
-                 full_history = pd.read_csv(csv_path, dtype={'horse_id': str, 'race_id': str})
-                 if 'horse_id' in full_history.columns:
-                     # Remove .0 if it exists (in case it was saved as float previously)
-                     full_history['horse_id'] = full_history['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
-             except Exception as e:
-                 print(f"  Failed to load CSV history: {e}")
-                 full_history = pd.DataFrame()
+        if history_df is not None:
+             # Use provided dataframe (Cached)
+             full_history = history_df
+        else:
+            # Fallback to loading from CSV
+            csv_path = CSV_FILE_PATH_NAR if mode == "NAR" else CSV_FILE_PATH
+            if os.path.exists(csv_path):
+                 print(f"  Loading local history from {csv_path} for enrichment...")
+                 try:
+                     full_history = pd.read_csv(csv_path, dtype={'horse_id': str, 'race_id': str})
+                     if 'horse_id' in full_history.columns:
+                         full_history['horse_id'] = full_history['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
+                 except Exception as e:
+                     print(f"  Failed to load CSV history: {e}")
+
 
         print(f"  Enriching {len(df)} horses with past data...")
         past_columns = []

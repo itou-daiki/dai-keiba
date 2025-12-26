@@ -43,6 +43,18 @@ def load_model_metadata(mode="JRA"):
             return json.load(f)
     return None
 
+@st.cache_resource
+def load_history_csv(mode):
+    """過去データをキャッシュとしてロード (高速化)"""
+    csv_path = os.path.join(PROJECT_ROOT, "data", "raw", "database_nar.csv" if mode == "NAR" else "database.csv")
+    if os.path.exists(csv_path):
+        try:
+            # 高速化のために必要な列だけ...といきたいが、汎用性を考え全読み込み
+            return pd.read_csv(csv_path, dtype={'horse_id': str, 'race_id': str})
+        except:
+            pass
+    return None
+
 def get_data_freshness(mode="JRA"):
     """データベースの最終更新日時を取得（SQL対応）"""
     db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "keiba_data.db")
@@ -393,9 +405,10 @@ if schedule_data and "races" in schedule_data:
                              status_text.text(f"分析中 ({i+1}/{len(target_races)}): {r_name}...")
                              
                              try:
-                                 # 1. Scrape
+                                 # 1. Scrape with cached history
                                  if i > 0: time.sleep(1) 
-                                 df_race = auto_scraper.scrape_shutuba_data(race['id'], mode=mode_val)
+                                 history_df_cache = load_history_csv(mode_val)
+                                 df_race = auto_scraper.scrape_shutuba_data(race['id'], mode=mode_val, history_df=history_df_cache)
                                  
                                  if df_race is not None and not df_race.empty:
                                      # 2. Predict
@@ -540,7 +553,8 @@ if race_id:
             # ステップ1: データ取得
             status_text.info("**ステップ 1/4:** 出馬表データを取得中...")
             progress_bar.progress(25)
-            df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val)
+            history_df_cache = load_history_csv(mode_val)
+            df = auto_scraper.scrape_shutuba_data(race_id, mode=mode_val, history_df=history_df_cache)
 
             if df is not None and not df.empty:
                 status_text.success("✅ ステップ 1/4: 出馬表データを取得しました")
