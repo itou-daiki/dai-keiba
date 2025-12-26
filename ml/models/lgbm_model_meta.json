@@ -1,52 +1,52 @@
 {
   "model_id": "lgbm_model",
   "model_type": "LightGBM Binary Classification",
-  "target": "target_win",
-  "trained_at": "2025-12-26T12:25:33.631654",
+  "target": "target_top3",
+  "trained_at": "2025-12-26T13:20:04.503606",
   "data_source": "processed_data.csv",
   "data_stats": {
     "total_records": 142001,
     "train_records": 142001,
     "test_records": 28401,
-    "win_rate": 0.07274596657770016
+    "win_rate": 0.21811114006239393
   },
   "performance": {
-    "auc": 0.9339511736328342,
-    "accuracy": 0.7045878666244146,
-    "precision": 0.19455215199689802,
-    "recall": 0.9612068965517241,
-    "f1": 0.3236052886165753,
-    "brier_score": 0.17992820595722153,
-    "log_loss": 0.5232682911016922
+    "auc": 0.8639009291253537,
+    "accuracy": 0.6917362064716032,
+    "precision": 0.40900467016929365,
+    "recall": 0.8952244050471171,
+    "f1": 0.5614825945404458,
+    "brier_score": 0.1943226326694324,
+    "log_loss": 0.5671937992253658
   },
   "cv_results": {
     "auc": {
-      "mean": 0.6951210578447226,
-      "std": 0.0208003095937273
+      "mean": 0.6893031116969829,
+      "std": 0.017882195068020735
     },
     "accuracy": {
-      "mean": 0.5133355869179412,
-      "std": 0.0975060242398565
+      "mean": 0.5905941012422885,
+      "std": 0.0987463657721388
     },
     "precision": {
-      "mean": 0.10685646446065644,
-      "std": 0.010256050416271692
+      "mean": 0.32840958548937355,
+      "std": 0.06428847300585397
     },
     "recall": {
-      "mean": 0.7538484956650807,
-      "std": 0.11938188945398562
+      "mean": 0.6533858414034741,
+      "std": 0.26865378469175305
     },
     "f1": {
-      "mean": 0.18581222072095485,
-      "std": 0.0129054238984315
+      "mean": 0.38274773635407483,
+      "std": 0.09599548959539198
     },
     "brier": {
-      "mean": 0.26261956692484734,
-      "std": 0.030811080082584385
+      "mean": 0.24308521033589744,
+      "std": 0.027312674962404904
     },
     "logloss": {
-      "mean": 0.7206386472757929,
-      "std": 0.0661044319289771
+      "mean": 0.6809934952834515,
+      "std": 0.05804352965760888
     }
   },
   "features": [
@@ -100,18 +100,18 @@
     "metric": "auc",
     "boosting_type": "gbdt",
     "verbose": -1,
-    "num_leaves": 101,
-    "learning_rate": 0.050530106030748326,
-    "feature_fraction": 0.54414859344452,
-    "bagging_fraction": 0.6988947293281592,
-    "bagging_freq": 4,
+    "num_leaves": 146,
+    "learning_rate": 0.03666693381354466,
+    "feature_fraction": 0.5661028396353777,
+    "bagging_fraction": 0.5422163284555217,
+    "bagging_freq": 2,
     "is_unbalance": false,
     "max_depth": 12,
-    "min_child_samples": 97,
-    "min_gain_to_split": 0.0030467753505717954,
-    "lambda_l1": 5.567456047459493e-05,
-    "lambda_l2": 3.004277588243592,
-    "scale_pos_weight": 22.11341618570173
+    "min_child_samples": 40,
+    "min_gain_to_split": 0.9993554212097718,
+    "lambda_l1": 1.9802390884676753,
+    "lambda_l2": 6.064118044529394e-07,
+    "scale_pos_weight": 5.012299535942699
   },
   "training_config": {
     "use_timeseries_split": true,
@@ -120,9 +120,11 @@
     "early_stopping_rounds": 30,
     "hyperparameter_optimization": false,
     "n_trials": null,
-    "optimal_threshold": 0.75,
+    "optimal_threshold": 0.6000000000000001,
     "calibrated": false,
     "trained_on_all_data": true
   },
-  "warnings": []
+  "warnings": [
+    "⚠️ target_winではなく他の目標変数を使用しています"
+  ]
 }
