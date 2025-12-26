@@ -256,7 +256,7 @@ with st.expander("ℹ️ MLflow (実験管理) の使い方"):
     (デフォルトポート: http://127.0.0.1:5000)
     """)
 
-tab_ml, tab_upload = st.tabs(["🧠 モデル学習 & チューニング", "📤 リポジトリ更新"])
+tab_ml, tab_data, tab_upload = st.tabs(["🧠 モデル学習", "🛠️ データ管理", "📤 デプロイ"])
 
 # --- Tab 1: ML (Training & Tuning) ---
 with tab_ml:
@@ -299,61 +299,7 @@ with tab_ml:
         
 
 
-    # --- Data Operations Section ---
-    st.markdown("---")
-    st.markdown("### 🛠️ データ管理 (Data Ops)")
-    
-    col_ops_1, col_ops_2 = st.columns(2)
-    
-    with col_ops_1:
-        if st.button("⚙️ データ加工 (前処理) のみ実行", help="rawデータから特徴量を計算し、processed_dataを作成します"):
-            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            # Switch paths based on Mode
-            if mode_val == "NAR":
-                data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
-                db_path = os.path.join(project_root, "data", "raw", "database_nar.csv")
-            else:
-                data_path = os.path.join(project_root, "ml", "processed_data.csv")
-                db_path = os.path.join(project_root, "data", "raw", "database.csv")
-            
-            with st.spinner("データ加工作業中..."):
-                if os.path.exists(db_path):
-                   # Import logic matches train_model call
-                   feature_engineering.calculate_features(db_path, data_path)
-                   st.success(f"完了！ 保存先: {os.path.basename(data_path)}")
-                else:
-                   st.error("database.csvが見つかりません。")
 
-    with col_ops_2:
-        if st.button("💾 データベース (SQL) に保存", help="processed_dataをSQLiteデータベースに保存します"):
-            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            if mode_val == "NAR":
-                data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
-            else:
-                data_path = os.path.join(project_root, "ml", "processed_data.csv")
-            
-            db_path_sql = os.path.join(project_root, "keiba_data.db")
-            
-            if not os.path.exists(data_path):
-                st.error(f"処理済みデータが見つかりません: {os.path.basename(data_path)}")
-                st.info("先に「データ加工」を実行してください。")
-            else:
-                with st.spinner("SQLiteデータベースに保存中..."):
-                    try:
-                        # Import db_helper dynamically if needed
-                        import db_helper
-                        importlib.reload(db_helper)
-                        
-                        df_proc = pd.read_csv(data_path)
-                        conn_check = importlib.import_module("sqlite3").connect(db_path_sql)
-                        conn_check.close() # Create file
-                        
-                        db = db_helper.KeibaDatabase(db_path_sql)
-                        db.save_processed_data(df_proc, mode=mode_val)
-                        
-                        st.success(f"保存完了！ データベース: {os.path.basename(db_path_sql)}")
-                    except Exception as e:
-                        st.error(f"SQL保存エラー: {e}")
 
     if start_process:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -506,6 +452,62 @@ with tab_ml:
                 st.info("特徴量重要度なし")
 
 
+
+
+# --- Tab 2: Data Ops ---
+with tab_data:
+    st.markdown("### 🛠️ データ管理 (Data Ops)")
+    st.info("モデル学習で使用する特徴量データの手動作成や、データベースへの保存を行えます。（通常は「モデル学習」時に自動で行われます）")
+
+    col_ops_1, col_ops_2 = st.columns(2)
+    
+    with col_ops_1:
+        if st.button("⚙️ データ加工 (前処理) のみ実行", help="rawデータから特徴量を計算し、processed_dataを作成します"):
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            # Switch paths based on Mode
+            if mode_val == "NAR":
+                data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
+                db_path = os.path.join(project_root, "data", "raw", "database_nar.csv")
+            else:
+                data_path = os.path.join(project_root, "ml", "processed_data.csv")
+                db_path = os.path.join(project_root, "data", "raw", "database.csv")
+            
+            with st.spinner("データ加工作業中..."):
+                if os.path.exists(db_path):
+                   feature_engineering.calculate_features(db_path, data_path)
+                   st.success(f"完了！ 保存先: {os.path.basename(data_path)}")
+                else:
+                   st.error("database.csvが見つかりません。")
+
+    with col_ops_2:
+        if st.button("💾 データベース (SQL) に保存", help="processed_dataをSQLiteデータベースに保存します"):
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            if mode_val == "NAR":
+                data_path = os.path.join(project_root, "ml", "processed_data_nar.csv")
+            else:
+                data_path = os.path.join(project_root, "ml", "processed_data.csv")
+            
+            db_path_sql = os.path.join(project_root, "keiba_data.db")
+            
+            if not os.path.exists(data_path):
+                st.error(f"処理済みデータが見つかりません: {os.path.basename(data_path)}")
+                st.info("先に「データ加工」を実行してください。")
+            else:
+                with st.spinner("SQLiteデータベースに保存中..."):
+                    try:
+                        import db_helper
+                        importlib.reload(db_helper)
+                        
+                        df_proc = pd.read_csv(data_path)
+                        conn_check = importlib.import_module("sqlite3").connect(db_path_sql)
+                        conn_check.close() # Create file
+                        
+                        db = db_helper.KeibaDatabase(db_path_sql)
+                        db.save_processed_data(df_proc, mode=mode_val)
+                        
+                        st.success(f"保存完了！ データベース: {os.path.basename(db_path_sql)}")
+                    except Exception as e:
+                        st.error(f"SQL保存エラー: {e}")
 
 # --- Tab 3: Upload ---
 with tab_upload:
