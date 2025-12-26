@@ -2,51 +2,51 @@
   "model_id": "lgbm_model_nar",
   "model_type": "LightGBM Binary Classification",
   "target": "target_top3",
-  "trained_at": "2025-12-26T13:00:34.823752",
+  "trained_at": "2025-12-27T00:48:42.140139",
   "data_source": "processed_data_nar.csv",
   "data_stats": {
-    "total_records": 83456,
-    "train_records": 83456,
-    "test_records": 16692,
-    "win_rate": 0.29178249616564417
+    "total_records": 90388,
+    "train_records": 90388,
+    "test_records": 18078,
+    "win_rate": 0.2921626764614772
   },
   "performance": {
-    "auc": 0.822301570750986,
-    "accuracy": 0.7814521926671459,
-    "precision": 0.7058823529411765,
-    "recall": 0.4253915910964551,
-    "f1": 0.5308641975308642,
-    "brier_score": 0.15392210002872625,
-    "log_loss": 0.47391022527737586
+    "auc": 0.8150755735582541,
+    "accuracy": 0.7582144042482576,
+    "precision": 0.5851063829787234,
+    "recall": 0.6190208216094542,
+    "f1": 0.6015859994531036,
+    "brier_score": 0.1677655462103683,
+    "log_loss": 0.5078898298622964
   },
   "cv_results": {
     "auc": {
-      "mean": 0.7158516019118617,
-      "std": 0.008539032294079854
+      "mean": 0.714660900772197,
+      "std": 0.00675044852024953
     },
     "accuracy": {
-      "mean": 0.7292256812136027,
-      "std": 0.005994479481846523
+      "mean": 0.7029075942644716,
+      "std": 0.005474536523998503
     },
     "precision": {
-      "mean": 0.5659385632204338,
-      "std": 0.005433288155041685
+      "mean": 0.49125981665224144,
+      "std": 0.007639997897053045
     },
     "recall": {
-      "mean": 0.3066980741301069,
-      "std": 0.018451556383674128
+      "mean": 0.47481376262126834,
+      "std": 0.018264291576087686
     },
     "f1": {
-      "mean": 0.39750954521853016,
-      "std": 0.016004491421808754
+      "mean": 0.4825936571413538,
+      "std": 0.007886815006303094
     },
     "brier": {
-      "mean": 0.18274560085591,
-      "std": 0.002885783638885546
+      "mean": 0.1957493593098278,
+      "std": 0.0021751385927794545
     },
     "logloss": {
-      "mean": 0.5433753995232106,
-      "std": 0.007044970111829499
+      "mean": 0.5730355572590003,
+      "std": 0.005261348910145035
     }
   },
   "features": [
@@ -100,18 +100,18 @@
     "metric": "auc",
     "boosting_type": "gbdt",
     "verbose": -1,
-    "num_leaves": 101,
-    "learning_rate": 0.030132491635713857,
-    "feature_fraction": 0.5446509757577813,
-    "bagging_fraction": 0.8682787429154414,
-    "bagging_freq": 1,
+    "num_leaves": 62,
+    "learning_rate": 0.04952686952531365,
+    "feature_fraction": 0.5484443137798841,
+    "bagging_fraction": 0.9969793222183456,
+    "bagging_freq": 10,
     "is_unbalance": false,
-    "max_depth": 11,
-    "min_child_samples": 100,
-    "min_gain_to_split": 0.45300933413535177,
-    "lambda_l1": 1.630728328988037e-06,
-    "lambda_l2": 0.00017733347972586605,
-    "scale_pos_weight": 1.2535759176129453
+    "max_depth": 10,
+    "min_child_samples": 89,
+    "min_gain_to_split": 0.09266196236728716,
+    "lambda_l1": 8.760564786050267e-05,
+    "lambda_l2": 1.1027565790533095e-06,
+    "scale_pos_weight": 1.8754151792959246
   },
   "training_config": {
     "use_timeseries_split": true,
@@ -120,11 +120,11 @@
     "early_stopping_rounds": 30,
     "hyperparameter_optimization": false,
     "n_trials": null,
-    "optimal_threshold": 0.35000000000000003,
+    "optimal_threshold": 0.45,
     "calibrated": false,
     "trained_on_all_data": true
   },
   "warnings": [
-    "⚠️ target_winではなく他の目標変数を使用しています"
+    "✅ 3着以内（複勝・ワイド）ターゲットで学習済み"
   ]
 }
