@@ -77,8 +77,9 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
             optimize_hyperparams = False
 
     # === P0-3: Target変数の統一 ===
-    # target_win (1着のみ) を使用してEVと整合させる
-    target_col = 'target_win'  # Changed from 'target_top3'
+    # === P0-3: Target変数の統一 ===
+    # target_top3 (3着以内) を使用して複勝・連複系に対応
+    target_col = 'target_top3'  # Changed from 'target_win'
 
     if target_col not in df.columns:
         logger.error(f"Target column '{target_col}' not found in data.")
@@ -94,10 +95,10 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
     # 2. 目標変数の分布チェック
     y = df[target_col]
     win_rate = y.mean()
-    logger.info(f"Win rate: {win_rate:.2%} ({y.sum()} wins / {len(y)} races)")
+    logger.info(f"Top 3 rate: {win_rate:.2%} ({y.sum()} top3 / {len(y)} races)")
 
-    if win_rate < 0.03 or win_rate > 0.20:
-        logger.warning(f"⚠️ Abnormal win rate: {win_rate:.2%} (expected: 5-10%)")
+    if win_rate < 0.15 or win_rate > 0.40:
+        logger.warning(f"⚠️ Abnormal top3 rate: {win_rate:.2%} (expected: 20-30%)")
 
     # 3. 重複チェック
     if 'race_id' in df.columns and '馬 番' in df.columns:
@@ -494,7 +495,8 @@ def optimize_hyperparameters(data_path, n_trials=50, use_timeseries_split=True):
         return None
 
     # === Target変数の統一 ===
-    target_col = 'target_win'  # Changed from 'target_top3'
+    # === Target変数の統一 ===
+    target_col = 'target_top3'  # Changed from 'target_win'
 
     if target_col not in df.columns:
         logger.error(f"Target column '{target_col}' not found.")

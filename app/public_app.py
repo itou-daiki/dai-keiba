@@ -813,65 +813,82 @@ if race_id:
                              
                              target_df = st.session_state[f'data_{race_id}']
                              
-                             # Update '単勝' and 'Odds'
+                             # Update '単勝' and 'Odds', and '複勝下限'
                              def update_odds(row):
                                  try:
                                      num = int(row['馬 番'])
-                                     return odds_map.get(num, row.get('Odds', 0.0))
+                                     d = {
+                                         'Odds': odds_map.get(num, {}).get('odds', row.get('Odds', 0.0)),
+                                         'PlaceMin': odds_map.get(num, {}).get('place_odds_min', row.get('PlaceMin', 0.0))
+                                     }
+                                     return d
                                  except:
-                                     return row.get('Odds', 0.0)
+                                     return {'Odds': row.get('Odds', 0.0), 'PlaceMin': row.get('PlaceMin', 0.0)}
                                  
-                             target_df['Odds'] = target_df.apply(update_odds, axis=1)
-                             target_df['単勝'] = target_df['Odds'] # Sync
+                             # Apply updates
+                             updated_data = target_df.apply(update_odds, axis=1, result_type='expand')
+                             target_df['Odds'] = updated_data['Odds']
+                             target_df['単勝'] = updated_data['Odds']
+                             target_df['PlaceMin'] = updated_data['PlaceMin']
+                             target_df['複勝下限'] = updated_data['PlaceMin']
                              
                              st.session_state[f'data_{race_id}'] = target_df
-                             st.success("オッズを更新しました！")
+                             st.success("オッズ（単勝・複勝）を更新しました！")
                              st.rerun()
                          else:
                              st.warning("オッズの取得に失敗したか、データが見つかりませんでした。")
                      except Exception as e:
                          st.error(f"オッズ取得エラー: {e}")
 
+        # Ensure PlaceMin exists
+        if '複勝下限' not in edited_df.columns:
+            edited_df['複勝下限'] = 0.0
         
         edited_df = st.data_editor(
             edited_df,
             column_config={
                 "AIスコア(%)": st.column_config.ProgressColumn(
-                    "AI期待度",
-                    help="1着（勝利）の AI予測確率",
+                    "AI複勝率(%)",
+                    help="3着以内に入る AI予測確率",
                     format="%d%%",
                     min_value=0,
                     max_value=100,
                 ),
                 "信頼度": st.column_config.ProgressColumn(
                     "予測信頼度",
-                    help="この予測の信頼性スコア（モデルAUC、データ量、予測確率を考慮）",
+                    help="この予測の信頼性スコア",
                     format="%d%%",
                     min_value=0,
                     max_value=100,
                 ),
                 "現在オッズ": st.column_config.NumberColumn(
-                    "現在オッズ",
-                    help="最新の単勝オッズを入力",
+                    "単勝オッズ",
+                    help="単勝オッズ（参考）",
+                    step=0.1,
+                    format="%.1f"
+                ),
+                "複勝下限": st.column_config.NumberColumn(
+                    "複勝下限",
+                    help="複勝オッズの下限値。EV計算に使用されます。",
                     step=0.1,
                     format="%.1f"
                 ),
                 "AI期待値": st.column_config.NumberColumn(
-                    "AI期待値",
-                    help="純粋な期待値（印補正なし）= (AI確率 × オッズ) - 1.0",
+                    "複勝期待値",
+                    help="純粋な複勝期待値 = (AI複勝率 × 複勝下限) - 1.0",
                     format="%.2f"
                 ),
                 "調整後期待値": st.column_config.NumberColumn(
                     "調整後期待値",
-                    help="AIの予測にあなたの「印」と「会場特性」を加味した、最終的な『儲かりやすさ』です。ここがプラスの馬を狙おう！",
+                    help="印・適性を加味した最終的な複勝期待値",
                     format="%.2f"
                 ),
                 "推奨度(Kelly)": st.column_config.ProgressColumn(
                     "推奨度(Kelly)",
-                    help="ケリー基準による推奨賭け率 (リスクを考慮した推奨度)",
+                    help="ケリー基準による推奨賭け率",
                     format="%.1f%%",
                     min_value=0,
-                    max_value=30, # Max display scale (usually >30% is rare)
+                    max_value=30, 
                 ),
                 "予想印": st.column_config.SelectboxColumn(
                     "予想印",
@@ -881,21 +898,21 @@ if race_id:
                 ),
                 "騎手適性度": st.column_config.ProgressColumn(
                     "騎手適性度",
-                    help="この騎手との相性（10点満点、高いほど良い）",
+                    help="この騎手との相性",
                     format="%.1f",
                     min_value=0,
                     max_value=10
                 ),
                 "コース適性度": st.column_config.ProgressColumn(
                     "コース適性度",
-                    help="芝/ダート別 相性（10点満点、高いほど良い）",
+                    help="芝/ダート別 相性",
                     format="%.1f",
                     min_value=0,
                     max_value=10
                 ),
                 "距離適性度": st.column_config.ProgressColumn(
                     "距離適性度",
-                    help="この距離での相性（10点満点、高いほど良い）",
+                    help="この距離での相性",
                     format="%.1f",
                     min_value=0,
                     max_value=10
@@ -952,7 +969,7 @@ if race_id:
                 "✕": 0.0,   # 消し: 0倍
                 "": 1.0     # 印なし: 1.0倍
             }
-            safety_threshold = 0.08  # AI確率8%未満は除外（信頼性重視）
+            safety_threshold = 0.15  # 3着内率15%未満は除外
             venue_info = f"🏇 中央競馬（JRA）" + (f" - {venue}" if venue else "")
         else:
             # === 地方競馬（NAR）設定 ===
@@ -965,7 +982,7 @@ if race_id:
                 "✕": 0.0,   # 消し: 0倍
                 "": 1.0     # 印なし: 1.0倍
             }
-            safety_threshold = 0.05  # AI確率5%未満は除外（低確率でも狙う価値あり）
+            safety_threshold = 0.10  # 3着内率10%未満は除外
             venue_info = f"🌙 地方競馬（NAR）" + (f" - {venue}" if venue else "")
 
         # Venue-specific adjustments
@@ -1021,9 +1038,9 @@ if race_id:
 
         probs = edited_df['AIスコア(%)'] / 100.0
         odds = edited_df['現在オッズ']
+        place_min_odds = edited_df['複勝下限'] # Use Place Odds
         marks = edited_df['予想印']
 
-        # Get run style compatibility if available
         # Get run style compatibility if available
         run_style_compatibility = None
         if 'venue_run_style_compatibility' in edited_df.columns:
@@ -1037,21 +1054,26 @@ if race_id:
         evs_pure = []      # 純粋EV（印補正なし）
         evs_adjusted = []  # 調整後EV（印補正あり）
         kellys = []
-
-        evs_pure = []      # 純粋EV（印補正なし）
-        evs_adjusted = []  # 調整後EV（印補正あり）
-        kellys = []
         bias_reasons_list = [] # 補正理由リスト
 
-        for idx, (p, o, m) in enumerate(zip(probs, odds, marks)):
+        for idx, (p, o_win, o_place, m) in enumerate(zip(probs, odds, place_min_odds, marks)):
             reasons = [] # この馬の補正理由
+            
+            # Use Place Min Odds for EV Calculation if available, else Estimate
+            calc_odds = 0.0
+            if o_place > 1.0:
+                calc_odds = o_place
+            elif o_win > 1.0:
+                 # Heuristic Estimate: 1.0 + (Win - 1.0) / 3.5 (Conservative)
+                 calc_odds = 1.0 + (o_win - 1.0) / 3.5
+                 reasons.append("複勝推定")
             
             # Safety filter (race type specific)
             if p < safety_threshold:
                 ev_pure = -1.0
                 ev_adj = -1.0
                 kelly = 0.0
-                reasons.append("確率過低(除外)")
+                reasons.append("確率不足(除外)")
             else:
                 w = mark_weights.get(m, 1.0)
                 if w != 1.0:
@@ -1095,10 +1117,11 @@ if race_id:
                         except: pass
 
                 # 純粋EV: 印補正なし（統計的に正しい）
-                ev_pure = (adjusted_p * o) - 1.0
+                # Uses Place Odds
+                ev_pure = (adjusted_p * calc_odds) - 1.0
 
                 # 調整後EV: 印補正あり（ユーザーの主観を反映）
-                ev_adj = (adjusted_p * w * o) - 1.0
+                ev_adj = (adjusted_p * w * calc_odds) - 1.0
 
                 # Kelly criterion (placeholder for now)
                 kelly = 0.0
