@@ -79,12 +79,13 @@ def scrape_jra_race(url, existing_race_ids=None):
         # JRA HTML structure varies, but often contained in specific divs or text lines.
         # We will scan the entire header text or specific class for these patterns.
         
-        # 1. Course & Distance (e.g., "芝2000メートル", "ダート1800メートル")
+        # 1. Course & Distance (e.g., "芝2000メートル", "ダート1800メートル", "芝・1600m")
         # Usually in the same block as race name or just below.
         # We search the whole header area text.
         header_text = soup.select_one("div.header_line").text if soup.select_one("div.header_line") else soup.text
         
-        dist_type_match = re.search(r'(芝|ダ|ダート|障害)\s*(\d+)', header_text)
+        # Regex: Allow spaces, dots, etc. between Type and Dist
+        dist_type_match = re.search(r'(芝|ダ|ダート|障害)[^0-9]*(\d+)', header_text)
         course_type = ""
         distance = ""
         
