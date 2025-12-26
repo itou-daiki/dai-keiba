@@ -374,6 +374,8 @@ with tab_ml:
 
         # 1. Preprocess
         with st.spinner("1/3 データ前処理中..."):
+            if os.path.exists(db_path):
+               feature_engineering.calculate_features(db_path, data_path)
             else:
                st.error("database.csvが見つかりません。")
                st.stop()
