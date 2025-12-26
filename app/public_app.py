@@ -1117,8 +1117,8 @@ if race_id:
         st.markdown("---")
         st.subheader("📊 AI期待度 TOP5 分析")
 
-        # TOP5を調整後期待値でソート（印補正を含む）
-        top5_df = edited_df.nlargest(5, '調整後期待値')
+        # TOP5をAIスコア（勝率）でソート（的中率重視）
+        top5_df = edited_df.nlargest(5, 'AIスコア(%)')
 
         # 1. 横棒グラフ: AI確率 vs 期待値
         import plotly.graph_objects as go
