@@ -102,6 +102,7 @@ class RaceScraper:
                 '馬体重': 'horse_weight',
                 'run_style_val': 'run_style',
                 '単勝': 'odds',
+                'オッズ': 'odds',
                 '距離': 'raw_distance' # e.g. "芝1600"
             }
             
