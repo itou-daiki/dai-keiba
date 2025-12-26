@@ -110,12 +110,12 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
     # 式を調整して範囲を拡大
     prob_bonus = (distance_from_uncertain * 2 - 0.25) * 40
 
-    # さらに極端な予測（<0.05 or >0.95）には追加ボーナス
-    if ai_prob < 0.05 or ai_prob > 0.95:
+    # さらに極端な予測（<0.10 or >0.90）には追加ボーナス (Top 3用に調整)
+    if ai_prob < 0.10 or ai_prob > 0.90:
         prob_bonus += 12
 
     # AI確率が極端に低い場合は信頼度を下げる（データ不足の可能性）
-    if ai_prob < 0.08:
+    if ai_prob < 0.15:
         prob_bonus -= 10
 
     # ===== 4. 適性スコアによる調整（新規追加） =====
