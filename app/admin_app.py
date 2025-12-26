@@ -374,11 +374,31 @@ with tab_ml:
 
         # 1. Preprocess
         with st.spinner("1/3 データ前処理中..."):
-            if os.path.exists(db_path):
-               feature_engineering.calculate_features(db_path, data_path)
             else:
                st.error("database.csvが見つかりません。")
                st.stop()
+        
+        # 1.5 Auto Save to DB
+        with st.spinner("1.5 データベース(SQL)に保存中..."):
+            try:
+                import db_helper
+                importlib.reload(db_helper)
+                
+                # Check if processed file exists
+                if os.path.exists(data_path):
+                    df_proc = pd.read_csv(data_path)
+                    
+                    db_path_sql = os.path.join(project_root, "keiba_data.db")
+                    # Ensure file creation
+                    conn_check = importlib.import_module("sqlite3").connect(db_path_sql)
+                    conn_check.close()
+                    
+                    db = db_helper.KeibaDatabase(db_path_sql)
+                    db.save_processed_data(df_proc, mode=mode_val)
+                    st.success(f"DB自動保存完了: {len(df_proc)} records")
+            except Exception as e:
+                st.warning(f"DB保存失敗: {e} (学習は続行します)")
+
         
         # 2. Tuning (if selected)
         if is_tuning:
