@@ -439,8 +439,10 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
                 metadata["warnings"].append("💡 ハイパーパラメータ最適化を推奨（optimize_hyperparams=True）")
             if not use_timeseries_split:
                 metadata["warnings"].append("⚠️ TimeSeriesSplitを使用していません（Look-ahead biasの可能性）")
-            if target_col != 'target_win':
-                metadata["warnings"].append("⚠️ target_winではなく他の目標変数を使用しています")
+            if target_col == 'target_top3':
+                metadata["warnings"].append("✅ 3着以内（複勝・ワイド）ターゲットで学習済み")
+            elif target_col != 'target_win':
+                metadata["warnings"].append(f"⚠️ 独自ターゲットを使用中: {target_col}")
             if not calibrate and brier > 0.15:
                 metadata["warnings"].append("💡 Brier Scoreが高い - 確率較正を推奨（calibrate=True）")
             if optimize_hyperparams:
