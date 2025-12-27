@@ -78,8 +78,8 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
 
     # === P0-3: Target変数の統一 ===
     # === P0-3: Target変数の統一 ===
-    # target_top3 (3着以内) を使用して複勝・連複系に対応
-    target_col = 'target_top3'  # Changed from 'target_win'
+    # target_win (1着) を使用して単勝期待値計算と整合させる
+    target_col = 'target_win'  # Reverted to 'target_win' from 'target_top3'
 
     if target_col not in df.columns:
         logger.error(f"Target column '{target_col}' not found in data.")
