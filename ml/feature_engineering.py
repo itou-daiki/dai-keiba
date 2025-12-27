@@ -1272,6 +1272,82 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
 
         feature_cols.append('frame_advantage')
 
+    # ========== Data-Driven Course Characteristics (If Stats Provided) ==========
+    if input_stats:
+         # Construct Key
+         if 'course_bias_key' not in df.columns:
+             df['course_bias_key'] = (
+                 df['会場'].astype(str) + '_' + 
+                 df['distance_val'].astype(int).astype(str) + '_' + 
+                 df['course_type_code'].astype(str) + '_' + 
+                 df['rotation_code'].astype(str)
+             )
+         
+         # 1. Frame Bias
+         if 'course_frame_bias' in input_stats and '枠' in df.columns:
+             # Map is tricky with nested dict.
+             # df.apply is easiest but slow.
+             # Optimized: Create a flat key comparison?
+             # Or just apply lambda.
+             stats_fb = input_stats['course_frame_bias']
+             def get_fb(row):
+                 k = row['course_bias_key']
+                 w = str(row['枠'])
+                 if k in stats_fb and w in stats_fb[k]:
+                     return stats_fb[k][w]
+                 return 0.08 # Default avg win rate ~1/12? Max 1/8=0.125. 16/18 head -> 0.05. 0.07 is distinct.
+             
+             df['dd_frame_bias'] = df.apply(get_fb, axis=1)
+             feature_cols.append('dd_frame_bias')
+         
+         # 2. Run Style Bias
+         if 'course_run_style_bias' in input_stats and 'run_style_code' in df.columns:
+             stats_rsb = input_stats['course_run_style_bias']
+             def get_rsb(row):
+                 k = row['course_bias_key']
+                 r = str(row['run_style_code'])
+                 if k in stats_rsb and r in stats_rsb[k]:
+                     return stats_rsb[k][r]
+                 return 0.0
+             
+             df['dd_run_style_bias'] = df.apply(get_rsb, axis=1)
+             feature_cols.append('dd_run_style_bias')
+             df['dd_run_style_bias'] = df.apply(get_rsb, axis=1)
+             feature_cols.append('dd_run_style_bias')
+    else:
+         # Training Mode: Calculate Rolling Bias
+         # Ensure course_bias_key exists
+         if 'course_bias_key' not in df.columns:
+             df['course_bias_key'] = (
+                 df['会場'].astype(str) + '_' + 
+                 df['distance_val'].astype(int).astype(str) + '_' + 
+                 df['course_type_code'].astype(str) + '_' + 
+                 df['rotation_code'].astype(str)
+             )
+         
+         # 1. Frame Bias
+         if '枠' in df.columns:
+             # Group by Key + Frame
+             # We can concat key + frame for simple groupby
+             df['key_frame'] = df['course_bias_key'] + '_' + df['枠'].astype(str)
+             df['dd_frame_bias'] = df.groupby('key_frame')['is_win'].transform(
+                 lambda x: x.shift(1).expanding().mean()
+             ).fillna(0.0) # Default 0 ok? Or avg? 0 is fine if feature is rate.
+             feature_cols.append('dd_frame_bias')
+             
+         # 2. Run Style Bias
+         if 'run_style_code' in df.columns:
+             df['key_run'] = df['course_bias_key'] + '_' + df['run_style_code'].astype(str)
+             df['dd_run_style_bias'] = df.groupby('key_run')['is_win'].transform(
+                 lambda x: x.shift(1).expanding().mean()
+             ).fillna(0.0)
+             feature_cols.append('dd_run_style_bias')
+             
+         # Remove temp keys
+         df.drop(columns=['key_frame', 'key_run'], inplace=True, errors='ignore')
+
+
+
     # Meta cols
     meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
     # Add date string if not exists
@@ -1319,6 +1395,52 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
 
         if 'horse_course_key' in df.columns:
              stats_data['course_horse'] = df.groupby('horse_course_key')['rank'].mean().to_dict()
+
+        # Course Bias Stats (Frame & RunStyle)
+        # Key: Venue_Distance_CourseType_Rotation
+        if 'course_bias_key' not in df.columns:
+             # Construct key
+             df['course_bias_key'] = (
+                 df['会場'].astype(str) + '_' + 
+                 df['distance_val'].astype(int).astype(str) + '_' + 
+                 df['course_type_code'].astype(str) + '_' + 
+                 df['rotation_code'].astype(str)
+             )
+        
+        # 1. Frame Bias (Waku)
+        if '枠' in df.columns:
+            # Group by [Key, Waku] -> Win Rate
+            # We want a nested dict: Key -> {Waku: Rate}
+            # Or simpler: Key_Waku -> Rate? Nested matches structure.
+            # Let's use MultiIndex to dict
+            fb = df.groupby(['course_bias_key', '枠'])['is_win'].mean()
+            # Convert to {key: {waku: rate}} is hard directly from series?
+            # Iterate unique keys?
+            # Optimized:
+            stats_data['course_frame_bias'] = {}
+            # Reset index to iterate
+            fb_df = fb.reset_index()
+            for _, row in fb_df.iterrows():
+                k = row['course_bias_key']
+                w = str(row['枠']) # Ensure str key for JSON/Pickle
+                v = row['is_win']
+                if k not in stats_data['course_frame_bias']:
+                    stats_data['course_frame_bias'][k] = {}
+                stats_data['course_frame_bias'][k][w] = v
+
+        # 2. Run Style Bias
+        if 'run_style_code' in df.columns:
+            rsb = df.groupby(['course_bias_key', 'run_style_code'])['is_win'].mean()
+            stats_data['course_run_style_bias'] = {}
+            rsb_df = rsb.reset_index()
+            for _, row in rsb_df.iterrows():
+                k = row['course_bias_key']
+                r = str(row['run_style_code'])
+                v = row['is_win']
+                if k not in stats_data['course_run_style_bias']:
+                    stats_data['course_run_style_bias'][k] = {}
+                stats_data['course_run_style_bias'][k][r] = v
+
 
         return df[keep_cols].copy(), stats_data
 
