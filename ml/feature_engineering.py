@@ -277,7 +277,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # - 競馬では前走の情報が圧倒的に重要（50-60%）
     # - 指数減衰では前走が30%程度で、重要度が低すぎる
     # - プロの予想家や指数計算で採用される標準的な比率を採用
-    base_weights = [0.55, 0.25, 0.12, 0.06, 0.02]  # 合計1.0
+    # Adjusted Weights for Stability (slightly smoother decay)
+    # 55% was too aggressive. 50% is standard strong emphasis.
+    base_weights = [0.50, 0.25, 0.13, 0.08, 0.04]  # Total 1.0
 
     # 動的な重み調整（後で実装）
     # - 休養期間が長い場合、前走の重みを下げる
@@ -287,8 +289,71 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     
     # Feature Columns to generate
     # Added interval, speed
+    # Feature Columns to generate
+    # Added interval, speed, trend
     features = ['rank', 'run_style', 'last_3f', 'horse_weight', 'odds', 'weather', 'weight_change', 'interval', 'speed']
     feature_cols = []
+    
+    # Calculate Trend (Linear Slope for Rank & Last 3F)
+    # We want to know if the horse is improving (Rank getting smaller, Time getting smaller)
+    # Slope > 0 means increasing (Worsening Rank/Time)
+    # Slope < 0 means decreasing (Improving Rank/Time)
+    
+    def calculate_trend(row, prefix):
+        # Extract values for past 1..5
+        y = []
+        x = []
+        valid_count = 0
+        for i in range(1, 6):
+            col = f"past_{i}_{prefix}"
+            if col in row.index and pd.notna(row[col]):
+                val = row[col]
+                # Filter out obvious filler values if possible, but hard to know.
+                # Assuming NaNs were handled but maybe not perfectly.
+                y.append(float(val))
+                x.append(i) # 1=Recent, 5=Old
+                valid_count += 1
+        
+        if valid_count < 2:
+            return 0.0
+            
+        # We want slope relative to time. 
+        # X axis: [1, 2, 3, 4, 5] (1 is recent)
+        # If values are [1, 2, 3] (Rank 1 recent, Rank 3 old) -> Improving.
+        # Linear Regression: y = ax + b
+        # X is [1, 2, 3...]
+        # If Rank=1(x=1), Rank=2(x=2), Rank=3(x=3). Slope approx +1.
+        # Wait, x=1 is recent.
+        # Rank 1 (Recent) < Rank 3 (Old).
+        # Slope = (y2-y1)/(x2-x1) = (3-1)/(3-1) = +1.
+        # So Positive Slope means "Old values were larger than recent values" -> IMPROVING.
+        # Wait.
+        # x: 1(Recent), 2, 3(Old). 
+        # y: 1(Good), 2, 3(Bad).
+        # P1(1,1), P3(3,3). 
+        # Slope = (3-1)/(3-1) = 1. Positive Slope = "Improving" (Recent is smaller/better).
+        # Let's double check.
+        # y = slope * x + intercept
+        # 1 = slope * 1 + b
+        # 3 = slope * 3 + b
+        # 2 = 2 * slope -> slope = 1.
+        # Positive Slope -> Value increases as we go back in time (Old is Larger).
+        # Since Rank/Time: Lower is Better.
+        # "Old is Larger" means "Old was Worse".
+        # So Positive Slope = Improving.
+        
+        try:
+            slope, _ = np.polyfit(x, y, 1)
+            return slope
+        except:
+            return 0.0
+
+    # Apply Trend for Rank & Last 3F
+    df['trend_rank'] = df.apply(lambda row: calculate_trend(row, 'rank'), axis=1)
+    df['trend_last_3f'] = df.apply(lambda row: calculate_trend(row, 'last_3f'), axis=1) # Note: last_3f LOWER is usually better (faster)? 
+    # Yes, 33.0 is better than 34.0. So Positive Slope = Improving.
+    
+    feature_cols.extend(['trend_rank', 'trend_last_3f'])
     
     # Pre-process columns (Fill NaNs)
     for i in range(1, 6):

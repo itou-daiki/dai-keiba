@@ -1788,3 +1788,106 @@
 2025-12-28 00:22:17,239 - train_model - INFO -   weighted_avg_last_3f: 13701.89
 2025-12-28 00:22:17,239 - train_model - INFO -   weighted_avg_interval: 13540.38
 2025-12-28 00:22:17,240 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_meta.json
+2025-12-28 00:24:48,314 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2025-12-28 00:24:48,806 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2025-12-28 00:24:48,807 - train_model - INFO - Win rate: 29.15%, scale_pos_weight: 2.43
+2025-12-28 00:24:48,807 - train_model - INFO - Starting Optuna optimization...
+2025-12-28 00:38:36,449 - train_model - INFO - 
+=== Optimization Complete ===
+2025-12-28 00:38:36,450 - train_model - INFO - Best AUC: 0.7166
+2025-12-28 00:38:36,450 - train_model - INFO - Best Parameters:
+2025-12-28 00:38:36,450 - train_model - INFO -   num_leaves: 59
+2025-12-28 00:38:36,450 - train_model - INFO -   max_depth: 12
+2025-12-28 00:38:36,450 - train_model - INFO -   learning_rate: 0.03194195889594597
+2025-12-28 00:38:36,450 - train_model - INFO -   feature_fraction: 0.5784700372102144
+2025-12-28 00:38:36,450 - train_model - INFO -   bagging_fraction: 0.8020472869993077
+2025-12-28 00:38:36,450 - train_model - INFO -   bagging_freq: 2
+2025-12-28 00:38:36,450 - train_model - INFO -   min_child_samples: 70
+2025-12-28 00:38:36,450 - train_model - INFO -   min_gain_to_split: 0.3682719136799948
+2025-12-28 00:38:36,450 - train_model - INFO -   lambda_l1: 5.5677714895850955e-05
+2025-12-28 00:38:36,450 - train_model - INFO -   lambda_l2: 6.789962074134871e-06
+2025-12-28 00:38:36,450 - train_model - INFO -   scale_pos_weight: 2.970067915426113
+2025-12-28 00:38:36,471 - train_model - INFO - Loading data from /Users/itoudaiki/Program/dai-keiba/ml/processed_data_nar.csv
+2025-12-28 00:38:37,002 - train_model - INFO - === データ品質検証 ===
+2025-12-28 00:38:37,002 - train_model - INFO - Total records: 107656
+2025-12-28 00:38:37,003 - train_model - INFO - Top 3 rate: 9.72% (10464 top3 / 107656 races)
+2025-12-28 00:38:37,003 - train_model - WARNING - ⚠️ Abnormal top3 rate: 9.72% (expected: 20-30%)
+2025-12-28 00:38:37,031 - train_model - INFO - Feature 'race_class' cast to category type
+2025-12-28 00:38:37,033 - train_model - INFO - Feature 'race_type_code' cast to category type
+2025-12-28 00:38:37,034 - train_model - INFO - Feature 'course_type_code' cast to category type
+2025-12-28 00:38:37,037 - train_model - INFO - Feature 'interval_category' cast to category type
+2025-12-28 00:38:37,049 - train_model - INFO - === 外れ値検出（サンプル） ===
+2025-12-28 00:38:37,054 - train_model - INFO -   weighted_avg_rank: 14383 outliers (13.4%)
+2025-12-28 00:38:37,057 - train_model - INFO -   weighted_avg_run_style: 15268 outliers (14.2%)
+2025-12-28 00:38:37,061 - train_model - INFO -   weighted_avg_last_3f: 4574 outliers (4.2%)
+2025-12-28 00:38:37,065 - train_model - INFO -   weighted_avg_horse_weight: 2667 outliers (2.5%)
+2025-12-28 00:38:37,067 - train_model - INFO - Features (52): ['weighted_avg_rank', 'weighted_avg_run_style', 'weighted_avg_last_3f', 'weighted_avg_horse_weight', 'weighted_avg_odds', 'weighted_avg_weather', 'weighted_avg_weight_change', 'weighted_avg_interval', 'weighted_avg_speed', 'turf_compatibility']...
+2025-12-28 00:38:37,067 - train_model - INFO - === TimeSeriesSplit (5-fold) ===
+2025-12-28 00:38:37,140 - train_model - INFO - Data sorted by date for time series split
+2025-12-28 00:38:37,141 - train_model - INFO - 
+--- Fold 1/5 ---
+2025-12-28 00:38:37,145 - train_model - INFO - Train: 17946 samples, Test: 17942 samples
+2025-12-28 00:38:37,145 - train_model - INFO - Train win rate: 9.80%, Test win rate: 9.92%
+2025-12-28 00:38:39,150 - train_model - INFO -   AUC: 0.7262, Accuracy: 0.8895, F1: 0.1843
+2025-12-28 00:38:39,150 - train_model - INFO - 
+--- Fold 2/5 ---
+2025-12-28 00:38:39,155 - train_model - INFO - Train: 35888 samples, Test: 17942 samples
+2025-12-28 00:38:39,155 - train_model - INFO - Train win rate: 9.86%, Test win rate: 9.59%
+2025-12-28 00:38:40,578 - train_model - INFO -   AUC: 0.7350, Accuracy: 0.8973, F1: 0.1694
+2025-12-28 00:38:40,578 - train_model - INFO - 
+--- Fold 3/5 ---
+2025-12-28 00:38:40,584 - train_model - INFO - Train: 53830 samples, Test: 17942 samples
+2025-12-28 00:38:40,584 - train_model - INFO - Train win rate: 9.77%, Test win rate: 9.55%
+2025-12-28 00:38:43,347 - train_model - INFO -   AUC: 0.7450, Accuracy: 0.8883, F1: 0.2477
+2025-12-28 00:38:43,348 - train_model - INFO - 
+--- Fold 4/5 ---
+2025-12-28 00:38:43,356 - train_model - INFO - Train: 71772 samples, Test: 17942 samples
+2025-12-28 00:38:43,356 - train_model - INFO - Train win rate: 9.71%, Test win rate: 9.81%
+2025-12-28 00:38:47,022 - train_model - INFO -   AUC: 0.7539, Accuracy: 0.8842, F1: 0.2611
+2025-12-28 00:38:47,022 - train_model - INFO - 
+--- Fold 5/5 ---
+2025-12-28 00:38:47,030 - train_model - INFO - Train: 89714 samples, Test: 17942 samples
+2025-12-28 00:38:47,030 - train_model - INFO - Train win rate: 9.73%, Test win rate: 9.66%
+2025-12-28 00:38:51,040 - train_model - INFO -   AUC: 0.7370, Accuracy: 0.8820, F1: 0.2316
+2025-12-28 00:38:51,041 - train_model - INFO - 
+=== Cross-Validation Results (Mean ± Std) ===
+2025-12-28 00:38:51,041 - train_model - INFO - AUC: 0.7394 ± 0.0094
+2025-12-28 00:38:51,041 - train_model - INFO - ACCURACY: 0.8883 ± 0.0053
+2025-12-28 00:38:51,041 - train_model - INFO - PRECISION: 0.3457 ± 0.0205
+2025-12-28 00:38:51,041 - train_model - INFO - RECALL: 0.1641 ± 0.0391
+2025-12-28 00:38:51,041 - train_model - INFO - F1: 0.2188 ± 0.0358
+2025-12-28 00:38:51,041 - train_model - INFO - BRIER: 0.0986 ± 0.0014
+2025-12-28 00:38:51,041 - train_model - INFO - LOGLOSS: 0.3394 ± 0.0044
+2025-12-28 00:38:51,041 - train_model - INFO - 
+=== Training final model on ALL data ===
+2025-12-28 00:38:51,087 - train_model - INFO - Training final LightGBM model...
+2025-12-28 00:38:57,752 - train_model - INFO - 
+=== Final Model Performance ===
+2025-12-28 00:38:57,752 - train_model - INFO - AUC: 0.8745
+2025-12-28 00:38:57,752 - train_model - INFO - Accuracy: 0.9069
+2025-12-28 00:38:57,752 - train_model - INFO - Precision: 0.5301
+2025-12-28 00:38:57,752 - train_model - INFO - Recall: 0.3091
+2025-12-28 00:38:57,752 - train_model - INFO - F1 Score: 0.3905
+2025-12-28 00:38:57,752 - train_model - INFO - Brier Score: 0.0817
+2025-12-28 00:38:57,752 - train_model - INFO - Log Loss: 0.2909
+2025-12-28 00:38:57,797 - train_model - INFO - 
+=== Finding Optimal Threshold ===
+2025-12-28 00:38:57,829 - train_model - INFO - Optimal threshold: 0.35 (f1=0.4660)
+2025-12-28 00:38:57,832 - train_model - INFO - 
+=== Calibrating Probabilities ===
+2025-12-28 00:38:57,832 - train_model - INFO - Calibrating probabilities with isotonic method...
+2025-12-28 00:38:57,833 - train_model - WARNING - Calibration failed: The 'cv' parameter of CalibratedClassifierCV must be an int in the range [2, inf), an object implementing 'split' and 'get_n_splits', an iterable or None. Got 'prefit' instead.
+2025-12-28 00:38:57,844 - train_model - INFO - Model saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_nar.pkl
+2025-12-28 00:38:57,850 - train_model - INFO - 
+=== Top 10 Feature Importance ===
+2025-12-28 00:38:57,850 - train_model - INFO -   jockey_compatibility: 51494.67
+2025-12-28 00:38:57,850 - train_model - INFO -   last_race_performance: 37131.77
+2025-12-28 00:38:57,850 - train_model - INFO -   weighted_avg_rank: 30739.67
+2025-12-28 00:38:57,850 - train_model - INFO -   dd_run_style_bias: 28273.93
+2025-12-28 00:38:57,850 - train_model - INFO -   weighted_avg_interval: 27217.14
+2025-12-28 00:38:57,850 - train_model - INFO -   weighted_avg_speed: 27182.80
+2025-12-28 00:38:57,850 - train_model - INFO -   dirt_compatibility: 26150.74
+2025-12-28 00:38:57,850 - train_model - INFO -   weighted_avg_horse_weight: 25371.50
+2025-12-28 00:38:57,850 - train_model - INFO -   distance_compatibility: 23961.35
+2025-12-28 00:38:57,850 - train_model - INFO -   jockey_id: 22135.16
+2025-12-28 00:38:57,851 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_nar_meta.json

@@ -578,6 +578,9 @@ if race_id:
         else:
             st.info("モデルメタデータが見つかりません")
 
+    st.markdown("### 🔮 AI予測設定")
+    use_odds_bias = st.checkbox("現在オッズ（人気）を加味してAI評価を補正する", value=False, help="チェックすると、AIの純粋な能力評価に「現在のオッズ（市場の支持）」を30%程度ブレンドします。人気馬のスコアが上がり、不人気馬のスコアが下がります。")
+
     button_analyze = st.button("🚀 このレースを分析する (データ取得・AI予測)", type="primary", use_container_width=True)
 
     if button_analyze:
@@ -679,6 +682,41 @@ if race_id:
         with col_r4:
             num_horses = len(df_display)
             st.metric("出走頭数", f"{num_horses}頭")
+
+        # --- オッズ加味ロジック (Blended Score) ---
+        if use_odds_bias and '単勝' in df_display.columns:
+            # 単勝オッズから市場の予測確率（Implied Probability）を算出
+            # 控除率を考慮して 0.8 / オッズ とする（標準的）
+            def calc_implied_prob(x):
+                try:
+                    odds = float(x)
+                    return 0.8 / odds if odds > 0 else 0
+                except:
+                    return 0
+
+            df_display['Implied_Prob'] = df_display['単勝'].apply(calc_implied_prob)
+            
+            # ブレンド (AI: 70%, Market: 30%)
+            alpha = 0.7
+            df_display['AI_Prob_Blended'] = (df_display['AI_Prob'] * alpha) + (df_display['Implied_Prob'] * (1 - alpha))
+            
+            # Update AI Score & Confidence
+            # スコアは単純に確立*100
+            df_display['AI_Score_Raw'] = df_display['AI_Score'] # Keep raw for reference
+            df_display['AI_Score'] = (df_display['AI_Prob_Blended'] * 100).astype(int)
+            
+            # Update Confidence (Simple scaling for now, or keep original? 
+            # Updating confidence makes sense as market agreement increases certainty)
+            # But let's keep Confidence tied to "Model's Confidence" to avoid confusion?
+            # Actually, if we change AI Score, we should probably align Confidence or leave it.
+            # User wants "Prediction" to include odds. 
+            # Let's update Confidence slightly if Market agrees.
+            
+            # But for simplicity and safety, let's just update the Score which drives the Ranking.
+            # Confidence is "How much we trust this evaluation". If Market agrees, trust goes up?
+            # Let's just update AI_Score for ranking.
+            
+            st.warning("⚠️ **現在オッズ加味モード**: AI評価スコアが市場人気（オッズ）の影響を受けて補正されています。")
 
         # AI予測サマリー
         if 'AI_Score' in df_display.columns and 'Confidence' in df_display.columns:
