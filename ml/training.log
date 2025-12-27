@@ -1891,3 +1891,11 @@
 2025-12-28 00:38:57,850 - train_model - INFO -   distance_compatibility: 23961.35
 2025-12-28 00:38:57,850 - train_model - INFO -   jockey_id: 22135.16
 2025-12-28 00:38:57,851 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_nar_meta.json
+2025-12-28 00:40:18,902 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2025-12-28 00:40:19,443 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2025-12-28 00:40:19,443 - train_model - INFO - Win rate: 21.81%, scale_pos_weight: 3.59
+2025-12-28 00:40:19,443 - train_model - INFO - Starting Optuna optimization...
+2025-12-28 00:42:10,446 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2025-12-28 00:42:11,252 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2025-12-28 00:42:11,252 - train_model - INFO - Win rate: 21.81%, scale_pos_weight: 3.59
+2025-12-28 00:42:11,252 - train_model - INFO - Starting Optuna optimization...
