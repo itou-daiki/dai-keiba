@@ -99,6 +99,21 @@ def scrape_jra_race(url, existing_race_ids=None):
             
             distance = int(d_val)
         
+        # 1.5 Rotation (Right/Left/Straight)
+        rotation = ""
+        # Often formatted as "(右)" or "（左）" 
+        rot_match = re.search(r'[（\(](右|左|直線)[）\)]', header_text)
+        if rot_match:
+            rotation = rot_match.group(1)
+        else:
+             # Fallback: Inference based on Venue
+             # Tokyo, Chukyo, Niigata -> Left (Default), others Right
+             # Niigata 1000m -> Straight
+             if "左" in header_text: rotation = "左"
+             elif "右" in header_text: rotation = "右"
+             elif "直線" in header_text: rotation = "直線"
+
+        
         # 2. Weather (e.g., "天候：晴")
         weather = ""
         w_match = re.search(r'天候\s*[:：]\s*(\S+)', soup.text)
@@ -214,7 +229,9 @@ def scrape_jra_race(url, existing_race_ids=None):
         df['距離'] = distance
         df['コースタイプ'] = course_type
         df['天候'] = weather
+        df['天候'] = weather
         df['馬場状態'] = condition
+        df['回り'] = rotation
         
         # ID Generation
         place_map = {
@@ -243,7 +260,7 @@ def scrape_jra_race(url, existing_race_ids=None):
         standard_columns = [
             "日付","会場","レース番号","レース名","重賞","着 順","枠","馬 番","馬名","性齢","斤量","騎手",
             "タイム","着差","人 気","単勝 オッズ","後3F","コーナー 通過順","厩舎","馬体重 (増減)","race_id",
-            "距離","コースタイプ","天候","馬場状態"
+            "距離","コースタイプ","天候","馬場状態","回り"
         ]
         
         for col in standard_columns:
