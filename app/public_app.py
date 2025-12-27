@@ -1503,8 +1503,14 @@ if race_id:
             # Budget Input
             budget = st.number_input("💰 予算 (円)", min_value=100, step=100, value=1000, help="この予算に合わせて購入金額を配分します")
 
-            # Logic for betting recommendations using 'edited_df' (which includes updated Odds/Marks)
-            sorted_df = edited_df.sort_values('調整後期待値', ascending=False)
+            # Logic for betting recommendations
+            if ranking_criteria == "回収率重視 (期待値)":
+                 sorted_df = edited_df.sort_values('調整後期待値', ascending=False)
+                 allow_negative_ev = False
+            else:
+                 sorted_df = edited_df.sort_values('AIスコア(%)', ascending=False)
+                 allow_negative_ev = True
+
             top1 = sorted_df.iloc[0]
             top2 = sorted_df.iloc[1] if len(sorted_df) > 1 else None
             top3 = sorted_df.iloc[2] if len(sorted_df) > 2 else None
@@ -1543,7 +1549,8 @@ if race_id:
             # 1. 🎯 Tankei (Tansho/Fukusho)
             with col_bet1:
                 st.markdown("#### 🎯 単系 (WIN/PLACE)")
-                if top1['AIスコア(%)'] >= 10 and top1['信頼度'] >= 60 and top1['調整後期待値'] > 0:
+                # Relax EV constraint for Hit Rate focus
+                if top1['AIスコア(%)'] >= 10 and top1['信頼度'] >= 60 and (allow_negative_ev or top1['調整後期待値'] > 0):
                     bet_type = "単勝 (WIN)" if top1['AIスコア(%)'] >= 20 else "複勝 (PLACE)"
                     
                     # Allocation: 50% of budget for Tankei focus
