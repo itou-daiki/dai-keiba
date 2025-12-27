@@ -771,9 +771,9 @@ if race_id:
                  is_turf_race = False
 
         if is_turf_race:
-             df_display['course_compatibility'] = df_display.get('turf_compatibility', 10.0)
+             df_display['course_compatibility'] = df_display.get('turf_compatibility', 5.0)
         else:
-             df_display['course_compatibility'] = df_display.get('dirt_compatibility', 10.0)
+             df_display['course_compatibility'] = df_display.get('dirt_compatibility', 5.0)
 
         # === 適性スコアを適性度に変換（10点満点、高い方が良い） ===
         # 元の値は「平均着順」（小さい方が良い）
@@ -800,8 +800,8 @@ if race_id:
              
         # Ensure all display columns exist
         defaults = {
-            'jockey_compatibility': 10.0,
-            'distance_compatibility': 10.0,
+            'jockey_compatibility': 5.0,
+            'distance_compatibility': 5.0,
             'weighted_avg_speed': 16.0,
             'Confidence': 50
         }

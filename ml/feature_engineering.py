@@ -432,8 +432,8 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         dirt_counts += np.where(is_dirt, 1, 0)
 
     # Calculate Avg
-    df['turf_compatibility'] = np.where(turf_counts > 0, turf_sums / turf_counts, 10.0)
-    df['dirt_compatibility'] = np.where(dirt_counts > 0, dirt_sums / dirt_counts, 10.0)
+    df['turf_compatibility'] = np.where(turf_counts > 0, turf_sums / turf_counts, 5.0)
+    df['dirt_compatibility'] = np.where(dirt_counts > 0, dirt_sums / dirt_counts, 5.0)
 
     # Defragment before adding more columns
     df = df.copy()
@@ -513,7 +513,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
             dist_sums += np.where(is_match, rank_series, 0)
             dist_counts += np.where(is_match, 1, 0)
 
-        df['distance_compatibility'] = np.where(dist_counts > 0, dist_sums / dist_counts, 10.0)
+        df['distance_compatibility'] = np.where(dist_counts > 0, dist_sums / dist_counts, 5.0)
 
     # ========== 新規特徴量: レース間隔関連 ==========
 
@@ -573,7 +573,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
                 j_sums += np.where(is_same, rank_series, 0)
                 j_counts += np.where(is_same, 1, 0)
 
-        df['jockey_compatibility'] = np.where(j_counts > 0, j_sums / j_counts, 10.0)
+        df['jockey_compatibility'] = np.where(j_counts > 0, j_sums / j_counts, 5.0)
 
     # ========== 新規特徴量: レースクラス・条件 ==========
 
