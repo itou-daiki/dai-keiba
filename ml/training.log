@@ -1899,3 +1899,33 @@
 2025-12-28 00:42:11,252 - train_model - INFO - Data sorted by date for TimeSeriesSplit
 2025-12-28 00:42:11,252 - train_model - INFO - Win rate: 21.81%, scale_pos_weight: 3.59
 2025-12-28 00:42:11,252 - train_model - INFO - Starting Optuna optimization...
+2025-12-28 01:05:00,395 - train_model - INFO - 
+=== Optimization Complete ===
+2025-12-28 01:05:00,399 - train_model - INFO - Best AUC: 0.7214
+2025-12-28 01:05:00,399 - train_model - INFO - Best Parameters:
+2025-12-28 01:05:00,399 - train_model - INFO -   num_leaves: 81
+2025-12-28 01:05:00,399 - train_model - INFO -   max_depth: 12
+2025-12-28 01:05:00,399 - train_model - INFO -   learning_rate: 0.04263696742630965
+2025-12-28 01:05:00,399 - train_model - INFO -   feature_fraction: 0.6143699836717937
+2025-12-28 01:05:00,399 - train_model - INFO -   bagging_fraction: 0.630244276532915
+2025-12-28 01:05:00,399 - train_model - INFO -   bagging_freq: 4
+2025-12-28 01:05:00,399 - train_model - INFO -   min_child_samples: 54
+2025-12-28 01:05:00,399 - train_model - INFO -   min_gain_to_split: 0.5732141361571211
+2025-12-28 01:05:00,400 - train_model - INFO -   lambda_l1: 9.345893102590873
+2025-12-28 01:05:00,400 - train_model - INFO -   lambda_l2: 0.00021773731498855823
+2025-12-28 01:05:00,400 - train_model - INFO -   scale_pos_weight: 2.7259959047334728
+2025-12-28 01:10:03,326 - train_model - INFO - 
+=== Optimization Complete ===
+2025-12-28 01:10:03,327 - train_model - INFO - Best AUC: 0.7294
+2025-12-28 01:10:03,327 - train_model - INFO - Best Parameters:
+2025-12-28 01:10:03,327 - train_model - INFO -   num_leaves: 64
+2025-12-28 01:10:03,327 - train_model - INFO -   max_depth: 10
+2025-12-28 01:10:03,327 - train_model - INFO -   learning_rate: 0.04234253967514891
+2025-12-28 01:10:03,327 - train_model - INFO -   feature_fraction: 0.5701114078568265
+2025-12-28 01:10:03,327 - train_model - INFO -   bagging_fraction: 0.9332700158075232
+2025-12-28 01:10:03,327 - train_model - INFO -   bagging_freq: 8
+2025-12-28 01:10:03,327 - train_model - INFO -   min_child_samples: 99
+2025-12-28 01:10:03,327 - train_model - INFO -   min_gain_to_split: 0.8979964426377001
+2025-12-28 01:10:03,327 - train_model - INFO -   lambda_l1: 2.0136095614915837
+2025-12-28 01:10:03,327 - train_model - INFO -   lambda_l2: 2.584080038071615e-05
+2025-12-28 01:10:03,327 - train_model - INFO -   scale_pos_weight: 3.2685484553667363
