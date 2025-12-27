@@ -1184,7 +1184,7 @@ if race_id:
 
         # === AI期待度TOP5のグラフ（デフォルト表示） ===
         st.markdown("---")
-        st.subheader("📊 AI期待度 TOP5 分析")
+        st.subheader("📊 AI評価 TOP5 分析")
 
         # TOP5をAIスコア（勝率）でソート（的中率重視）
 
@@ -1325,7 +1325,7 @@ if race_id:
 
             ### 🎯 推奨される使い方
 
-            1. **TOP5グラフ**でAI期待度の高い馬を確認
+            1. **TOP5グラフ**でAI評価の高い馬を確認
             2. **期待値(EV)がプラス**の馬に注目
             3. **信頼度が70%以上**の予測を優先
             4. **適性度**で相性を確認（特に騎手適性度は重要）
@@ -1339,21 +1339,39 @@ if race_id:
             """)
 
         st.markdown("---")
+        st.markdown("---")
         st.subheader("📋 詳細データテーブル")
+
+        # Rename for clarity if exists
+        if 'AI期待値' in edited_df.columns:
+            edited_df.rename(columns={'AI期待値': '単勝期待値'}, inplace=True)
+
 
         # Highlight high EV and Kelly
         def highlight_ev(s):
             is_high = s > 0
             return ['background-color: #d4edda' if v else '' for v in is_high]
 
+        # Select and Order Columns for Hit Rate Focus
+        display_cols = [
+            '予想印', '枠', '馬 番', '馬名', 
+            'AIスコア(%)', '信頼度', 
+            'jockey_compatibility', 'time_stats', 
+            '現在オッズ', '単勝期待値', '調整後期待値', '推奨度(Kelly)'
+        ]
+        # Filter existing columns
+        display_cols = [c for c in display_cols if c in edited_df.columns]
+        
         st.dataframe(
-            edited_df.style
+            edited_df[display_cols].style
             .format({
                 '推奨度(Kelly)': lambda x: '-' if x <= 0 else f'{x:.1f}%',
-                'AI期待値': '{:.2f}',
-                '調整後期待値': '{:.2f}'
+                '単勝期待値': '{:.2f}',
+                '調整後期待値': '{:.2f}',
+                'AIスコア(%)': '{:.1f}',
+                '信頼度': '{:.0f}'
             })
-            .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['AI期待値', '調整後期待値', '推奨度(Kelly)'])
+            .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['単勝期待値', '調整後期待値', '推奨度(Kelly)'])
         )
 
 
@@ -1458,7 +1476,7 @@ if race_id:
                         st.metric("信頼度", f"{pred_row['信頼度']}%")
                     with col_s3:
                         ai_ev_val = pred_row['AI期待値']
-                        st.metric("AI期待値", f"{ai_ev_val:.2f}")
+                        st.metric("単勝期待値", f"{ai_ev_val:.2f}")
                     with col_s4:
                         adj_ev_val = pred_row['調整後期待値']
                         ev_delta = "買い推奨" if adj_ev_val > 0 else "見送り"
@@ -1492,19 +1510,30 @@ if race_id:
             # Helper for circled numbers
             def to_circled_num(n):
                 try:
-                    n = int(n)
-                    if 1 <= n <= 20:
-                        return chr(9311 + n)
-                    return f"({n})"
+                    val = int(float(n)) # Handle float 1.0 -> 1
+                    if 1 <= val <= 20:
+                        return chr(9311 + val)
+                    return f"({val})"
                 except:
                     return ""
 
             # Helper to format horse name with circle num
             def fmt_horse(row):
-                num = row.get('馬 番', '')
+                # Try both column names
+                num = row.get('馬 番')
+                if pd.isna(num):
+                    num = row.get('馬番', '')
+                
                 name = row['馬名']
+                
+                # Format: "⑦ ウマメイ" or "(7) ウマメイ" or just "ウマメイ" if no num
                 c_num = to_circled_num(num)
-                return f"{c_num} {name}".strip()
+                if c_num:
+                    return f"{c_num} {name}".strip()
+                elif pd.notna(num) and str(num).strip():
+                     return f"({num}) {name}".strip()
+                else:
+                    return name
 
             # Cards Layout
             col_bet1, col_bet2, col_bet3 = st.columns(3)
