@@ -409,7 +409,7 @@ if schedule_data and "races" in schedule_data:
             target_races = [r for r in todays_races if not selected_venues or r.get('venue') in selected_venues]
             st.write(f"対象レース数: {len(target_races)} レース")
             
-            confidence_threshold = st.slider("信頼度フィルター (これ以上の信頼度のレースを表示)", 0, 100, 80)
+            confidence_threshold = st.slider("信頼度フィルター (これ以上の信頼度のレースを表示)", 0, 100, 70)
             
             if st.button("🚀 一括分析を開始する", type="primary"):
                  if not target_races:
@@ -462,19 +462,28 @@ if schedule_data and "races" in schedule_data:
                                          # Helper for circled numbers (local scope)
                                          def to_circled_num_local(n):
                                              try:
-                                                 n = int(n)
-                                                 if 1 <= n <= 20:
-                                                     return chr(9311 + n)
-                                                 return f"({n})"
+                                                 val = int(float(n))
+                                                 if 1 <= val <= 20:
+                                                     return chr(9311 + val)
+                                                 return f"({val})"
                                              except:
                                                  return ""
 
                                          for rank in range(min(5, len(processed_df))):
                                              h = processed_df.iloc[rank]
                                              m = marks[rank]
-                                             h_num = h.get('馬 番', '')
+                                             h_num = h.get('馬 番')
+                                             if pd.isna(h_num): h_num = h.get('馬番', '')
+                                             
                                              c_num = to_circled_num_local(h_num)
-                                             picks_str.append(f"{m} {c_num} {h['馬名']} ({h['AI_Score']}%)")
+                                             
+                                             # Format: "◎ ⑦ ウマメイ" or "◎ (7) ウマメイ" or "◎ ウマメイ"
+                                             if c_num:
+                                                 picks_str.append(f"{m} {c_num} {h['馬名']} ({h['AI_Score']}%)")
+                                             elif pd.notna(h_num) and str(h_num).strip():
+                                                  picks_str.append(f"{m} ({h_num}) {h['馬名']} ({h['AI_Score']}%)")
+                                             else:
+                                                 picks_str.append(f"{m} {h['馬名']} ({h['AI_Score']}%)")
                                          
                                          picks_display = " / ".join(picks_str)
 
