@@ -164,7 +164,7 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
         # dateカラムでソート（時系列順）
         if 'date' in df.columns:
             df_sorted = df.sort_values('date').reset_index(drop=True)
-            X = df_sorted.drop(columns=drop_cols, errors='ignore').select_dtypes(include=['number'])
+            X = df_sorted.drop(columns=drop_cols, errors='ignore').select_dtypes(include=['number', 'category'])
             y = df_sorted[target_col]
             logger.info("Data sorted by date for time series split")
         else:
