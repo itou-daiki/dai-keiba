@@ -3,6 +3,10 @@ import os
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+try:
+    from tqdm import tqdm
+except ImportError:
+    def tqdm(x, **kwargs): return x
 
 # Add project root to path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,6 +24,16 @@ def backfill_metadata(csv_path=None):
 
     print(f"Reading {csv_path}...")
     df = pd.read_csv(csv_path, dtype={'race_id': str})
+    
+    # Robust ID cleaning
+    def clean_id(x):
+        if pd.isna(x) or x == '': return None
+        s = str(x)
+        if s.endswith('.0'): return s[:-2]
+        return s
+    
+    if 'race_id' in df.columns:
+        df['race_id'] = df['race_id'].apply(clean_id)
     
     # Identify missing rows
     # Check for empty course_type or distance
@@ -57,11 +71,7 @@ def backfill_metadata(csv_path=None):
         completed = 0
         total = len(target_race_ids)
         
-        for future in as_completed(futures):
-            completed += 1
-            if completed % 10 == 0:
-                print(f"  Progress: {completed}/{total}")
-                
+        for future in tqdm(as_completed(futures), total=len(target_race_ids), desc="Backfilling"):
             data = future.result()
             if data and data.get('course_type'):
                 results[data['race_id']] = data
