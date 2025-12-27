@@ -78,26 +78,59 @@ def backfill_metadata(csv_path=None):
     
     print(f"Successfully fetched metadata for {len(results)} races.")
     print("Updating DataFrame...")
+        last_save = 0
+        save_interval = 200
+        
+        for future in tqdm(as_completed(futures), total=len(target_race_ids), desc="Backfilling"):
+            data = future.result()
+            if data and data.get('course_type'):
+                results[data['race_id']] = data
+            
+            # Incremental Save
+            if len(results) - last_save >= save_interval:
+                print(f"  Saving progress... ({len(results)} fetched)")
+                
+                # Update temporary
+                # Note: We need to use the keys in 'results' 
+                # Ideally we only update what's new, but map is fast enough
+                # map logic:
+                current_keys = list(results.keys())
+                mask = df['race_id'].isin(current_keys) # 'race_id' is str
+                
+                # Create mini maps for speed? Or just map all (might be slow if map is large)
+                # Let's map all 'results' so far
+                
+                # Careful: calling .map on huge df repeatedly might be slow.
+                # Optimization: Only update rows for keys in results, using the results dict directly?
+                # df.loc[mask, 'col'] = df.loc[mask, 'race_id'].map(...)
+                
+                c_map = {rid: d['course_type'] for rid, d in results.items() if d.get('course_type')}
+                d_map = {rid: d['distance'] for rid, d in results.items() if d.get('distance')}
+                w_map = {rid: d['weather'] for rid, d in results.items() if d.get('weather')}
+                cond_map = {rid: d['condition'] for rid, d in results.items() if d.get('condition')}
+                
+                df.loc[mask, 'コースタイプ'] = df.loc[mask, 'race_id'].map(c_map).fillna(df.loc[mask, 'コースタイプ'])
+                df.loc[mask, '距離'] = df.loc[mask, 'race_id'].map(d_map).fillna(df.loc[mask, '距離'])
+                df.loc[mask, '天候'] = df.loc[mask, 'race_id'].map(w_map).fillna(df.loc[mask, '天候'])
+                df.loc[mask, '馬場状態'] = df.loc[mask, 'race_id'].map(cond_map).fillna(df.loc[mask, '馬場状態'])
+                
+                df.to_csv(csv_path, index=False, encoding='utf-8-sig')
+                last_save = len(results)
     
-    # Update
-    # Map from race_id to values
-    # For efficiency, create map dicts
-    ctype_map = {rid: d['course_type'] for rid, d in results.items() if d['course_type']}
-    dist_map = {rid: d['distance'] for rid, d in results.items() if d['distance']}
-    weather_map = {rid: d['weather'] for rid, d in results.items() if d['weather']}
-    cond_map = {rid: d['condition'] for rid, d in results.items() if d['condition']}
+    print(f"Successfully fetched metadata for {len(results)} races.")
+    print("Final update DataFrame...")
     
-    # Apply using map
-    # Only update if currently missing to avoid overwriting (though here we want to fill)
-    # Actually, overwriting is fine if we are sure it's the correct race.
-    
-    # Only update rows that match the race_ids we fetched
+    # Final Apply
     mask = df['race_id'].isin(results.keys())
+    c_map = {rid: d['course_type'] for rid, d in results.items() if d.get('course_type')}
+    d_map = {rid: d['distance'] for rid, d in results.items() if d.get('distance')}
+    w_map = {rid: d['weather'] for rid, d in results.items() if d.get('weather')}
+    cond_map = {rid: d['condition'] for rid, d in results.items() if d.get('condition')}
     
-    df.loc[mask, 'コースタイプ'] = df.loc[mask, 'race_id'].map(ctype_map)
-    df.loc[mask, '距離'] = df.loc[mask, 'race_id'].map(dist_map)
-    df.loc[mask, '天候'] = df.loc[mask, 'race_id'].map(weather_map)
-    df.loc[mask, '馬場状態'] = df.loc[mask, 'race_id'].map(cond_map)
+    df.loc[mask, 'コースタイプ'] = df.loc[mask, 'race_id'].map(c_map).fillna(df.loc[mask, 'コースタイプ'])
+    df.loc[mask, '距離'] = df.loc[mask, 'race_id'].map(d_map).fillna(df.loc[mask, '距離'])
+    df.loc[mask, '天候'] = df.loc[mask, 'race_id'].map(w_map).fillna(df.loc[mask, '天候'])
+    df.loc[mask, '馬場状態'] = df.loc[mask, 'race_id'].map(cond_map).fillna(df.loc[mask, '馬場状態'])
     
     print("Saving to CSV...")
     df.to_csv(csv_path, index=False, encoding='utf-8-sig')
