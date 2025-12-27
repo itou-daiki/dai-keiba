@@ -1449,7 +1449,7 @@ if race_id:
 
         try:
             # === 分析対象の馬を選択 ===
-            st.info("💡 分析対象の馬を選択してください（デフォルトはAI期待度上位5頭）")
+            st.info("💡 分析対象の馬を選択してください（デフォルトは評価上位5頭）")
 
             # Get all horses sorted by AI Score
             all_horses = edited_df.sort_values('AIスコア(%)', ascending=False)['馬名'].tolist()
@@ -1475,7 +1475,7 @@ if race_id:
                     with col_s2:
                         st.metric("信頼度", f"{pred_row['信頼度']}%")
                     with col_s3:
-                        ai_ev_val = pred_row['AI期待値']
+                        ai_ev_val = pred_row.get('単勝期待値', 0.0)
                         st.metric("単勝期待値", f"{ai_ev_val:.2f}")
                     with col_s4:
                         adj_ev_val = pred_row['調整後期待値']
