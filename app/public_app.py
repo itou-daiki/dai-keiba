@@ -1187,28 +1187,7 @@ if race_id:
         st.subheader("📊 AI期待度 TOP5 分析")
 
         # TOP5をAIスコア（勝率）でソート（的中率重視）
-        top5_df = edited_df.nlargest(5, 'AIスコア(%)')
 
-        # 1. 横棒グラフ: AI確率 vs 期待値
-        import plotly.graph_objects as go
-        from plotly.subplots import make_subplots
-
-        fig_top5 = make_subplots(
-            rows=1, cols=2,
-            subplot_titles=("AI勝率予測 TOP5", "調整後期待値 TOP5"),
-            specs=[[{"type": "bar"}, {"type": "bar"}]]
-        )
-
-        # 左: AI勝率
-        fig_top5.add_trace(
-            go.Bar(
-                y=top5_df['馬名'],
-                x=top5_df['AIスコア(%)'],
-                orientation='h',
-                name='AI勝率',
-                marker=dict(color='lightblue'),
-                text=top5_df['AIスコア(%)'].apply(lambda x: f'{x}%'),
-                textposition='auto'
         
 
         # Apply sorting based on ranking criteria
@@ -1223,15 +1202,15 @@ if race_id:
             y_label = 'AIスコア(%)'
             bar_color = '#1f77b4'
 
-        top_df = edited_df.head(5)
+        top5_df = edited_df.head(5)
         
         # Plot Top 5
         st.subheader(f"📈 {ranking_criteria} TOP 5")
         
         fig_top5 = go.Figure(go.Bar(
-            x=top_df['馬名'],
-            y=top_df[y_col],
-            text=top_df[y_col].apply(lambda x: f"{x:.2f}" if y_col == '調整後期待値' else f"{x}%"),
+            x=top5_df['馬名'],
+            y=top5_df[y_col],
+            text=top5_df[y_col].apply(lambda x: f"{x:.2f}" if y_col == '調整後期待値' else f"{x}%"),
             textposition='auto',
             marker_color=bar_color
         ))
