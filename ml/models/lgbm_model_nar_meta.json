@@ -1,52 +1,52 @@
 {
   "model_id": "lgbm_model_nar",
   "model_type": "LightGBM Binary Classification",
-  "target": "target_top3",
-  "trained_at": "2025-12-27T00:48:42.140139",
+  "target": "target_win",
+  "trained_at": "2025-12-28T00:38:57.850991",
   "data_source": "processed_data_nar.csv",
   "data_stats": {
-    "total_records": 90388,
-    "train_records": 90388,
-    "test_records": 18078,
-    "win_rate": 0.2921626764614772
+    "total_records": 107656,
+    "train_records": 107656,
+    "test_records": 21532,
+    "win_rate": 0.09719848406034035
   },
   "performance": {
-    "auc": 0.8150755735582541,
-    "accuracy": 0.7582144042482576,
-    "precision": 0.5851063829787234,
-    "recall": 0.6190208216094542,
-    "f1": 0.6015859994531036,
-    "brier_score": 0.1677655462103683,
-    "log_loss": 0.5078898298622964
+    "auc": 0.8745131135428882,
+    "accuracy": 0.90692922162363,
+    "precision": 0.5301403798513625,
+    "recall": 0.30909966297544533,
+    "f1": 0.3905109489051095,
+    "brier_score": 0.08168439808676484,
+    "log_loss": 0.2909463298319501
   },
   "cv_results": {
     "auc": {
-      "mean": 0.714660900772197,
-      "std": 0.00675044852024953
+      "mean": 0.7394238881205525,
+      "std": 0.009406342270540453
     },
     "accuracy": {
-      "mean": 0.7029075942644716,
-      "std": 0.005474536523998503
+      "mean": 0.8882510311002119,
+      "std": 0.005255443087681246
     },
     "precision": {
-      "mean": 0.49125981665224144,
-      "std": 0.007639997897053045
+      "mean": 0.3457278525271528,
+      "std": 0.020540345740398317
     },
     "recall": {
-      "mean": 0.47481376262126834,
-      "std": 0.018264291576087686
+      "mean": 0.1640688872814205,
+      "std": 0.039094018795829154
     },
     "f1": {
-      "mean": 0.4825936571413538,
-      "std": 0.007886815006303094
+      "mean": 0.21881655400014513,
+      "std": 0.035815285123464234
     },
     "brier": {
-      "mean": 0.1957493593098278,
-      "std": 0.0021751385927794545
+      "mean": 0.09861917050068056,
+      "std": 0.0014394584630077116
     },
     "logloss": {
-      "mean": 0.5730355572590003,
-      "std": 0.005261348910145035
+      "mean": 0.33938794027795427,
+      "std": 0.004404290386472835
     }
   },
   "features": [
@@ -64,22 +64,28 @@
     "good_condition_avg",
     "heavy_condition_avg",
     "distance_compatibility",
-    "is_rest_comeback",
-    "interval_category",
-    "is_consecutive",
     "jockey_compatibility",
-    "race_class",
-    "is_graded",
-    "age_limit",
-    "race_type_code",
-    "jra_compatibility",
-    "nar_compatibility",
-    "is_jra_transfer",
     "last_race_reliability",
     "best_similar_course_rank",
     "growth_factor",
     "last_race_performance",
     "rank_trend",
+    "race_class",
+    "race_type_code",
+    "is_rest_comeback",
+    "interval_category",
+    "is_consecutive",
+    "jra_compatibility",
+    "nar_compatibility",
+    "is_jra_transfer",
+    "is_graded",
+    "age_limit",
+    "jockey_win_rate",
+    "jockey_top3_rate",
+    "jockey_races_log",
+    "stable_win_rate",
+    "stable_top3_rate",
+    "course_distance_record",
     "age",
     "course_type_code",
     "distance_val",
@@ -93,25 +99,27 @@
     "jockey_id",
     "trainer_id",
     "run_style_code",
-    "run_style_consistency"
+    "run_style_consistency",
+    "dd_frame_bias",
+    "dd_run_style_bias"
   ],
   "hyperparameters": {
     "objective": "binary",
     "metric": "auc",
     "boosting_type": "gbdt",
     "verbose": -1,
-    "num_leaves": 62,
-    "learning_rate": 0.04952686952531365,
-    "feature_fraction": 0.5484443137798841,
-    "bagging_fraction": 0.9969793222183456,
-    "bagging_freq": 10,
+    "num_leaves": 59,
+    "learning_rate": 0.03194195889594597,
+    "feature_fraction": 0.5784700372102144,
+    "bagging_fraction": 0.8020472869993077,
+    "bagging_freq": 2,
     "is_unbalance": false,
-    "max_depth": 10,
-    "min_child_samples": 89,
-    "min_gain_to_split": 0.09266196236728716,
-    "lambda_l1": 8.760564786050267e-05,
-    "lambda_l2": 1.1027565790533095e-06,
-    "scale_pos_weight": 1.8754151792959246
+    "max_depth": 12,
+    "min_child_samples": 70,
+    "min_gain_to_split": 0.3682719136799948,
+    "lambda_l1": 5.5677714895850955e-05,
+    "lambda_l2": 6.789962074134871e-06,
+    "scale_pos_weight": 2.970067915426113
   },
   "training_config": {
     "use_timeseries_split": true,
@@ -120,11 +128,9 @@
     "early_stopping_rounds": 30,
     "hyperparameter_optimization": false,
     "n_trials": null,
-    "optimal_threshold": 0.45,
+    "optimal_threshold": 0.35000000000000003,
     "calibrated": false,
     "trained_on_all_data": true
   },
-  "warnings": [
-    "✅ 3着以内（複勝・ワイド）ターゲットで学習済み"
-  ]
+  "warnings": []
 }
