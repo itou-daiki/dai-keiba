@@ -235,7 +235,9 @@ def predict_race_logic(df, model, model_meta, stats=None):
         cols_to_merge = [
             'turf_compatibility', 'dirt_compatibility', 
             'jockey_compatibility', 'distance_compatibility', 
-            'weighted_avg_speed', 'weighted_avg_rank'
+            'weighted_avg_speed', 'weighted_avg_rank',
+            'dd_frame_bias', 'dd_run_style_bias', 
+            'jockey_win_rate', 'course_distance_record'
         ]
         for c in cols_to_merge:
             if c in X_df.columns:

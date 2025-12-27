@@ -2,6 +2,7 @@ import sys
 import os
 import pandas as pd
 import numpy as np
+import pickle
 from unittest.mock import MagicMock
 
 # --- 1. Mock Streamlit to avoid Import Side-Effects ---
@@ -20,6 +21,8 @@ def mock_columns(spec):
 mock_st.columns.side_effect = mock_columns
 mock_st.button.return_value = False
 mock_st.checkbox.return_value = False
+mock_st.error = MagicMock(side_effect=lambda x: print(f"ST ERROR: {x}"))
+mock_st.code = MagicMock(side_effect=lambda x: print(f"ST CODE: {x}"))
 mock_st.session_state = {}
 sys.modules['streamlit'] = mock_st
 
@@ -49,12 +52,16 @@ def verify_prediction(mode="NAR"):
     
     # 1. Load Stats (Real Stats)
     print("1. Loading Stats...")
-    stats = load_stats(mode)
-    if stats:
+    stats_path = os.path.join(os.path.dirname(__file__), '../ml/models/feature_stats_nar.pkl')
+    if os.path.exists(stats_path):
+        print(f"   Loading stats from: {stats_path}")
+        with open(stats_path, 'rb') as f:
+            stats = pickle.load(f)
         print("   Success!")
         if 'jockey' in stats:
             print(f"   Jockey Stats: {len(stats['jockey']['win_rate'])} entries")
     else:
+        print(f"   Stats file not found: {stats_path}")
         print("   Failed to load stats (Check if export_stats.py ran)!")
         # Proceed with empty stats to test logic robustness
         stats = {'jockey': {'win_rate': {}, 'top3_rate': {}}}
@@ -70,13 +77,13 @@ def verify_prediction(mode="NAR"):
         '日付': ['2025年05月01日'],
         '会場': ['大井'],
         'レース名': ['テストレース'],
-        '枠': ['1'],
-        '馬 番': ['1'],
+        '枠': [1],
+        '馬 番': [1],
         '馬名': ['テストホース'],
         'horse_id': ['123456'],
-        '騎手': ['森泰斗'], # Known jockey
-        '斤量': ['56.0'],
-        '距離': ['1200'],
+        '騎手': ['森 泰斗'], 
+        '斤量': [56.0],
+        '距離': [1200],
         'コースタイプ': ['ダ'],
         '回り': ['右'],
         '天候': ['晴'],
@@ -84,6 +91,7 @@ def verify_prediction(mode="NAR"):
         '性齢': ['牡4'],
         '単勝': [1.0],
         'date': ['2025/05/01'],
+        'feature_name': [['feature1']], # Dummy for model meta? Not crucial
     }
     # Add minimal past data
     for i in range(1, 6):
@@ -94,11 +102,10 @@ def verify_prediction(mode="NAR"):
 
     # 4. Run Prediction Logic
     print("\n4. Running predict_race_logic with Stats...")
-    try:
-        # Pass stats explicitly
-        processed_df = predict_race_logic(df, model, model_meta, stats=stats)
-        
-        if processed_df is not None:
+    # Pass stats explicitly
+    processed_df = predict_race_logic(df, model, model_meta, stats=stats)
+    
+    if processed_df is not None:
              print("   Prediction Success!")
              
              # Check if stats columns exist
@@ -117,14 +124,20 @@ def verify_prediction(mode="NAR"):
                  print(f"   Confidence: {processed_df['Confidence'].iloc[0]}")
              else:
                  print("   ERROR: Confidence column missing!")
-                 
-        else:
-             print("   Prediction Failed (returned None)")
+            
+             cols_to_check = ['AI_Prob', 'AI_Score', 'jockey_compatibility', 'jockey_win_rate', 'course_distance_record', 'dd_frame_bias', 'dd_run_style_bias']
+             print("\n   Checking Key Columns:")
+             for c in cols_to_check:
+                 if c in processed_df.columns:
+                     print(f"   {c}: {processed_df[c].values}")
+                 else:
+                     print(f"   {c}: NOT FOUND")
+                     
+             # Validate Stats Injection
+    else:
+        print("   Prediction Failed (returned None)")
              
-    except Exception as e:
-        print(f"   Error during prediction: {e}")
-        import traceback
-        traceback.print_exc()
+
 
 if __name__ == "__main__":
     verify_prediction("NAR")

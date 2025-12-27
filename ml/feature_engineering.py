@@ -942,14 +942,11 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         pass
 
     # Cleanup temp columns
-    cols_to_drop = ['is_win', 'is_top3', 
-                    'course_id', 'date_dt']
-    # 'jockey_clean', 'stable_clean', 'horse_course_key' kept if return_stats needed?
-    # No, we can re-create or just don't drop them if return_stats is True?
-    # Simpler: Don't drop them here if return_stats is True.
+    cols_to_drop = ['course_id', 'date_dt']
+    # 'jockey_clean', 'stable_clean', 'horse_course_key', 'is_win', 'is_top3' kept if return_stats needed
     
     if not return_stats:
-        cols_to_drop.extend(['jockey_clean', 'stable_clean', 'horse_course_key'])
+        cols_to_drop.extend(['jockey_clean', 'stable_clean', 'horse_course_key', 'is_win', 'is_top3'])
         
     df.drop(columns=[c for c in cols_to_drop if c in df.columns], inplace=True, errors='ignore')
 
@@ -1312,10 +1309,17 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
              
              df['dd_run_style_bias'] = df.apply(get_rsb, axis=1)
              feature_cols.append('dd_run_style_bias')
-             df['dd_run_style_bias'] = df.apply(get_rsb, axis=1)
-             feature_cols.append('dd_run_style_bias')
+
     else:
          # Training Mode: Calculate Rolling Bias
+         # Ensure is_win exists (it might have been dropped)
+         if 'is_win' not in df.columns:
+             if 'rank' in df.columns:
+                 df['is_win'] = (df['rank'] == 1).astype(int)
+             else:
+                 # Should not happen in training but safe fallback
+                 df['is_win'] = 0
+
          # Ensure course_bias_key exists
          if 'course_bias_key' not in df.columns:
              df['course_bias_key'] = (
