@@ -326,7 +326,7 @@ class RaceScraper:
     def get_race_metadata(self, race_id):
         """
         Fetches metadata for a specific race ID from Netkeiba.
-        Returns dict with: race_name, date, venue, course_type, distance, weather, condition
+        Returns dict with: race_name, date, venue, course_type, distance, weather, condition, turn
         """
         url = f"https://race.netkeiba.com/race/result.html?race_id={race_id}"
         soup = self._get_soup(url)
@@ -341,6 +341,7 @@ class RaceScraper:
             "distance": "",
             "weather": "",
             "condition": "",
+            "turn": "", # New: Dictionary key for turn direction
             "race_id": race_id
         }
         
@@ -350,19 +351,14 @@ class RaceScraper:
             if title_elem:
                 data["race_name"] = title_elem.text.strip()
                 
-            # Date & Venue
+            # Date & Venue & Conditions
             # <div class="RaceData01">... 2023年1月5日 ... 1回中山1日 ...</div>
-            # Structure: 
-            # <dd class="RaceData01">
-            #   HH:MM  天候:晴  芝1600m  良
-            # </dd>
+            # Content: "15:35発走 / 芝1600m (右 外) / 天候:晴 / 馬場:良"
             
-            # Actually Main Race Data is usually in .RaceData01
             rd1 = soup.select_one(".RaceData01")
             
             if rd1:
                 txt = rd1.text.strip()
-                # Text: "15:35  天候:晴  芝1600m  良"
                 
                 # Weather
                 if "天候:晴" in txt: data["weather"] = "晴"
@@ -372,36 +368,43 @@ class RaceScraper:
                 elif "天候:雪" in txt: data["weather"] = "雪"
                 
                 # Condition
-                if "良" in txt: data["condition"] = "良"
-                elif "稍重" in txt: data["condition"] = "稍重"
-                elif "重" in txt: data["condition"] = "重"
-                elif "不良" in txt: data["condition"] = "不良"
+                if "馬場:良" in txt: data["condition"] = "良"
+                elif "馬場:稍" in txt: data["condition"] = "稍重" # Covers 稍重
+                elif "馬場:重" in txt: data["condition"] = "重"
+                elif "馬場:不良" in txt: data["condition"] = "不良"
                 
                 # Course & Distance ("芝1600m")
-                # Regex
+                # Regex for "芝", "ダ", "障" followed by digits
                 match = re.search(r'(芝|ダ|障)(\d+)m', txt)
                 if match:
-                    ctype_map = {"芝": "芝", "ダ": "ダート", "障": "障害"}
-                    data["course_type"] = ctype_map.get(match.group(1), match.group(1))
+                    ctype_raw = match.group(1)
+                    if ctype_raw == "芝": data["course_type"] = "芝"
+                    elif ctype_raw == "ダ": data["course_type"] = "ダート"
+                    elif ctype_raw == "障": data["course_type"] = "障害"
+                    
                     data["distance"] = match.group(2)
-            
-            # Date is likely in header or another div
-            # <div class="RaceList_Date">
-            #   <dl><dd>2023年1月5日</dd></dl>
-            # </div>
+                
+                # Turn Direction ("右", "左", "直線")
+                # Usually in parentheses like "(右)" or "(左)" or "(芝 左)"
+                if "右" in txt: data["turn"] = "右"
+                elif "左" in txt: data["turn"] = "左"
+                elif "直線" in txt: data["turn"] = "直"
+
+            # Date
+            # Try finding date in Title or dedicated element
             date_elem = soup.select_one("dl#RaceList_DateList dd.Active") 
-            if not date_elem:
-                 # Fallback: find any date string in Title/Meta
+            if date_elem:
+                 # Usually "1月5日(金)" - needs Year
+                 # We can rely on the fact that race_id contains year (2025...)
+                 # But let's look for YYYY年 in the whole text or title
+                 pass
+            
+            # Fallback Date from Title Tag or Meta
+            if not data["date"]:
                  meta_title = soup.title.text if soup.title else ""
-                 # "2023年1月5日 ..."
                  match_date = re.search(r'(\d{4}年\d{1,2}月\d{1,2}日)', meta_title)
                  if match_date:
                      data["date"] = match_date.group(1)
-            else:
-                 # Usually pure text "1月5日" or link with params
-                 # Try finding full date from query or other element.
-                 # Let's rely on fallback or existing date in DB usually.
-                 pass
 
         except Exception as e:
             print(f"Error parsing metadata for {race_id}: {e}")

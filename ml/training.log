@@ -1929,3 +1929,7 @@
 2025-12-28 01:10:03,327 - train_model - INFO -   lambda_l1: 2.0136095614915837
 2025-12-28 01:10:03,327 - train_model - INFO -   lambda_l2: 2.584080038071615e-05
 2025-12-28 01:10:03,327 - train_model - INFO -   scale_pos_weight: 3.2685484553667363
+2025-12-28 05:47:21,300 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2025-12-28 05:47:21,921 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2025-12-28 05:47:21,922 - train_model - INFO - Win rate: 21.81%, scale_pos_weight: 3.59
+2025-12-28 05:47:21,922 - train_model - INFO - Starting Optuna optimization...
