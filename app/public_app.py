@@ -55,6 +55,18 @@ def load_history_csv(mode):
             pass
     return None
 
+@st.cache_resource
+def load_stats(mode="JRA"):
+    """統計データ（騎手・コース成績など）をロード"""
+    stats_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), f"ml/models/feature_stats_nar.pkl" if mode == "NAR" else "ml/models/feature_stats.pkl")
+    if os.path.exists(stats_path):
+        try:
+            with open(stats_path, 'rb') as f:
+                return pickle.load(f)
+        except Exception as e:
+            st.warning(f"Stats load error: {e}")
+    return None
+
 def get_data_freshness(mode="JRA"):
     """データベースの最終更新日時を取得（SQL対応）"""
     db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "keiba_data.db")
@@ -163,13 +175,15 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
     # 範囲を拡大: 20-95（より差別化）
     return int(max(20, min(95, confidence)))
 
-def predict_race_logic(df, model, model_meta):
+def predict_race_logic(df, model, model_meta, stats=None):
     """
     データフレームに対してAI予測と信頼度計算を行う
+    stats: 統計情報の辞書（inference用）
     """
     try:
         # 特徴量エンジニアリング（会場特性あり）
-        X_df = process_data(df, use_venue_features=True)
+        # inference mode: pass stats
+        X_df = process_data(df, use_venue_features=True, input_stats=stats)
 
         # Align features with model
         if hasattr(model, 'feature_name'):
@@ -388,8 +402,12 @@ if schedule_data and "races" in schedule_data:
                  else:
                      with st.spinner("モデルを読み込み中..."):
                          # from app.public_app import load_model, load_model_metadata
+                         # from app.public_app import load_model, load_model_metadata
+                         # from app.public_app import load_model, load_model_metadata
                          model = load_model(mode_val)
                          model_meta = load_model_metadata(mode_val)
+                         stats = load_stats(mode_val)
+
                      
                      if not model:
                          st.error("モデルの読み込みに失敗しました。")
@@ -412,7 +430,8 @@ if schedule_data and "races" in schedule_data:
                                  
                                  if df_race is not None and not df_race.empty:
                                      # 2. Predict
-                                     processed_df = predict_race_logic(df_race, model, model_meta)
+
+                                     processed_df = predict_race_logic(df_race, model, model_meta, stats=stats)
                                      
                                      if processed_df is not None:
                                          # 3. Find Top Horses (Top 3)
@@ -488,6 +507,7 @@ if race_id:
     # Load Model and Metadata
     model = load_model(mode=mode_val)
     model_meta = load_model_metadata(mode=mode_val)
+    stats = load_stats(mode=mode_val)
     last_updated, days_ago = get_data_freshness(mode=mode_val)
 
     # Display Model Information and Data Freshness
@@ -564,7 +584,8 @@ if race_id:
                 progress_bar.progress(60)
                 
                 if model:
-                    processed_df = predict_race_logic(df, model, model_meta)
+
+                    processed_df = predict_race_logic(df, model, model_meta, stats=stats)
                     
                     if processed_df is not None:
                          df = processed_df

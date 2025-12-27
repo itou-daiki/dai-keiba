@@ -129,8 +129,20 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
 
     X = df.drop(columns=drop_cols, errors='ignore')
 
-    # Ensure only numeric
-    X = X.select_dtypes(include=['number'])
+    # Ensure only numeric and category
+    # P0-4: Categorical Features Handling
+    categorical_cols = [
+        'race_class', 'race_type_code', 'weather_num', 'cond_code', 
+        'course_type_code', 'interval_category', 'venue_id'
+    ]
+    
+    # Check if these columns exist and cast to category
+    for col in categorical_cols:
+        if col in X.columns:
+            X[col] = X[col].astype('category')
+            logger.info(f"Feature '{col}' cast to category type")
+            
+    X = X.select_dtypes(include=['number', 'category'])
 
     # 6. 外れ値検出（IQR法）
     logger.info("=== 外れ値検出（サンプル） ===")
@@ -514,13 +526,31 @@ def optimize_hyperparameters(data_path, n_trials=50, use_timeseries_split=True):
     ]
     drop_cols = [c for c in df.columns if c in meta_cols or c in exclude_cols or c in leakage_cols]
 
-    X = df.drop(columns=drop_cols, errors='ignore').select_dtypes(include=['number'])
+    X = df.drop(columns=drop_cols, errors='ignore')
+    
+    # Ensure only numeric and category
+    categorical_cols = [
+        'race_class', 'race_type_code', 'weather_num', 'cond_code', 
+        'course_type_code', 'interval_category', 'venue_id'
+    ]
+    
+    for col in categorical_cols:
+        if col in X.columns:
+            X[col] = X[col].astype('category')
+            
+    X = X.select_dtypes(include=['number', 'category'])
     y = df[target_col]
 
     # TimeSeriesSplit用にソート
     if use_timeseries_split and 'date' in df.columns:
         df_sorted = df.sort_values('date').reset_index(drop=True)
-        X = df_sorted.drop(columns=drop_cols, errors='ignore').select_dtypes(include=['number'])
+        X = df_sorted.drop(columns=drop_cols, errors='ignore')
+        
+        for col in categorical_cols:
+            if col in X.columns:
+                X[col] = X[col].astype('category')
+                
+        X = X.select_dtypes(include=['number', 'category'])
         y = df_sorted[target_col]
         logger.info("Data sorted by date for TimeSeriesSplit")
 

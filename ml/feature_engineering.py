@@ -258,7 +258,7 @@ def add_history_features(df):
 
     return df
 
-def process_data(df, lambda_decay=0.2, use_venue_features=False):
+def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=None, return_stats=False):
     # FIRST: Add history features
     df = add_history_features(df)
     
@@ -801,24 +801,160 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
         'good_condition_avg',
         'heavy_condition_avg',
         'distance_compatibility',
-        'is_rest_comeback',
-        'interval_category',
-        'is_consecutive',
         'jockey_compatibility',
-        'race_class',
-        'is_graded',
-        'age_limit',
-        'race_type_code',
-        'jra_compatibility',
-        'nar_compatibility',
-        'is_jra_transfer',
-        # 動的重み付け関連
         'last_race_reliability',
         'best_similar_course_rank',
         'growth_factor',
         'last_race_performance',
-        'rank_trend'
+        'rank_trend',
+        'race_class',
+        'race_type_code',
+        'is_rest_comeback',
+        'interval_category',
+        'is_consecutive',
+        'jra_compatibility',
+        'nar_compatibility',
+        'is_jra_transfer',
+        'is_graded',
+        'age_limit'
     ]
+
+    # ========== 新規特徴量: 騎手・厩舎の全体成績（Global Stats） ==========
+    # 注意: リークを防ぐため、そのレース以前の成績のみを使用する
+    
+    # データを日付順にソート（念のため）
+    if 'date_dt' not in df.columns:
+        df['date_dt'] = pd.to_datetime(df['日付'], format='%Y年%m月%d日', errors='coerce')
+    
+    df = df.sort_values('date_dt')
+    
+    # ターゲット変数の準備（NaNは計算対象外）
+    if 'rank' not in df.columns:
+         df['rank'] = pd.to_numeric(df['着 順'], errors='coerce')
+    
+    # helper for rolling stats
+    def calculate_rolling_stats(series_group, window=None):
+        # Shift 1 to avoid using current race result
+        # expanding().mean()
+        return series_group.shift(1).expanding().mean()
+        
+    def calculate_rolling_count_sum(df_in, group_col, target_mask_col, new_col_name):
+        # Calculate sum of target_mask (wins/top3) and count of races
+        # Group by group_col (e.g., Jockey)
+        
+        # We need a clean way. 
+        # rolling_sum = df_in.groupby(group_col)[target_mask_col].transform(lambda x: x.shift(1).expanding().sum())
+        # rolling_count = df_in.groupby(group_col)[target_mask_col].transform(lambda x: x.shift(1).expanding().count())
+        
+        # Optimization: Use global accumulation if dataset is huge, but transform is safe.
+        # Ensure we categorize or use string for grouping
+        
+        # Win flag
+        # Calculate rolling mean directly
+        return df_in.groupby(group_col)[target_mask_col].transform(lambda x: x.shift(1).expanding().mean())
+
+    # 19. 騎手の直近成績（通算勝率・複勝率）
+    if '騎手' in df.columns:
+        df['jockey_clean'] = df['騎手'].astype(str).apply(clean_jockey)
+        
+        # 1着フラグ等 (計算用)
+        df['is_win'] = (df['rank'] == 1).astype(int)
+        df['is_top3'] = (df['rank'] <= 3).astype(int)
+
+        if input_stats and 'jockey' in input_stats:
+             # Inference Mode: Map from stats
+             j_stats = input_stats['jockey']
+             # map returns NaN if not found -> fillna(0) or average? 0 is safer for now.
+             df['jockey_win_rate'] = df['jockey_clean'].map(j_stats['win_rate']).fillna(0.0)
+             df['jockey_top3_rate'] = df['jockey_clean'].map(j_stats['top3_rate']).fillna(0.0)
+             # Log count? If not in stats, 0.
+             if 'count' in j_stats:
+                 df['jockey_races_log'] = np.log1p(df['jockey_clean'].map(j_stats['count']).fillna(0))
+             else:
+                 df['jockey_races_log'] = 0.0
+        else:
+            # Training Mode: Rolling Stats
+            df['jockey_win_rate'] = calculate_rolling_stats(
+                df.groupby('jockey_clean')['is_win']
+            ).fillna(0.0)
+            
+            df['jockey_top3_rate'] = calculate_rolling_stats(
+                df.groupby('jockey_clean')['is_top3']
+            ).fillna(0.0)
+            
+            df['jockey_races_log'] = np.log1p(
+                df.groupby('jockey_clean')['rank'].transform(lambda x: x.shift(1).expanding().count()).fillna(0)
+            )
+        
+        new_features.extend(['jockey_win_rate', 'jockey_top3_rate', 'jockey_races_log'])
+
+    # 20. 厩舎の直近成績
+    if '厩舎' in df.columns:
+        df['stable_clean'] = df['厩舎'].astype(str).str.strip()
+        
+        if input_stats and 'stable' in input_stats:
+             s_stats = input_stats['stable']
+             df['stable_win_rate'] = df['stable_clean'].map(s_stats['win_rate']).fillna(0.0)
+             df['stable_top3_rate'] = df['stable_clean'].map(s_stats['top3_rate']).fillna(0.0)
+        else:
+            df['stable_win_rate'] = calculate_rolling_stats(
+                df.groupby('stable_clean')['is_win']
+            ).fillna(0.0)
+            
+            df['stable_top3_rate'] = calculate_rolling_stats(
+                df.groupby('stable_clean')['is_top3']
+            ).fillna(0.0)
+        
+        new_features.extend(['stable_win_rate', 'stable_top3_rate'])
+
+    # 21. 詳細なコース適性（会場×距離）
+    # 会場 + 距離 の識別子を作成
+    if '会場' in df.columns and '距離' in df.columns:
+        df['course_id'] = df['会場'].astype(str) + '_' + df['距離'].astype(str)
+        
+        # 馬ごとのコース別成績平均
+        # Group by Horse + Course ID
+        # Calculate expanding mean of rank
+        # We need 'rank'
+        
+        # Horse ID available?
+        h_id_col = 'horse_id' if 'horse_id' in df.columns else '馬名'
+        
+        # Create a grouping key
+        df['horse_course_key'] = df[h_id_col].astype(str) + '_' + df['course_id']
+        
+        # Calculate Avg Rank in this course previously
+        # Calculate Avg Rank in this course previously
+        if input_stats and 'course_horse' in input_stats:
+             df['course_distance_record'] = df['horse_course_key'].map(input_stats['course_horse']).fillna(10.0)
+        else:
+            df['course_distance_record'] = df.groupby('horse_course_key')['rank'].transform(
+                lambda x: x.shift(1).expanding().mean()
+            ).fillna(10.0) # Default to 10th place
+        
+        new_features.append('course_distance_record')
+        
+        # Run Style Compatibility with Course
+        # Calculate which run style wins most at this course?
+        # This requires aggregation of ALL horses at this course, then mapping back.
+        # Might be expensive/complex for this step. Skip for now or simpler version:
+        # Just use pre-calculated biases if available (venue_characteristics.py)
+        pass
+
+    # Cleanup temp columns
+    cols_to_drop = ['is_win', 'is_top3', 
+                    'course_id', 'date_dt']
+    # 'jockey_clean', 'stable_clean', 'horse_course_key' kept if return_stats needed?
+    # No, we can re-create or just don't drop them if return_stats is True?
+    # Simpler: Don't drop them here if return_stats is True.
+    
+    if not return_stats:
+        cols_to_drop.extend(['jockey_clean', 'stable_clean', 'horse_course_key'])
+        
+    df.drop(columns=[c for c in cols_to_drop if c in df.columns], inplace=True, errors='ignore')
+
+
+
 
     # Features to save
     feature_cols = [f'weighted_avg_{f}' for f in features] + new_features
@@ -1154,6 +1290,38 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False):
     # Add feature cols
     keep_cols.extend(feature_cols)
     
+    # Return Logic with Stats
+    if return_stats:
+        stats_data = {}
+        # Jockey Stats
+        if 'jockey_clean' in df.columns:
+            j_grp = df.groupby('jockey_clean')
+            stats_data['jockey'] = {
+                'win_rate': j_grp['is_win'].mean().to_dict(),
+                'top3_rate': j_grp['is_top3'].mean().to_dict(),
+                'count': j_grp['rank'].count().to_dict()
+            }
+            
+        # Stable Stats
+        if 'stable_clean' in df.columns:
+            s_grp = df.groupby('stable_clean')
+            stats_data['stable'] = {
+                'win_rate': s_grp['is_win'].mean().to_dict(),
+                'top3_rate': s_grp['is_top3'].mean().to_dict()
+            }
+            
+        # Course Stats
+        # Re-calc key if needed
+        if 'horse_course_key' not in df.columns and 'venue_id' in df.columns and 'distance' in df.columns:
+             h_id_col = 'horse_id' if 'horse_id' in df.columns else '馬名'
+             c_id = df['venue_id'].astype(str) + '_' + df['distance'].astype(str)
+             df['horse_course_key'] = df[h_id_col].astype(str) + '_' + c_id
+
+        if 'horse_course_key' in df.columns:
+             stats_data['course_horse'] = df.groupby('horse_course_key')['rank'].mean().to_dict()
+
+        return df[keep_cols].copy(), stats_data
+
     return df[keep_cols].copy()
 
 def calculate_features(input_csv, output_path, lambda_decay=0.5, use_venue_features=False):

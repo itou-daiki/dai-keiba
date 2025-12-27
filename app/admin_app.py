@@ -509,6 +509,28 @@ with tab_data:
                     except Exception as e:
                         st.error(f"SQL保存エラー: {e}")
 
+    # New Section: Global Stats
+    st.markdown("---")
+    st.markdown("### 📊 統計アーティファクト管理")
+    st.info("予測時に使用する騎手・コース・厩舎の統計データファイル (`feature_stats.pkl`) を更新します。")
+    if st.button("📈 統計アーティファクトを更新 (Export Stats)", help="ml/export_stats.pyを実行します"):
+         with st.spinner(f"統計データを計算・出力中 ({mode_val})..."):
+             try:
+                 cmd = [sys.executable, "ml/export_stats.py", "--mode", mode_val]
+                 res = subprocess.run(cmd, capture_output=True, text=True, cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                 
+                 st.markdown("#### 実行ログ")
+                 st.code(res.stdout)
+                 
+                 if res.returncode == 0:
+                     st.success("統計アーティファクトの更新に成功しました！")
+                 else:
+                     st.error("更新に失敗しました。")
+                     st.code(res.stderr)
+             except Exception as e:
+                 st.error(f"実行エラー: {e}")
+
+
 # --- Tab 3: Upload ---
 with tab_upload:
     st.markdown("### リポジトリへアップロード")
