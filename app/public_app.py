@@ -993,6 +993,16 @@ if race_id:
             # Silently fail if venue characteristics not available
             pass
 
+        # === UI: ランキング基準の選択 ===
+        st.markdown("#### 📊 ランキング基準")
+        ranking_criteria = st.radio(
+            "評価方法を選択してください:", 
+            ["回収率重視 (期待値)", "的中率重視 (AIスコア)"], 
+            horizontal=True,
+            help="「回収率」はオッズを考慮して儲かる馬を探します。「的中率」はオッズを無視して純粋に勝つ確率が高い馬を探します。"
+        )
+
+
         # Base parameters by race type
         if race_type == 'JRA':
             # === 中央競馬（JRA）設定 ===
@@ -1005,7 +1015,7 @@ if race_id:
                 "✕": 0.0,   # 消し: 0倍
                 "": 1.0     # 印なし: 1.0倍
             }
-            safety_threshold = 0.15  # 3着内率15%未満は除外
+            safety_threshold = 0.04  # 1着確率4%未満は除外 (Win予測用に調整)
             venue_info = f"🏇 中央競馬（JRA）" + (f" - {venue}" if venue else "")
         else:
             # === 地方競馬（NAR）設定 ===
@@ -1018,7 +1028,7 @@ if race_id:
                 "✕": 0.0,   # 消し: 0倍
                 "": 1.0     # 印なし: 1.0倍
             }
-            safety_threshold = 0.10  # 3着内率10%未満は除外
+            safety_threshold = 0.03  # 1着確率3%未満は除外 (Win予測用に調整)
             venue_info = f"🌙 地方競馬（NAR）" + (f" - {venue}" if venue else "")
 
         # Venue-specific adjustments
@@ -1095,14 +1105,14 @@ if race_id:
         for idx, (p, o_win, o_place, m) in enumerate(zip(probs, odds, place_min_odds, marks)):
             reasons = [] # この馬の補正理由
             
-            # Use Place Min Odds for EV Calculation if available, else Estimate
+            # Use Win Odds for EV Calculation (since we are predicting target_win)
             calc_odds = 0.0
-            if o_place > 1.0:
-                calc_odds = o_place
-            elif o_win > 1.0:
-                 # Heuristic Estimate: 1.0 + (Win - 1.0) / 3.5 (Conservative)
-                 calc_odds = 1.0 + (o_win - 1.0) / 3.5
-                 reasons.append("複勝推定")
+            if o_win > 1.0:
+                 calc_odds = o_win
+            elif o_place > 1.0:
+                 # Fallback if Win Odds missing but Place Odds exist (rare)
+                 calc_odds = o_place * 3.0
+                 reasons.append("単勝推定")
             
             # Safety filter (race type specific)
             if p < safety_threshold:
@@ -1199,30 +1209,38 @@ if race_id:
                 marker=dict(color='lightblue'),
                 text=top5_df['AIスコア(%)'].apply(lambda x: f'{x}%'),
                 textposition='auto'
-            ),
-            row=1, col=1
-        )
+        
 
-        # 右: 調整後期待値
-        colors = ['green' if ev > 0 else 'red' for ev in top5_df['調整後期待値']]
-        fig_top5.add_trace(
-            go.Bar(
-                y=top5_df['馬名'],
-                x=top5_df['調整後期待値'],
-                orientation='h',
-                name='調整後期待値',
-                marker=dict(color=colors),
-                text=top5_df['調整後期待値'].apply(lambda x: f'{x:.2f}'),
-                textposition='auto'
-            ),
-            row=1, col=2
-        )
+        # Apply sorting based on ranking criteria
+        if ranking_criteria == "回収率重視 (期待値)":
+            edited_df.sort_values(by='調整後期待値', ascending=False, inplace=True)
+            y_col = '調整後期待値'
+            y_label = '期待値(EV)'
+            bar_color = '#28a745'
+        else: # "的中率重視 (AIスコア)"
+            edited_df.sort_values(by='AIスコア(%)', ascending=False, inplace=True)
+            y_col = 'AIスコア(%)'
+            y_label = 'AIスコア(%)'
+            bar_color = '#1f77b4'
 
-        fig_top5.update_xaxes(title_text="AI勝率 (%)", row=1, col=1)
-        fig_top5.update_xaxes(title_text="調整後期待値", row=1, col=2)
-        fig_top5.update_yaxes(autorange="reversed", row=1, col=1)
-        fig_top5.update_yaxes(autorange="reversed", row=1, col=2)
-        fig_top5.update_layout(height=400, showlegend=False)
+        top_df = edited_df.head(5)
+        
+        # Plot Top 5
+        st.subheader(f"📈 {ranking_criteria} TOP 5")
+        
+        fig_top5 = go.Figure(go.Bar(
+            x=top_df['馬名'],
+            y=top_df[y_col],
+            text=top_df[y_col].apply(lambda x: f"{x:.2f}" if y_col == '調整後期待値' else f"{x}%"),
+            textposition='auto',
+            marker_color=bar_color
+        ))
+        fig_top5.update_layout(
+            yaxis_title=y_label,
+            xaxis_title="馬名",
+            height=400,
+            showlegend=False
+        )
 
         st.plotly_chart(fig_top5, use_container_width=True)
 
