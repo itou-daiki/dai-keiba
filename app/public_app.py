@@ -1097,6 +1097,7 @@ if race_id:
         odds = edited_df['現在オッズ']
         place_min_odds = edited_df['複勝下限'] # Use Place Odds
         marks = edited_df['予想印']
+        confidences = edited_df['信頼度']
 
         # Get run style compatibility if available
         run_style_compatibility = None
@@ -1113,7 +1114,7 @@ if race_id:
         kellys = []
         bias_reasons_list = [] # 補正理由リスト
 
-        for idx, (p, o_win, o_place, m) in enumerate(zip(probs, odds, place_min_odds, marks)):
+        for idx, (p, o_win, o_place, m, c) in enumerate(zip(probs, odds, place_min_odds, marks, confidences)):
             reasons = [] # この馬の補正理由
             
             # Use Win Odds for EV Calculation (since we are predicting target_win)
@@ -1177,8 +1178,13 @@ if race_id:
                 # Uses Place Odds
                 ev_pure = (adjusted_p * calc_odds) - 1.0
 
-                # 調整後EV: 印補正あり（ユーザーの主観を反映）
-                ev_adj = (adjusted_p * w * calc_odds) - 1.0
+                # 調整後EV: 印・信頼度補正あり（ユーザーの主観＋リスク換算）
+                # 信頼度(c)を乗算することで、「AIが自信のない穴馬」のEV過大評価を防ぐ
+                trust_factor = c / 100.0
+                ev_adj = (adjusted_p * w * calc_odds * trust_factor) - 1.0
+                
+                if trust_factor < 0.6:
+                     reasons.append(f"信頼度低 (x{trust_factor:.2f})")
 
                 # Kelly criterion (placeholder for now)
                 kelly = 0.0
