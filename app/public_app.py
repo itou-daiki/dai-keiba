@@ -81,7 +81,7 @@ def get_data_freshness(mode="JRA"):
     return "DBなし", -1
     return None, None
 
-def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None, is_rest_comeback=0):
+def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None, is_rest_comeback=0, has_history=True):
     """
     予測の信頼度スコアを計算（0-100）
 
@@ -92,6 +92,7 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
         course_compat: コース適性スコア（0-10、Noneの場合は考慮しない）
         distance_compat: 距離適性スコア（0-10、Noneの場合は考慮しない）
         is_rest_comeback: 休養明けフラグ（1=True, 0=False）
+        has_history: 過去走データがあるかどうか (True/False)
 
     Returns:
         int: 信頼度スコア（0-100）
@@ -168,9 +169,14 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
     interval_penalty = 0
     if is_rest_comeback == 1:
         interval_penalty = -10 # 長期休養明けは不確定要素が多い
+        
+    # ===== 6. 初出走・履歴なしによるペナルティ (新規追加) =====
+    history_penalty = 0
+    if not has_history:
+        history_penalty = -40 # データが全くない馬は信頼できない
 
     # ===== 最終計算 =====
-    confidence = base_confidence + data_penalty + prob_bonus + compat_bonus + interval_penalty
+    confidence = base_confidence + data_penalty + prob_bonus + compat_bonus + interval_penalty + history_penalty
 
     # 範囲を拡大: 20-95（より差別化）
     return int(max(20, min(95, confidence)))
@@ -225,8 +231,15 @@ def predict_race_logic(df, model, model_meta, stats=None):
                     course_c = X_df['turf_compatibility'].iloc[idx] # Default
 
             is_rest = X_df['is_rest_comeback'].iloc[idx] if 'is_rest_comeback' in X_df.columns else 0
-
-            conf = calculate_confidence_score(p, model_meta, jockey_c, course_c, distance_c, is_rest)
+            
+            # Check for history (using raw df columns if available, or heuristic on X_df)
+            has_history = True
+            if 'past_1_rank' in df.columns:
+                 val = df['past_1_rank'].iloc[idx]
+                 if pd.isna(val) or val == 0 or val == "":
+                     has_history = False
+            
+            conf = calculate_confidence_score(p, model_meta, jockey_c, course_c, distance_c, is_rest, has_history)
             confidences.append(conf)
 
         df['Confidence'] = confidences
