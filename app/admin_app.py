@@ -284,6 +284,7 @@ with tab_ml:
         is_calibrate = st.checkbox("確率較正 (Calibration) を行う", value=False, help="Brier Scoreが高い場合に有効にしてください。")
         st.markdown("---")
         auto_push = st.checkbox("学習完了後、リポジトリを自動更新 (Git Push)", value=True, help="学習成功時に変更を自動的にコミット＆プッシュします")
+        skip_preprocess = st.checkbox("前処理をスキップ (既存のprocessed_data.csvを使用)", value=False)
 
     with col_conf_2:
         st.markdown(f"""
@@ -319,12 +320,15 @@ with tab_ml:
         model_path = os.path.join(model_dir, model_name)
 
         # 1. Preprocess
-        with st.spinner("1/3 データ前処理中..."):
-            if os.path.exists(db_path):
-               feature_engineering.calculate_features(db_path, data_path)
-            else:
-               st.error("database.csvが見つかりません。")
-               st.stop()
+        if not skip_preprocess:
+            with st.spinner("1/3 データ前処理中..."):
+                if os.path.exists(db_path):
+                   feature_engineering.calculate_features(db_path, data_path)
+                else:
+                   st.error("database.csvが見つかりません。")
+                   st.stop()
+        else:
+            st.info("ℹ️ 前処理をスキップしました。既存のデータを使用します。")
         
         # 1.5 Auto Save to DB
         with st.spinner("1.5 データベース(SQL)に保存中..."):
