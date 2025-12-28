@@ -708,7 +708,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # Helper to clean jockey name (Used later in the file too)
     def clean_jockey(name):
         if not isinstance(name, str): return ""
-        return re.sub(r'[▲△☆◇★\d]', '', name).strip()
+        # Remove symbols and ALL whitespace
+        name = re.sub(r'[▲△☆◇★\d]', '', name)
+        return name.replace(" ", "").replace("　", "").strip()
     
     if '騎手' in df.columns:
         # Create keys

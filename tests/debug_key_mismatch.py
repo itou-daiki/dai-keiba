@@ -42,8 +42,24 @@ def check_formats():
     print(f"Float as str: '{str(id_float)}'")
     print(f"String as str: '{str(id_str)}'")
     
-    if str(id_float) != str(id_str):
-        print("MISMATCH DETECTED! '2011106610.0' != '2011106610'")
+    # 4. Check Jockey Names
+    print("\n[Jockey Name Check]")
+    if os.path.exists(db_path):
+        print("Database Sample:")
+        print(df_db['騎手'].head())
+        # Apply clean
+        import re
+        def clean_jockey(name):
+            if not isinstance(name, str): return ""
+            return re.sub(r'[▲△☆◇★\d]', '', name).strip()
+            
+        print("Database Cleaned:")
+        print(df_db['騎手'].astype(str).apply(clean_jockey).head())
+
+    # Check Scraper JSON jockey names if possible
+    # (Simulated check based on common netkeiba issues)
+    print("Scraper usually returns names like 'ルメール' or '武 豊'.")
+    print("If DB has '武 豊' (space) and Scraper has '武豊' (no space), keys won't match.")
 
 if __name__ == "__main__":
     check_formats()
