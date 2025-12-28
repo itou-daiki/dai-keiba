@@ -452,7 +452,7 @@ if schedule_data and "races" in schedule_data:
             st.write(f"対象レース数: {len(target_races)} レース")
             
             confidence_threshold = st.slider("信頼度フィルター (これ以上の信頼度のレースを表示)", 0, 100, 70)
-            use_odds_bias_batch = st.checkbox("現在オッズを加味する (推奨)", value=True, help("人気馬のスコアを上げ、不人気馬を下げます"))
+            use_odds_bias_batch = st.checkbox("現在オッズを加味する (推奨)", value=True, help="人気馬のスコアを上げ、不人気馬を下げます")
 
             if st.button("🚀 一括分析を開始する", type="primary"):
                  if not target_races:
