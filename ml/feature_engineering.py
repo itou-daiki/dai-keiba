@@ -444,165 +444,207 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
             df[f'weighted_avg_{feat}'] += df[f"past_{i}_{feat}"] * norm_weights[i-1]
         feature_cols.append(f'weighted_avg_{feat}')
 
-    # ========== 新規特徴量: コース・馬場適性 ==========
-
-    # 1. 芝適性（芝での平均着順）
-    df['turf_compatibility'] = 10.0
-    df['dirt_compatibility'] = 10.0
+    # ========== 新規特徴量: 現在レースのメタ情報 (Moved for dependencies) ==========
     
-    # Vectorized calculation using numpy check
-    # We can assume rows are independent
-    # Correct logic: For each row (horse), calculate avg rank in Turf/Dirt
-    
-    # Initialize separate sums/counts for each row
-    turf_sums = pd.Series(0.0, index=df.index)
-    turf_counts = pd.Series(0, index=df.index)
-    dirt_sums = pd.Series(0.0, index=df.index)
-    dirt_counts = pd.Series(0, index=df.index)
+    # 1. Course Type (course_type) -> 芝=1, ダ=2, 障=3
+    if 'コースタイプ' in df.columns:
+        def map_course(x):
+            if not isinstance(x, str): return 0
+            if '芝' in x: return 1
+            if 'ダ' in x: return 2
+            if '障' in x: return 3
+            return 0
+        df['course_type_code'] = df['コースタイプ'].apply(map_course)
+        feature_cols.append('course_type_code')
+    else:
+        df['course_type_code'] = 0
+        feature_cols.append('course_type_code')
 
-    for i in range(1, 6):
-        # Use course_type_code if available (1=Turf, 2=Dirt)
-        # Fallback to race_name string check if needed? 
-        # But we added course_type_code in add_history_features.
-        
-        c_code_col = f'past_{i}_course_type_code'
-        rank_col = f'past_{i}_rank'
-        
-        # If code not computed (scraper not run yet, manual update?), fallback to name regex?
-        # Let's rely on c_code_col first, if 0 try regex.
-        
-        # Actually straightforward:
-        code_series = df[c_code_col] if c_code_col in df.columns else pd.Series(0, index=df.index)
-        rank_series = df[rank_col] if rank_col in df.columns else pd.Series(18, index=df.index) # Use filled 18 if missing? existing logic filled it.
-
-        # Logic for Turf (1)
-        is_turf = (code_series == 1)
-        # If code is 0 but name has '芝'?
-        race_name_col = f'past_{i}_race_name'
-        if race_name_col in df.columns:
-             # Only fill if 0?
-             is_turf_name = df[race_name_col].astype(str).str.contains('芝', na=False)
-             is_turf = is_turf | ((code_series == 0) & is_turf_name)
-
-        turf_sums += np.where(is_turf, rank_series, 0)
-        turf_counts += np.where(is_turf, 1, 0)
-        
-        # Logic for Dirt (2)
-        is_dirt = (code_series == 2)
-        if race_name_col in df.columns:
-             is_dirt_name = df[race_name_col].astype(str).str.contains('ダ', na=False)
-             is_dirt = is_dirt | ((code_series == 0) & is_dirt_name)
-
-        dirt_sums += np.where(is_dirt, rank_series, 0)
-        dirt_counts += np.where(is_dirt, 1, 0)
-
-    # Calculate Avg
-    df['turf_compatibility'] = np.where(turf_counts > 0, turf_sums / turf_counts, 5.0)
-    df['dirt_compatibility'] = np.where(dirt_counts > 0, dirt_sums / dirt_counts, 5.0)
-
-    # Defragment before adding more columns
-    df = df.copy()
-
-    # 2. 馬場状態適性（良/稍重/重/不良での平均着順）
-    df['good_condition_avg'] = 0.0
-    df['heavy_condition_avg'] = 0.0
-    df['good_count'] = 0
-    df['heavy_count'] = 0
-
-    for i in range(1, 6):
-        cond_col = f'past_{i}_condition'
-        rank_col = f'past_{i}_rank'
-
-        if cond_col in df.columns and rank_col in df.columns:
-            # 良馬場（1）
-            is_good = df[cond_col] == 1
-            df.loc[is_good, 'good_condition_avg'] += df.loc[is_good, rank_col]
-            df.loc[is_good, 'good_count'] += 1
-
-            # 重馬場（3以上: 重/不良）
-            is_heavy = df[cond_col] >= 3
-            df.loc[is_heavy, 'heavy_condition_avg'] += df.loc[is_heavy, rank_col]
-            df.loc[is_heavy, 'heavy_count'] += 1
-
-    # 平均化
-    df['good_condition_avg'] = df.apply(
-        lambda x: x['good_condition_avg'] / x['good_count'] if x['good_count'] > 0 else 10.0, axis=1
-    )
-    df['heavy_condition_avg'] = df.apply(
-        lambda x: x['heavy_condition_avg'] / x['heavy_count'] if x['heavy_count'] > 0 else 10.0, axis=1
-    )
-
-    # 3. 距離適性（現在のレース距離との近さで判定）
-    # 現在の距離に±200m以内の過去レースでの平均着順
-    df['distance_compatibility'] = 10.0  # デフォルト
-
-    # 3. 距離適性（現在のレース距離との近さで判定）
-    # 現在の距離に±200m以内の過去レースでの平均着順
-    df['distance_compatibility'] = 10.0  # デフォルト
-
+    # 2. Distance -> Numeric
     if '距離' in df.columns:
-        current_distance = pd.to_numeric(df['距離'], errors='coerce').fillna(1600)
+        df['distance_val'] = pd.to_numeric(df['距離'], errors='coerce').fillna(1600)
+        feature_cols.append('distance_val')
+    else:
+        df['distance_val'] = 1600
+        feature_cols.append('distance_val')
+
+    # 3. Rotation -> 右=1, 左=2, 直線=3, 他=0
+    if '回り' in df.columns:
+        def map_rot(x):
+            if not isinstance(x, str): return 0
+            if '右' in x: return 1
+            if '左' in x: return 2
+            if '直線' in x: return 3
+            return 0
+        df['rotation_code'] = df['回り'].apply(map_rot)
+        feature_cols.append('rotation_code')
+    else:
+        df['rotation_code'] = 0
+        feature_cols.append('rotation_code')
+
+    # 4. Weather (Current Race) -> 晴=1, 曇=2, 雨=3, 小雨=4, 雪=5
+    # Note: DB might have '天候' column
+    w_map = {'晴': 1, '曇': 2, '雨': 3, '小雨': 4, '雪': 5}
+    if '天候' in df.columns:
+         def map_weather_curr(val):
+            if not isinstance(val, str): return 2
+            for k, v in w_map.items():
+                if k in val: return v
+            return 2
+         df['weather_code'] = df['天候'].apply(map_weather_curr)
+         feature_cols.append('weather_code')
+    else:
+         df['weather_code'] = 2
+         feature_cols.append('weather_code')
+
+    # 5. Condition (Current Race) -> 良=1, 稍重=2, 重=3, 不良=4
+    c_map = {'良': 1, '稍重': 2, '重': 3, '不良': 4}
+    if '馬場状態' in df.columns:
+        def map_cond_curr(val):
+            if not isinstance(val, str): return 1
+            for k, v in c_map.items():
+                if k in val: return v
+            return 1
+        df['condition_code'] = df['馬場状態'].apply(map_cond_curr)
+        feature_cols.append('condition_code')
+    else:
+        df['condition_code'] = 1
+        feature_cols.append('condition_code')
+
+    # ========== 新規特徴量: コース・馬場適性 (Global History) ==========
+    
+    # Global Sort (Already done for Jockey Compat, but ensure it)
+    if not df.index.equals(df.sort_values('date_dt').index):
+        df.sort_values('date_dt', inplace=True)
+
+    # Helper: Global Expanding Mean by Horse
+    # We use 'hj_key' part 'horse_id' which we probably need to define cleanly.
+    if 'horse_id' in df.columns:
+        df['h_key'] = df['horse_id'].astype(str)
+    else:
+        df['h_key'] = df['馬名'].astype(str)
+
+    # 1. Turf/Dirt Compatibility
+    # Prepare flags
+    # course_type_code: 1=Turf, 2=Dirt
+    # We need to rely on the row's own course type for the 'is_turf' check of THAT race.
+    # Wait, for expanding mean, we need to know if the PAST race was Turf or Dirt using that row's data.
+    # `course_type_code` in `df` represents the CURRENT race info (if we are predicting) 
+    # OR the race info of that row (if training).
+    # In `database.csv`, each row is a race result. So `df['course_type_code']` is the course type of that race.
+    # Correct.
+    
+    # Masks
+    is_turf = (df['course_type_code'] == 1)
+    is_dirt = (df['course_type_code'] == 2)
+    
+    # Calculate Ranks for specific conditions (NaN if not matching)
+    df['rank_if_turf'] = np.where(is_turf, df['rank'], np.nan)
+    df['rank_if_dirt'] = np.where(is_dirt, df['rank'], np.nan)
+    
+    # Expanding Mean
+    # Group by Horse, Shift 1 (past), Expanding Mean
+    df['turf_compatibility'] = df.groupby('h_key')['rank_if_turf'].transform(
+        lambda x: x.shift(1).expanding().mean()
+    ).fillna(10.0) # Default 10.0 (Avg)
+    
+    df['dirt_compatibility'] = df.groupby('h_key')['rank_if_dirt'].transform(
+        lambda x: x.shift(1).expanding().mean()
+    ).fillna(10.0)
+
+    # 2. Condition Compatibility
+    # Good: 1, Heavy: 3 or 4 (Heavy/Bad)
+    is_good = (df['condition_code'] == 1)
+    is_heavy = (df['condition_code'] >= 3)
+    
+    df['rank_if_good'] = np.where(is_good, df['rank'], np.nan)
+    df['rank_if_heavy'] = np.where(is_heavy, df['rank'], np.nan)
+    
+    df['good_condition_avg'] = df.groupby('h_key')['rank_if_good'].transform(
+        lambda x: x.shift(1).expanding().mean()
+    ).fillna(10.0)
+    
+    df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
+        lambda x: x.shift(1).expanding().mean()
+    ).fillna(10.0)
+    
+    # 3. Distance Compatibility
+    # Convert distance to categories
+    # Sprint: <1400
+    # Mile: 1400-1800
+    # Intermediate: 1600-2400 (Overlap? Standardize bins)
+    # 1000-1300 (Sprint), 1301-1899 (Mile), 1900-2499 (Intermediate), 2500+ (Long)
+    # Simple bins: 
+    # Use bins centered?
+    # Let's use strict bins: 0-1300, 1301-1899, 1900-2499, 2500+
+    
+    dist_val = df['distance_val'].fillna(1600)
+    df['dist_cat'] = pd.cut(dist_val, bins=[0, 1399, 1899, 2499, 9999], labels=['Sprint', 'Mile', 'Intermediate', 'Long'])
+    
+    # We want compatibility for the CURRENT race's category.
+    # So we need historical avg for the category matching the current row.
+    
+    # Approach:
+    # Calculate expanding mean for EACH category separately.
+    # Then select the column matching the current row's category.
+    
+    cats = ['Sprint', 'Mile', 'Intermediate', 'Long']
+    for cat in cats:
+        is_cat = (df['dist_cat'] == cat)
+        df[f'rank_if_{cat}'] = np.where(is_cat, df['rank'], np.nan)
+        df[f'avg_rank_{cat}'] = df.groupby('h_key')[f'rank_if_{cat}'].transform(
+            lambda x: x.shift(1).expanding().mean()
+        ).fillna(10.0)
         
-        dist_sums = pd.Series(0.0, index=df.index)
-        dist_counts = pd.Series(0, index=df.index)
+    # Select feature based on current category
+    # Vectorized lookup?
+    # df['distance_compatibility'] = ...
+    df['distance_compatibility'] = 10.0
+    for cat in cats:
+        is_cat = (df['dist_cat'] == cat)
+        df.loc[is_cat, 'distance_compatibility'] = df.loc[is_cat, f'avg_rank_{cat}']
 
-        for i in range(1, 6):
-            rank_col = f'past_{i}_rank'
-            dist_col_hist = f'past_{i}_distance' # New explicit column
-            race_name_col = f'past_{i}_race_name'
-            
-            # Use explicit distance if available
-            if dist_col_hist in df.columns:
-                p_dist = df[dist_col_hist]
-            else:
-                 p_dist = pd.Series(np.nan, index=df.index)
+    # Calculate Speed (Global Avg Speed?) - Optional, user request mentions speed
+    # Currently handled in weighted_avg_speed (past 5). Global speed might be useful too but task focus is compatibility.
+    
+    # Cleanup temps
+    drop_temp_cols = ['h_key', 'rank_if_turf', 'rank_if_dirt', 'rank_if_good', 'rank_if_heavy', 'dist_cat']
+    for cat in cats:
+        drop_temp_cols.append(f'rank_if_{cat}')
+        drop_temp_cols.append(f'avg_rank_{cat}')
+        
+    df.drop(columns=drop_temp_cols, inplace=True, errors='ignore')
 
-            # Fallback to regex
-            if race_name_col in df.columns:
-                # Fill NaNs in p_dist with regex extraction
-                def extract_distance(name):
-                    if not isinstance(name, str): return np.nan
-                    match = re.search(r'(\d{3,4})m?', name)
-                    if match: return float(match.group(1))
-                    return np.nan
-                extracted = df[race_name_col].apply(extract_distance)
-                p_dist = p_dist.fillna(extracted)
+    # ========== 新規特徴量: レース間隔関連 (Optimized) ==========
 
-            rank_series = df[rank_col] if rank_col in df.columns else pd.Series(18, index=df.index)
-            
-            # Check diff
-            # We align indices automatically? Series operations align by index.
-            diff = (p_dist - current_distance).abs()
-            is_match = (diff <= 200) & p_dist.notna() & current_distance.notna()
-            
-            dist_sums += np.where(is_match, rank_series, 0)
-            dist_counts += np.where(is_match, 1, 0)
+    # 4. is_rest_comeback / interval
+    # Calculate interval from previous date globally (much faster/more accurate than past_1)
+    # Group by Horse, Shift Date
+    # df is sorted by date
+    
+    df['prev_date'] = df.groupby('horse_id' if 'horse_id' in df.columns else '馬名')['date_dt'].shift(1)
+    df['interval_days'] = (df['date_dt'] - df['prev_date']).dt.days
+    
+    # Fill missing interval (First race) with large number (e.g. 180 or 999)
+    df['interval_days'] = df['interval_days'].fillna(999)
+    
+    df['is_rest_comeback'] = (df['interval_days'] >= 90).astype(int)
+    df['is_consecutive'] = (df['interval_days'] <= 14).astype(int)
+    
+    # Interval Category
+    # 1: <=14, 2: <=30, 3: <=60, 4: >60
+    df['interval_category'] = 4
+    df.loc[df['interval_days'] <= 60, 'interval_category'] = 3
+    df.loc[df['interval_days'] <= 30, 'interval_category'] = 2
+    df.loc[df['interval_days'] <= 14, 'interval_category'] = 1
+    
+    # Drop prev_date
+    df.drop(columns=['prev_date', 'interval_days'], inplace=True, errors='ignore') # We might want to keep interval_days as specific feature?
+    # Original features had 'weighted_avg_interval'.
+    # Keeping raw 'interval' for current race might be useful as feature?
+    # But `process_data` defines features list.
+    # Let's strictly replace the section 447-606.
 
-        df['distance_compatibility'] = np.where(dist_counts > 0, dist_sums / dist_counts, 5.0)
-
-    # ========== 新規特徴量: レース間隔関連 ==========
-
-    # 4. 休養明けフラグ（最小レース間隔が90日以上）
-    df['is_rest_comeback'] = 0
-
-    min_interval_cols = [f'past_{i}_interval' for i in range(1, 6) if f'past_{i}_interval' in df.columns]
-    if min_interval_cols:
-        min_interval = df[min_interval_cols].min(axis=1)
-        df['is_rest_comeback'] = (min_interval >= 90).astype(int)
-
-    # 5. レース間隔カテゴリ（直近レースからの間隔）
-    # 1: 2週以内, 2: 1ヶ月以内, 3: 2ヶ月以内, 4: 3ヶ月以上
-    df['interval_category'] = 2  # デフォルト
-
-    if 'past_1_interval' in df.columns:
-        df['interval_category'] = df['past_1_interval'].apply(
-            lambda x: 1 if x <= 14 else (2 if x <= 30 else (3 if x <= 60 else 4))
-        )
-
-    # 6. 連闘フラグ（2週間以内の連続出走）
-    df['is_consecutive'] = 0
-    if 'past_1_interval' in df.columns:
-        df['is_consecutive'] = (df['past_1_interval'] <= 14).astype(int)
 
     # ========== 新規特徴量: 騎手との相性 ==========
 
@@ -1087,73 +1129,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
          df['age'] = 3.0
     feature_cols.append('age')
     
-    # --- New Course Features ---
-    # Convert raw strings to numeric codes
-    
-    # 1. Course Type (course_type) -> 芝=1, ダ=2, 障=3
-    if 'コースタイプ' in df.columns:
-        def map_course(x):
-            if not isinstance(x, str): return 0
-            if '芝' in x: return 1
-            if 'ダ' in x: return 2
-            if '障' in x: return 3
-            return 0
-        df['course_type_code'] = df['コースタイプ'].apply(map_course)
-        feature_cols.append('course_type_code')
-    else:
-        df['course_type_code'] = 0
-        feature_cols.append('course_type_code')
 
-    # 2. Distance -> Numeric
-    if '距離' in df.columns:
-        df['distance_val'] = pd.to_numeric(df['距離'], errors='coerce').fillna(1600)
-        feature_cols.append('distance_val')
-    else:
-        df['distance_val'] = 1600
-        feature_cols.append('distance_val')
-
-    # 3. Rotation -> 右=1, 左=2, 直線=3, 他=0
-    if '回り' in df.columns:
-        def map_rot(x):
-            if not isinstance(x, str): return 0
-            if '右' in x: return 1
-            if '左' in x: return 2
-            if '直線' in x: return 3
-            return 0
-        df['rotation_code'] = df['回り'].apply(map_rot)
-        feature_cols.append('rotation_code')
-    else:
-        df['rotation_code'] = 0
-        feature_cols.append('rotation_code')
-
-    # 4. Weather (Current Race) -> 晴=1, 曇=2, 雨=3, 小雨=4, 雪=5
-    # Note: DB might have '天候' column
-    w_map = {'晴': 1, '曇': 2, '雨': 3, '小雨': 4, '雪': 5}
-    if '天候' in df.columns:
-         def map_weather_curr(val):
-            if not isinstance(val, str): return 2
-            for k, v in w_map.items():
-                if k in val: return v
-            return 2
-         df['weather_code'] = df['天候'].apply(map_weather_curr)
-         feature_cols.append('weather_code')
-    else:
-         df['weather_code'] = 2
-         feature_cols.append('weather_code')
-
-    # 5. Condition (Current Race) -> 良=1, 稍重=2, 重=3, 不良=4
-    c_map = {'良': 1, '稍重': 2, '重': 3, '不良': 4}
-    if '馬場状態' in df.columns:
-        def map_cond_curr(val):
-            if not isinstance(val, str): return 1
-            for k, v in c_map.items():
-                if k in val: return v
-            return 1
-        df['condition_code'] = df['馬場状態'].apply(map_cond_curr)
-        feature_cols.append('condition_code')
-    else:
-        df['condition_code'] = 1
-        feature_cols.append('condition_code')
 
     # ========== 新規特徴量: 騎手・調教師関連（続き） ==========
 

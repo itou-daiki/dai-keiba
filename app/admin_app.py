@@ -516,7 +516,7 @@ with tab_data:
     # New Section: Global Stats
     st.markdown("---")
     st.markdown("### 📊 統計アーティファクト管理")
-    st.info("予測時に使用する騎手・コース・厩舎の統計データファイル (`feature_stats.pkl`) を更新します。")
+    st.info("予測時に使用する騎手・コース・厩舎の統計データファイル (`feature_stats.pkl`) を更新します。これには**全期間（3年間）のGlobal Historyデータ**（騎手相性、適性スコア）が含まれます。")
     if st.button("📈 統計アーティファクトを更新 (Export Stats)", help="ml/export_stats.pyを実行します"):
          with st.spinner(f"統計データを計算・出力中 ({mode_val})..."):
              try:

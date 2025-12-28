@@ -885,9 +885,10 @@ if race_id:
 
         for compat_col in ['jockey_compatibility', 'distance_compatibility', 'course_compatibility']:
             if compat_col in df_display.columns:
-                # 10 - 値 で反転（ただし、0-10の範囲に制限）
+                # 10 - (値 / 2) でスコア化 (平均着順10.0 -> 5.0点)
+                # 1位 -> 9.5点, 18位 -> 1.0点
                 df_display[compat_col] = df_display[compat_col].apply(
-                    lambda x: max(0, min(10, 10 - x)) if pd.notna(x) else 5.0
+                    lambda x: max(0, min(10, 10 - (x / 2))) if pd.notna(x) else 5.0
                 )
 
         rename_map = {
@@ -916,11 +917,11 @@ if race_id:
 
         # Ensure all display columns exist
         defaults = {
-            'jockey_compatibility': 5.0,
-            'distance_compatibility': 5.0,
-            'course_compatibility': 5.0,
-            'turf_compatibility': 5.0,
-            'dirt_compatibility': 5.0,
+            'jockey_compatibility': 10.0,
+            'distance_compatibility': 10.0,
+            'course_compatibility': 10.0,
+            'turf_compatibility': 10.0,
+            'dirt_compatibility': 10.0,
             'weighted_avg_speed': 16.0,
             'weighted_avg_rank': 7.0,
             'jockey_win_rate': 0.1,
@@ -1438,12 +1439,12 @@ if race_id:
             *   **狙い目**: この数値がプラス（緑色）の馬は、統計的にも主観的にも「買う価値あり」と判断された馬です。
 
             **4. 適性度（騎手・コース・距離）**
-            - 過去のデータから計算した適性度（10点満点）
-            - **数値が高いほど良い** (10点=抜群の相性、0点=相性悪い)
-            - 7点以上: 抜群の相性
-            - 5点以上: 良好
-            - 3点以下: やや不安
-            - 5点前後: データ不足（標準値）
+            - **全期間（3年間）のGlobal History**データから計算
+            - 平均着順を10点満点スコアに変換: `10 - (平均着順 / 2)`
+            - **数値が高いほど良い** (10点=平均1着, 5点=平均10着)
+            - **7.0点以上**: 優秀 (平均着順 6着以内)
+            - **5.0点**: 標準 (データなし、または平均10着)
+            - **3.0点以下**: 不安 (平均14着以下)
 
             **5. コース特性（傾斜・直線距離・コース幅・枠番）**
             - **勾配（傾斜）**: 急坂ありの競馬場では人気馬が有利（+2%）
@@ -1523,20 +1524,24 @@ if race_id:
             row = df_display[df_display['馬名'] == horse_name].iloc[0]
 
             # --- Scoring Logic (Lower rank is better, so Invert) ---
+            # --- Scoring Logic (Lower rank is better, so Invert) ---
             def rank_to_score(r):
                 if pd.isna(r) or r > 18: return 0
-                return max(0, min(10, (14 - r) * (10/13)))
+                # Use same logic as table: 10 - (Rank / 2)
+                # Rank 1 -> 9.5
+                # Rank 10 -> 5.0
+                return max(0, min(10, 10 - (r / 2)))
 
             # Calculate scores
             sp_val = row.get('weighted_avg_speed', 16.0)
             score_speed = max(0, min(10, (sp_val - 15.0) * 5))
-            j_val = row.get('jockey_compatibility', 10.0)
+            j_val = row.get('jockey_compatibility', 10.0) # Raw Rank
             score_jockey = rank_to_score(j_val)
-            c_val = row.get('course_compatibility', 10.0)
+            c_val = row.get('course_compatibility', 10.0) # Raw Rank
             score_course = rank_to_score(c_val)
-            d_val = row.get('distance_compatibility', 10.0)
+            d_val = row.get('distance_compatibility', 10.0) # Raw Rank
             score_dist = rank_to_score(d_val)
-            rank_val = row.get('weighted_avg_rank', 10.0)
+            rank_val = row.get('weighted_avg_rank', 10.0) # Raw Rank
             score_form = rank_to_score(rank_val)
 
             # Radar Chart
