@@ -686,10 +686,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     if input_stats:
         if 'hj_compatibility' in input_stats:
              df['jockey_compatibility'] = df['hj_key'].map(input_stats['hj_compatibility'])
-    
-        df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
-            lambda x: x.shift(1).expanding().mean()
-        ).fillna(10.0)
+             
+        if 'tj_compatibility' in input_stats:
+             df['trainer_jockey_compatibility'] = df['tj_key'].map(input_stats['tj_compatibility'])
     
     # De-fragment
     df = df.copy()
