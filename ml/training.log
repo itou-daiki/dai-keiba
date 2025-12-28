@@ -2683,3 +2683,7 @@
 2025-12-28 19:37:13,617 - train_model - INFO -   jockey_races_log: 17517.34
 2025-12-28 19:37:13,617 - train_model - INFO -   trainer_id: 17083.64
 2025-12-28 19:37:13,618 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_meta.json
+2025-12-28 20:12:43,064 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2025-12-28 20:12:43,555 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2025-12-28 20:12:43,555 - train_model - INFO - Win rate: 9.74%, scale_pos_weight: 9.27
+2025-12-28 20:12:43,555 - train_model - INFO - Starting Optuna optimization...
