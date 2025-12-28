@@ -443,7 +443,7 @@ with tab_ml:
                     if 'valid' in evals and 'auc' in evals['valid']:
                         fig_lc.add_trace(go.Scatter(y=evals['valid']['auc'], mode='lines', name='Valid AUC'))
                     fig_lc.update_layout(title="学習曲線 (AUC)", xaxis_title="Rounds", yaxis_title="AUC")
-                    st.plotly_chart(fig_lc, use_container_width=True)
+                    st.plotly_chart(fig_lc, width="stretch")
             else:
                 st.info("学習履歴なし")
 
@@ -459,7 +459,7 @@ with tab_ml:
                         yaxis=dict(autorange="reversed"),
                         xaxis_title="Importance (Gain)"
                     )
-                    st.plotly_chart(fig_fi, use_container_width=True)
+                    st.plotly_chart(fig_fi, width="stretch")
             else:
                 st.info("特徴量重要度なし")
 

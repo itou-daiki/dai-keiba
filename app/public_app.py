@@ -1358,7 +1358,7 @@ if race_id:
             showlegend=False
         )
 
-        st.plotly_chart(fig_top5, use_container_width=True)
+        st.plotly_chart(fig_top5, width="stretch")
 
         # 補正内容の表示
         st.markdown("##### ℹ️ 期待値調整の詳細 (TOP5)")
@@ -1409,7 +1409,7 @@ if race_id:
             height=300
         )
 
-        st.plotly_chart(fig_heatmap, use_container_width=True)
+        st.plotly_chart(fig_heatmap, width="stretch")
 
         # 3. 予測結果の解釈ガイド
         with st.expander("ℹ️ AI分析指標の完全ガイド・計算ロジック", expanded=False):
@@ -1508,7 +1508,7 @@ if race_id:
                 'AIスコア(%)': '{:.1f}',
                 '信頼度': '{:.0f}'
             })
-            .applymap(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['単勝期待値', '調整後期待値', '推奨度(Kelly)'])
+            .map(lambda x: 'background-color: #d4edda' if x > 0 else '', subset=['単勝期待値', '調整後期待値', '推奨度(Kelly)'])
         )
 
 
@@ -1630,10 +1630,10 @@ if race_id:
                     col_c1, col_c2 = st.columns(2)
                     with col_c1:
                         st.markdown("**能力チャート**")
-                        st.plotly_chart(fig_radar, use_container_width=True, key=f"radar_{idx}_{horse_name}")
+                        st.plotly_chart(fig_radar, width="stretch", key=f"radar_{idx}_{horse_name}")
                     with col_c2:
                         st.markdown("**過去5走の推移**")
-                        st.plotly_chart(fig_line, use_container_width=True, key=f"line_{idx}_{horse_name}")
+                        st.plotly_chart(fig_line, width="stretch", key=f"line_{idx}_{horse_name}")
 
             # === おすすめの買い方提案 ===
             st.markdown("---")

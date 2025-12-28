@@ -517,6 +517,13 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     if not df.index.equals(df.sort_values('date_dt').index):
         df.sort_values('date_dt', inplace=True)
 
+    # Global Sort (Already done for Jockey Compat, but ensure it)
+    if not df.index.equals(df.sort_values('date_dt').index):
+        df.sort_values('date_dt', inplace=True)
+    
+    # De-fragment before heavy group operations
+    df = df.copy()
+
     # Helper: Global Expanding Mean by Horse
     # We use 'hj_key' part 'horse_id' which we probably need to define cleanly.
     
@@ -602,6 +609,13 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
             lambda x: x.shift(1).expanding().mean()
         ).fillna(10.0)
     
+        df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
+            lambda x: x.shift(1).expanding().mean()
+        ).fillna(10.0)
+    
+    # De-fragment
+    df = df.copy()
+    
     # 3. Distance Compatibility
     dist_val = df['distance_val'].fillna(1600)
     # Use explicit bins mapping
@@ -643,6 +657,11 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
 
     # Calculate Speed (Global Avg Speed?) - Optional, user request mentions speed
     # Currently handled in weighted_avg_speed (past 5). Global speed might be useful too but task focus is compatibility.
+    
+    # De-fragment before dropping
+    df = df.copy()
+    
+    # Cleanup temps
     
     # Cleanup temps
     drop_temp_cols = ['h_key', 'rank_if_turf', 'rank_if_dirt', 'rank_if_good', 'rank_if_heavy', 'dist_cat']

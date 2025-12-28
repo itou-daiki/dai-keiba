@@ -21,14 +21,17 @@ def inspect_stats(mode="JRA"):
             
         print(f"Stats Keys: {list(stats.keys())}")
         
-        check_keys = ['horse_turf', 'horse_dirt', 'horse_dist_Mile']
+        
+        check_keys = ['horse_turf', 'horse_dirt', 'horse_dist_Mile', 'stable', 'jockey']
         for k in check_keys:
             if k in stats:
                 print(f"  {k}: {len(stats[k])} items")
+                if isinstance(stats[k], dict) and len(stats[k]) > 0:
+                     # Check inner structure for stable/jockey
+                     first_k = list(stats[k].keys())[0]
+                     print(f"    Inner Sample: {stats[k][first_k]}")
                 # Print first 3 items
-                print(f"    Sample: {list(stats[k].items())[:3]}")
-                keys_list = list(stats[k].keys())
-                print(f"    Key Type: {type(keys_list[0])} (Example: '{keys_list[0]}')")
+                # print(f"    Sample: {list(stats[k].items())[:3]}") # Too verbose for nested
             else:
                 print(f"  {k}: MISSING")
                 
