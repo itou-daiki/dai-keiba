@@ -1662,8 +1662,21 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         for cat in ['Sprint', 'Mile', 'Intermediate', 'Long']:
             stats_data[f'horse_dist_{cat}'] = df[df['dist_cat_temp'] == cat].groupby('h_key')['rank'].mean().to_dict()
             
+        # Stable Stats
+        # Re-create t_key for stats
+        if 't_key' not in df.columns:
+            df['t_key'] = df['厩舎'].astype(str).apply(clean_stable_name) if '厩舎' in df.columns else ""
+        
+        # Calculate Win Rate (Rank 1)
+        stats_data['stable_win_rate'] = df.groupby('t_key')['is_win'].mean().to_dict()
+        
+        # Calculate Top 3 Rate (Rank <= 3)
+        # Check if is_top3 exists, or calc it
+        df['is_top3_temp'] = (df['rank'] <= 3).astype(int)
+        stats_data['stable_top3_rate'] = df.groupby('t_key')['is_top3_temp'].mean().to_dict()
+        
         # Cleanup
-        df.drop(columns=['h_key', 'is_turf_temp', 'is_dirt_temp', 'is_good_temp', 'is_heavy_temp', 'dist_cat_temp'], inplace=True, errors='ignore')
+        df.drop(columns=['h_key', 't_key', 'is_top3_temp', 'is_turf_temp', 'is_dirt_temp', 'is_good_temp', 'is_heavy_temp', 'dist_cat_temp'], inplace=True, errors='ignore')
 
 
         # Course Bias Stats (Frame & RunStyle)
