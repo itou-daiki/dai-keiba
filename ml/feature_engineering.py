@@ -799,38 +799,10 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # 2. 厩舎×騎手の通算成績 (Global Expanding Mean) - Fallback
     # 3. デフォルト (10.0)
 
-    df['jockey_compatibility'] = np.nan
-    df['trainer_jockey_compatibility'] = np.nan
+    # This section was redundant and buggy. 
+    # Jockey/Stable keys and compatibility lookup are already handled correctly above (around lines 660-680).
+    # Removing duplicate reset to prevent overwriting with dirty keys.
 
-    df['jockey_compatibility'] = np.nan
-    df['trainer_jockey_compatibility'] = np.nan
-
-    if '騎手' in df.columns:
-        # Create keys
-        # Use existing columns or cleaned ones
-        jockey_series = df['騎手'].astype(str).apply(clean_jockey)
-        
-        # Horse-Jockey Key
-        # If horse_id exists use it, else Name
-        if 'horse_id' in df.columns:
-             h_key = df['horse_id'].apply(clean_id_str)
-        else:
-             h_key = df['馬名'].astype(str)
-             
-        df['hj_key'] = h_key + '_' + jockey_series
-        
-        # Trainer-Jockey Key
-        t_key = df['厩舎'].astype(str).str.strip() if '厩舎' in df.columns else pd.Series([''] * len(df))
-        df['tj_key'] = t_key + '_' + jockey_series
-
-        if input_stats:
-            # Inference Mode
-            if 'hj_compatibility' in input_stats:
-                df['jockey_compatibility'] = df['hj_key'].map(input_stats['hj_compatibility'])
-            
-            if 'tj_compatibility' in input_stats:
-                df['trainer_jockey_compatibility'] = df['tj_key'].map(input_stats['tj_compatibility'])
-        else:
             # Training Mode (Expanding Mean)
             if 'rank' not in df.columns:
                  df['rank'] = pd.to_numeric(df['着 順'], errors='coerce')
