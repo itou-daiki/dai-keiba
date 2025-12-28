@@ -3567,3 +3567,7 @@
 2025-12-28 23:29:29,602 - train_model - INFO - Data sorted by date for TimeSeriesSplit
 2025-12-28 23:29:29,603 - train_model - INFO - Win rate: 9.76%, scale_pos_weight: 9.25
 2025-12-28 23:29:29,603 - train_model - INFO - Starting Optuna optimization...
+2025-12-28 23:36:40,734 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2025-12-28 23:36:41,310 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2025-12-28 23:36:41,311 - train_model - INFO - Win rate: 7.27%, scale_pos_weight: 12.75
+2025-12-28 23:36:41,311 - train_model - INFO - Starting Optuna optimization...

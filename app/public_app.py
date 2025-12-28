@@ -452,7 +452,8 @@ if schedule_data and "races" in schedule_data:
             st.write(f"対象レース数: {len(target_races)} レース")
             
             confidence_threshold = st.slider("信頼度フィルター (これ以上の信頼度のレースを表示)", 0, 100, 70)
-            
+            use_odds_bias_batch = st.checkbox("現在オッズを加味する (推奨)", value=True, help("人気馬のスコアを上げ、不人気馬を下げます"))
+
             if st.button("🚀 一括分析を開始する", type="primary"):
                  if not target_races:
                      st.warning("対象レースがありません。")
@@ -489,6 +490,22 @@ if schedule_data and "races" in schedule_data:
                                      # 2. Predict
 
                                      processed_df = predict_race_logic(df_race, model, model_meta, stats=stats)
+                                    
+                                    # Odds Bias (Batch Mode)
+                                    if use_odds_bias_batch and processed_df is not None and '単勝' in processed_df.columns:
+                                        try:
+                                            # Local helper or lambda
+                                            calc_prob = lambda x: 0.8 / float(x) if (str(x).replace('.','',1).isdigit() and float(x) > 0) else 0
+                                            
+                                            processed_df['Implied_Prob'] = processed_df['単勝'].apply(calc_prob)
+                                            # Blend: AI 70%, Market 30%
+                                            alpha = 0.7
+                                            processed_df['AI_Prob_Blended'] = (processed_df['AI_Prob'] * alpha) + (processed_df['Implied_Prob'] * (1 - alpha))
+                                            processed_df['AI_Score'] = (processed_df['AI_Prob_Blended'] * 100).astype(int)
+                                        except Exception as e:
+                                            # If error (e.g. odds not numeric), skip bias
+                                            print(f"Odds bias error in batch: {e}")
+
                                      
                                      if processed_df is not None:
                                          # 3. Find Top Horses (Top 3)
