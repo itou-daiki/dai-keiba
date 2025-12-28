@@ -491,20 +491,20 @@ if schedule_data and "races" in schedule_data:
 
                                      processed_df = predict_race_logic(df_race, model, model_meta, stats=stats)
                                     
-                                    # Odds Bias (Batch Mode)
-                                    if use_odds_bias_batch and processed_df is not None and '単勝' in processed_df.columns:
-                                        try:
-                                            # Local helper or lambda
-                                            calc_prob = lambda x: 0.8 / float(x) if (str(x).replace('.','',1).isdigit() and float(x) > 0) else 0
-                                            
-                                            processed_df['Implied_Prob'] = processed_df['単勝'].apply(calc_prob)
-                                            # Blend: AI 70%, Market 30%
-                                            alpha = 0.7
-                                            processed_df['AI_Prob_Blended'] = (processed_df['AI_Prob'] * alpha) + (processed_df['Implied_Prob'] * (1 - alpha))
-                                            processed_df['AI_Score'] = (processed_df['AI_Prob_Blended'] * 100).astype(int)
-                                        except Exception as e:
-                                            # If error (e.g. odds not numeric), skip bias
-                                            print(f"Odds bias error in batch: {e}")
+                                     # Odds Bias (Batch Mode)
+                                     if use_odds_bias_batch and processed_df is not None and '単勝' in processed_df.columns:
+                                         try:
+                                             # Local helper or lambda
+                                             calc_prob = lambda x: 0.8 / float(x) if (str(x).replace('.','',1).isdigit() and float(x) > 0) else 0
+                                             
+                                             processed_df['Implied_Prob'] = processed_df['単勝'].apply(calc_prob)
+                                             # Blend: AI 70%, Market 30%
+                                             alpha = 0.7
+                                             processed_df['AI_Prob_Blended'] = (processed_df['AI_Prob'] * alpha) + (processed_df['Implied_Prob'] * (1 - alpha))
+                                             processed_df['AI_Score'] = (processed_df['AI_Prob_Blended'] * 100).astype(int)
+                                         except Exception as e:
+                                             # If error (e.g. odds not numeric), skip bias
+                                             print(f"Odds bias error in batch: {e}")
 
                                      
                                      if processed_df is not None:
