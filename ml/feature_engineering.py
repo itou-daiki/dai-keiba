@@ -630,10 +630,16 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     df['rank_if_good'] = np.where(is_good, df['rank'], np.nan)
     df['rank_if_heavy'] = np.where(is_heavy, df['rank'], np.nan)
     
+    if input_stats:
         if 'horse_heavy' in input_stats:
              df['heavy_condition_avg'] = df['h_key'].map(input_stats['horse_heavy']).fillna(10.0)
         else:
              df['heavy_condition_avg'] = 10.0
+             
+        if 'horse_good' in input_stats:
+             df['good_condition_avg'] = df['h_key'].map(input_stats['horse_good']).fillna(10.0)
+        else:
+             df['good_condition_avg'] = 10.0
     else:
         df['good_condition_avg'] = df.groupby('h_key')['rank_if_good'].transform(
             lambda x: x.shift(1).expanding().mean()
