@@ -856,13 +856,13 @@ if __name__ == "__main__":
     data_path = os.path.join(ml_dir, "processed_data.csv")
     model_path = os.path.join(model_dir, "lgbm_model.pkl")
     print(f"Training JRA Model from {data_path}...")
-    train_and_save_model(data_path, model_path)
+    train_and_save_model(data_path, model_path, calibrate=True)
 
     # 2. Train NAR
     data_path_nar = os.path.join(ml_dir, "processed_data_nar.csv")
     model_path_nar = os.path.join(model_dir, "lgbm_model_nar.pkl")
     if os.path.exists(data_path_nar):
         print(f"\nTraining NAR Model from {data_path_nar}...")
-        train_and_save_model(data_path_nar, model_path_nar)
+        train_and_save_model(data_path_nar, model_path_nar, calibrate=True)
     else:
         print(f"NAR Data {data_path_nar} not found. Skipping.")

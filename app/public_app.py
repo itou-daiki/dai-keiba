@@ -200,11 +200,18 @@ def predict_race_logic(df, model, model_meta, stats=None):
         # Align features with model
         if hasattr(model, 'feature_name'):
              model_features = model.feature_name()
-             # Ensure all features exist
+             # Ensure all features exist and log missing ones
+             missing_features = []
              for f in model_features:
                  if f not in X_df.columns:
+                     missing_features.append(f)
                      X_df[f] = 0
-             
+
+             if missing_features:
+                 logger.warning(f"⚠️  Missing features defaulted to 0 (first 10): {missing_features[:10]}")
+                 if len(missing_features) > 10:
+                     logger.warning(f"... and {len(missing_features)-10} more missing features")
+
              X_pred = X_df[model_features].fillna(0)
         else:
              # Fallback for older sklearn models or if feature_name not available
@@ -252,16 +259,41 @@ def predict_race_logic(df, model, model_meta, stats=None):
 
         # Merge relevant features back to df
         cols_to_merge = [
-            'turf_compatibility', 'dirt_compatibility', 
-            'jockey_compatibility', 'distance_compatibility', 
+            'turf_compatibility', 'dirt_compatibility',
+            'jockey_compatibility', 'distance_compatibility',
             'weighted_avg_speed', 'weighted_avg_rank',
-            'dd_frame_bias', 'dd_run_style_bias', 
-            'jockey_win_rate', 'course_distance_record'
+            'dd_frame_bias', 'dd_run_style_bias',
+            'jockey_win_rate', 'course_distance_record',
+            'good_condition_avg', 'heavy_condition_avg',
+            'stable_win_rate', 'jockey_top3_rate',
+            'trend_rank', 'growth_factor',
+            # 過去成績データも追加
+            'past_1_rank', 'past_2_rank', 'past_3_rank', 'past_4_rank', 'past_5_rank',
+            'past_1_last_3f', 'past_2_last_3f', 'past_3_last_3f'
         ]
         for c in cols_to_merge:
             if c in X_df.columns:
                 df[c] = X_df[c]
-                
+
+        # course_compatibilityを動的に生成（コースタイプに応じて芝/ダートを選択）
+        if 'turf_compatibility' in df.columns and 'dirt_compatibility' in df.columns:
+            if 'コースタイプ' in df.columns:
+                df['course_compatibility'] = df.apply(
+                    lambda row: row['turf_compatibility'] if '芝' in str(row.get('コースタイプ', ''))
+                               else row['dirt_compatibility'] if 'ダ' in str(row.get('コースタイプ', ''))
+                               else row['turf_compatibility'],  # Default to turf
+                    axis=1
+                )
+            else:
+                # コースタイプ不明の場合は芝をデフォルトに
+                df['course_compatibility'] = df['turf_compatibility']
+        elif 'turf_compatibility' in df.columns:
+            df['course_compatibility'] = df['turf_compatibility']
+        elif 'dirt_compatibility' in df.columns:
+            df['course_compatibility'] = df['dirt_compatibility']
+        else:
+            df['course_compatibility'] = 5.0  # デフォルト値
+
         return df
     except Exception as e:
         import traceback
@@ -826,20 +858,22 @@ if race_id:
              else:
                  df_display['Odds'] = 0.0
         
-        # Select appropriate course compatibility
-        # If 'コースタイプ' contains '芝', use turf, else dirt
-        # Default to turf if unknown
-        is_turf_race = True
-        if 'コースタイプ' in df_display.columns:
-             # Check first row (all same race)
-             c_type = str(df_display['コースタイプ'].iloc[0])
-             if 'ダ' in c_type:
-                 is_turf_race = False
+        # course_compatibilityがpredict_race_logicで既に生成されていない場合のみ生成
+        if 'course_compatibility' not in df_display.columns:
+            # Select appropriate course compatibility
+            # If 'コースタイプ' contains '芝', use turf, else dirt
+            # Default to turf if unknown
+            is_turf_race = True
+            if 'コースタイプ' in df_display.columns:
+                 # Check first row (all same race)
+                 c_type = str(df_display['コースタイプ'].iloc[0])
+                 if 'ダ' in c_type:
+                     is_turf_race = False
 
-        if is_turf_race:
-             df_display['course_compatibility'] = df_display.get('turf_compatibility', 5.0)
-        else:
-             df_display['course_compatibility'] = df_display.get('dirt_compatibility', 5.0)
+            if is_turf_race:
+                 df_display['course_compatibility'] = df_display.get('turf_compatibility', 5.0)
+            else:
+                 df_display['course_compatibility'] = df_display.get('dirt_compatibility', 5.0)
 
         # === 適性スコアを適性度に変換（10点満点、高い方が良い） ===
         # 元の値は「平均着順」（小さい方が良い）
@@ -861,15 +895,40 @@ if race_id:
             'jockey_compatibility': '騎手適性度',
             'distance_compatibility': '距離適性度',
             'course_compatibility': 'コース適性度',
-            'weighted_avg_speed': '平均スピード'
+            'turf_compatibility': '芝適性度',
+            'dirt_compatibility': 'ダート適性度',
+            'weighted_avg_speed': '平均スピード',
+            'weighted_avg_rank': '平均着順',
+            'jockey_win_rate': '騎手勝率',
+            'stable_win_rate': '厩舎勝率',
+            'good_condition_avg': '良馬場適性',
+            'heavy_condition_avg': '重馬場適性',
+            'trend_rank': '着順トレンド',
+            'growth_factor': '成長係数',
+            'past_1_rank': '前走着順',
+            'past_2_rank': '前々走着順',
+            'past_3_rank': '3走前着順'
         }
-             
+
         # Ensure all display columns exist
         defaults = {
             'jockey_compatibility': 5.0,
             'distance_compatibility': 5.0,
+            'course_compatibility': 5.0,
+            'turf_compatibility': 5.0,
+            'dirt_compatibility': 5.0,
             'weighted_avg_speed': 16.0,
-            'Confidence': 50
+            'weighted_avg_rank': 7.0,
+            'jockey_win_rate': 0.1,
+            'stable_win_rate': 0.1,
+            'good_condition_avg': 10.0,
+            'heavy_condition_avg': 10.0,
+            'trend_rank': 0.0,
+            'growth_factor': 1.0,
+            'Confidence': 50,
+            'past_1_rank': 0,
+            'past_2_rank': 0,
+            'past_3_rank': 0
         }
         for c, v in defaults.items():
             if c not in df_display.columns:
@@ -879,8 +938,13 @@ if race_id:
         if '予想印' not in df_display.columns:
             df_display['予想印'] = ""
 
-        # Display columns with 予想印 next to 馬名
-        display_cols = ['枠', '馬 番', '馬名', '予想印', '性齢', 'AI_Score', 'Confidence', 'Odds', 'jockey_compatibility', 'course_compatibility', 'distance_compatibility']
+        # Display columns with 予想印 next to 馬名（基本情報+主要適性度）
+        display_cols = [
+            '枠', '馬 番', '馬名', '予想印', '性齢',
+            'AI_Score', 'Confidence', 'Odds',
+            'jockey_compatibility', 'course_compatibility', 'distance_compatibility',
+            'weighted_avg_rank', 'past_1_rank', 'past_2_rank'
+        ]
 
 
         edited_df = df_display[display_cols].copy()
