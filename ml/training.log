@@ -3353,3 +3353,7 @@
 2025-12-28 22:35:59,584 - train_model - INFO -   age_limit: 29222.19
 2025-12-28 22:35:59,584 - train_model - INFO -   weighted_avg_horse_weight: 27150.52
 2025-12-28 22:35:59,585 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_meta.json
+2025-12-28 22:39:01,765 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2025-12-28 22:39:02,406 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2025-12-28 22:39:02,407 - train_model - INFO - Win rate: 7.27%, scale_pos_weight: 12.75
+2025-12-28 22:39:02,407 - train_model - INFO - Starting Optuna optimization...

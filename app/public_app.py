@@ -621,7 +621,7 @@ if race_id:
             st.info("モデルメタデータが見つかりません")
 
     st.markdown("### 🔮 AI予測設定")
-    use_odds_bias = st.checkbox("現在オッズ（人気）を加味してAI評価を補正する", value=False, help="チェックすると、AIの純粋な能力評価に「現在のオッズ（市場の支持）」を30%程度ブレンドします。人気馬のスコアが上がり、不人気馬のスコアが下がります。")
+    use_odds_bias = st.checkbox("現在オッズ（人気）を加味してAI評価を補正する", value=True, help="チェックすると、AIの純粋な能力評価に「現在のオッズ（市場の支持）」を30%程度ブレンドします。人気馬のスコアが上がり、不人気馬のスコアが下がります。")
 
     button_analyze = st.button("🚀 このレースを分析する (データ取得・AI予測)", type="primary", use_container_width=True)
 
