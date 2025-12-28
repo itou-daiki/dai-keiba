@@ -544,13 +544,29 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     
     # Expanding Mean
     # Group by Horse, Shift 1 (past), Expanding Mean
-    df['turf_compatibility'] = df.groupby('h_key')['rank_if_turf'].transform(
-        lambda x: x.shift(1).expanding().mean()
-    ).fillna(10.0) # Default 10.0 (Avg)
+    # Expanding Mean
+    # Group by Horse, Shift 1 (past), Expanding Mean
     
-    df['dirt_compatibility'] = df.groupby('h_key')['rank_if_dirt'].transform(
-        lambda x: x.shift(1).expanding().mean()
-    ).fillna(10.0)
+    if input_stats:
+        # Inference Mode: Use pre-calculated stats
+        if 'horse_turf' in input_stats:
+             df['turf_compatibility'] = df['h_key'].map(input_stats['horse_turf']).fillna(10.0)
+        else:
+             df['turf_compatibility'] = 10.0
+             
+        if 'horse_dirt' in input_stats:
+             df['dirt_compatibility'] = df['h_key'].map(input_stats['horse_dirt']).fillna(10.0)
+        else:
+             df['dirt_compatibility'] = 10.0
+    else:
+        # Training Mode
+        df['turf_compatibility'] = df.groupby('h_key')['rank_if_turf'].transform(
+            lambda x: x.shift(1).expanding().mean()
+        ).fillna(10.0)
+        
+        df['dirt_compatibility'] = df.groupby('h_key')['rank_if_dirt'].transform(
+            lambda x: x.shift(1).expanding().mean()
+        ).fillna(10.0)
 
     # 2. Condition Compatibility
     # Good: 1, Heavy: 3 or 4 (Heavy/Bad)
@@ -560,58 +576,73 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     df['rank_if_good'] = np.where(is_good, df['rank'], np.nan)
     df['rank_if_heavy'] = np.where(is_heavy, df['rank'], np.nan)
     
-    df['good_condition_avg'] = df.groupby('h_key')['rank_if_good'].transform(
-        lambda x: x.shift(1).expanding().mean()
-    ).fillna(10.0)
-    
-    df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
-        lambda x: x.shift(1).expanding().mean()
-    ).fillna(10.0)
-    
-    # 3. Distance Compatibility
-    # Convert distance to categories
-    # Sprint: <1400
-    # Mile: 1400-1800
-    # Intermediate: 1600-2400 (Overlap? Standardize bins)
-    # 1000-1300 (Sprint), 1301-1899 (Mile), 1900-2499 (Intermediate), 2500+ (Long)
-    # Simple bins: 
-    # Use bins centered?
-    # Let's use strict bins: 0-1300, 1301-1899, 1900-2499, 2500+
-    
-    dist_val = df['distance_val'].fillna(1600)
-    df['dist_cat'] = pd.cut(dist_val, bins=[0, 1399, 1899, 2499, 9999], labels=['Sprint', 'Mile', 'Intermediate', 'Long'])
-    
-    # We want compatibility for the CURRENT race's category.
-    # So we need historical avg for the category matching the current row.
-    
-    # Approach:
-    # Calculate expanding mean for EACH category separately.
-    # Then select the column matching the current row's category.
-    
-    cats = ['Sprint', 'Mile', 'Intermediate', 'Long']
-    for cat in cats:
-        is_cat = (df['dist_cat'] == cat)
-        df[f'rank_if_{cat}'] = np.where(is_cat, df['rank'], np.nan)
-        df[f'avg_rank_{cat}'] = df.groupby('h_key')[f'rank_if_{cat}'].transform(
+    if input_stats:
+        if 'horse_good' in input_stats:
+             df['good_condition_avg'] = df['h_key'].map(input_stats['horse_good']).fillna(10.0)
+        else:
+             df['good_condition_avg'] = 10.0
+             
+        if 'horse_heavy' in input_stats:
+             df['heavy_condition_avg'] = df['h_key'].map(input_stats['horse_heavy']).fillna(10.0)
+        else:
+             df['heavy_condition_avg'] = 10.0
+    else:
+        df['good_condition_avg'] = df.groupby('h_key')['rank_if_good'].transform(
             lambda x: x.shift(1).expanding().mean()
         ).fillna(10.0)
         
-    # Select feature based on current category
-    # Vectorized lookup?
-    # df['distance_compatibility'] = ...
+        df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
+            lambda x: x.shift(1).expanding().mean()
+        ).fillna(10.0)
+    
+    # 3. Distance Compatibility
+    dist_val = df['distance_val'].fillna(1600)
+    # Use explicit bins mapping
+    cats = ['Sprint', 'Mile', 'Intermediate', 'Long']
+    # Use pandas cut but handle category type carefully
+    df['dist_cat'] = pd.cut(dist_val, bins=[0, 1399, 1899, 2499, 9999], labels=cats)
+    
+    # Init column
     df['distance_compatibility'] = 10.0
-    for cat in cats:
-        is_cat = (df['dist_cat'] == cat)
-        df.loc[is_cat, 'distance_compatibility'] = df.loc[is_cat, f'avg_rank_{cat}']
+
+    if input_stats:
+        # Inference: Lookup based on CURRENT dist_cat
+        # We need a map: {h_key: {'Sprint': val, 'Mile': val...}} -> complex?
+        # Or simple flat maps: 'horse_dist_Sprint', 'horse_dist_Mile'
+        for cat in cats:
+            stat_key = f'horse_dist_{cat}'
+            if stat_key in input_stats:
+                # Map only for rows where category matches
+                is_cat = (df['dist_cat'] == cat)
+                if is_cat.any():
+                    # Create a Series for this cat
+                    mapped = df.loc[is_cat, 'h_key'].map(input_stats[stat_key]).fillna(10.0)
+                    df.loc[is_cat, 'distance_compatibility'] = mapped
+    else:
+        # Training
+        for cat in cats:
+            is_cat = (df['dist_cat'] == cat)
+            col_name = f'rank_if_{cat}'
+            df[col_name] = np.where(is_cat, df['rank'], np.nan)
+            
+            # Temporary avg column
+            avg_col = f'avg_rank_{cat}'
+            df[avg_col] = df.groupby('h_key')[col_name].transform(
+                lambda x: x.shift(1).expanding().mean()
+            ).fillna(10.0)
+            
+            # Apply to distance_compatibility
+            df.loc[is_cat, 'distance_compatibility'] = df.loc[is_cat, avg_col]
 
     # Calculate Speed (Global Avg Speed?) - Optional, user request mentions speed
     # Currently handled in weighted_avg_speed (past 5). Global speed might be useful too but task focus is compatibility.
     
     # Cleanup temps
     drop_temp_cols = ['h_key', 'rank_if_turf', 'rank_if_dirt', 'rank_if_good', 'rank_if_heavy', 'dist_cat']
-    for cat in cats:
-        drop_temp_cols.append(f'rank_if_{cat}')
-        drop_temp_cols.append(f'avg_rank_{cat}')
+    if not input_stats:
+        for cat in cats:
+            drop_temp_cols.append(f'rank_if_{cat}')
+            drop_temp_cols.append(f'avg_rank_{cat}')
         
     df.drop(columns=drop_temp_cols, inplace=True, errors='ignore')
 
@@ -1512,6 +1543,45 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
              
         stats_data['hj_compatibility'] = df.groupby('hj_key')['rank'].mean().to_dict()
         stats_data['tj_compatibility'] = df.groupby('tj_key')['rank'].mean().to_dict()
+
+        # Add Stats for Global Features
+        # Determine h_key again just in case (though it was dropped)
+        if 'horse_id' in df.columns:
+            df['h_key'] = df['horse_id'].astype(str)
+        else:
+            df['h_key'] = df['馬名'].astype(str)
+
+        # Re-create masks if needed? No, we need to re-calc group means for the WHOLE dataset
+        # We can just groupby h_key and apply logic? No, conditional mean.
+        # Use helper
+        def get_group_mean(mask_name):
+            # Create masked rank
+            masked_rank = np.where(df[mask_name], df['rank'], np.nan)
+            return pd.Series(masked_rank).groupby(df['h_key']).mean().dropna().to_dict()
+
+        # Course Type
+        
+        # Temp masks for stats
+        df['is_turf_temp'] = (df['course_type_code'] == 1)
+        df['is_dirt_temp'] = (df['course_type_code'] == 2)
+        stats_data['horse_turf'] = df[df['is_turf_temp']].groupby('h_key')['rank'].mean().to_dict()
+        stats_data['horse_dirt'] = df[df['is_dirt_temp']].groupby('h_key')['rank'].mean().to_dict()
+
+        # Condition
+        df['is_good_temp'] = (df['condition_code'] == 1)
+        df['is_heavy_temp'] = (df['condition_code'] >= 3)
+        stats_data['horse_good'] = df[df['is_good_temp']].groupby('h_key')['rank'].mean().to_dict()
+        stats_data['horse_heavy'] = df[df['is_heavy_temp']].groupby('h_key')['rank'].mean().to_dict()
+        
+        # Distance
+        # Re-calc cats
+        dist_val_s = df['distance_val'].fillna(1600)
+        df['dist_cat_temp'] = pd.cut(dist_val_s, bins=[0, 1399, 1899, 2499, 9999], labels=['Sprint', 'Mile', 'Intermediate', 'Long'])
+        for cat in ['Sprint', 'Mile', 'Intermediate', 'Long']:
+            stats_data[f'horse_dist_{cat}'] = df[df['dist_cat_temp'] == cat].groupby('h_key')['rank'].mean().to_dict()
+            
+        # Cleanup
+        df.drop(columns=['h_key', 'is_turf_temp', 'is_dirt_temp', 'is_good_temp', 'is_heavy_temp', 'dist_cat_temp'], inplace=True, errors='ignore')
 
 
         # Course Bias Stats (Frame & RunStyle)
