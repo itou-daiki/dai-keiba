@@ -252,6 +252,9 @@ def add_history_features(df):
              df[f'past_{i}_speed'] = df[f'past_{i}_speed'].replace([np.inf, -np.inf], np.nan)
         else:
              df[f'past_{i}_speed'] = np.nan
+        
+        # De-fragment inside loop to prevent buildup
+        df = df.copy()
 
     # Clean up current weight change (calculated above)
     # Already done: df['weight_change_num']
@@ -520,6 +523,33 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     else:
         df['condition_code'] = 1
         feature_cols.append('condition_code')
+
+    # 6. Current Odds (単勝)
+    if '単勝' in df.columns:
+        df['odds'] = pd.to_numeric(df['単勝'], errors='coerce').fillna(0.0)
+        feature_cols.append('odds')
+    elif 'odds' in df.columns:
+        # Already exists (e.g. inference with prepared df)
+        df['odds'] = pd.to_numeric(df['odds'], errors='coerce').fillna(0.0)
+        feature_cols.append('odds')
+    else:
+        df['odds'] = 0.0
+        feature_cols.append('odds')
+
+    # 7. Current Weight & Change (Already parsed to weight_num, weight_change_num)
+    if 'weight_num' in df.columns:
+        df['horse_weight'] = df['weight_num'].fillna(470) # Standard fill
+        feature_cols.append('horse_weight')
+    else:
+        df['horse_weight'] = 470
+        feature_cols.append('horse_weight')
+        
+    if 'weight_change_num' in df.columns:
+        df['weight_change'] = df['weight_change_num'].fillna(0)
+        feature_cols.append('weight_change')
+    else:
+        df['weight_change'] = 0
+        feature_cols.append('weight_change')
 
     # ========== 新規特徴量: コース・馬場適性 (Global History) ==========
     
