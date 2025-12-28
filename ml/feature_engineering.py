@@ -638,7 +638,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
                 j_sums += np.where(is_same, rank_series, 0)
                 j_counts += np.where(is_same, 1, 0)
 
-        df['jockey_compatibility'] = np.where(j_counts > 0, j_sums / j_counts, 5.0)
+        df['jockey_compatibility'] = np.where(j_counts > 0, j_sums / j_counts, np.nan) 
+        # Note: We will fill NaN later after calculating global jockey stats
+
 
     # ========== 新規特徴量: レースクラス・条件 ==========
 
@@ -952,6 +954,26 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
             )
         
         new_features.extend(['jockey_win_rate', 'jockey_top3_rate', 'jockey_races_log'])
+
+        # Now fill missing Jockey Compatibility using Jockey Stats (Proxy)
+        # Scale: WinRate is 0.0-1.0 approx (Top Jockeys ~0.15-0.20)
+        # Compatibility is Rank (1-18, Lower better).
+        # Wait, compatibility was Avg Rank. 5.0 is Good (5th place). 10.0 is Avg.
+        # If High Win Rate -> Low Rank (Good).
+        # Let's map Top3 Rate (0.0-1.0) to Rank (18.0 - 1.0)
+        # Avg Top3 is ~0.25? -> Rank 9?
+        # Top Jockey (0.50) -> Rank 4?
+        # Low Jockey (0.10) -> Rank 12?
+        # Formula: Base 14 - (Top3Rate * 20) -> restricted to 1.0-18.0
+        # Example: 0.5 * 20 = 10. 14-10 = 4.0 (Good)
+        # Example: 0.1 * 20 = 2. 14-2 = 12.0 (Bad)
+        # Example: 0.0 -> 14.0 (Bad)
+        
+        fallback_compat = 14.0 - (df['jockey_top3_rate'] * 20.0)
+        fallback_compat = fallback_compat.clip(1.0, 18.0)
+        
+        df['jockey_compatibility'] = df['jockey_compatibility'].fillna(fallback_compat)
+
 
     # 20. 厩舎の直近成績
     if '厩舎' in df.columns:
