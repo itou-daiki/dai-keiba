@@ -799,35 +799,31 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # 2. 厩舎×騎手の通算成績 (Global Expanding Mean) - Fallback
     # 3. デフォルト (10.0)
 
-    # This section was redundant and buggy. 
-    # Jockey/Stable keys and compatibility lookup are already handled correctly above (around lines 660-680).
-    # Removing duplicate reset to prevent overwriting with dirty keys.
+    if not input_stats:
+        # Training Mode (Expanding Mean)
+        if 'rank' not in df.columns:
+             df['rank'] = pd.to_numeric(df['着 順'], errors='coerce')
+        
+        # Global Sort by Date (Crucial for expanding)
+        df.sort_values(['date_dt'], inplace=True)
+        
+        # 1. Horse-Jockey Compatibility
+        # Calculate average rank of previous races
+        df['prev_rank'] = df.groupby('hj_key')['rank'].shift(1)
+        
+        # Expanding mean (Optimized)
+        # Returns MultiIndex (Key, OriginalIndex), we drop Key to align with df via Index
+        df['jockey_compatibility'] = df.groupby('hj_key')['prev_rank'].expanding().mean().reset_index(level=0, drop=True)
+        
+        # 2. Trainer-Jockey Compatibility
+        df['prev_rank_tj'] = df.groupby('tj_key')['rank'].shift(1)
+        df['trainer_jockey_compatibility'] = df.groupby('tj_key')['prev_rank_tj'].expanding().mean().reset_index(level=0, drop=True)
+        
+        # Drop temp
+        df.drop(columns=['prev_rank', 'prev_rank_tj'], inplace=True, errors='ignore')
 
-            # Training Mode (Expanding Mean)
-            if 'rank' not in df.columns:
-                 df['rank'] = pd.to_numeric(df['着 順'], errors='coerce')
-            
-            # Global Sort by Date (Crucial for expanding)
-            df.sort_values(['date_dt'], inplace=True)
-            
-            # 1. Horse-Jockey Compatibility
-            # Calculate average rank of previous races
-            df['prev_rank'] = df.groupby('hj_key')['rank'].shift(1)
-            
-            # Expanding mean (Optimized)
-            # Returns MultiIndex (Key, OriginalIndex), we drop Key to align with df via Index
-            df['jockey_compatibility'] = df.groupby('hj_key')['prev_rank'].expanding().mean().reset_index(level=0, drop=True)
-            
-            # 2. Trainer-Jockey Compatibility
-            df['prev_rank_tj'] = df.groupby('tj_key')['rank'].shift(1)
-            df['trainer_jockey_compatibility'] = df.groupby('tj_key')['prev_rank_tj'].expanding().mean().reset_index(level=0, drop=True)
-            
-            # Drop temp
-            df.drop(columns=['prev_rank', 'prev_rank_tj'], inplace=True, errors='ignore')
-
-             
-        # Fallback Logic
-        df['jockey_compatibility'] = df['jockey_compatibility'].fillna(df['trainer_jockey_compatibility'])
+    # Fallback Logic
+    df['jockey_compatibility'] = df['jockey_compatibility'].fillna(df['trainer_jockey_compatibility'])
         df['jockey_compatibility'] = df['jockey_compatibility'].fillna(10.0) # Default Average
         
         # Clean temp keys
