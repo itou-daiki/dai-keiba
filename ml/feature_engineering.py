@@ -519,8 +519,15 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
 
     # Helper: Global Expanding Mean by Horse
     # We use 'hj_key' part 'horse_id' which we probably need to define cleanly.
+    
+    def clean_id_str(val):
+        try:
+            return str(int(float(val)))
+        except:
+            return str(val)
+
     if 'horse_id' in df.columns:
-        df['h_key'] = df['horse_id'].astype(str)
+        df['h_key'] = df['horse_id'].apply(clean_id_str)
     else:
         df['h_key'] = df['馬名'].astype(str)
 
@@ -710,7 +717,11 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         
         # Horse-Jockey Key
         # If horse_id exists use it, else Name
-        h_key = df['horse_id'].astype(str) if 'horse_id' in df.columns else df['馬名'].astype(str)
+        if 'horse_id' in df.columns:
+             h_key = df['horse_id'].apply(clean_id_str)
+        else:
+             h_key = df['馬名'].astype(str)
+             
         df['hj_key'] = h_key + '_' + jockey_series
         
         # Trainer-Jockey Key
@@ -1119,10 +1130,13 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         # We need 'rank'
         
         # Horse ID available?
-        h_id_col = 'horse_id' if 'horse_id' in df.columns else '馬名'
+        if 'horse_id' in df.columns:
+            h_id_key = df['horse_id'].apply(clean_id_str)
+        else:
+            h_id_key = df['馬名'].astype(str)
         
         # Create a grouping key
-        df['horse_course_key'] = df[h_id_col].astype(str) + '_' + df['course_id']
+        df['horse_course_key'] = h_id_key + '_' + df['course_id']
         
         # Calculate Avg Rank in this course previously
         # Calculate Avg Rank in this course previously
@@ -1551,7 +1565,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         # Add Stats for Global Features
         # Determine h_key again just in case (though it was dropped)
         if 'horse_id' in df.columns:
-            df['h_key'] = df['horse_id'].astype(str)
+            df['h_key'] = df['horse_id'].apply(clean_id_str)
         else:
             df['h_key'] = df['馬名'].astype(str)
 

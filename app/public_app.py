@@ -551,7 +551,7 @@ if schedule_data and "races" in schedule_data:
                          if solid_races_data:
                              st.markdown("### 💎 堅いレース候補")
                              res_df = pd.DataFrame(solid_races_data)
-                             st.dataframe(res_df, use_container_width=True)
+                             st.dataframe(res_df, width='stretch')
                              st.info("詳細を見たい場合は、上の「個別レース分析」モードで該当レースを選択してください。")
                          else:
                              st.warning("条件を満たす堅いレースは見つかりませんでした。信頼度基準を下げてみてください。")
@@ -1369,7 +1369,7 @@ if race_id:
                 "推奨度(Kelly)": st.column_config.ProgressColumn(format="%.1f%%", max_value=30),
             },
             hide_index=True,
-            use_container_width=True
+            width='stretch'
         )
 
         # 2. 適性スコア比較（ヒートマップ）

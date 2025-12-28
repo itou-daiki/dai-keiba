@@ -189,7 +189,7 @@ if os.path.exists(csv_path):
     try:
         df = pd.read_csv(csv_path)
         st.metric("総データ数 (行)", len(df))
-        st.dataframe(df,use_container_width=True)
+        st.dataframe(df, width='stretch')
     except Exception as e:
         st.error(f"{csv_filename} を読み込めませんでした: {e}")
 else:
