@@ -677,6 +677,10 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # Let's strictly replace the section 447-606.
 
 
+    # Optimize Memory (De-fragmentation)
+    # The previous steps added many columns, causing fragmentation warnings.
+    df = df.copy()
+
     # ========== 新規特徴量: 騎手との相性 ==========
 
     # 7. 現在の騎手との過去成績（過去5走で同じ騎手の時の平均着順）
