@@ -256,6 +256,10 @@ def add_history_features(df):
     # Clean up current weight change (calculated above)
     # Already done: df['weight_change_num']
 
+    
+    # De-fragment after helper loop
+    df = df.copy()
+
     return df
 
 def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=None, return_stats=False):
@@ -355,6 +359,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     
     feature_cols.extend(['trend_rank', 'trend_last_3f'])
     
+    # De-fragment
+    df = df.copy()
+    
     # Pre-process columns (Fill NaNs)
     for i in range(1, 6):
         # Rank
@@ -404,7 +411,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         # Odds
         col = f"past_{i}_odds"
         if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(100.0) 
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(100.0).infer_objects(copy=False) 
         else:
             df[col] = 100.0
 
@@ -443,6 +450,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         for i in range(1, 6):
             df[f'weighted_avg_{feat}'] += df[f"past_{i}_{feat}"] * norm_weights[i-1]
         feature_cols.append(f'weighted_avg_{feat}')
+    
+    # De-fragment
+    df = df.copy()
 
     # ========== 新規特徴量: 現在レースのメタ情報 (Moved for dependencies) ==========
     
