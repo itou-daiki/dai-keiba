@@ -2,7 +2,7 @@
   "model_id": "lgbm_model",
   "model_type": "LightGBM Binary Classification",
   "target": "target_win",
-  "trained_at": "2025-12-28T21:21:05.517192",
+  "trained_at": "2025-12-28T21:40:05.384203",
   "data_source": "processed_data.csv",
   "data_stats": {
     "total_records": 142350,
