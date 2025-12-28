@@ -404,7 +404,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         # Odds
         col = f"past_{i}_odds"
         if col in df.columns:
-            df[col] = df[col].fillna(100.0) 
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(100.0) 
         else:
             df[col] = 100.0
 
@@ -609,37 +609,74 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # 7. 現在の騎手との過去成績（過去5走で同じ騎手の時の平均着順）
     df['jockey_compatibility'] = 10.0  # デフォルト
 
-    # 7. 現在の騎手との過去成績（過去5走で同じ騎手の時の平均着順）
-    df['jockey_compatibility'] = 10.0  # デフォルト
+    # ========== 新規特徴量: 騎手との相性 (Global & Trainer Fallback) ==========
 
-    # Helper to clean jockey name
+    # 7. 騎手との相性（Global）
+    # 過去5走だけでなく、過去3年間の全データから相性を算出
+    # 優先度:
+    # 1. 馬×騎手の通算成績 (Global Expanding Mean)
+    # 2. 厩舎×騎手の通算成績 (Global Expanding Mean) - Fallback
+    # 3. デフォルト (10.0)
+
+    df['jockey_compatibility'] = np.nan
+    df['trainer_jockey_compatibility'] = np.nan
+
+    # Helper to clean jockey name (Used later in the file too)
     def clean_jockey(name):
         if not isinstance(name, str): return ""
-        # Remove symbols like ▲, △, ☆, ◇, numbers?
-        # Typically "▲丹内" -> "丹内"
         return re.sub(r'[▲△☆◇★\d]', '', name).strip()
-
+    
     if '騎手' in df.columns:
-        current_jockey = df['騎手'].astype(str).apply(clean_jockey)
+        # Create keys
+        # Use existing columns or cleaned ones
+        jockey_series = df['騎手'].astype(str).apply(clean_jockey)
         
-        j_sums = pd.Series(0.0, index=df.index)
-        j_counts = pd.Series(0, index=df.index)
+        # Horse-Jockey Key
+        # If horse_id exists use it, else Name
+        h_key = df['horse_id'].astype(str) if 'horse_id' in df.columns else df['馬名'].astype(str)
+        df['hj_key'] = h_key + '_' + jockey_series
+        
+        # Trainer-Jockey Key
+        t_key = df['厩舎'].astype(str).str.strip() if '厩舎' in df.columns else pd.Series([''] * len(df))
+        df['tj_key'] = t_key + '_' + jockey_series
 
-        for i in range(1, 6):
-            past_jockey_col = f'past_{i}_jockey'
-            rank_col = f'past_{i}_rank'
+        if input_stats:
+            # Inference Mode
+            if 'hj_compatibility' in input_stats:
+                df['jockey_compatibility'] = df['hj_key'].map(input_stats['hj_compatibility'])
             
-            if past_jockey_col in df.columns:
-                p_jockey = df[past_jockey_col].astype(str).apply(clean_jockey)
-                rank_series = df[rank_col] if rank_col in df.columns else pd.Series(18, index=df.index)
-                
-                is_same = (p_jockey == current_jockey) & (current_jockey != "")
-                
-                j_sums += np.where(is_same, rank_series, 0)
-                j_counts += np.where(is_same, 1, 0)
+            if 'tj_compatibility' in input_stats:
+                df['trainer_jockey_compatibility'] = df['tj_key'].map(input_stats['tj_compatibility'])
+        else:
+            # Training Mode (Expanding Mean)
+            if 'rank' not in df.columns:
+                 df['rank'] = pd.to_numeric(df['着 順'], errors='coerce')
+            
+            # Global Sort by Date (Crucial for expanding)
+            df.sort_values(['date_dt'], inplace=True)
+            
+            # 1. Horse-Jockey Compatibility
+            # Calculate average rank of previous races
+            df['prev_rank'] = df.groupby('hj_key')['rank'].shift(1)
+            
+            # Expanding mean (Optimized)
+            # Returns MultiIndex (Key, OriginalIndex), we drop Key to align with df via Index
+            df['jockey_compatibility'] = df.groupby('hj_key')['prev_rank'].expanding().mean().reset_index(level=0, drop=True)
+            
+            # 2. Trainer-Jockey Compatibility
+            df['prev_rank_tj'] = df.groupby('tj_key')['rank'].shift(1)
+            df['trainer_jockey_compatibility'] = df.groupby('tj_key')['prev_rank_tj'].expanding().mean().reset_index(level=0, drop=True)
+            
+            # Drop temp
+            df.drop(columns=['prev_rank', 'prev_rank_tj'], inplace=True, errors='ignore')
 
-        df['jockey_compatibility'] = np.where(j_counts > 0, j_sums / j_counts, np.nan) 
-        # Note: We will fill NaN later after calculating global jockey stats
+             
+        # Fallback Logic
+        df['jockey_compatibility'] = df['jockey_compatibility'].fillna(df['trainer_jockey_compatibility'])
+        df['jockey_compatibility'] = df['jockey_compatibility'].fillna(10.0) # Default Average
+        
+        # Clean temp keys
+        df.drop(columns=['hj_key', 'tj_key', 'trainer_jockey_compatibility'], inplace=True, errors='ignore')
 
 
     # ========== 新規特徴量: レースクラス・条件 ==========
@@ -1486,6 +1523,20 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
 
         if 'horse_course_key' in df.columns:
              stats_data['course_horse'] = df.groupby('horse_course_key')['rank'].mean().to_dict()
+
+        # Add Jockey-Horse & Jockey-Trainer Stats
+        # Re-construct keys if missing (likely dropped)
+        if 'hj_key' not in df.columns or 'tj_key' not in df.columns:
+             jockey_series = df['騎手'].astype(str).apply(clean_jockey) if '騎手' in df.columns else pd.Series(['']*len(df))
+             h_key = df['horse_id'].astype(str) if 'horse_id' in df.columns else df['馬名'].astype(str)
+             t_key = df['厩舎'].astype(str).str.strip() if '厩舎' in df.columns else pd.Series(['']*len(df))
+             
+             df['hj_key'] = h_key + '_' + jockey_series
+             df['tj_key'] = t_key + '_' + jockey_series
+             
+        stats_data['hj_compatibility'] = df.groupby('hj_key')['rank'].mean().to_dict()
+        stats_data['tj_compatibility'] = df.groupby('tj_key')['rank'].mean().to_dict()
+
 
         # Course Bias Stats (Frame & RunStyle)
         # Key: Venue_Distance_CourseType_Rotation
