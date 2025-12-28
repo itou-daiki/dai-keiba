@@ -48,7 +48,31 @@ def parse_time(t_str):
     except:
         return np.nan
 
+def clean_id_str(val):
+    try:
+        return str(int(float(val)))
+    except:
+        return str(val)
+
+def clean_stable_name(val):
+    if not isinstance(val, str): return ""
+    # Remove (Western), (Eastern), (Local) etc.
+    # Remove all whitespace
+    val = val.replace(" ", "").replace("　", "")
+    # Remove text in parentheses
+    import re
+    val = re.sub(r'\(.*?\)', '', val)
+    return val
+
+def clean_jockey(name):
+    if not isinstance(name, str): return ""
+    # Remove symbols and ALL whitespace
+    import re
+    name = re.sub(r'[▲△☆◇★\d]', '', name)
+    return name.replace(" ", "").replace("　", "").strip()
+
 def add_history_features(df):
+
     """
     Groups by horse and sorts by date to add past N race features.
     """
@@ -567,12 +591,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # Helper: Global Expanding Mean by Horse
     # We use 'hj_key' part 'horse_id' which we probably need to define cleanly.
     
-    def clean_id_str(val):
-        try:
-            return str(int(float(val)))
-        except:
-            return str(val)
-
+    # Helper: Global Expanding Mean by Horse
+    # We use 'hj_key' part 'horse_id' which we probably need to define cleanly.
+    
     if 'horse_id' in df.columns:
         df['h_key'] = df['horse_id'].apply(clean_id_str)
     else:
@@ -648,16 +669,6 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
             lambda x: x.shift(1).expanding().mean()
         ).fillna(10.0)
-
-    # Helper for Stable Name Cleaning
-    def clean_stable_name(val):
-        if not isinstance(val, str): return ""
-        # Remove (Western), (Eastern), (Local) etc.
-        # Remove all whitespace
-        val = val.replace(" ", "").replace("　", "")
-        # Remove text in parentheses
-        val = re.sub(r'\(.*?\)', '', val)
-        return val
 
     # 3. Jockey Compatibility
     # Clean Jockey Name
@@ -791,13 +802,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     df['jockey_compatibility'] = np.nan
     df['trainer_jockey_compatibility'] = np.nan
 
-    # Helper to clean jockey name (Used later in the file too)
-    def clean_jockey(name):
-        if not isinstance(name, str): return ""
-        # Remove symbols and ALL whitespace
-        name = re.sub(r'[▲△☆◇★\d]', '', name)
-        return name.replace(" ", "").replace("　", "").strip()
-    
+    df['jockey_compatibility'] = np.nan
+    df['trainer_jockey_compatibility'] = np.nan
+
     if '騎手' in df.columns:
         # Create keys
         # Use existing columns or cleaned ones
