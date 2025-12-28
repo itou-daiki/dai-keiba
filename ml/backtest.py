@@ -43,7 +43,7 @@ def run_backtest(model_path, data_path, betting_strategy='ev_positive', bet_amou
     df = pd.read_csv(data_path)
 
     # Prepare features
-    target_col = 'target_top3'
+    target_col = 'target_win'  # 1着予測（EV計算と整合）
     meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
 
     # Keep race_id and rank for evaluation
