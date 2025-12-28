@@ -1574,7 +1574,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         # Re-construct keys if missing (likely dropped)
         if 'hj_key' not in df.columns or 'tj_key' not in df.columns:
              jockey_series = df['騎手'].astype(str).apply(clean_jockey) if '騎手' in df.columns else pd.Series(['']*len(df))
-             h_key = df['horse_id'].astype(str) if 'horse_id' in df.columns else df['馬名'].astype(str)
+             h_key = df['horse_id'].apply(clean_id_str) if 'horse_id' in df.columns else df['馬名'].astype(str)
              t_key = df['厩舎'].astype(str).str.strip() if '厩舎' in df.columns else pd.Series(['']*len(df))
              
              df['hj_key'] = h_key + '_' + jockey_series
