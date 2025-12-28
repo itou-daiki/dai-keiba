@@ -630,12 +630,6 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     df['rank_if_good'] = np.where(is_good, df['rank'], np.nan)
     df['rank_if_heavy'] = np.where(is_heavy, df['rank'], np.nan)
     
-    if input_stats:
-        if 'horse_good' in input_stats:
-             df['good_condition_avg'] = df['h_key'].map(input_stats['horse_good']).fillna(10.0)
-        else:
-             df['good_condition_avg'] = 10.0
-             
         if 'horse_heavy' in input_stats:
              df['heavy_condition_avg'] = df['h_key'].map(input_stats['horse_heavy']).fillna(10.0)
         else:
@@ -648,6 +642,33 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
             lambda x: x.shift(1).expanding().mean()
         ).fillna(10.0)
+
+    # Helper for Stable Name Cleaning
+    def clean_stable_name(val):
+        if not isinstance(val, str): return ""
+        # Remove (Western), (Eastern), (Local) etc.
+        # Remove all whitespace
+        val = val.replace(" ", "").replace("　", "")
+        # Remove text in parentheses
+        val = re.sub(r'\(.*?\)', '', val)
+        return val
+
+    # 3. Jockey Compatibility
+    # Clean Jockey Name
+    df['jockey_clean'] = df['騎手'].astype(str).apply(clean_jockey)
+    
+    # Generate Stable Key (t_key)
+    if '厩舎' in df.columns:
+        df['t_key'] = df['厩舎'].astype(str).apply(clean_stable_name)
+    else:
+        df['t_key'] = ""
+        
+    df['hj_key'] = df['h_key'] + '_' + df['jockey_clean']
+    df['tj_key'] = df['t_key'] + '_' + df['jockey_clean']
+
+    if input_stats:
+        if 'hj_compatibility' in input_stats:
+             df['jockey_compatibility'] = df['hj_key'].map(input_stats['hj_compatibility'])
     
         df['heavy_condition_avg'] = df.groupby('h_key')['rank_if_heavy'].transform(
             lambda x: x.shift(1).expanding().mean()
@@ -1615,7 +1636,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         if 'hj_key' not in df.columns or 'tj_key' not in df.columns:
              jockey_series = df['騎手'].astype(str).apply(clean_jockey) if '騎手' in df.columns else pd.Series(['']*len(df))
              h_key = df['horse_id'].apply(clean_id_str) if 'horse_id' in df.columns else df['馬名'].astype(str)
-             t_key = df['厩舎'].astype(str).str.strip() if '厩舎' in df.columns else pd.Series(['']*len(df))
+             
+             # Use same cleaner for stable
+             t_key = df['厩舎'].astype(str).apply(clean_stable_name) if '厩舎' in df.columns else pd.Series(['']*len(df))
              
              df['hj_key'] = h_key + '_' + jockey_series
              df['tj_key'] = t_key + '_' + jockey_series
