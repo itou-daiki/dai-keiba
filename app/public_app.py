@@ -880,14 +880,15 @@ if race_id:
                  df_display['course_compatibility'] = df_display.get('dirt_compatibility', 5.0)
 
         # === 適性スコアを適性度に変換（10点満点、高い方が良い） ===
-        # 元の値は「平均着順」（小さい方が良い）
-        # 適性度 = 10 - 平均着順（0-10点、高い方が良い）
+        # 元の値は「平均着順」（1-18、小さい方が良い）
+        # 適性度 = 19 - 平均着順（1-10点、高い方が良い、最低1点保証）
+        # 例: 着順1 → 18点 → 10点, 着順9 → 10点, 着順14 → 5点, 着順18 → 1点
 
         for compat_col in ['jockey_compatibility', 'distance_compatibility', 'course_compatibility']:
             if compat_col in df_display.columns:
-                # 10 - 値 で反転（ただし、0-10の範囲に制限）
+                # 19 - 値 で反転し、1-10の範囲に制限（データ不足でも最低1点保証）
                 df_display[compat_col] = df_display[compat_col].apply(
-                    lambda x: max(0, min(10, 10 - x)) if pd.notna(x) else 5.0
+                    lambda x: max(1, min(10, 19 - x)) if pd.notna(x) else 5.0
                 )
 
         rename_map = {

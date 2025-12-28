@@ -968,10 +968,19 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         # Example: 0.5 * 20 = 10. 14-10 = 4.0 (Good)
         # Example: 0.1 * 20 = 2. 14-2 = 12.0 (Bad)
         # Example: 0.0 -> 14.0 (Bad)
-        
-        fallback_compat = 14.0 - (df['jockey_top3_rate'] * 20.0)
+
+        # IMPROVED: For limited data (3 years), use league average for unknown jockeys
+        # Calculate mean top3_rate from available data, or use default (JRA: 0.25, NAR: 0.30)
+        mean_top3_rate = df['jockey_top3_rate'].replace(0.0, np.nan).mean()
+        if pd.isna(mean_top3_rate) or mean_top3_rate == 0:
+            mean_top3_rate = 0.27  # Conservative average between JRA (0.25) and NAR (0.30)
+
+        # Use mean for jockeys with no data (top3_rate = 0)
+        adjusted_top3_rate = df['jockey_top3_rate'].replace(0.0, mean_top3_rate)
+
+        fallback_compat = 14.0 - (adjusted_top3_rate * 20.0)
         fallback_compat = fallback_compat.clip(1.0, 18.0)
-        
+
         df['jockey_compatibility'] = df['jockey_compatibility'].fillna(fallback_compat)
 
 
