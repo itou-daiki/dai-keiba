@@ -147,23 +147,29 @@ def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_c
         avg_compat = sum(compat_scores) / len(compat_scores)
         min_compat = min(compat_scores)
 
-        # 平均適性による調整
-        if avg_compat >= 9:
-            compat_bonus = +15  # 全て高適性
-        elif avg_compat >= 7:
-            compat_bonus = +8
-        elif avg_compat >= 5:
-            compat_bonus = 0
-        elif avg_compat >= 3:
-            compat_bonus = -12
+        # 平均適性による調整 (Lower is Better, since these are Ranks 1-18)
+        # 1.0 - 4.0: Excellent
+        # 4.1 - 8.0: Good
+        # 8.1 - 12.0: Average
+        # 12.1+: Poor
+        
+        if avg_compat <= 3.5:
+            compat_bonus = +15  # 全て高適性 (Rank 1-3)
+        elif avg_compat <= 7.0:
+            compat_bonus = +8   # 良適性 (Rank 4-7)
+        elif avg_compat <= 11.0:
+            compat_bonus = 0    # 平均的
+        elif avg_compat <= 14.0:
+            compat_bonus = -12  # 不適性
         else:
-            compat_bonus = -25  # データ品質が低い
+            compat_bonus = -25  # 致命的 (Rank 15-18)
 
-        # 最低スコアによる追加ペナルティ（いずれかの適性が極端に低い場合）
-        if min_compat < 3:
-            compat_bonus -= 15  # 致命的な不適性
-        elif min_compat < 5:
-            compat_bonus -= 8
+        # 最低スコアによる追加ペナルティ（いずれかの適性が極端に低い場合 = Rankが大きい）
+        if max(compat_scores) > 13.0:
+            compat_bonus -= 15  # 致命的な不適性を抱えている
+        elif max(compat_scores) > 10.0:
+            compat_bonus -= 5
+
 
     # ===== 5. 休養明け・間隔による調整 (新規追加) =====
     interval_penalty = 0
