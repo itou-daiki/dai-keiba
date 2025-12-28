@@ -324,6 +324,14 @@ with tab_ml:
             with st.spinner("1/3 データ前処理中..."):
                 if os.path.exists(db_path):
                    feature_engineering.calculate_features(db_path, data_path)
+                   
+                   # 1.1 Export Stats for Inference
+                   import export_stats
+                   importlib.reload(export_stats)
+                   if export_stats.export_stats(mode=mode_val):
+                       st.success("統計データ(Inference用)のエクスポート完了")
+                   else:
+                       st.error("統計データのエクスポートに失敗しました")
                 else:
                    st.error("database.csvが見つかりません。")
                    st.stop()
