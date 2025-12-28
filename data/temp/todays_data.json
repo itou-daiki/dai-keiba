@@ -1,294 +1,6 @@
 {
-  "date": "2025-12-27",
+  "date": "2025-12-28",
   "races": [
-    {
-      "id": "202506050501",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050502",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "2",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050503",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "3",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050504",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "4",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202506050505",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202506050506",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "6",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202506050507",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "7",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050508",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "8",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202506050509",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "9",
-      "name": "ひいらぎ賞",
-      "horses": []
-    },
-    {
-      "id": "202506050510",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "10",
-      "name": "香取特別",
-      "horses": []
-    },
-    {
-      "id": "202506050511",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "11",
-      "name": "ターコイズS",
-      "horses": []
-    },
-    {
-      "id": "202506050512",
-      "date": "2025-12-20",
-      "venue": "中山",
-      "number": "12",
-      "name": "3歳以上2勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202509050501",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202509050502",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "2",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202509050503",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "3",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202509050504",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "4",
-      "name": "3歳以上障害OP",
-      "horses": []
-    },
-    {
-      "id": "202509050505",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202509050506",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "6",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202509050507",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "7",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202509050508",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "8",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202509050509",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "9",
-      "name": "ポインセチア",
-      "horses": []
-    },
-    {
-      "id": "202509050510",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "10",
-      "name": "境港特別",
-      "horses": []
-    },
-    {
-      "id": "202509050511",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "11",
-      "name": "タンザナイト",
-      "horses": []
-    },
-    {
-      "id": "202509050512",
-      "date": "2025-12-20",
-      "venue": "阪神",
-      "number": "12",
-      "name": "3歳以上2勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050501",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202507050502",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "2",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050503",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "3",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050504",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "4",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202507050505",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "5",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202507050506",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "6",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050507",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "7",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202507050508",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "8",
-      "name": "YJSF名1",
-      "horses": []
-    },
-    {
-      "id": "202507050509",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "9",
-      "name": "クリスマスR",
-      "horses": []
-    },
-    {
-      "id": "202507050510",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "10",
-      "name": "YJSF名2",
-      "horses": []
-    },
-    {
-      "id": "202507050511",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "11",
-      "name": "尾頭橋S",
-      "horses": []
-    },
-    {
-      "id": "202507050512",
-      "date": "2025-12-20",
-      "venue": "中京",
-      "number": "12",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
     {
       "id": "202506050601",
       "date": "2025-12-21",
@@ -583,98 +295,7 @@
       "venue": "中山",
       "number": "1",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 9.7,
-          "place_odds_min": 2.5,
-          "place_odds_max": 3.8
-        },
-        {
-          "number": 2,
-          "odds": 36.4,
-          "place_odds_min": 4.5,
-          "place_odds_max": 7.1
-        },
-        {
-          "number": 3,
-          "odds": 46.7,
-          "place_odds_min": 5.5,
-          "place_odds_max": 8.8
-        },
-        {
-          "number": 4,
-          "odds": 95.6,
-          "place_odds_min": 13.6,
-          "place_odds_max": 22.2
-        },
-        {
-          "number": 5,
-          "odds": 65.3,
-          "place_odds_min": 8.2,
-          "place_odds_max": 13.4
-        },
-        {
-          "number": 6,
-          "odds": 31.8,
-          "place_odds_min": 6.1,
-          "place_odds_max": 9.8
-        },
-        {
-          "number": 7,
-          "odds": 5.3,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.3
-        },
-        {
-          "number": 8,
-          "odds": 215.3,
-          "place_odds_min": 26.9,
-          "place_odds_max": 44.4
-        },
-        {
-          "number": 9,
-          "odds": 23.0,
-          "place_odds_min": 4.5,
-          "place_odds_max": 7.2
-        },
-        {
-          "number": 10,
-          "odds": 2.7,
-          "place_odds_min": 1.2,
-          "place_odds_max": 1.6
-        },
-        {
-          "number": 11,
-          "odds": 468.5,
-          "place_odds_min": 61.7,
-          "place_odds_max": 101.8
-        },
-        {
-          "number": 12,
-          "odds": 284.3,
-          "place_odds_min": 31.5,
-          "place_odds_max": 51.9
-        },
-        {
-          "number": 13,
-          "odds": 7.1,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.5
-        },
-        {
-          "number": 14,
-          "odds": 4.0,
-          "place_odds_min": 1.5,
-          "place_odds_max": 2.1
-        },
-        {
-          "number": 15,
-          "odds": 21.0,
-          "place_odds_min": 3.6,
-          "place_odds_max": 5.6
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050702",
@@ -682,104 +303,7 @@
       "venue": "中山",
       "number": "2",
       "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 9.3,
-          "place_odds_min": 2.0,
-          "place_odds_max": 3.2
-        },
-        {
-          "number": 2,
-          "odds": 226.3,
-          "place_odds_min": 19.6,
-          "place_odds_max": 35.6
-        },
-        {
-          "number": 3,
-          "odds": 218.6,
-          "place_odds_min": 29.3,
-          "place_odds_max": 53.3
-        },
-        {
-          "number": 4,
-          "odds": 43.6,
-          "place_odds_min": 5.8,
-          "place_odds_max": 10.2
-        },
-        {
-          "number": 5,
-          "odds": 10.8,
-          "place_odds_min": 3.1,
-          "place_odds_max": 5.4
-        },
-        {
-          "number": 6,
-          "odds": 248.2,
-          "place_odds_min": 34.6,
-          "place_odds_max": 63.1
-        },
-        {
-          "number": 7,
-          "odds": 2.5,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.5
-        },
-        {
-          "number": 8,
-          "odds": 4.5,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 9,
-          "odds": 15.8,
-          "place_odds_min": 3.4,
-          "place_odds_max": 5.8
-        },
-        {
-          "number": 10,
-          "odds": 342.3,
-          "place_odds_min": 54.6,
-          "place_odds_max": 99.8
-        },
-        {
-          "number": 11,
-          "odds": 268.3,
-          "place_odds_min": 29.3,
-          "place_odds_max": 53.3
-        },
-        {
-          "number": 12,
-          "odds": 23.2,
-          "place_odds_min": 4.3,
-          "place_odds_max": 7.5
-        },
-        {
-          "number": 13,
-          "odds": 407.2,
-          "place_odds_min": 68.0,
-          "place_odds_max": 124.2
-        },
-        {
-          "number": 14,
-          "odds": 6.2,
-          "place_odds_min": 1.4,
-          "place_odds_max": 2.2
-        },
-        {
-          "number": 15,
-          "odds": 22.4,
-          "place_odds_min": 4.5,
-          "place_odds_max": 7.9
-        },
-        {
-          "number": 16,
-          "odds": 11.6,
-          "place_odds_min": 3.0,
-          "place_odds_max": 5.1
-        }
-      ]
+      "horses": []
     },
     {
       "id": "202506050703",
@@ -787,30 +311,923 @@
       "venue": "中山",
       "number": "3",
       "name": "2歳未勝利",
+      "horses": []
+    },
+    {
+      "id": "202506050704",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "4",
+      "name": "2歳未勝利",
+      "horses": []
+    },
+    {
+      "id": "202506050705",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "5",
+      "name": "2歳新馬",
+      "horses": []
+    },
+    {
+      "id": "202506050706",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "6",
+      "name": "2歳新馬",
+      "horses": []
+    },
+    {
+      "id": "202506050707",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "7",
+      "name": "3歳以上1勝クラス",
+      "horses": []
+    },
+    {
+      "id": "202506050708",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "8",
+      "name": "3歳以上1勝クラス",
+      "horses": []
+    },
+    {
+      "id": "202506050709",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "9",
+      "name": "ベストウィッ",
+      "horses": []
+    },
+    {
+      "id": "202506050710",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "10",
+      "name": "中山大障害",
+      "horses": []
+    },
+    {
+      "id": "202506050711",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "11",
+      "name": "ホープフルS",
+      "horses": []
+    },
+    {
+      "id": "202506050712",
+      "date": "2025-12-27",
+      "venue": "中山",
+      "number": "12",
+      "name": "グレイトフル",
+      "horses": []
+    },
+    {
+      "id": "202509050701",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "1",
+      "name": "2歳未勝利",
+      "horses": []
+    },
+    {
+      "id": "202509050702",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "2",
+      "name": "2歳未勝利",
+      "horses": []
+    },
+    {
+      "id": "202509050703",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "3",
+      "name": "2歳未勝利",
+      "horses": []
+    },
+    {
+      "id": "202509050704",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "4",
+      "name": "2歳未勝利",
+      "horses": []
+    },
+    {
+      "id": "202509050705",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "5",
+      "name": "2歳新馬",
+      "horses": []
+    },
+    {
+      "id": "202509050706",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "6",
+      "name": "2歳新馬",
+      "horses": []
+    },
+    {
+      "id": "202509050707",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "7",
+      "name": "3歳以上1勝クラス",
+      "horses": []
+    },
+    {
+      "id": "202509050708",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "8",
+      "name": "3歳以上2勝クラス",
+      "horses": []
+    },
+    {
+      "id": "202509050709",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "9",
+      "name": "万両賞",
+      "horses": []
+    },
+    {
+      "id": "202509050710",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "10",
+      "name": "摩耶S",
+      "horses": []
+    },
+    {
+      "id": "202509050711",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "11",
+      "name": "阪神カップ",
+      "horses": []
+    },
+    {
+      "id": "202509050712",
+      "date": "2025-12-27",
+      "venue": "阪神",
+      "number": "12",
+      "name": "3歳以上2勝クラス",
+      "horses": []
+    },
+    {
+      "id": "202506050801",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "1",
+      "name": "2歳未勝利",
       "horses": [
         {
           "number": 1,
-          "odds": 19.8,
-          "place_odds_min": 2.2,
-          "place_odds_max": 4.2
+          "odds": 248.5,
+          "place_odds_min": 26.9,
+          "place_odds_max": 49.5
         },
         {
           "number": 2,
-          "odds": 59.7,
-          "place_odds_min": 6.3,
-          "place_odds_max": 13.0
+          "odds": 312.7,
+          "place_odds_min": 35.5,
+          "place_odds_max": 65.3
         },
         {
           "number": 3,
-          "odds": 63.4,
-          "place_odds_min": 5.2,
-          "place_odds_max": 10.5
+          "odds": 113.7,
+          "place_odds_min": 13.2,
+          "place_odds_max": 24.0
         },
         {
           "number": 4,
-          "odds": 16.7,
-          "place_odds_min": 3.0,
+          "odds": 4.7,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 5,
+          "odds": 26.7,
+          "place_odds_min": 3.3,
+          "place_odds_max": 5.6
+        },
+        {
+          "number": 6,
+          "odds": 42.4,
+          "place_odds_min": 6.7,
+          "place_odds_max": 12.0
+        },
+        {
+          "number": 7,
+          "odds": 16.2,
+          "place_odds_min": 3.3,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 8,
+          "odds": 8.9,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 9,
+          "odds": 66.0,
+          "place_odds_min": 8.2,
+          "place_odds_max": 14.8
+        },
+        {
+          "number": 10,
+          "odds": 69.2,
+          "place_odds_min": 7.9,
+          "place_odds_max": 14.2
+        },
+        {
+          "number": 11,
+          "odds": 3.1,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.5
+        },
+        {
+          "number": 12,
+          "odds": 239.9,
+          "place_odds_min": 39.2,
+          "place_odds_max": 72.0
+        },
+        {
+          "number": 13,
+          "odds": 23.8,
+          "place_odds_min": 4.6,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 14,
+          "odds": 3.2,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 15,
+          "odds": 14.1,
+          "place_odds_min": 2.5,
+          "place_odds_max": 4.2
+        },
+        {
+          "number": 16,
+          "odds": 96.7,
+          "place_odds_min": 11.7,
+          "place_odds_max": 21.3
+        }
+      ]
+    },
+    {
+      "id": "202506050802",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "2",
+      "name": "2歳未勝利",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 126.4,
+          "place_odds_min": 18.4,
+          "place_odds_max": 125.0
+        },
+        {
+          "number": 2,
+          "odds": 83.7,
+          "place_odds_min": 5.3,
+          "place_odds_max": 33.8
+        },
+        {
+          "number": 3,
+          "odds": 186.1,
+          "place_odds_min": 16.8,
+          "place_odds_max": 114.1
+        },
+        {
+          "number": 4,
+          "odds": 115.8,
+          "place_odds_min": 6.9,
+          "place_odds_max": 45.3
+        },
+        {
+          "number": 5,
+          "odds": 207.3,
+          "place_odds_min": 43.8,
+          "place_odds_max": 301.9
+        },
+        {
+          "number": 6,
+          "odds": 192.1,
+          "place_odds_min": 13.2,
+          "place_odds_max": 89.3
+        },
+        {
+          "number": 7,
+          "odds": 1.3,
+          "place_odds_min": 1.0,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 8,
+          "odds": 313.7,
+          "place_odds_min": 41.4,
+          "place_odds_max": 285.0
+        },
+        {
+          "number": 9,
+          "odds": 14.1,
+          "place_odds_min": 1.7,
+          "place_odds_max": 8.6
+        },
+        {
+          "number": 10,
+          "odds": 60.2,
+          "place_odds_min": 4.9,
+          "place_odds_max": 31.6
+        },
+        {
+          "number": 11,
+          "odds": 116.4,
+          "place_odds_min": 11.6,
+          "place_odds_max": 78.2
+        },
+        {
+          "number": 12,
+          "odds": 11.5,
+          "place_odds_min": 1.5,
+          "place_odds_max": 7.9
+        },
+        {
+          "number": 13,
+          "odds": 110.1,
+          "place_odds_min": 12.5,
+          "place_odds_max": 84.4
+        },
+        {
+          "number": 14,
+          "odds": 7.7,
+          "place_odds_min": 1.7,
+          "place_odds_max": 8.9
+        },
+        {
+          "number": 15,
+          "odds": 6.7,
+          "place_odds_min": 1.2,
+          "place_odds_max": 5.0
+        },
+        {
+          "number": 16,
+          "odds": 183.3,
+          "place_odds_min": 9.3,
+          "place_odds_max": 61.9
+        }
+      ]
+    },
+    {
+      "id": "202506050803",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "3",
+      "name": "2歳未勝利",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 92.4,
+          "place_odds_min": 11.7,
+          "place_odds_max": 19.4
+        },
+        {
+          "number": 2,
+          "odds": 391.4,
+          "place_odds_min": 59.7,
+          "place_odds_max": 99.9
+        },
+        {
+          "number": 3,
+          "odds": 3.7,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.9
+        },
+        {
+          "number": 4,
+          "odds": 11.5,
+          "place_odds_min": 2.9,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 5,
+          "odds": 100.3,
+          "place_odds_min": 22.5,
+          "place_odds_max": 37.5
+        },
+        {
+          "number": 6,
+          "odds": 290.2,
+          "place_odds_min": 55.8,
+          "place_odds_max": 93.4
+        },
+        {
+          "number": 7,
+          "odds": 22.6,
+          "place_odds_min": 3.5,
+          "place_odds_max": 5.6
+        },
+        {
+          "number": 8,
+          "odds": 16.1,
+          "place_odds_min": 3.8,
+          "place_odds_max": 6.0
+        },
+        {
+          "number": 9,
+          "odds": 234.3,
+          "place_odds_min": 33.0,
+          "place_odds_max": 55.1
+        },
+        {
+          "number": 10,
+          "odds": 10.7,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.3
+        },
+        {
+          "number": 11,
+          "odds": 9.6,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 12,
+          "odds": 4.4,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 13,
+          "odds": 3.1,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 14,
+          "odds": 69.2,
+          "place_odds_min": 8.4,
+          "place_odds_max": 13.7
+        },
+        {
+          "number": 15,
+          "odds": 275.7,
+          "place_odds_min": 42.5,
+          "place_odds_max": 71.0
+        },
+        {
+          "number": 16,
+          "odds": 315.2,
+          "place_odds_min": 44.5,
+          "place_odds_max": 74.4
+        }
+      ]
+    },
+    {
+      "id": "202506050804",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "4",
+      "name": "2歳1勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 434.3,
+          "place_odds_min": 62.1,
+          "place_odds_max": 150.7
+        },
+        {
+          "number": 2,
+          "odds": 6.1,
+          "place_odds_min": 1.6,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 3,
+          "odds": 15.0,
+          "place_odds_min": 1.8,
+          "place_odds_max": 3.7
+        },
+        {
+          "number": 4,
+          "odds": 24.5,
+          "place_odds_min": 2.8,
+          "place_odds_max": 6.1
+        },
+        {
+          "number": 5,
+          "odds": 6.9,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 6,
+          "odds": 62.2,
+          "place_odds_min": 5.2,
+          "place_odds_max": 12.2
+        },
+        {
+          "number": 7,
+          "odds": 2.8,
+          "place_odds_min": 1.2,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 8,
+          "odds": 89.4,
+          "place_odds_min": 6.6,
+          "place_odds_max": 15.6
+        },
+        {
+          "number": 9,
+          "odds": 197.9,
+          "place_odds_min": 17.1,
+          "place_odds_max": 41.3
+        },
+        {
+          "number": 10,
+          "odds": 2.2,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 11,
+          "odds": 99.4,
+          "place_odds_min": 9.4,
+          "place_odds_max": 22.5
+        }
+      ]
+    },
+    {
+      "id": "202506050805",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "5",
+      "name": "2歳新馬",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 42.1,
+          "place_odds_min": 6.0,
+          "place_odds_max": 11.5
+        },
+        {
+          "number": 2,
+          "odds": 32.5,
+          "place_odds_min": 4.0,
+          "place_odds_max": 7.5
+        },
+        {
+          "number": 3,
+          "odds": 110.8,
+          "place_odds_min": 13.6,
+          "place_odds_max": 26.8
+        },
+        {
+          "number": 4,
+          "odds": 8.0,
+          "place_odds_min": 1.8,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 5,
+          "odds": 84.3,
+          "place_odds_min": 9.0,
+          "place_odds_max": 17.5
+        },
+        {
+          "number": 6,
+          "odds": 10.0,
+          "place_odds_min": 1.8,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 7,
+          "odds": 51.3,
+          "place_odds_min": 5.9,
+          "place_odds_max": 11.4
+        },
+        {
+          "number": 8,
+          "odds": 3.6,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 9,
+          "odds": 208.2,
+          "place_odds_min": 24.6,
+          "place_odds_max": 48.6
+        },
+        {
+          "number": 10,
+          "odds": 184.7,
+          "place_odds_min": 25.6,
+          "place_odds_max": 50.6
+        },
+        {
+          "number": 11,
+          "odds": 75.7,
+          "place_odds_min": 7.4,
+          "place_odds_max": 14.3
+        },
+        {
+          "number": 12,
+          "odds": 27.5,
+          "place_odds_min": 3.9,
+          "place_odds_max": 7.4
+        },
+        {
+          "number": 13,
+          "odds": 34.5,
+          "place_odds_min": 4.0,
+          "place_odds_max": 7.5
+        },
+        {
+          "number": 14,
+          "odds": 65.0,
+          "place_odds_min": 7.3,
+          "place_odds_max": 14.1
+        },
+        {
+          "number": 15,
+          "odds": 1.9,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.3
+        },
+        {
+          "number": 16,
+          "odds": 19.7,
+          "place_odds_min": 2.8,
+          "place_odds_max": 5.1
+        }
+      ]
+    },
+    {
+      "id": "202506050806",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "6",
+      "name": "2歳新馬",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 229.1,
+          "place_odds_min": 31.4,
+          "place_odds_max": 57.8
+        },
+        {
+          "number": 2,
+          "odds": 64.1,
+          "place_odds_min": 7.9,
+          "place_odds_max": 14.2
+        },
+        {
+          "number": 3,
+          "odds": 55.8,
+          "place_odds_min": 7.1,
+          "place_odds_max": 12.7
+        },
+        {
+          "number": 4,
+          "odds": 4.4,
+          "place_odds_min": 1.3,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 5,
+          "odds": 17.7,
+          "place_odds_min": 2.7,
+          "place_odds_max": 4.7
+        },
+        {
+          "number": 6,
+          "odds": 8.3,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.6
+        },
+        {
+          "number": 7,
+          "odds": 5.0,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 8,
+          "odds": 247.5,
+          "place_odds_min": 35.5,
+          "place_odds_max": 65.4
+        },
+        {
+          "number": 9,
+          "odds": 118.3,
+          "place_odds_min": 13.4,
+          "place_odds_max": 24.4
+        },
+        {
+          "number": 10,
+          "odds": 42.7,
+          "place_odds_min": 6.1,
+          "place_odds_max": 10.9
+        },
+        {
+          "number": 11,
+          "odds": 266.8,
+          "place_odds_min": 25.8,
+          "place_odds_max": 47.4
+        },
+        {
+          "number": 12,
+          "odds": 153.1,
+          "place_odds_min": 15.9,
+          "place_odds_max": 29.1
+        },
+        {
+          "number": 13,
+          "odds": 34.4,
+          "place_odds_min": 4.9,
+          "place_odds_max": 8.7
+        },
+        {
+          "number": 14,
+          "odds": 34.7,
+          "place_odds_min": 4.6,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 15,
+          "odds": 2.2,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.4
+        },
+        {
+          "number": 16,
+          "odds": 304.2,
+          "place_odds_min": 47.0,
+          "place_odds_max": 86.8
+        },
+        {
+          "number": 17,
+          "odds": 20.3,
+          "place_odds_min": 3.4,
           "place_odds_max": 5.9
+        },
+        {
+          "number": 18,
+          "odds": 142.7,
+          "place_odds_min": 17.9,
+          "place_odds_max": 32.9
+        }
+      ]
+    },
+    {
+      "id": "202506050807",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "7",
+      "name": "3歳以上1勝クラス",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 436.9,
+          "place_odds_min": 111.1,
+          "place_odds_max": 174.8
+        },
+        {
+          "number": 2,
+          "odds": 3.4,
+          "place_odds_min": 1.4,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 3,
+          "odds": 110.9,
+          "place_odds_min": 21.4,
+          "place_odds_max": 33.7
+        },
+        {
+          "number": 4,
+          "odds": 33.0,
+          "place_odds_min": 7.2,
+          "place_odds_max": 11.1
+        },
+        {
+          "number": 5,
+          "odds": 4.1,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 6,
+          "odds": 14.1,
+          "place_odds_min": 3.3,
+          "place_odds_max": 4.9
+        },
+        {
+          "number": 7,
+          "odds": 9.2,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.3
+        },
+        {
+          "number": 8,
+          "odds": 6.4,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 9,
+          "odds": 386.1,
+          "place_odds_min": 69.0,
+          "place_odds_max": 108.5
+        },
+        {
+          "number": 10,
+          "odds": 26.8,
+          "place_odds_min": 5.0,
+          "place_odds_max": 7.7
+        },
+        {
+          "number": 11,
+          "odds": 47.5,
+          "place_odds_min": 9.6,
+          "place_odds_max": 15.0
+        },
+        {
+          "number": 12,
+          "odds": 65.0,
+          "place_odds_min": 7.7,
+          "place_odds_max": 11.9
+        },
+        {
+          "number": 13,
+          "odds": 163.6,
+          "place_odds_min": 26.0,
+          "place_odds_max": 41.0
+        },
+        {
+          "number": 14,
+          "odds": 8.5,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 15,
+          "odds": 113.9,
+          "place_odds_min": 16.4,
+          "place_odds_max": 25.7
+        },
+        {
+          "number": 16,
+          "odds": 7.2,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.1
+        }
+      ]
+    },
+    {
+      "id": "202506050808",
+      "date": "2025-12-28",
+      "venue": "中山",
+      "number": "8",
+      "name": "ハッピーエン",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 12.6,
+          "place_odds_min": 2.6,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 2,
+          "odds": 134.4,
+          "place_odds_min": 20.1,
+          "place_odds_max": 36.7
+        },
+        {
+          "number": 3,
+          "odds": 160.7,
+          "place_odds_min": 15.6,
+          "place_odds_max": 28.4
+        },
+        {
+          "number": 4,
+          "odds": 2.5,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.5
         },
         {
           "number": 5,
@@ -820,2136 +1237,53 @@
         },
         {
           "number": 6,
-          "odds": 138.0,
-          "place_odds_min": 11.6,
-          "place_odds_max": 24.2
-        },
-        {
-          "number": 7,
-          "odds": 188.7,
-          "place_odds_min": 47.1,
-          "place_odds_max": 100.2
-        },
-        {
-          "number": 8,
-          "odds": 17.2,
-          "place_odds_min": 2.0,
-          "place_odds_max": 3.7
-        },
-        {
-          "number": 9,
-          "odds": 512.2,
-          "place_odds_min": 43.3,
-          "place_odds_max": 92.0
-        },
-        {
-          "number": 10,
-          "odds": 718.0,
-          "place_odds_min": 64.9,
-          "place_odds_max": 138.2
-        },
-        {
-          "number": 11,
-          "odds": 4.4,
-          "place_odds_min": 1.4,
-          "place_odds_max": 2.5
-        },
-        {
-          "number": 12,
-          "odds": 103.2,
-          "place_odds_min": 10.2,
-          "place_odds_max": 21.2
-        },
-        {
-          "number": 13,
-          "odds": 160.1,
-          "place_odds_min": 12.7,
-          "place_odds_max": 26.6
-        },
-        {
-          "number": 14,
-          "odds": 20.5,
-          "place_odds_min": 3.3,
-          "place_odds_max": 6.6
-        },
-        {
-          "number": 15,
-          "odds": 565.5,
-          "place_odds_min": 45.6,
-          "place_odds_max": 97.0
-        },
-        {
-          "number": 16,
-          "odds": 2.4,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.3
-        }
-      ]
-    },
-    {
-      "id": "202506050704",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "4",
-      "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 110.8,
-          "place_odds_min": 15.3,
-          "place_odds_max": 24.9
-        },
-        {
-          "number": 2,
-          "odds": 540.3,
-          "place_odds_min": 92.0,
-          "place_odds_max": 151.5
-        },
-        {
-          "number": 3,
-          "odds": 40.1,
-          "place_odds_min": 5.6,
-          "place_odds_max": 8.9
-        },
-        {
-          "number": 4,
-          "odds": 24.5,
-          "place_odds_min": 4.5,
-          "place_odds_max": 7.1
-        },
-        {
-          "number": 5,
-          "odds": 3.7,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 6,
-          "odds": 204.0,
-          "place_odds_min": 23.6,
-          "place_odds_max": 38.7
-        },
-        {
-          "number": 7,
-          "odds": 7.4,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.4
-        },
-        {
-          "number": 8,
-          "odds": 2.9,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.8
-        },
-        {
-          "number": 9,
-          "odds": 216.6,
-          "place_odds_min": 23.2,
-          "place_odds_max": 38.1
-        },
-        {
-          "number": 10,
-          "odds": 441.8,
-          "place_odds_min": 90.6,
-          "place_odds_max": 149.2
-        },
-        {
-          "number": 11,
-          "odds": 271.6,
-          "place_odds_min": 35.0,
-          "place_odds_max": 57.4
-        },
-        {
-          "number": 12,
-          "odds": 5.0,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.3
-        },
-        {
-          "number": 13,
-          "odds": 7.0,
-          "place_odds_min": 1.9,
-          "place_odds_max": 2.8
-        },
-        {
-          "number": 14,
-          "odds": 734.1,
-          "place_odds_min": 113.0,
-          "place_odds_max": 186.1
-        },
-        {
-          "number": 15,
-          "odds": 24.8,
-          "place_odds_min": 3.8,
-          "place_odds_max": 6.0
-        },
-        {
-          "number": 16,
-          "odds": 305.2,
-          "place_odds_min": 45.8,
-          "place_odds_max": 75.3
-        },
-        {
-          "number": 17,
-          "odds": 96.6,
-          "place_odds_min": 16.7,
-          "place_odds_max": 27.2
-        },
-        {
-          "number": 18,
-          "odds": 33.2,
-          "place_odds_min": 4.5,
-          "place_odds_max": 7.2
-        }
-      ]
-    },
-    {
-      "id": "202506050705",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 155.9,
-          "place_odds_min": 31.8,
-          "place_odds_max": 47.9
-        },
-        {
-          "number": 2,
-          "odds": 17.8,
-          "place_odds_min": 3.1,
-          "place_odds_max": 4.5
-        },
-        {
-          "number": 3,
-          "odds": 107.4,
-          "place_odds_min": 22.2,
-          "place_odds_max": 33.4
-        },
-        {
-          "number": 4,
-          "odds": 97.0,
-          "place_odds_min": 17.6,
-          "place_odds_max": 26.4
-        },
-        {
-          "number": 5,
-          "odds": 34.5,
-          "place_odds_min": 7.9,
-          "place_odds_max": 11.7
-        },
-        {
-          "number": 6,
-          "odds": 6.1,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.2
-        },
-        {
-          "number": 7,
-          "odds": 16.8,
-          "place_odds_min": 3.8,
-          "place_odds_max": 5.5
-        },
-        {
-          "number": 8,
-          "odds": 12.0,
-          "place_odds_min": 2.7,
-          "place_odds_max": 3.8
-        },
-        {
-          "number": 9,
-          "odds": 30.8,
-          "place_odds_min": 7.0,
-          "place_odds_max": 10.3
-        },
-        {
-          "number": 10,
-          "odds": 16.1,
-          "place_odds_min": 4.0,
-          "place_odds_max": 5.8
-        },
-        {
-          "number": 11,
-          "odds": 178.8,
-          "place_odds_min": 35.4,
-          "place_odds_max": 53.4
-        },
-        {
-          "number": 12,
-          "odds": 4.6,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.3
-        },
-        {
-          "number": 13,
-          "odds": 3.7,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 14,
-          "odds": 6.4,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.0
-        },
-        {
-          "number": 15,
-          "odds": 10.9,
-          "place_odds_min": 3.1,
+          "odds": 22.3,
+          "place_odds_min": 2.6,
           "place_odds_max": 4.4
         },
         {
-          "number": 16,
-          "odds": 157.2,
-          "place_odds_min": 27.8,
-          "place_odds_max": 41.9
-        }
-      ]
-    },
-    {
-      "id": "202506050706",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "6",
-      "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 5.2,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.3
-        },
-        {
-          "number": 2,
-          "odds": 3.2,
+          "number": 7,
+          "odds": 4.8,
           "place_odds_min": 1.3,
-          "place_odds_max": 1.8
-        },
-        {
-          "number": 3,
-          "odds": 175.4,
-          "place_odds_min": 30.7,
-          "place_odds_max": 50.4
-        },
-        {
-          "number": 4,
-          "odds": 72.4,
-          "place_odds_min": 11.1,
-          "place_odds_max": 18.1
-        },
-        {
-          "number": 5,
-          "odds": 23.8,
-          "place_odds_min": 4.7,
-          "place_odds_max": 7.5
-        },
-        {
-          "number": 6,
-          "odds": 18.5,
-          "place_odds_min": 3.6,
-          "place_odds_max": 5.7
-        },
-        {
-          "number": 7,
-          "odds": 9.2,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.1
-        },
-        {
-          "number": 8,
-          "odds": 47.6,
-          "place_odds_min": 8.4,
-          "place_odds_max": 13.6
-        },
-        {
-          "number": 9,
-          "odds": 161.7,
-          "place_odds_min": 23.4,
-          "place_odds_max": 38.5
-        },
-        {
-          "number": 10,
-          "odds": 8.1,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.6
-        },
-        {
-          "number": 11,
-          "odds": 3.7,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.8
-        },
-        {
-          "number": 12,
-          "odds": 11.2,
-          "place_odds_min": 2.6,
-          "place_odds_max": 4.0
-        },
-        {
-          "number": 13,
-          "odds": 108.9,
-          "place_odds_min": 18.8,
-          "place_odds_max": 30.8
-        },
-        {
-          "number": 14,
-          "odds": 139.4,
-          "place_odds_min": 18.3,
-          "place_odds_max": 30.1
-        }
-      ]
-    },
-    {
-      "id": "202506050707",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "7",
-      "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 15.4,
-          "place_odds_min": 3.7,
-          "place_odds_max": 5.6
-        },
-        {
-          "number": 2,
-          "odds": 9.9,
-          "place_odds_min": 2.9,
-          "place_odds_max": 4.4
-        },
-        {
-          "number": 3,
-          "odds": 34.7,
-          "place_odds_min": 6.7,
-          "place_odds_max": 10.4
-        },
-        {
-          "number": 4,
-          "odds": 480.1,
-          "place_odds_min": 70.5,
-          "place_odds_max": 111.8
-        },
-        {
-          "number": 5,
-          "odds": 417.6,
-          "place_odds_min": 67.9,
-          "place_odds_max": 107.7
-        },
-        {
-          "number": 6,
-          "odds": 38.3,
-          "place_odds_min": 6.3,
-          "place_odds_max": 9.8
-        },
-        {
-          "number": 7,
-          "odds": 24.8,
-          "place_odds_min": 4.6,
-          "place_odds_max": 7.1
-        },
-        {
-          "number": 8,
-          "odds": 41.0,
-          "place_odds_min": 7.0,
-          "place_odds_max": 11.0
-        },
-        {
-          "number": 9,
-          "odds": 2.6,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.7
-        },
-        {
-          "number": 10,
-          "odds": 67.6,
-          "place_odds_min": 12.1,
-          "place_odds_max": 19.2
-        },
-        {
-          "number": 11,
-          "odds": 48.0,
-          "place_odds_min": 7.6,
-          "place_odds_max": 11.9
-        },
-        {
-          "number": 12,
-          "odds": 31.1,
-          "place_odds_min": 3.9,
-          "place_odds_max": 6.0
-        },
-        {
-          "number": 13,
-          "odds": 92.4,
-          "place_odds_min": 11.1,
-          "place_odds_max": 17.6
-        },
-        {
-          "number": 14,
-          "odds": 4.5,
-          "place_odds_min": 1.5,
-          "place_odds_max": 2.1
-        },
-        {
-          "number": 15,
-          "odds": 7.4,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.4
-        },
-        {
-          "number": 16,
-          "odds": 27.3,
-          "place_odds_min": 4.4,
-          "place_odds_max": 6.8
-        },
-        {
-          "number": 17,
-          "odds": 14.2,
-          "place_odds_min": 3.4,
-          "place_odds_max": 5.1
-        },
-        {
-          "number": 18,
-          "odds": 22.6,
-          "place_odds_min": 4.8,
-          "place_odds_max": 7.4
-        }
-      ]
-    },
-    {
-      "id": "202506050708",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "8",
-      "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 3.5,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.7
-        },
-        {
-          "number": 2,
-          "odds": 11.2,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.3
-        },
-        {
-          "number": 3,
-          "odds": 433.7,
-          "place_odds_min": 67.1,
-          "place_odds_max": 115.6
-        },
-        {
-          "number": 4,
-          "odds": 370.7,
-          "place_odds_min": 44.5,
-          "place_odds_max": 76.6
-        },
-        {
-          "number": 5,
-          "odds": 20.2,
-          "place_odds_min": 4.4,
-          "place_odds_max": 7.3
-        },
-        {
-          "number": 6,
-          "odds": 19.1,
-          "place_odds_min": 4.7,
-          "place_odds_max": 7.8
-        },
-        {
-          "number": 7,
-          "odds": 306.4,
-          "place_odds_min": 29.3,
-          "place_odds_max": 50.4
-        },
-        {
-          "number": 8,
-          "odds": 53.9,
-          "place_odds_min": 9.4,
-          "place_odds_max": 15.9
-        },
-        {
-          "number": 9,
-          "odds": 401.9,
-          "place_odds_min": 43.7,
-          "place_odds_max": 75.3
-        },
-        {
-          "number": 10,
-          "odds": 241.3,
-          "place_odds_min": 24.0,
-          "place_odds_max": 41.2
-        },
-        {
-          "number": 11,
-          "odds": 395.8,
-          "place_odds_min": 43.4,
-          "place_odds_max": 74.7
-        },
-        {
-          "number": 12,
-          "odds": 44.6,
-          "place_odds_min": 4.0,
-          "place_odds_max": 6.5
-        },
-        {
-          "number": 13,
-          "odds": 7.3,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.3
-        },
-        {
-          "number": 14,
-          "odds": 3.6,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.8
-        },
-        {
-          "number": 15,
-          "odds": 4.2,
-          "place_odds_min": 1.4,
-          "place_odds_max": 2.1
-        },
-        {
-          "number": 16,
-          "odds": 12.9,
-          "place_odds_min": 2.9,
-          "place_odds_max": 4.6
-        }
-      ]
-    },
-    {
-      "id": "202506050709",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "9",
-      "name": "ベストウィッ",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 16.7,
-          "place_odds_min": 2.8,
-          "place_odds_max": 4.9
-        },
-        {
-          "number": 2,
-          "odds": 17.5,
-          "place_odds_min": 2.8,
-          "place_odds_max": 4.9
-        },
-        {
-          "number": 3,
-          "odds": 43.5,
-          "place_odds_min": 7.3,
-          "place_odds_max": 13.4
-        },
-        {
-          "number": 4,
-          "odds": 315.9,
-          "place_odds_min": 29.6,
-          "place_odds_max": 55.5
-        },
-        {
-          "number": 5,
-          "odds": 49.5,
-          "place_odds_min": 5.2,
-          "place_odds_max": 9.3
-        },
-        {
-          "number": 6,
-          "odds": 7.7,
-          "place_odds_min": 2.0,
-          "place_odds_max": 3.3
-        },
-        {
-          "number": 7,
-          "odds": 18.0,
-          "place_odds_min": 3.3,
-          "place_odds_max": 5.8
-        },
-        {
-          "number": 8,
-          "odds": 375.5,
-          "place_odds_min": 48.5,
-          "place_odds_max": 91.1
-        },
-        {
-          "number": 9,
-          "odds": 3.1,
-          "place_odds_min": 1.2,
-          "place_odds_max": 1.5
-        },
-        {
-          "number": 10,
-          "odds": 25.7,
-          "place_odds_min": 3.3,
-          "place_odds_max": 5.9
-        },
-        {
-          "number": 11,
-          "odds": 2.6,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.7
-        },
-        {
-          "number": 12,
-          "odds": 154.2,
-          "place_odds_min": 22.1,
-          "place_odds_max": 41.3
-        },
-        {
-          "number": 13,
-          "odds": 7.6,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.9
-        },
-        {
-          "number": 14,
-          "odds": 86.0,
-          "place_odds_min": 11.7,
-          "place_odds_max": 21.7
-        },
-        {
-          "number": 15,
-          "odds": 295.3,
-          "place_odds_min": 27.4,
-          "place_odds_max": 51.3
-        },
-        {
-          "number": 16,
-          "odds": 76.0,
-          "place_odds_min": 8.9,
-          "place_odds_max": 16.4
-        }
-      ]
-    },
-    {
-      "id": "202506050710",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "10",
-      "name": "中山大障害",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 3.7,
-          "place_odds_min": 1.1,
-          "place_odds_max": 3.0
-        },
-        {
-          "number": 2,
-          "odds": 138.0,
-          "place_odds_min": 8.6,
-          "place_odds_max": 45.3
-        },
-        {
-          "number": 3,
-          "odds": 29.7,
-          "place_odds_min": 2.6,
-          "place_odds_max": 11.9
-        },
-        {
-          "number": 4,
-          "odds": 1.5,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.1
-        },
-        {
-          "number": 5,
-          "odds": 206.1,
-          "place_odds_min": 13.6,
-          "place_odds_max": 72.4
-        },
-        {
-          "number": 6,
-          "odds": 5.3,
-          "place_odds_min": 1.2,
-          "place_odds_max": 4.6
-        },
-        {
-          "number": 7,
-          "odds": 10.6,
-          "place_odds_min": 1.4,
-          "place_odds_max": 5.3
-        },
-        {
-          "number": 8,
-          "odds": 163.9,
-          "place_odds_min": 9.0,
-          "place_odds_max": 47.1
-        },
-        {
-          "number": 9,
-          "odds": 73.6,
-          "place_odds_min": 4.3,
-          "place_odds_max": 21.5
-        },
-        {
-          "number": 10,
-          "odds": 101.3,
-          "place_odds_min": 5.1,
-          "place_odds_max": 26.1
-        }
-      ]
-    },
-    {
-      "id": "202506050711",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "11",
-      "name": "ホープフルS",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 37.9,
-          "place_odds_min": 6.6,
-          "place_odds_max": 10.1
-        },
-        {
-          "number": 2,
-          "odds": 16.0,
-          "place_odds_min": 3.2,
-          "place_odds_max": 4.8
-        },
-        {
-          "number": 3,
-          "odds": 4.6,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.1
-        },
-        {
-          "number": 4,
-          "odds": 19.8,
-          "place_odds_min": 5.1,
-          "place_odds_max": 7.7
-        },
-        {
-          "number": 5,
-          "odds": 279.1,
-          "place_odds_min": 47.1,
-          "place_odds_max": 73.9
-        },
-        {
-          "number": 6,
-          "odds": 6.4,
-          "place_odds_min": 2.0,
-          "place_odds_max": 2.9
-        },
-        {
-          "number": 7,
-          "odds": 87.8,
-          "place_odds_min": 11.6,
-          "place_odds_max": 18.0
-        },
-        {
-          "number": 8,
-          "odds": 151.9,
-          "place_odds_min": 19.4,
-          "place_odds_max": 30.5
-        },
-        {
-          "number": 9,
-          "odds": 133.0,
-          "place_odds_min": 21.0,
-          "place_odds_max": 32.9
-        },
-        {
-          "number": 10,
-          "odds": 62.0,
-          "place_odds_min": 7.7,
-          "place_odds_max": 11.8
-        },
-        {
-          "number": 11,
-          "odds": 6.4,
-          "place_odds_min": 1.9,
-          "place_odds_max": 2.7
-        },
-        {
-          "number": 12,
-          "odds": 3.5,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.7
-        },
-        {
-          "number": 13,
-          "odds": 5.6,
-          "place_odds_min": 1.9,
-          "place_odds_max": 2.8
-        },
-        {
-          "number": 14,
-          "odds": 55.0,
-          "place_odds_min": 8.3,
-          "place_odds_max": 12.9
-        },
-        {
-          "number": 15,
-          "odds": 32.9,
-          "place_odds_min": 4.5,
-          "place_odds_max": 6.9
-        },
-        {
-          "number": 16,
-          "odds": 29.9,
-          "place_odds_min": 5.4,
-          "place_odds_max": 8.3
-        }
-      ]
-    },
-    {
-      "id": "202506050712",
-      "date": "2025-12-27",
-      "venue": "中山",
-      "number": "12",
-      "name": "グレイトフル",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 20.6,
-          "place_odds_min": 3.3,
-          "place_odds_max": 5.4
-        },
-        {
-          "number": 2,
-          "odds": 30.7,
-          "place_odds_min": 5.0,
-          "place_odds_max": 8.3
-        },
-        {
-          "number": 3,
-          "odds": 4.6,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.4
-        },
-        {
-          "number": 4,
-          "odds": 7.8,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.6
-        },
-        {
-          "number": 5,
-          "odds": 26.7,
-          "place_odds_min": 3.4,
-          "place_odds_max": 5.6
-        },
-        {
-          "number": 6,
-          "odds": 4.0,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 7,
-          "odds": 23.4,
-          "place_odds_min": 2.9,
-          "place_odds_max": 4.7
-        },
-        {
-          "number": 8,
-          "odds": 377.4,
-          "place_odds_min": 36.7,
-          "place_odds_max": 62.8
-        },
-        {
-          "number": 9,
-          "odds": 100.4,
-          "place_odds_min": 8.7,
-          "place_odds_max": 14.6
-        },
-        {
-          "number": 10,
-          "odds": 146.9,
-          "place_odds_min": 15.0,
-          "place_odds_max": 25.7
-        },
-        {
-          "number": 11,
-          "odds": 333.4,
-          "place_odds_min": 40.3,
-          "place_odds_max": 69.1
-        },
-        {
-          "number": 12,
-          "odds": 17.1,
-          "place_odds_min": 3.0,
-          "place_odds_max": 4.9
-        },
-        {
-          "number": 13,
-          "odds": 201.3,
-          "place_odds_min": 17.5,
-          "place_odds_max": 30.0
-        },
-        {
-          "number": 14,
-          "odds": 2.4,
-          "place_odds_min": 1.2,
-          "place_odds_max": 1.6
-        }
-      ]
-    },
-    {
-      "id": "202509050701",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 91.2,
-          "place_odds_min": 8.4,
-          "place_odds_max": 21.6
-        },
-        {
-          "number": 2,
-          "odds": 2.8,
-          "place_odds_min": 1.2,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 3,
-          "odds": 393.5,
-          "place_odds_min": 46.9,
-          "place_odds_max": 123.7
-        },
-        {
-          "number": 4,
-          "odds": 36.6,
-          "place_odds_min": 3.8,
-          "place_odds_max": 9.4
-        },
-        {
-          "number": 5,
-          "odds": 12.1,
-          "place_odds_min": 2.1,
-          "place_odds_max": 4.8
-        },
-        {
-          "number": 6,
-          "odds": 22.9,
-          "place_odds_min": 3.9,
-          "place_odds_max": 9.5
-        },
-        {
-          "number": 7,
-          "odds": 455.6,
-          "place_odds_min": 65.1,
-          "place_odds_max": 171.8
-        },
-        {
-          "number": 8,
-          "odds": 8.8,
-          "place_odds_min": 1.7,
-          "place_odds_max": 3.8
-        },
-        {
-          "number": 9,
-          "odds": 21.9,
-          "place_odds_min": 2.9,
-          "place_odds_max": 7.0
-        },
-        {
-          "number": 10,
-          "odds": 13.3,
-          "place_odds_min": 1.9,
-          "place_odds_max": 4.2
-        },
-        {
-          "number": 11,
-          "odds": 220.0,
-          "place_odds_min": 21.9,
-          "place_odds_max": 57.4
-        },
-        {
-          "number": 12,
-          "odds": 86.2,
-          "place_odds_min": 8.6,
-          "place_odds_max": 22.1
-        },
-        {
-          "number": 13,
-          "odds": 2.2,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.1
-        },
-        {
-          "number": 14,
-          "odds": 28.9,
-          "place_odds_min": 4.6,
-          "place_odds_max": 11.3
-        },
-        {
-          "number": 15,
-          "odds": 280.4,
-          "place_odds_min": 28.6,
-          "place_odds_max": 75.3
-        }
-      ]
-    },
-    {
-      "id": "202509050702",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "2",
-      "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 7.2,
-          "place_odds_min": 1.5,
-          "place_odds_max": 4.9
-        },
-        {
-          "number": 2,
-          "odds": 14.5,
-          "place_odds_min": 1.9,
-          "place_odds_max": 6.7
-        },
-        {
-          "number": 3,
-          "odds": 1.8,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.1
-        },
-        {
-          "number": 4,
-          "odds": 124.9,
-          "place_odds_min": 17.5,
-          "place_odds_max": 72.8
-        },
-        {
-          "number": 5,
-          "odds": 24.7,
-          "place_odds_min": 2.5,
-          "place_odds_max": 9.0
-        },
-        {
-          "number": 6,
-          "odds": 332.8,
-          "place_odds_min": 33.8,
-          "place_odds_max": 141.5
-        },
-        {
-          "number": 7,
-          "odds": 41.6,
-          "place_odds_min": 5.6,
-          "place_odds_max": 22.4
-        },
-        {
-          "number": 8,
-          "odds": 7.1,
-          "place_odds_min": 1.6,
-          "place_odds_max": 5.4
-        },
-        {
-          "number": 9,
-          "odds": 73.9,
-          "place_odds_min": 5.9,
-          "place_odds_max": 23.5
-        },
-        {
-          "number": 10,
-          "odds": 3.8,
-          "place_odds_min": 1.4,
-          "place_odds_max": 4.3
-        },
-        {
-          "number": 11,
-          "odds": 42.1,
-          "place_odds_min": 4.3,
-          "place_odds_max": 16.9
-        }
-      ]
-    },
-    {
-      "id": "202509050703",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "3",
-      "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 46.5,
-          "place_odds_min": 3.8,
-          "place_odds_max": 11.3
-        },
-        {
-          "number": 2,
-          "odds": 8.8,
-          "place_odds_min": 1.4,
-          "place_odds_max": 3.4
-        },
-        {
-          "number": 3,
-          "odds": 135.3,
-          "place_odds_min": 12.5,
-          "place_odds_max": 39.7
-        },
-        {
-          "number": 4,
-          "odds": 2.8,
-          "place_odds_min": 1.1,
-          "place_odds_max": 2.2
-        },
-        {
-          "number": 5,
-          "odds": 118.8,
-          "place_odds_min": 14.1,
-          "place_odds_max": 45.0
-        },
-        {
-          "number": 6,
-          "odds": 72.9,
-          "place_odds_min": 4.4,
-          "place_odds_max": 13.4
-        },
-        {
-          "number": 7,
-          "odds": 12.6,
-          "place_odds_min": 1.8,
-          "place_odds_max": 4.8
-        },
-        {
-          "number": 8,
-          "odds": 117.0,
-          "place_odds_min": 6.4,
-          "place_odds_max": 19.7
-        },
-        {
-          "number": 9,
-          "odds": 165.6,
-          "place_odds_min": 13.5,
-          "place_odds_max": 43.0
-        },
-        {
-          "number": 10,
-          "odds": 165.5,
-          "place_odds_min": 11.4,
-          "place_odds_max": 36.2
-        },
-        {
-          "number": 11,
-          "odds": 400.2,
-          "place_odds_min": 32.6,
-          "place_odds_max": 105.1
-        },
-        {
-          "number": 12,
-          "odds": 211.7,
-          "place_odds_min": 17.0,
-          "place_odds_max": 54.4
-        },
-        {
-          "number": 13,
-          "odds": 1.8,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.1
-        },
-        {
-          "number": 14,
-          "odds": 413.5,
-          "place_odds_min": 36.4,
-          "place_odds_max": 117.4
-        },
-        {
-          "number": 15,
-          "odds": 125.5,
-          "place_odds_min": 12.0,
-          "place_odds_max": 38.2
-        },
-        {
-          "number": 16,
-          "odds": 14.9,
-          "place_odds_min": 2.1,
-          "place_odds_max": 5.7
-        }
-      ]
-    },
-    {
-      "id": "202509050704",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "4",
-      "name": "2歳未勝利",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 314.4,
-          "place_odds_min": 41.0,
-          "place_odds_max": 73.7
-        },
-        {
-          "number": 2,
-          "odds": 514.4,
-          "place_odds_min": 72.6,
-          "place_odds_max": 130.6
-        },
-        {
-          "number": 3,
-          "odds": 211.3,
-          "place_odds_min": 19.1,
-          "place_odds_max": 34.1
-        },
-        {
-          "number": 4,
-          "odds": 4.0,
-          "place_odds_min": 1.2,
-          "place_odds_max": 1.7
-        },
-        {
-          "number": 5,
-          "odds": 5.2,
-          "place_odds_min": 1.4,
-          "place_odds_max": 2.2
-        },
-        {
-          "number": 6,
-          "odds": 10.6,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.4
-        },
-        {
-          "number": 7,
-          "odds": 4.6,
-          "place_odds_min": 1.4,
-          "place_odds_max": 2.2
-        },
-        {
-          "number": 8,
-          "odds": 301.2,
-          "place_odds_min": 31.4,
-          "place_odds_max": 56.4
-        },
-        {
-          "number": 9,
-          "odds": 89.8,
-          "place_odds_min": 8.4,
-          "place_odds_max": 14.8
-        },
-        {
-          "number": 10,
-          "odds": 51.8,
-          "place_odds_min": 6.5,
-          "place_odds_max": 11.4
-        },
-        {
-          "number": 11,
-          "odds": 146.0,
-          "place_odds_min": 11.2,
-          "place_odds_max": 19.9
-        },
-        {
-          "number": 12,
-          "odds": 2.5,
-          "place_odds_min": 1.2,
-          "place_odds_max": 1.6
-        },
-        {
-          "number": 13,
-          "odds": 117.7,
-          "place_odds_min": 14.7,
-          "place_odds_max": 26.1
-        },
-        {
-          "number": 14,
-          "odds": 30.6,
-          "place_odds_min": 3.6,
-          "place_odds_max": 6.1
-        },
-        {
-          "number": 15,
-          "odds": 83.4,
-          "place_odds_min": 8.1,
-          "place_odds_max": 14.3
-        }
-      ]
-    },
-    {
-      "id": "202509050705",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 105.9,
-          "place_odds_min": 18.4,
-          "place_odds_max": 29.7
-        },
-        {
-          "number": 2,
-          "odds": 28.5,
-          "place_odds_min": 4.4,
-          "place_odds_max": 6.8
-        },
-        {
-          "number": 3,
-          "odds": 3.9,
-          "place_odds_min": 1.4,
           "place_odds_max": 2.0
         },
         {
-          "number": 4,
-          "odds": 47.8,
-          "place_odds_min": 7.2,
-          "place_odds_max": 11.4
-        },
-        {
-          "number": 5,
-          "odds": 3.8,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 6,
-          "odds": 121.9,
-          "place_odds_min": 20.6,
-          "place_odds_max": 33.2
-        },
-        {
-          "number": 7,
-          "odds": 12.7,
-          "place_odds_min": 2.4,
-          "place_odds_max": 3.6
-        },
-        {
           "number": 8,
-          "odds": 24.4,
-          "place_odds_min": 4.5,
-          "place_odds_max": 7.1
+          "odds": 80.3,
+          "place_odds_min": 11.4,
+          "place_odds_max": 20.7
         },
         {
           "number": 9,
-          "odds": 112.7,
-          "place_odds_min": 17.3,
-          "place_odds_max": 28.0
+          "odds": 48.5,
+          "place_odds_min": 8.1,
+          "place_odds_max": 14.5
         },
         {
           "number": 10,
-          "odds": 3.2,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.7
-        },
-        {
-          "number": 11,
-          "odds": 36.1,
-          "place_odds_min": 6.5,
-          "place_odds_max": 10.3
-        },
-        {
-          "number": 12,
-          "odds": 85.9,
-          "place_odds_min": 15.5,
-          "place_odds_max": 25.1
-        },
-        {
-          "number": 13,
-          "odds": 40.2,
-          "place_odds_min": 6.4,
-          "place_odds_max": 10.2
-        },
-        {
-          "number": 14,
-          "odds": 6.2,
+          "odds": 7.8,
           "place_odds_min": 1.6,
-          "place_odds_max": 2.3
-        }
-      ]
-    },
-    {
-      "id": "202509050706",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "6",
-      "name": "2歳新馬",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 17.9,
-          "place_odds_min": 3.9,
-          "place_odds_max": 5.8
-        },
-        {
-          "number": 2,
-          "odds": 14.7,
-          "place_odds_min": 2.7,
-          "place_odds_max": 3.9
-        },
-        {
-          "number": 3,
-          "odds": 23.4,
-          "place_odds_min": 5.0,
-          "place_odds_max": 7.5
-        },
-        {
-          "number": 4,
-          "odds": 5.4,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.3
-        },
-        {
-          "number": 5,
-          "odds": 3.7,
-          "place_odds_min": 1.4,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 6,
-          "odds": 4.3,
-          "place_odds_min": 1.5,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 7,
-          "odds": 54.0,
-          "place_odds_min": 10.4,
-          "place_odds_max": 15.7
-        },
-        {
-          "number": 8,
-          "odds": 5.0,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.2
-        },
-        {
-          "number": 9,
-          "odds": 74.4,
-          "place_odds_min": 12.5,
-          "place_odds_max": 18.9
-        },
-        {
-          "number": 10,
-          "odds": 106.6,
-          "place_odds_min": 18.6,
-          "place_odds_max": 28.1
+          "place_odds_max": 2.6
         },
         {
           "number": 11,
-          "odds": 6.0,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.4
-        }
-      ]
-    },
-    {
-      "id": "202509050707",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "7",
-      "name": "3歳以上1勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 51.4,
-          "place_odds_min": 5.5,
-          "place_odds_max": 10.1
-        },
-        {
-          "number": 2,
-          "odds": 58.3,
-          "place_odds_min": 7.8,
-          "place_odds_max": 14.6
-        },
-        {
-          "number": 3,
-          "odds": 18.0,
-          "place_odds_min": 3.6,
-          "place_odds_max": 6.5
-        },
-        {
-          "number": 4,
-          "odds": 5.7,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.9
-        },
-        {
-          "number": 5,
-          "odds": 534.8,
-          "place_odds_min": 74.2,
-          "place_odds_max": 140.9
-        },
-        {
-          "number": 6,
-          "odds": 57.9,
-          "place_odds_min": 6.6,
-          "place_odds_max": 12.2
-        },
-        {
-          "number": 7,
-          "odds": 4.7,
-          "place_odds_min": 1.5,
-          "place_odds_max": 2.4
-        },
-        {
-          "number": 8,
-          "odds": 176.1,
-          "place_odds_min": 18.6,
-          "place_odds_max": 35.3
-        },
-        {
-          "number": 9,
-          "odds": 4.9,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 10,
-          "odds": 11.1,
-          "place_odds_min": 2.2,
-          "place_odds_max": 3.8
-        },
-        {
-          "number": 11,
-          "odds": 332.2,
-          "place_odds_min": 45.2,
-          "place_odds_max": 85.8
+          "odds": 358.7,
+          "place_odds_min": 46.3,
+          "place_odds_max": 84.6
         },
         {
           "number": 12,
           "odds": 67.3,
-          "place_odds_min": 7.1,
-          "place_odds_max": 13.2
+          "place_odds_min": 6.8,
+          "place_odds_max": 12.2
         },
         {
           "number": 13,
-          "odds": 44.8,
-          "place_odds_min": 5.1,
-          "place_odds_max": 9.3
-        },
-        {
-          "number": 14,
-          "odds": 87.9,
-          "place_odds_min": 10.7,
-          "place_odds_max": 20.0
-        },
-        {
-          "number": 15,
-          "odds": 2.4,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.4
+          "odds": 59.1,
+          "place_odds_min": 5.4,
+          "place_odds_max": 9.5
         }
       ]
-    },
-    {
-      "id": "202509050708",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "8",
-      "name": "3歳以上2勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 94.8,
-          "place_odds_min": 18.6,
-          "place_odds_max": 28.7
-        },
-        {
-          "number": 2,
-          "odds": 14.3,
-          "place_odds_min": 2.6,
-          "place_odds_max": 3.7
-        },
-        {
-          "number": 3,
-          "odds": 4.8,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.3
-        },
-        {
-          "number": 4,
-          "odds": 410.6,
-          "place_odds_min": 62.9,
-          "place_odds_max": 97.1
-        },
-        {
-          "number": 5,
-          "odds": 207.4,
-          "place_odds_min": 25.0,
-          "place_odds_max": 38.7
-        },
-        {
-          "number": 6,
-          "odds": 3.7,
-          "place_odds_min": 1.5,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 7,
-          "odds": 16.5,
-          "place_odds_min": 2.9,
-          "place_odds_max": 4.2
-        },
-        {
-          "number": 8,
-          "odds": 87.0,
-          "place_odds_min": 17.4,
-          "place_odds_max": 26.9
-        },
-        {
-          "number": 9,
-          "odds": 9.9,
-          "place_odds_min": 2.4,
-          "place_odds_max": 3.4
-        },
-        {
-          "number": 10,
-          "odds": 12.3,
-          "place_odds_min": 3.0,
-          "place_odds_max": 4.4
-        },
-        {
-          "number": 11,
-          "odds": 134.8,
-          "place_odds_min": 17.6,
-          "place_odds_max": 27.1
-        },
-        {
-          "number": 12,
-          "odds": 97.1,
-          "place_odds_min": 12.7,
-          "place_odds_max": 19.5
-        },
-        {
-          "number": 13,
-          "odds": 106.6,
-          "place_odds_min": 18.1,
-          "place_odds_max": 27.9
-        },
-        {
-          "number": 14,
-          "odds": 3.9,
-          "place_odds_min": 1.5,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 15,
-          "odds": 25.4,
-          "place_odds_min": 4.4,
-          "place_odds_max": 6.5
-        },
-        {
-          "number": 16,
-          "odds": 8.3,
-          "place_odds_min": 2.9,
-          "place_odds_max": 4.2
-        }
-      ]
-    },
-    {
-      "id": "202509050709",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "9",
-      "name": "万両賞",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 4.9,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.1
-        },
-        {
-          "number": 2,
-          "odds": 46.1,
-          "place_odds_min": 6.6,
-          "place_odds_max": 9.6
-        },
-        {
-          "number": 3,
-          "odds": 7.8,
-          "place_odds_min": 2.2,
-          "place_odds_max": 3.0
-        },
-        {
-          "number": 4,
-          "odds": 29.4,
-          "place_odds_min": 4.6,
-          "place_odds_max": 6.7
-        },
-        {
-          "number": 5,
-          "odds": 11.5,
-          "place_odds_min": 2.3,
-          "place_odds_max": 3.2
-        },
-        {
-          "number": 6,
-          "odds": 6.9,
-          "place_odds_min": 2.2,
-          "place_odds_max": 3.1
-        },
-        {
-          "number": 7,
-          "odds": 18.4,
-          "place_odds_min": 4.2,
-          "place_odds_max": 6.0
-        },
-        {
-          "number": 8,
-          "odds": 2.8,
-          "place_odds_min": 1.3,
-          "place_odds_max": 1.6
-        },
-        {
-          "number": 9,
-          "odds": 11.5,
-          "place_odds_min": 2.3,
-          "place_odds_max": 3.3
-        },
-        {
-          "number": 10,
-          "odds": 7.3,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.3
-        }
-      ]
-    },
-    {
-      "id": "202509050710",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "10",
-      "name": "摩耶S",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 23.9,
-          "place_odds_min": 4.1,
-          "place_odds_max": 5.9
-        },
-        {
-          "number": 2,
-          "odds": 4.6,
-          "place_odds_min": 1.8,
-          "place_odds_max": 2.5
-        },
-        {
-          "number": 3,
-          "odds": 4.2,
-          "place_odds_min": 1.5,
-          "place_odds_max": 1.9
-        },
-        {
-          "number": 4,
-          "odds": 14.7,
-          "place_odds_min": 3.1,
-          "place_odds_max": 4.5
-        },
-        {
-          "number": 5,
-          "odds": 237.4,
-          "place_odds_min": 33.0,
-          "place_odds_max": 50.2
-        },
-        {
-          "number": 6,
-          "odds": 34.6,
-          "place_odds_min": 5.0,
-          "place_odds_max": 7.4
-        },
-        {
-          "number": 7,
-          "odds": 69.4,
-          "place_odds_min": 12.2,
-          "place_odds_max": 18.4
-        },
-        {
-          "number": 8,
-          "odds": 10.8,
-          "place_odds_min": 2.7,
-          "place_odds_max": 3.8
-        },
-        {
-          "number": 9,
-          "odds": 14.7,
-          "place_odds_min": 2.9,
-          "place_odds_max": 4.2
-        },
-        {
-          "number": 10,
-          "odds": 23.7,
-          "place_odds_min": 4.6,
-          "place_odds_max": 6.8
-        },
-        {
-          "number": 11,
-          "odds": 280.2,
-          "place_odds_min": 50.1,
-          "place_odds_max": 76.3
-        },
-        {
-          "number": 12,
-          "odds": 3.6,
-          "place_odds_min": 1.6,
-          "place_odds_max": 2.1
-        },
-        {
-          "number": 13,
-          "odds": 279.4,
-          "place_odds_min": 47.8,
-          "place_odds_max": 72.8
-        },
-        {
-          "number": 14,
-          "odds": 50.6,
-          "place_odds_min": 6.6,
-          "place_odds_max": 9.9
-        },
-        {
-          "number": 15,
-          "odds": 178.1,
-          "place_odds_min": 25.8,
-          "place_odds_max": 39.2
-        },
-        {
-          "number": 16,
-          "odds": 7.3,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.0
-        }
-      ]
-    },
-    {
-      "id": "202509050711",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "11",
-      "name": "阪神カップ",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 25.8,
-          "place_odds_min": 3.9,
-          "place_odds_max": 7.6
-        },
-        {
-          "number": 2,
-          "odds": 23.7,
-          "place_odds_min": 3.3,
-          "place_odds_max": 6.2
-        },
-        {
-          "number": 3,
-          "odds": 152.0,
-          "place_odds_min": 12.3,
-          "place_odds_max": 24.8
-        },
-        {
-          "number": 4,
-          "odds": 310.4,
-          "place_odds_min": 36.2,
-          "place_odds_max": 73.7
-        },
-        {
-          "number": 5,
-          "odds": 134.5,
-          "place_odds_min": 9.1,
-          "place_odds_max": 18.2
-        },
-        {
-          "number": 6,
-          "odds": 90.3,
-          "place_odds_min": 8.5,
-          "place_odds_max": 17.1
-        },
-        {
-          "number": 7,
-          "odds": 8.1,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.7
-        },
-        {
-          "number": 8,
-          "odds": 348.0,
-          "place_odds_min": 31.4,
-          "place_odds_max": 64.0
-        },
-        {
-          "number": 9,
-          "odds": 6.4,
-          "place_odds_min": 1.7,
-          "place_odds_max": 2.8
-        },
-        {
-          "number": 10,
-          "odds": 29.5,
-          "place_odds_min": 4.3,
-          "place_odds_max": 8.4
-        },
-        {
-          "number": 11,
-          "odds": 9.2,
-          "place_odds_min": 2.1,
-          "place_odds_max": 3.8
-        },
-        {
-          "number": 12,
-          "odds": 1.9,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.1
-        },
-        {
-          "number": 13,
-          "odds": 22.8,
-          "place_odds_min": 3.3,
-          "place_odds_max": 6.3
-        },
-        {
-          "number": 14,
-          "odds": 114.0,
-          "place_odds_min": 10.7,
-          "place_odds_max": 21.6
-        },
-        {
-          "number": 15,
-          "odds": 7.1,
-          "place_odds_min": 1.9,
-          "place_odds_max": 3.4
-        },
-        {
-          "number": 16,
-          "odds": 202.7,
-          "place_odds_min": 19.6,
-          "place_odds_max": 39.9
-        }
-      ]
-    },
-    {
-      "id": "202509050712",
-      "date": "2025-12-27",
-      "venue": "阪神",
-      "number": "12",
-      "name": "3歳以上2勝クラス",
-      "horses": [
-        {
-          "number": 1,
-          "odds": 1.8,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.1
-        },
-        {
-          "number": 2,
-          "odds": 104.1,
-          "place_odds_min": 5.1,
-          "place_odds_max": 18.4
-        },
-        {
-          "number": 3,
-          "odds": 8.5,
-          "place_odds_min": 1.4,
-          "place_odds_max": 4.1
-        },
-        {
-          "number": 4,
-          "odds": 2.6,
-          "place_odds_min": 1.1,
-          "place_odds_max": 1.5
-        },
-        {
-          "number": 5,
-          "odds": 340.2,
-          "place_odds_min": 24.2,
-          "place_odds_max": 92.0
-        },
-        {
-          "number": 6,
-          "odds": 25.8,
-          "place_odds_min": 1.9,
-          "place_odds_max": 5.9
-        },
-        {
-          "number": 7,
-          "odds": 6.5,
-          "place_odds_min": 1.2,
-          "place_odds_max": 3.4
-        },
-        {
-          "number": 8,
-          "odds": 318.2,
-          "place_odds_min": 15.8,
-          "place_odds_max": 59.7
-        },
-        {
-          "number": 9,
-          "odds": 96.1,
-          "place_odds_min": 4.3,
-          "place_odds_max": 15.2
-        }
-      ]
-    },
-    {
-      "id": "202506050801",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "1",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050802",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "2",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050803",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "3",
-      "name": "2歳未勝利",
-      "horses": []
-    },
-    {
-      "id": "202506050804",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "4",
-      "name": "2歳1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202506050805",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "5",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202506050806",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "6",
-      "name": "2歳新馬",
-      "horses": []
-    },
-    {
-      "id": "202506050807",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "7",
-      "name": "3歳以上1勝クラス",
-      "horses": []
-    },
-    {
-      "id": "202506050808",
-      "date": "2025-12-28",
-      "venue": "中山",
-      "number": "8",
-      "name": "ハッピーエン",
-      "horses": []
     },
     {
       "id": "202506050809",
@@ -2957,7 +1291,92 @@
       "venue": "中山",
       "number": "9",
       "name": "グッドラック",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 11.8,
+          "place_odds_min": 2.4,
+          "place_odds_max": 4.4
+        },
+        {
+          "number": 2,
+          "odds": 36.3,
+          "place_odds_min": 3.6,
+          "place_odds_max": 6.7
+        },
+        {
+          "number": 3,
+          "odds": 123.9,
+          "place_odds_min": 9.2,
+          "place_odds_max": 18.2
+        },
+        {
+          "number": 4,
+          "odds": 175.8,
+          "place_odds_min": 17.2,
+          "place_odds_max": 34.5
+        },
+        {
+          "number": 5,
+          "odds": 75.7,
+          "place_odds_min": 9.3,
+          "place_odds_max": 18.5
+        },
+        {
+          "number": 6,
+          "odds": 3.6,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.3
+        },
+        {
+          "number": 7,
+          "odds": 70.1,
+          "place_odds_min": 6.4,
+          "place_odds_max": 12.4
+        },
+        {
+          "number": 8,
+          "odds": 2.3,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.3
+        },
+        {
+          "number": 9,
+          "odds": 9.1,
+          "place_odds_min": 1.9,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 10,
+          "odds": 372.2,
+          "place_odds_min": 43.5,
+          "place_odds_max": 87.6
+        },
+        {
+          "number": 11,
+          "odds": 89.2,
+          "place_odds_min": 8.0,
+          "place_odds_max": 15.8
+        },
+        {
+          "number": 12,
+          "odds": 4.3,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 13,
+          "odds": 27.2,
+          "place_odds_min": 3.0,
+          "place_odds_max": 5.6
+        },
+        {
+          "number": 14,
+          "odds": 202.1,
+          "place_odds_min": 19.4,
+          "place_odds_max": 38.9
+        }
+      ]
     },
     {
       "id": "202506050810",
@@ -2965,7 +1384,104 @@
       "venue": "中山",
       "number": "10",
       "name": "フェアウェル",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 113.3,
+          "place_odds_min": 15.4,
+          "place_odds_max": 25.5
+        },
+        {
+          "number": 2,
+          "odds": 24.5,
+          "place_odds_min": 4.2,
+          "place_odds_max": 6.6
+        },
+        {
+          "number": 3,
+          "odds": 70.1,
+          "place_odds_min": 8.6,
+          "place_odds_max": 14.0
+        },
+        {
+          "number": 4,
+          "odds": 9.8,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.4
+        },
+        {
+          "number": 5,
+          "odds": 102.0,
+          "place_odds_min": 15.8,
+          "place_odds_max": 26.2
+        },
+        {
+          "number": 6,
+          "odds": 150.1,
+          "place_odds_min": 22.3,
+          "place_odds_max": 37.0
+        },
+        {
+          "number": 7,
+          "odds": 3.2,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 8,
+          "odds": 3.1,
+          "place_odds_min": 1.4,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 9,
+          "odds": 8.3,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.9
+        },
+        {
+          "number": 10,
+          "odds": 21.5,
+          "place_odds_min": 3.1,
+          "place_odds_max": 4.9
+        },
+        {
+          "number": 11,
+          "odds": 14.0,
+          "place_odds_min": 2.8,
+          "place_odds_max": 4.3
+        },
+        {
+          "number": 12,
+          "odds": 12.0,
+          "place_odds_min": 3.6,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 13,
+          "odds": 59.5,
+          "place_odds_min": 8.8,
+          "place_odds_max": 14.4
+        },
+        {
+          "number": 14,
+          "odds": 160.8,
+          "place_odds_min": 17.7,
+          "place_odds_max": 29.4
+        },
+        {
+          "number": 15,
+          "odds": 26.9,
+          "place_odds_min": 4.2,
+          "place_odds_max": 6.7
+        },
+        {
+          "number": 16,
+          "odds": 17.0,
+          "place_odds_min": 3.7,
+          "place_odds_max": 5.8
+        }
+      ]
     },
     {
       "id": "202506050811",
@@ -2973,7 +1489,104 @@
       "venue": "中山",
       "number": "11",
       "name": "有馬記念",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 29.7,
+          "place_odds_min": 3.8,
+          "place_odds_max": 6.0
+        },
+        {
+          "number": 2,
+          "odds": 26.6,
+          "place_odds_min": 3.9,
+          "place_odds_max": 6.1
+        },
+        {
+          "number": 3,
+          "odds": 12.7,
+          "place_odds_min": 2.6,
+          "place_odds_max": 4.0
+        },
+        {
+          "number": 4,
+          "odds": 3.8,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 5,
+          "odds": 3.3,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 6,
+          "odds": 5.8,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 7,
+          "odds": 122.5,
+          "place_odds_min": 16.7,
+          "place_odds_max": 27.1
+        },
+        {
+          "number": 8,
+          "odds": 154.1,
+          "place_odds_min": 30.2,
+          "place_odds_max": 49.1
+        },
+        {
+          "number": 9,
+          "odds": 3.8,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 10,
+          "odds": 111.5,
+          "place_odds_min": 10.4,
+          "place_odds_max": 16.7
+        },
+        {
+          "number": 11,
+          "odds": 53.5,
+          "place_odds_min": 7.8,
+          "place_odds_max": 12.4
+        },
+        {
+          "number": 12,
+          "odds": 111.5,
+          "place_odds_min": 11.8,
+          "place_odds_max": 19.0
+        },
+        {
+          "number": 13,
+          "odds": 50.3,
+          "place_odds_min": 5.9,
+          "place_odds_max": 9.4
+        },
+        {
+          "number": 14,
+          "odds": 174.2,
+          "place_odds_min": 30.3,
+          "place_odds_max": 49.3
+        },
+        {
+          "number": 15,
+          "odds": 180.3,
+          "place_odds_min": 26.1,
+          "place_odds_max": 42.5
+        },
+        {
+          "number": 16,
+          "odds": 35.4,
+          "place_odds_min": 4.0,
+          "place_odds_max": 6.3
+        }
+      ]
     },
     {
       "id": "202506050812",
@@ -2981,7 +1594,104 @@
       "venue": "中山",
       "number": "12",
       "name": "ファイナルS",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 8.0,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.4
+        },
+        {
+          "number": 2,
+          "odds": 52.1,
+          "place_odds_min": 5.5,
+          "place_odds_max": 9.2
+        },
+        {
+          "number": 3,
+          "odds": 34.9,
+          "place_odds_min": 5.1,
+          "place_odds_max": 8.6
+        },
+        {
+          "number": 4,
+          "odds": 95.7,
+          "place_odds_min": 13.6,
+          "place_odds_max": 23.2
+        },
+        {
+          "number": 5,
+          "odds": 3.7,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 6,
+          "odds": 2.6,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.5
+        },
+        {
+          "number": 7,
+          "odds": 22.5,
+          "place_odds_min": 3.6,
+          "place_odds_max": 5.9
+        },
+        {
+          "number": 8,
+          "odds": 6.2,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 9,
+          "odds": 22.5,
+          "place_odds_min": 3.9,
+          "place_odds_max": 6.4
+        },
+        {
+          "number": 10,
+          "odds": 30.3,
+          "place_odds_min": 4.4,
+          "place_odds_max": 7.4
+        },
+        {
+          "number": 11,
+          "odds": 11.7,
+          "place_odds_min": 2.4,
+          "place_odds_max": 3.8
+        },
+        {
+          "number": 12,
+          "odds": 58.3,
+          "place_odds_min": 6.5,
+          "place_odds_max": 11.0
+        },
+        {
+          "number": 13,
+          "odds": 45.8,
+          "place_odds_min": 5.5,
+          "place_odds_max": 9.2
+        },
+        {
+          "number": 14,
+          "odds": 237.0,
+          "place_odds_min": 37.4,
+          "place_odds_max": 64.2
+        },
+        {
+          "number": 15,
+          "odds": 114.1,
+          "place_odds_min": 13.4,
+          "place_odds_max": 23.0
+        },
+        {
+          "number": 16,
+          "odds": 233.3,
+          "place_odds_min": 26.2,
+          "place_odds_max": 44.9
+        }
+      ]
     },
     {
       "id": "202509050801",
@@ -2989,7 +1699,86 @@
       "venue": "阪神",
       "number": "1",
       "name": "2歳未勝利",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 17.9,
+          "place_odds_min": 2.4,
+          "place_odds_max": 6.2
+        },
+        {
+          "number": 2,
+          "odds": 50.5,
+          "place_odds_min": 6.2,
+          "place_odds_max": 17.2
+        },
+        {
+          "number": 3,
+          "odds": 7.3,
+          "place_odds_min": 1.4,
+          "place_odds_max": 3.3
+        },
+        {
+          "number": 4,
+          "odds": 112.0,
+          "place_odds_min": 10.6,
+          "place_odds_max": 30.3
+        },
+        {
+          "number": 5,
+          "odds": 1.8,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 6,
+          "odds": 32.7,
+          "place_odds_min": 3.8,
+          "place_odds_max": 10.2
+        },
+        {
+          "number": 7,
+          "odds": 18.5,
+          "place_odds_min": 3.0,
+          "place_odds_max": 7.8
+        },
+        {
+          "number": 8,
+          "odds": 24.4,
+          "place_odds_min": 3.1,
+          "place_odds_max": 8.1
+        },
+        {
+          "number": 9,
+          "odds": 25.6,
+          "place_odds_min": 3.7,
+          "place_odds_max": 9.9
+        },
+        {
+          "number": 10,
+          "odds": 3.5,
+          "place_odds_min": 1.3,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 11,
+          "odds": 172.6,
+          "place_odds_min": 17.4,
+          "place_odds_max": 50.2
+        },
+        {
+          "number": 12,
+          "odds": 107.2,
+          "place_odds_min": 9.0,
+          "place_odds_max": 25.8
+        },
+        {
+          "number": 13,
+          "odds": 30.0,
+          "place_odds_min": 3.5,
+          "place_odds_max": 9.3
+        }
+      ]
     },
     {
       "id": "202509050802",
@@ -2997,7 +1786,110 @@
       "venue": "阪神",
       "number": "2",
       "name": "2歳未勝利",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 52.1,
+          "place_odds_min": 6.2,
+          "place_odds_max": 23.2
+        },
+        {
+          "number": 2,
+          "odds": 407.8,
+          "place_odds_min": 76.8,
+          "place_odds_max": 304.9
+        },
+        {
+          "number": 3,
+          "odds": 23.6,
+          "place_odds_min": 3.3,
+          "place_odds_max": 11.7
+        },
+        {
+          "number": 4,
+          "odds": 52.0,
+          "place_odds_min": 4.8,
+          "place_odds_max": 17.8
+        },
+        {
+          "number": 5,
+          "odds": 8.8,
+          "place_odds_min": 1.9,
+          "place_odds_max": 6.2
+        },
+        {
+          "number": 6,
+          "odds": 373.9,
+          "place_odds_min": 52.2,
+          "place_odds_max": 206.9
+        },
+        {
+          "number": 7,
+          "odds": 54.0,
+          "place_odds_min": 8.1,
+          "place_odds_max": 30.9
+        },
+        {
+          "number": 8,
+          "odds": 46.5,
+          "place_odds_min": 5.8,
+          "place_odds_max": 21.7
+        },
+        {
+          "number": 9,
+          "odds": 1.5,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 10,
+          "odds": 22.2,
+          "place_odds_min": 2.7,
+          "place_odds_max": 9.2
+        },
+        {
+          "number": 11,
+          "odds": 112.7,
+          "place_odds_min": 10.9,
+          "place_odds_max": 42.1
+        },
+        {
+          "number": 12,
+          "odds": 11.5,
+          "place_odds_min": 1.9,
+          "place_odds_max": 6.2
+        },
+        {
+          "number": 13,
+          "odds": 156.1,
+          "place_odds_min": 16.7,
+          "place_odds_max": 65.3
+        },
+        {
+          "number": 14,
+          "odds": 214.7,
+          "place_odds_min": 25.7,
+          "place_odds_max": 101.4
+        },
+        {
+          "number": 15,
+          "odds": 7.7,
+          "place_odds_min": 1.6,
+          "place_odds_max": 4.9
+        },
+        {
+          "number": 16,
+          "odds": 15.0,
+          "place_odds_min": 2.9,
+          "place_odds_max": 10.3
+        },
+        {
+          "number": 17,
+          "odds": 46.1,
+          "place_odds_min": 6.1,
+          "place_odds_max": 22.9
+        }
+      ]
     },
     {
       "id": "202509050803",
@@ -3005,7 +1897,116 @@
       "venue": "阪神",
       "number": "3",
       "name": "2歳未勝利",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 2.5,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.5
+        },
+        {
+          "number": 2,
+          "odds": 552.2,
+          "place_odds_min": 78.7,
+          "place_odds_max": 135.5
+        },
+        {
+          "number": 3,
+          "odds": 98.5,
+          "place_odds_min": 19.7,
+          "place_odds_max": 33.7
+        },
+        {
+          "number": 4,
+          "odds": 128.1,
+          "place_odds_min": 19.3,
+          "place_odds_max": 32.9
+        },
+        {
+          "number": 5,
+          "odds": 21.7,
+          "place_odds_min": 4.5,
+          "place_odds_max": 7.3
+        },
+        {
+          "number": 6,
+          "odds": 614.1,
+          "place_odds_min": 90.3,
+          "place_odds_max": 155.5
+        },
+        {
+          "number": 7,
+          "odds": 8.9,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 8,
+          "odds": 43.5,
+          "place_odds_min": 7.2,
+          "place_odds_max": 12.0
+        },
+        {
+          "number": 9,
+          "odds": 506.6,
+          "place_odds_min": 66.4,
+          "place_odds_max": 114.3
+        },
+        {
+          "number": 10,
+          "odds": 36.9,
+          "place_odds_min": 6.4,
+          "place_odds_max": 10.7
+        },
+        {
+          "number": 11,
+          "odds": 70.0,
+          "place_odds_min": 10.1,
+          "place_odds_max": 17.0
+        },
+        {
+          "number": 12,
+          "odds": 7.6,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 13,
+          "odds": 4.3,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 14,
+          "odds": 28.3,
+          "place_odds_min": 5.0,
+          "place_odds_max": 8.3
+        },
+        {
+          "number": 15,
+          "odds": 15.0,
+          "place_odds_min": 2.8,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 16,
+          "odds": 7.8,
+          "place_odds_min": 2.0,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 17,
+          "odds": 419.6,
+          "place_odds_min": 61.6,
+          "place_odds_max": 106.0
+        },
+        {
+          "number": 18,
+          "odds": 51.3,
+          "place_odds_min": 9.0,
+          "place_odds_max": 15.2
+        }
+      ]
     },
     {
       "id": "202509050804",
@@ -3013,7 +2014,104 @@
       "venue": "阪神",
       "number": "4",
       "name": "2歳新馬",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 93.2,
+          "place_odds_min": 14.6,
+          "place_odds_max": 26.1
+        },
+        {
+          "number": 2,
+          "odds": 49.2,
+          "place_odds_min": 6.8,
+          "place_odds_max": 11.9
+        },
+        {
+          "number": 3,
+          "odds": 71.5,
+          "place_odds_min": 9.3,
+          "place_odds_max": 16.5
+        },
+        {
+          "number": 4,
+          "odds": 2.8,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.6
+        },
+        {
+          "number": 5,
+          "odds": 134.8,
+          "place_odds_min": 23.6,
+          "place_odds_max": 42.2
+        },
+        {
+          "number": 6,
+          "odds": 82.9,
+          "place_odds_min": 10.7,
+          "place_odds_max": 19.0
+        },
+        {
+          "number": 7,
+          "odds": 15.2,
+          "place_odds_min": 2.7,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 8,
+          "odds": 22.3,
+          "place_odds_min": 4.0,
+          "place_odds_max": 6.8
+        },
+        {
+          "number": 9,
+          "odds": 3.1,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 10,
+          "odds": 8.3,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 11,
+          "odds": 41.7,
+          "place_odds_min": 6.4,
+          "place_odds_max": 11.2
+        },
+        {
+          "number": 12,
+          "odds": 19.7,
+          "place_odds_min": 2.7,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 13,
+          "odds": 139.6,
+          "place_odds_min": 22.9,
+          "place_odds_max": 41.0
+        },
+        {
+          "number": 14,
+          "odds": 7.1,
+          "place_odds_min": 2.0,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 15,
+          "odds": 16.8,
+          "place_odds_min": 3.2,
+          "place_odds_max": 5.3
+        },
+        {
+          "number": 16,
+          "odds": 98.3,
+          "place_odds_min": 18.6,
+          "place_odds_max": 33.3
+        }
+      ]
     },
     {
       "id": "202509050805",
@@ -3021,7 +2119,92 @@
       "venue": "阪神",
       "number": "5",
       "name": "3歳以上障害未勝利",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 47.2,
+          "place_odds_min": 8.6,
+          "place_odds_max": 13.9
+        },
+        {
+          "number": 2,
+          "odds": 18.5,
+          "place_odds_min": 3.7,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 3,
+          "odds": 138.4,
+          "place_odds_min": 18.1,
+          "place_odds_max": 29.3
+        },
+        {
+          "number": 4,
+          "odds": 15.8,
+          "place_odds_min": 3.5,
+          "place_odds_max": 5.4
+        },
+        {
+          "number": 5,
+          "odds": 3.1,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 6,
+          "odds": 10.0,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.4
+        },
+        {
+          "number": 7,
+          "odds": 25.1,
+          "place_odds_min": 4.4,
+          "place_odds_max": 6.9
+        },
+        {
+          "number": 8,
+          "odds": 11.1,
+          "place_odds_min": 2.4,
+          "place_odds_max": 3.6
+        },
+        {
+          "number": 9,
+          "odds": 25.1,
+          "place_odds_min": 6.0,
+          "place_odds_max": 9.6
+        },
+        {
+          "number": 10,
+          "odds": 3.7,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 11,
+          "odds": 77.9,
+          "place_odds_min": 10.2,
+          "place_odds_max": 16.5
+        },
+        {
+          "number": 12,
+          "odds": 64.8,
+          "place_odds_min": 8.5,
+          "place_odds_max": 13.7
+        },
+        {
+          "number": 13,
+          "odds": 119.5,
+          "place_odds_min": 18.4,
+          "place_odds_max": 29.7
+        },
+        {
+          "number": 14,
+          "odds": 4.7,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.0
+        }
+      ]
     },
     {
       "id": "202509050806",
@@ -3029,7 +2212,104 @@
       "venue": "阪神",
       "number": "6",
       "name": "2歳新馬",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 45.4,
+          "place_odds_min": 9.5,
+          "place_odds_max": 14.2
+        },
+        {
+          "number": 2,
+          "odds": 76.5,
+          "place_odds_min": 16.4,
+          "place_odds_max": 24.6
+        },
+        {
+          "number": 3,
+          "odds": 19.7,
+          "place_odds_min": 4.6,
+          "place_odds_max": 6.8
+        },
+        {
+          "number": 4,
+          "odds": 59.8,
+          "place_odds_min": 9.7,
+          "place_odds_max": 14.4
+        },
+        {
+          "number": 5,
+          "odds": 4.2,
+          "place_odds_min": 1.5,
+          "place_odds_max": 1.9
+        },
+        {
+          "number": 6,
+          "odds": 25.1,
+          "place_odds_min": 5.5,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 7,
+          "odds": 88.0,
+          "place_odds_min": 19.2,
+          "place_odds_max": 28.9
+        },
+        {
+          "number": 8,
+          "odds": 4.6,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.1
+        },
+        {
+          "number": 9,
+          "odds": 37.6,
+          "place_odds_min": 7.1,
+          "place_odds_max": 10.5
+        },
+        {
+          "number": 10,
+          "odds": 10.8,
+          "place_odds_min": 2.7,
+          "place_odds_max": 3.9
+        },
+        {
+          "number": 11,
+          "odds": 15.0,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.5
+        },
+        {
+          "number": 12,
+          "odds": 216.0,
+          "place_odds_min": 41.2,
+          "place_odds_max": 61.9
+        },
+        {
+          "number": 13,
+          "odds": 4.5,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 14,
+          "odds": 15.6,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.5
+        },
+        {
+          "number": 15,
+          "odds": 43.7,
+          "place_odds_min": 8.2,
+          "place_odds_max": 12.2
+        },
+        {
+          "number": 16,
+          "odds": 6.7,
+          "place_odds_min": 2.0,
+          "place_odds_max": 2.7
+        }
+      ]
     },
     {
       "id": "202509050807",
@@ -3037,7 +2317,104 @@
       "venue": "阪神",
       "number": "7",
       "name": "3歳以上1勝クラス",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 195.7,
+          "place_odds_min": 23.4,
+          "place_odds_max": 43.4
+        },
+        {
+          "number": 2,
+          "odds": 123.8,
+          "place_odds_min": 14.7,
+          "place_odds_max": 27.1
+        },
+        {
+          "number": 3,
+          "odds": 257.7,
+          "place_odds_min": 23.4,
+          "place_odds_max": 43.5
+        },
+        {
+          "number": 4,
+          "odds": 65.3,
+          "place_odds_min": 7.3,
+          "place_odds_max": 13.3
+        },
+        {
+          "number": 5,
+          "odds": 112.4,
+          "place_odds_min": 13.8,
+          "place_odds_max": 25.4
+        },
+        {
+          "number": 6,
+          "odds": 15.1,
+          "place_odds_min": 2.6,
+          "place_odds_max": 4.4
+        },
+        {
+          "number": 7,
+          "odds": 6.2,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 8,
+          "odds": 84.9,
+          "place_odds_min": 13.0,
+          "place_odds_max": 24.0
+        },
+        {
+          "number": 9,
+          "odds": 8.3,
+          "place_odds_min": 1.9,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 10,
+          "odds": 11.7,
+          "place_odds_min": 2.0,
+          "place_odds_max": 3.3
+        },
+        {
+          "number": 11,
+          "odds": 67.3,
+          "place_odds_min": 8.4,
+          "place_odds_max": 15.3
+        },
+        {
+          "number": 12,
+          "odds": 12.4,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.9
+        },
+        {
+          "number": 13,
+          "odds": 82.8,
+          "place_odds_min": 8.8,
+          "place_odds_max": 16.1
+        },
+        {
+          "number": 14,
+          "odds": 2.0,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.3
+        },
+        {
+          "number": 15,
+          "odds": 167.6,
+          "place_odds_min": 19.5,
+          "place_odds_max": 36.2
+        },
+        {
+          "number": 16,
+          "odds": 5.9,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.7
+        }
+      ]
     },
     {
       "id": "202509050808",
@@ -3045,7 +2422,86 @@
       "venue": "阪神",
       "number": "8",
       "name": "3歳以上2勝クラス",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 95.8,
+          "place_odds_min": 14.6,
+          "place_odds_max": 23.4
+        },
+        {
+          "number": 2,
+          "odds": 26.0,
+          "place_odds_min": 3.7,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 3,
+          "odds": 4.7,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 4,
+          "odds": 8.2,
+          "place_odds_min": 2.9,
+          "place_odds_max": 4.4
+        },
+        {
+          "number": 5,
+          "odds": 17.4,
+          "place_odds_min": 3.9,
+          "place_odds_max": 6.1
+        },
+        {
+          "number": 6,
+          "odds": 38.5,
+          "place_odds_min": 6.8,
+          "place_odds_max": 10.7
+        },
+        {
+          "number": 7,
+          "odds": 72.8,
+          "place_odds_min": 12.7,
+          "place_odds_max": 20.4
+        },
+        {
+          "number": 8,
+          "odds": 216.3,
+          "place_odds_min": 36.3,
+          "place_odds_max": 58.4
+        },
+        {
+          "number": 9,
+          "odds": 3.6,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.6
+        },
+        {
+          "number": 10,
+          "odds": 4.6,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.1
+        },
+        {
+          "number": 11,
+          "odds": 134.6,
+          "place_odds_min": 14.5,
+          "place_odds_max": 23.3
+        },
+        {
+          "number": 12,
+          "odds": 6.8,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.6
+        },
+        {
+          "number": 13,
+          "odds": 8.0,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.1
+        }
+      ]
     },
     {
       "id": "202509050809",
@@ -3053,7 +2509,80 @@
       "venue": "阪神",
       "number": "9",
       "name": "フォーチュン",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 27.4,
+          "place_odds_min": 4.2,
+          "place_odds_max": 7.6
+        },
+        {
+          "number": 2,
+          "odds": 21.1,
+          "place_odds_min": 3.6,
+          "place_odds_max": 6.5
+        },
+        {
+          "number": 3,
+          "odds": 54.1,
+          "place_odds_min": 8.9,
+          "place_odds_max": 16.2
+        },
+        {
+          "number": 4,
+          "odds": 2.7,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.5
+        },
+        {
+          "number": 5,
+          "odds": 5.9,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 6,
+          "odds": 222.4,
+          "place_odds_min": 30.8,
+          "place_odds_max": 56.9
+        },
+        {
+          "number": 7,
+          "odds": 16.6,
+          "place_odds_min": 2.6,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 8,
+          "odds": 3.7,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 9,
+          "odds": 5.6,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 10,
+          "odds": 32.9,
+          "place_odds_min": 5.1,
+          "place_odds_max": 9.4
+        },
+        {
+          "number": 11,
+          "odds": 29.6,
+          "place_odds_min": 4.3,
+          "place_odds_max": 7.8
+        },
+        {
+          "number": 12,
+          "odds": 22.6,
+          "place_odds_min": 3.1,
+          "place_odds_max": 5.4
+        }
+      ]
     },
     {
       "id": "202509050810",
@@ -3061,7 +2590,74 @@
       "venue": "阪神",
       "number": "10",
       "name": "サンクフルS",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 52.2,
+          "place_odds_min": 4.6,
+          "place_odds_max": 30.6
+        },
+        {
+          "number": 2,
+          "odds": 88.5,
+          "place_odds_min": 8.9,
+          "place_odds_max": 61.3
+        },
+        {
+          "number": 3,
+          "odds": 17.8,
+          "place_odds_min": 1.9,
+          "place_odds_max": 10.8
+        },
+        {
+          "number": 4,
+          "odds": 90.3,
+          "place_odds_min": 7.4,
+          "place_odds_max": 50.5
+        },
+        {
+          "number": 5,
+          "odds": 14.3,
+          "place_odds_min": 1.7,
+          "place_odds_max": 9.5
+        },
+        {
+          "number": 6,
+          "odds": 20.4,
+          "place_odds_min": 1.9,
+          "place_odds_max": 10.7
+        },
+        {
+          "number": 7,
+          "odds": 1.4,
+          "place_odds_min": 1.0,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 8,
+          "odds": 3.8,
+          "place_odds_min": 1.1,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 9,
+          "odds": 103.8,
+          "place_odds_min": 11.3,
+          "place_odds_max": 78.6
+        },
+        {
+          "number": 10,
+          "odds": 20.4,
+          "place_odds_min": 1.8,
+          "place_odds_max": 9.7
+        },
+        {
+          "number": 11,
+          "odds": 113.7,
+          "place_odds_min": 7.8,
+          "place_odds_max": 53.7
+        }
+      ]
     },
     {
       "id": "202509050811",
@@ -3069,7 +2665,104 @@
       "venue": "阪神",
       "number": "11",
       "name": "ギャラクシー",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 17.2,
+          "place_odds_min": 3.6,
+          "place_odds_max": 5.3
+        },
+        {
+          "number": 2,
+          "odds": 71.7,
+          "place_odds_min": 13.8,
+          "place_odds_max": 21.2
+        },
+        {
+          "number": 3,
+          "odds": 5.3,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 4,
+          "odds": 21.0,
+          "place_odds_min": 5.7,
+          "place_odds_max": 8.6
+        },
+        {
+          "number": 5,
+          "odds": 3.2,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.6
+        },
+        {
+          "number": 6,
+          "odds": 56.0,
+          "place_odds_min": 9.2,
+          "place_odds_max": 14.1
+        },
+        {
+          "number": 7,
+          "odds": 43.0,
+          "place_odds_min": 5.4,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 8,
+          "odds": 26.2,
+          "place_odds_min": 5.4,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 9,
+          "odds": 6.9,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 10,
+          "odds": 97.2,
+          "place_odds_min": 15.1,
+          "place_odds_max": 23.4
+        },
+        {
+          "number": 11,
+          "odds": 10.8,
+          "place_odds_min": 2.5,
+          "place_odds_max": 3.6
+        },
+        {
+          "number": 12,
+          "odds": 191.1,
+          "place_odds_min": 34.9,
+          "place_odds_max": 54.2
+        },
+        {
+          "number": 13,
+          "odds": 7.8,
+          "place_odds_min": 2.4,
+          "place_odds_max": 3.4
+        },
+        {
+          "number": 14,
+          "odds": 5.9,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.6
+        },
+        {
+          "number": 15,
+          "odds": 235.7,
+          "place_odds_min": 38.9,
+          "place_odds_max": 60.4
+        },
+        {
+          "number": 16,
+          "odds": 166.9,
+          "place_odds_min": 22.7,
+          "place_odds_max": 35.2
+        }
+      ]
     },
     {
       "id": "202509050812",
@@ -3077,6 +2770,115 @@
       "venue": "阪神",
       "number": "12",
       "name": "カウントダウ",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 22.8,
+          "place_odds_min": 3.6,
+          "place_odds_max": 5.3
+        },
+        {
+          "number": 2,
+          "odds": 3.7,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 3,
+          "odds": 6.8,
+          "place_odds_min": 2.1,
+          "place_odds_max": 2.9
+        },
+        {
+          "number": 4,
+          "odds": 4.6,
+          "place_odds_min": 1.4,
+          "place_odds_max": 1.9
+        },
+        {
+          "number": 5,
+          "odds": 29.5,
+          "place_odds_min": 6.1,
+          "place_odds_max": 9.0
+        },
+        {
+          "number": 6,
+          "odds": 4.0,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.1
+        },
+        {
+          "number": 7,
+          "odds": 93.5,
+          "place_odds_min": 14.8,
+          "place_odds_max": 21.9
+        },
+        {
+          "number": 8,
+          "odds": 9.6,
+          "place_odds_min": 2.6,
+          "place_odds_max": 3.7
+        },
+        {
+          "number": 9,
+          "odds": 21.3,
+          "place_odds_min": 3.4,
+          "place_odds_max": 5.1
+        },
+        {
+          "number": 10,
+          "odds": 7.4,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.6
+        }
+      ]
+    },
+    {
+      "id": "202606010109",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "9",
+      "name": "招福S",
+      "horses": []
+    },
+    {
+      "id": "202606010110",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "10",
+      "name": "ジュニアC",
+      "horses": []
+    },
+    {
+      "id": "202606010111",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "11",
+      "name": "日刊中山金杯",
+      "horses": []
+    },
+    {
+      "id": "202608010109",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "9",
+      "name": "天ケ瀬特別",
+      "horses": []
+    },
+    {
+      "id": "202608010110",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "10",
+      "name": "寿ステークス",
+      "horses": []
+    },
+    {
+      "id": "202608010111",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "11",
+      "name": "スポ京都金杯",
       "horses": []
     }
   ]
