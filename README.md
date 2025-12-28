@@ -567,27 +567,4 @@ python train_model.py --calibrate
 4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
 5. プルリクエストを作成
 
----
 
-## 📄 ライセンス
-
-MIT License
-
----
-
-## 📞 お問い合わせ
-
-- **Issue:** [GitHub Issues](https://github.com/yourusername/dai-keiba/issues)
-
----
-
-## 🙏 謝辞
-
-- netkeiba.comのデータ提供に感謝
-- LightGBM、Optuna、Streamlitの開発者の皆様に感謝
-
----
-
-**最終更新日:** 2025-12-28
-**バージョン:** 2.0.0
-**ステータス:** ✅ プロダクション運用可能
