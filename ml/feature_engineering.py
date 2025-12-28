@@ -824,10 +824,10 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
 
     # Fallback Logic
     df['jockey_compatibility'] = df['jockey_compatibility'].fillna(df['trainer_jockey_compatibility'])
-        df['jockey_compatibility'] = df['jockey_compatibility'].fillna(10.0) # Default Average
+    df['jockey_compatibility'] = df['jockey_compatibility'].fillna(10.0) # Default Average
         
-        # Clean temp keys
-        df.drop(columns=['hj_key', 'tj_key', 'trainer_jockey_compatibility'], inplace=True, errors='ignore')
+    # Clean temp keys
+    df.drop(columns=['hj_key', 'tj_key', 'trainer_jockey_compatibility'], inplace=True, errors='ignore')
 
 
     # ========== 新規特徴量: レースクラス・条件 ==========
