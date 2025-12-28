@@ -1230,8 +1230,15 @@ if race_id:
                 if trust_factor < 0.6:
                      reasons.append(f"信頼度低 (x{trust_factor:.2f})")
 
-                # Kelly criterion (placeholder for now)
-                kelly = 0.0
+                # Kelly criterion: 最適賭け金比率の計算
+                # Formula: f* = (p * odds - 1) / (odds - 1)
+                # ここでpは調整後の確率、oddsはオッズ
+                if calc_odds > 1.0:
+                    kelly_raw = (adjusted_p * w * calc_odds - 1.0) / (calc_odds - 1.0)
+                    # 負の値は0に、上限は10%に制限（リスク管理）
+                    kelly = max(0.0, min(0.10, kelly_raw)) * 100  # パーセント表示
+                else:
+                    kelly = 0.0
             
             evs_pure.append(ev_pure)
             evs_adjusted.append(ev_adj)
