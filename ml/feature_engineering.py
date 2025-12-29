@@ -438,7 +438,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         # Odds
         col = f"past_{i}_odds"
         if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(100.0).infer_objects(copy=False) 
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(100.0).infer_objects() 
         else:
             df[col] = 100.0
 
@@ -845,17 +845,17 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
                 return 8
             elif 'G3' in name or 'ＧⅢ' in name:
                 return 7
-            elif 'オープン' in name or 'OP' in name:
+            elif 'オープン' in name or 'OP' in name or 'A1' in name:
                 return 6
-            elif '3勝' in name:
+            elif '3勝' in name or 'A2' in name or 'B1' in name:
                 return 5
-            elif '2勝' in name:
+            elif '2勝' in name or 'B2' in name or 'B3' in name:
                 return 4
-            elif '1勝' in name:
+            elif '1勝' in name or 'C1' in name:
                 return 3
-            elif '未勝利' in name:
+            elif '未勝利' in name or 'C2' in name:
                 return 2
-            elif '新馬' in name:
+            elif '新馬' in name or 'C3' in name:
                 return 1
             return 0
 
