@@ -1595,6 +1595,10 @@ def process_data_v2(df, lambda_decay=0.2, use_venue_features=False, input_stats=
             
     # Add feature cols
     keep_cols.extend(feature_cols)
+
+    # DEBUG: Always keep verification keys
+    if 'hj_key' in df.columns: keep_cols.append('hj_key')
+    if 'debug_ver' in df.columns: keep_cols.append('debug_ver')
     
     # Return Logic with Stats
     if return_stats:
