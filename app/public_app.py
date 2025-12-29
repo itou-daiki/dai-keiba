@@ -97,17 +97,22 @@ def load_stats(mode="JRA"):
 
 def get_data_freshness(mode="JRA"):
     """データベースの最終更新日時を取得（SQL対応）"""
-    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "keiba_data.db")
-    if os.path.exists(db_path):
+    csv_filename = "database_nar.csv" if mode == "NAR" else "database.csv"
+    csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw", csv_filename)
+    
+    if os.path.exists(csv_path):
         try:
-            db = KeibaDatabase(db_path)
-            freshness = db.get_data_freshness(mode)
-            return freshness, 0  # 鮮度情報を文字列で返す
+            mtime = os.path.getmtime(csv_path)
+            dt = datetime.fromtimestamp(mtime)
+            freshness = dt.strftime('%Y-%m-%d %H:%M')
+            
+            # 鮮度判定 (3日以内なら0=安全、それ以上は日数)
+            days_diff = (datetime.now() - dt).days
+            return freshness, days_diff
         except Exception as e:
             st.warning(f"データ鮮度の取得に失敗: {e}")
             return "不明", -1
-    return "DBなし", -1
-    return None, None
+    return "CSVなし", -1
 
 def calculate_confidence_score(ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None, is_rest_comeback=0, has_history=True):
     """

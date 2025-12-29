@@ -682,7 +682,11 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         
     df['hj_key'] = df['h_key'] + '_' + df['jockey_clean']
     df['tj_key'] = df['t_key'] + '_' + df['jockey_clean']
-
+    
+    
+    # Initialize jockey_compatibility to NaN (will be filled by stats map or fallback)
+    df['jockey_compatibility'] = np.nan
+    
     if input_stats:
         if 'hj_compatibility' in input_stats:
              df['jockey_compatibility'] = df['hj_key'].map(input_stats['hj_compatibility'])
@@ -787,7 +791,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # ========== 新規特徴量: 騎手との相性 ==========
 
     # 7. 現在の騎手との過去成績（過去5走で同じ騎手の時の平均着順）
-    df['jockey_compatibility'] = 10.0  # デフォルト
+
 
     # ========== 新規特徴量: 騎手との相性 (Global & Trainer Fallback) ==========
 
