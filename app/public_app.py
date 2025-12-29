@@ -397,90 +397,6 @@ st.markdown("### 設定")
 mode = st.radio("開催モード (Mode)", ["JRA (中央競馬)", "NAR (地方競馬)"], horizontal=True)
 mode_val = "JRA" if "JRA" in mode else "NAR"
 
-# --- Debug Info ---
-with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
-    st.write("Python Version:", sys.version)
-    st.write("Current Dir:", os.getcwd())
-    
-    csv_path = "data/raw/database_nar.csv" if mode_val == "NAR" else "data/raw/database.csv"
-    if os.path.exists(csv_path):
-        st.success(f"CSV Found: {csv_path}")
-        st.write("Size:", os.path.getsize(csv_path) / 1024 / 1024, "MB")
-        
-        # Try loading head
-        try:
-            df_head = pd.read_csv(csv_path, nrows=5)
-            st.write("Loaded Head:", df_head.shape)
-            if 'horse_id' in df_head.columns:
-                st.write("Sample ID:", df_head['horse_id'].iloc[0], type(df_head['horse_id'].iloc[0]))
-        except Exception as e:
-            st.error(f"Read Error: {e}")
-    else:
-        st.error(f"CSV Not Found: {csv_path}")
-
-    # Stats Check
-    st.write("--- Stats Check ---")
-    
-    # Allow helper function usage
-    if 'stats' not in st.session_state:
-        st.session_state['stats'] = load_stats(mode_val)
-    
-    stats_debug = st.session_state.get('stats')
-    if stats_debug:
-        st.success(f"Stats Loaded. Keys: {list(stats_debug.keys())}")
-        if 'hj_compatibility' in stats_debug:
-            hj_stats = stats_debug['hj_compatibility']
-            st.write("hj_compatibility size:", len(hj_stats))
-            st.write("Sample keys:", list(hj_stats.keys())[:5])
-            
-            # --- Key Match Test ---
-            st.write("--- Key Match Test (Top 5 Rows) ---")
-            if os.path.exists(csv_path):
-                 try:
-                     df_debug = pd.read_csv(csv_path, nrows=5)
-                     if 'horse_id' in df_debug.columns and '騎手' in df_debug.columns:
-                         for i, row in df_debug.iterrows():
-                             # Simulate cleaning logic exactly
-                             h_id = str(row['horse_id']).replace(".0", "")
-                             try: h_id = str(int(float(h_id)))
-                             except: pass
-                             
-                             j_name = str(row['騎手']) if pd.notna(row['騎手']) else ""
-                             j_name = re.sub(r'[▲△☆◇★\d]', '', j_name).replace(" ", "").replace("　", "").strip()
-                             
-                             gen_key = f"{h_id}_{j_name}"
-                             found = gen_key in hj_stats
-                             match_icon = "✅" if found else "❌"
-                             val_disp = hj_stats[gen_key] if found else "Only Fallback"
-                             st.write(f"{i+1}. Key: `{gen_key}` -> {match_icon} (Val: {val_disp})")
-                 except Exception as ex:
-                     st.error(f"Key Test Error: {ex}")
-        else:
-            st.error("'hj_compatibility' key MISSING in stats!")
-    else:
-        st.warning("Stats object not loaded yet (or failed).")
-
-    # Features Check (if prediction ran)
-    if 'last_features' in st.session_state:
-         st.write("--- Last Prediction Features ---")
-         feat_df = st.session_state['last_features']
-         if 'jockey_compatibility' in feat_df.columns:
-             st.write("jockey_compatibility head:", feat_df['jockey_compatibility'].head())
-             st.write("Stats:", feat_df['jockey_compatibility'].describe())
-             
-             # Check if hj_key persisted (Debug mode)
-             if 'hj_key' in feat_df.columns:
-                 st.write("hj_key head:", feat_df['hj_key'].head())
-                 # Check match against stats here too!
-                 if stats:
-                     hj_stats = stats.get('hj_compatibility', {})
-                     sample_key = feat_df['hj_key'].iloc[0]
-                     st.write(f"Live Key '{sample_key}' in Stats? {'✅' if sample_key in hj_stats else '❌'}")
-             else:
-                 st.warning("hj_key column dropped (normal behavior if not debug)")
-
-         else:
-             st.error("jockey_compatibility MISSING in features!")
 with st.expander("🛠️ 管理ツール (スケジュール更新など)"):
     col_admin_1, col_admin_2 = st.columns([1, 1])
     with col_admin_1:
@@ -1903,3 +1819,89 @@ if race_id:
             st.warning(f"可視化エラー: {e}")
             import traceback
             st.text(traceback.format_exc())
+
+# --- Debug Info (Moved to Bottom) ---
+st.markdown("---")
+with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
+    st.write("Python Version:", sys.version)
+    st.write("Current Dir:", os.getcwd())
+    
+    csv_path = "data/raw/database_nar.csv" if mode_val == "NAR" else "data/raw/database.csv"
+    if os.path.exists(csv_path):
+        st.success(f"CSV Found: {csv_path}")
+        st.write("Size:", os.path.getsize(csv_path) / 1024 / 1024, "MB")
+        
+        # Try loading head
+        try:
+            df_head = pd.read_csv(csv_path, nrows=5)
+            st.write("Loaded Head:", df_head.shape)
+            if 'horse_id' in df_head.columns:
+                st.write("Sample ID:", df_head['horse_id'].iloc[0], type(df_head['horse_id'].iloc[0]))
+        except Exception as e:
+            st.error(f"Read Error: {e}")
+    else:
+        st.error(f"CSV Not Found: {csv_path}")
+
+    # Stats Check
+    st.write("--- Stats Check ---")
+    
+    # Allow helper function usage
+    if 'stats' not in st.session_state:
+        st.session_state['stats'] = load_stats(mode_val)
+    
+    stats_debug = st.session_state.get('stats')
+    if stats_debug:
+        st.success(f"Stats Loaded. Keys: {list(stats_debug.keys())}")
+        if 'hj_compatibility' in stats_debug:
+            hj_stats = stats_debug['hj_compatibility']
+            st.write("hj_compatibility size:", len(hj_stats))
+            st.write("Sample keys:", list(hj_stats.keys())[:5])
+            
+            # --- Key Match Test ---
+            st.write("--- Key Match Test (Top 5 Rows) ---")
+            if os.path.exists(csv_path):
+                 try:
+                     df_debug = pd.read_csv(csv_path, nrows=5)
+                     if 'horse_id' in df_debug.columns and '騎手' in df_debug.columns:
+                         for i, row in df_debug.iterrows():
+                             # Simulate cleaning logic exactly
+                             h_id = str(row['horse_id']).replace(".0", "")
+                             try: h_id = str(int(float(h_id)))
+                             except: pass
+                             
+                             j_name = str(row['騎手']) if pd.notna(row['騎手']) else ""
+                             j_name = re.sub(r'[▲△☆◇★\d]', '', j_name).replace(" ", "").replace("　", "").strip()
+                             
+                             gen_key = f"{h_id}_{j_name}"
+                             found = gen_key in hj_stats
+                             match_icon = "✅" if found else "❌"
+                             val_disp = hj_stats[gen_key] if found else "Only Fallback"
+                             st.write(f"{i+1}. Key: `{gen_key}` -> {match_icon} (Val: {val_disp})")
+                 except Exception as ex:
+                     st.error(f"Key Test Error: {ex}")
+        else:
+            st.error("'hj_compatibility' key MISSING in stats!")
+    else:
+        st.warning("Stats object not loaded yet (or failed).")
+
+    # Features Check (if prediction ran)
+    if 'last_features' in st.session_state:
+         st.write("--- Last Prediction Features ---")
+         feat_df = st.session_state['last_features']
+         if 'jockey_compatibility' in feat_df.columns:
+             st.write("jockey_compatibility head:", feat_df['jockey_compatibility'].head())
+             st.write("Stats:", feat_df['jockey_compatibility'].describe())
+             
+             # Check if hj_key persisted (Debug mode)
+             if 'hj_key' in feat_df.columns:
+                 st.write("hj_key head:", feat_df['hj_key'].head())
+                 # Check match against stats here too!
+                 if stats_debug:
+                     hj_stats = stats_debug.get('hj_compatibility', {})
+                     sample_key = feat_df['hj_key'].iloc[0]
+                     st.write(f"Live Key '{sample_key}' in Stats? {'✅' if sample_key in hj_stats else '❌'}")
+             else:
+                 st.warning("hj_key column dropped (normal behavior if not debug)")
+
+         else:
+             st.error("jockey_compatibility MISSING in features!")
