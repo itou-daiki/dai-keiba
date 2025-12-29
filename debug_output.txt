@@ -1,0 +1,91 @@
+Loading Stats...
+Stats Keys: ['jockey', 'stable', 'course_horse', 'hj_compatibility', 'tj_compatibility', 'horse_turf', 'horse_dirt', 'horse_good', 'horse_heavy', 'horse_dist_Sprint', 'horse_dist_Mile', 'horse_dist_Intermediate', 'horse_dist_Long', 'stable_win_rate', 'stable_top3_rate', 'course_frame_bias', 'course_run_style_bias']
+Loading Raw Data...
+Running process_data...
+DEBUG: h_key type object
+DEBUG: hj_key sample (internal) ['2021107128_村上忍', '2021107246_鈴木祐', '2022102440_大坪慎', '2018104454_阿部英俊', '2022106286_岩本怜']
+DEBUG: Lookup Key '2021107128_村上忍' in stats? True
+DEBUG: map matches count 100
+Columns: ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順', 'weighted_avg_rank', 'weighted_avg_run_style', 'weighted_avg_last_3f', 'weighted_avg_horse_weight', 'weighted_avg_odds', 'weighted_avg_weather', 'weighted_avg_weight_change', 'weighted_avg_interval', 'weighted_avg_speed', 'turf_compatibility', 'dirt_compatibility', 'good_condition_avg', 'heavy_condition_avg', 'distance_compatibility', 'jockey_compatibility', 'last_race_reliability', 'best_similar_course_rank', 'growth_factor', 'last_race_performance', 'rank_trend', 'race_class', 'race_type_code', 'is_rest_comeback', 'interval_category', 'is_consecutive', 'jra_compatibility', 'nar_compatibility', 'is_jra_transfer', 'is_graded', 'age_limit', 'jockey_win_rate', 'jockey_top3_rate', 'jockey_races_log', 'stable_win_rate', 'stable_top3_rate', 'course_distance_record', 'age', 'is_jockey_change', 'father_id', 'mother_id', 'bms_id', 'jockey_id', 'trainer_id', 'run_style_code', 'run_style_consistency', 'dd_frame_bias', 'dd_run_style_bias']
+
+Jockey Compatibility (First 20):
+66    10.0
+54    10.0
+11    10.0
+21    10.0
+59    10.0
+31    10.0
+98    10.0
+89    10.0
+86    10.0
+48    10.0
+82    10.0
+39    10.0
+68    10.0
+80    10.0
+92    10.0
+57    10.0
+49    10.0
+35    10.0
+6     10.0
+43    10.0
+Name: jockey_compatibility, dtype: float64
+
+Stats:
+count    100.0
+mean      10.0
+std        0.0
+min       10.0
+25%       10.0
+50%       10.0
+75%       10.0
+max       10.0
+Name: jockey_compatibility, dtype: float64
+
+Stats Keys (First 5): ['2004102130_尾崎章生', '2008104077_下原理', '2008104077_大柿一真', '2008104077_杉浦健太', '2008104077_竹村達也']
+
+--- Manual Key Check ---
+Generated Keys (First 5):
+['2022102161_菅原辰徳', '2022106919_塚本涼人', '2020101804_小林凌', '2022105913_阿部英俊', '2017103529_高橋悠里']
+
+Matching Check:
+Key: 2022102161_菅原辰徳 -> Found: True
+   Value: 1.0
+Key: 2022106919_塚本涼人 -> Found: True
+   Value: 2.0
+Key: 2020101804_小林凌 -> Found: True
+   Value: 3.0
+Key: 2022105913_阿部英俊 -> Found: True
+   Value: 4.0
+Key: 2017103529_高橋悠里 -> Found: True
+   Value: 5.0
+Key: 2022102440_大坪慎 -> Found: True
+   Value: 6.0
+Key: 2019105758_山本聡紀 -> Found: True
+   Value: 7.0
+Key: 2022104054_佐々木志 -> Found: True
+   Value: 8.0
+Key: 2021107246_鈴木祐 -> Found: True
+   Value: 9.0
+Key: 2020103185_岩本怜 -> Found: True
+   Value: 5.333333333333333
+Key: 2022101081_鈴木祐 -> Found: True
+   Value: 1.0
+Key: 2020104476_大坪慎 -> Found: True
+   Value: 2.0
+Key: 2022100821_小林凌 -> Found: True
+   Value: 6.25
+Key: 2019101990_佐々木志 -> Found: True
+   Value: 4.0
+Key: 2022107297_関本玲花 -> Found: True
+   Value: 4.8
+Key: 2022100853_村上忍 -> Found: True
+   Value: 6.0
+Key: 2018104454_阿部英俊 -> Found: True
+   Value: 5.583333333333333
+Key: 2022106836_菅原辰徳 -> Found: True
+   Value: 6.666666666666667
+Key: 2022106599_高松亮 -> Found: True
+   Value: 9.0
+Key: 2022106286_岩本怜 -> Found: True
+   Value: 10.0

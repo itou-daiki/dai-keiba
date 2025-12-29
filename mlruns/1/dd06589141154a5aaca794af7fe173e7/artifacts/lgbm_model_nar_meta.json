@@ -1,0 +1,131 @@
+{
+  "model_id": "lgbm_model_nar",
+  "model_type": "LightGBM Binary Classification",
+  "target": "target_win",
+  "trained_at": "2025-12-30T00:01:41.500760",
+  "data_source": "processed_data_nar.csv",
+  "data_stats": {
+    "total_records": 139937,
+    "train_records": 139937,
+    "test_records": 27988,
+    "win_rate": 0.09767252406440041
+  },
+  "performance": {
+    "auc": 0.8210585485906371,
+    "accuracy": 0.8158496498499357,
+    "precision": 0.28851291184327693,
+    "recall": 0.5829435048578625,
+    "f1": 0.38598999285203717,
+    "brier_score": 0.14220152003065709,
+    "log_loss": 0.4457132665722427
+  },
+  "cv_results": {
+    "auc": {
+      "mean": 0.7362911214856245,
+      "std": 0.011036306195206493
+    },
+    "accuracy": {
+      "mean": 0.8183088928908326,
+      "std": 0.02424517096142864
+    },
+    "precision": {
+      "mean": 0.24587626096173457,
+      "std": 0.022689520374225402
+    },
+    "recall": {
+      "mean": 0.40259844065325706,
+      "std": 0.0636622044967102
+    },
+    "f1": {
+      "mean": 0.3007853201876596,
+      "std": 0.015622586609447051
+    },
+    "brier": {
+      "mean": 0.14189759849925382,
+      "std": 0.010689620953918271
+    },
+    "logloss": {
+      "mean": 0.44628252479727026,
+      "std": 0.024696395297042383
+    }
+  },
+  "features": [
+    "weighted_avg_rank",
+    "weighted_avg_run_style",
+    "weighted_avg_last_3f",
+    "weighted_avg_horse_weight",
+    "weighted_avg_odds",
+    "weighted_avg_weather",
+    "weighted_avg_weight_change",
+    "weighted_avg_interval",
+    "weighted_avg_speed",
+    "turf_compatibility",
+    "dirt_compatibility",
+    "good_condition_avg",
+    "heavy_condition_avg",
+    "distance_compatibility",
+    "jockey_compatibility",
+    "last_race_reliability",
+    "best_similar_course_rank",
+    "growth_factor",
+    "last_race_performance",
+    "rank_trend",
+    "race_class",
+    "race_type_code",
+    "is_rest_comeback",
+    "interval_category",
+    "is_consecutive",
+    "jra_compatibility",
+    "nar_compatibility",
+    "is_jra_transfer",
+    "is_graded",
+    "age_limit",
+    "jockey_win_rate",
+    "jockey_top3_rate",
+    "jockey_races_log",
+    "stable_win_rate",
+    "stable_top3_rate",
+    "course_distance_record",
+    "age",
+    "is_jockey_change",
+    "father_id",
+    "mother_id",
+    "bms_id",
+    "jockey_id",
+    "trainer_id",
+    "run_style_code",
+    "run_style_consistency",
+    "dd_frame_bias",
+    "dd_run_style_bias"
+  ],
+  "hyperparameters": {
+    "objective": "binary",
+    "metric": "auc",
+    "boosting_type": "gbdt",
+    "verbose": -1,
+    "num_leaves": 83,
+    "learning_rate": 0.019072311469705224,
+    "feature_fraction": 0.5956941791170133,
+    "bagging_fraction": 0.755530030765459,
+    "bagging_freq": 1,
+    "is_unbalance": false,
+    "max_depth": 10,
+    "min_child_samples": 68,
+    "min_gain_to_split": 0.44428140491967616,
+    "lambda_l1": 1.9469257179763747e-07,
+    "lambda_l2": 1.0193823363558257e-08,
+    "scale_pos_weight": 6.086709466796039
+  },
+  "training_config": {
+    "use_timeseries_split": true,
+    "n_folds": 5,
+    "num_boost_round": 300,
+    "early_stopping_rounds": 30,
+    "hyperparameter_optimization": false,
+    "n_trials": null,
+    "optimal_threshold": 0.5,
+    "calibrated": false,
+    "trained_on_all_data": true
+  },
+  "warnings": []
+}
