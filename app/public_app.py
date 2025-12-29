@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(PROJECT_ROOT, 'scraper'))
 sys.path.append(os.path.join(PROJECT_ROOT, 'ml'))
+sys.path.append(PROJECT_ROOT) # Add root for 'ml.feature_engineering' access
 
 try:
     import importlib
