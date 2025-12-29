@@ -53,9 +53,25 @@ def load_history_csv(mode):
     csv_path = os.path.join(PROJECT_ROOT, "data", "raw", "database_nar.csv" if mode == "NAR" else "database.csv")
     if os.path.exists(csv_path):
         try:
-            # 高速化のために必要な列だけ...といきたいが、汎用性を考え全読み込み
-            return pd.read_csv(csv_path, dtype={'horse_id': str, 'race_id': str})
-        except:
+            # Cloud optimization: Load only necessary columns
+            usecols = [
+                'horse_id', 'race_id', '日付', '着 順', 'タイム', 'レース名', 
+                '後3F', '馬体重(増減)', '騎手', '馬場状態', '単勝 オッズ', 
+                '天候', '距離', 'コースタイプ'
+            ]
+            # Ensure columns exist (handling potential mismatches if file is old)
+            # But read_csv usecols must match exactly.
+            # We assume standard database.csv structure.
+            # If strictly needed, we could read header first, but that's slow.
+            # We'll just try loading.
+            
+            return pd.read_csv(
+                csv_path, 
+                usecols=lambda c: c in usecols, # Lambda handles missing cols gracefully? No, filtering.
+                dtype={'horse_id': str, 'race_id': str, '着 順': str} 
+            )
+        except Exception as e:
+            st.warning(f"History load failed: {e}")
             pass
     return None
 
