@@ -24,8 +24,13 @@ try:
     import importlib
     import auto_scraper
     importlib.reload(auto_scraper) # Force reload to apply fixes
+    
+    # Reload both potential module paths
     import feature_engineering
-    importlib.reload(feature_engineering) # Force reload to apply debug fixes
+    import ml.feature_engineering
+    importlib.reload(feature_engineering)
+    importlib.reload(ml.feature_engineering)
+    
     from feature_engineering import process_data
     from db_helper import KeibaDatabase
 except ImportError as e:
@@ -1827,6 +1832,12 @@ st.markdown("---")
 with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
     st.write("Python Version:", sys.version)
     st.write("Current Dir:", os.getcwd())
+    
+    # Check Module Paths
+    import feature_engineering
+    import ml.feature_engineering
+    st.write(f"Mod FE: {feature_engineering.__file__}")
+    st.write(f"Mod ML.FE: {ml.feature_engineering.__file__}")
     
     csv_path = "data/raw/database_nar.csv" if mode_val == "NAR" else "data/raw/database.csv"
     if os.path.exists(csv_path):
