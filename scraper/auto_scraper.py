@@ -1050,9 +1050,13 @@ def scrape_shutuba_data(race_id, mode="JRA", history_df=None):
             weight_elem = row.select_one(".Txt_C")
             weight = weight_elem.text.strip() if weight_elem else (row.select_one("td:nth-child(6)").text.strip() if row.select_one("td:nth-child(6)") else "57.0")
 
+            trainer_elem = row.select_one(".Trainer a")
+            trainer = trainer_elem.text.strip() if trainer_elem else (row.select_one("td:nth-child(8) a").text.strip() if row.select_one("td:nth-child(8) a") else "")
+
             entry = {
                 "日付": date_text,
                 "会場": venue_text, # Added Venue
+                "厩舎": trainer,
                 "レース名": race_name,
                 "枠": waku,
                 "馬 番": umaban,
