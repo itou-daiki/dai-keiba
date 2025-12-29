@@ -774,9 +774,15 @@ def scrape_odds_for_race(race_id, mode="JRA"):
             p_max = 0.0
             
             # Try classes
-            u_el = row.select_one('.Umaban')
+            # Try classes
+            u_el = row.select_one('.Umaban') or row.select_one('.W31')
             o_el = row.select_one('.Tan_Odds') or row.select_one('.Odds') 
             f_el = row.select_one('.Fuku_Odds')
+
+            if not u_el:
+                 # Fallback positional (Col 2 is Umaban usually)
+                 if len(cols) >= 2 and cols[1].text.strip().isdigit():
+                     u_el = cols[1]
 
             if u_el:
                  try:
