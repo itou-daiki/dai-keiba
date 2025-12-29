@@ -393,27 +393,6 @@ st.markdown("### 設定")
 mode = st.radio("開催モード (Mode)", ["JRA (中央競馬)", "NAR (地方競馬)"], horizontal=True)
 mode_val = "JRA" if "JRA" in mode else "NAR"
 
-# --- Debug Info ---
-with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
-    st.write(f"Mode: {mode_val}")
-    csv_path = os.path.join(PROJECT_ROOT, "data", "raw", "database_nar.csv" if mode_val == "NAR" else "database.csv")
-    if os.path.exists(csv_path):
-        size_mb = os.path.getsize(csv_path) / (1024 * 1024)
-        st.write(f"✅ CSV Found: {size_mb:.1f} MB")
-    else:
-        st.error(f"❌ CSV Not Found: {csv_path}")
-
-    # History Load Check
-    try:
-        hist = load_history_csv(mode_val)
-        if hist is not None:
-             st.write(f"✅ History Loaded: {hist.shape}")
-             st.write(f"Columns ({len(hist.columns)}): {list(hist.columns)[:5]}...")
-             if 'horse_id' in hist.columns:
-                 st.write(f"First ID: {hist['horse_id'].iloc[0]}")
-        else:
-             st.error("❌ History Load Returned None")
-    except Exception as e:
         st.error(f"❌ History Check Failed: {e}")
 
 with st.expander("🛠️ 管理ツール (スケジュール更新など)"):
