@@ -24,6 +24,8 @@ try:
     import importlib
     import auto_scraper
     importlib.reload(auto_scraper) # Force reload to apply fixes
+    import feature_engineering
+    importlib.reload(feature_engineering) # Force reload to apply debug fixes
     from feature_engineering import process_data
     from db_helper import KeibaDatabase
 except ImportError as e:
