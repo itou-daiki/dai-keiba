@@ -833,6 +833,7 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     # DEBUG: Keep keys for verification
     # df.drop(columns=['hj_key', 'tj_key', 'trainer_jockey_compatibility'], inplace=True, errors='ignore')
     df.drop(columns=['trainer_jockey_compatibility'], inplace=True, errors='ignore')
+    df['debug_ver'] = "v1_nodrop"
 
 
     # ========== 新規特徴量: レースクラス・条件 ==========

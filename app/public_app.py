@@ -1893,6 +1893,11 @@ with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
              st.write("Stats:", feat_df['jockey_compatibility'].describe())
              
              # Check if hj_key persisted (Debug mode)
+             if 'debug_ver' in feat_df.columns:
+                 st.write(f"Debug Ver: {feat_df['debug_ver'].iloc[0]}")
+             else:
+                 st.error("Debug Ver MISSING (Old Code?)")
+
              if 'hj_key' in feat_df.columns:
                  st.write("hj_key head:", feat_df['hj_key'].head())
                  # Check match against stats here too!
