@@ -1,926 +1,6 @@
 {
-  "date": "2025-12-26",
+  "date": "2025-12-29",
   "races": [
-    {
-      "id": "202545121901",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "1",
-      "name": "パネトーネ賞(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202545121902",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "2",
-      "name": "スパーキングデビュ...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202545121903",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "3",
-      "name": "スパーキングデビュ...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202545121904",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "4",
-      "name": "スパーキングデビュ...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202545121905",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "5",
-      "name": "ティング賞(3歳)",
-      "horses": []
-    },
-    {
-      "id": "202545121906",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "6",
-      "name": "ジングルベル賞(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202545121907",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "7",
-      "name": "天雷賞(C2)",
-      "horses": []
-    },
-    {
-      "id": "202545121908",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "8",
-      "name": "ありがとう 今野忠...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202545121909",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "9",
-      "name": "ありがとう 山崎誠...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202545121910",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "10",
-      "name": "やまなし畜産特別(B3C1)",
-      "horses": []
-    },
-    {
-      "id": "202545121911",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "11",
-      "name": "今野忠成・山崎誠士...(B3)",
-      "horses": []
-    },
-    {
-      "id": "202545121912",
-      "date": "2025-12-19",
-      "venue": "川崎",
-      "number": "12",
-      "name": "47thホワイトク...(C1C2)",
-      "horses": []
-    },
-    {
-      "id": "202546121901",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "1",
-      "name": "C111",
-      "horses": []
-    },
-    {
-      "id": "202546121902",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "2",
-      "name": "C110",
-      "horses": []
-    },
-    {
-      "id": "202546121903",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "3",
-      "name": "熊本ゴメン球団結成...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202546121904",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "4",
-      "name": "C18",
-      "horses": []
-    },
-    {
-      "id": "202546121905",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "5",
-      "name": "C17",
-      "horses": []
-    },
-    {
-      "id": "202546121906",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "6",
-      "name": "かほちー就職&誕生...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202546121907",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "7",
-      "name": "C15",
-      "horses": []
-    },
-    {
-      "id": "202546121908",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "8",
-      "name": "☆凛太郎くん☆1歳...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202546121909",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "9",
-      "name": "楽天ポイントで馬券...(B2)",
-      "horses": []
-    },
-    {
-      "id": "202546121910",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "10",
-      "name": "大倉岳高原賞(B2)",
-      "horses": []
-    },
-    {
-      "id": "202546121911",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "11",
-      "name": "一里野温泉特別(B2)",
-      "horses": []
-    },
-    {
-      "id": "202546121912",
-      "date": "2025-12-19",
-      "venue": "金沢",
-      "number": "12",
-      "name": "地方競馬の馬券はS...(A1)",
-      "horses": []
-    },
-    {
-      "id": "202548121901",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "1",
-      "name": "C25組",
-      "horses": []
-    },
-    {
-      "id": "202548121902",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "2",
-      "name": "C24組",
-      "horses": []
-    },
-    {
-      "id": "202548121903",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "3",
-      "name": "2歳6組",
-      "horses": []
-    },
-    {
-      "id": "202548121904",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "4",
-      "name": "2歳5組",
-      "horses": []
-    },
-    {
-      "id": "202548121905",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "5",
-      "name": "C23組",
-      "horses": []
-    },
-    {
-      "id": "202548121906",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "6",
-      "name": "荒木利裕お誕生日記...(C)",
-      "horses": []
-    },
-    {
-      "id": "202548121907",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "7",
-      "name": "C21組",
-      "horses": []
-    },
-    {
-      "id": "202548121908",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "8",
-      "name": "年の瀬の運試し!第...(C)",
-      "horses": []
-    },
-    {
-      "id": "202548121909",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "9",
-      "name": "B4組",
-      "horses": []
-    },
-    {
-      "id": "202548121910",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "10",
-      "name": "巳年納特別(A)",
-      "horses": []
-    },
-    {
-      "id": "202548121911",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "11",
-      "name": "尾張国特別(A)",
-      "horses": []
-    },
-    {
-      "id": "202548121912",
-      "date": "2025-12-19",
-      "venue": "名古屋",
-      "number": "12",
-      "name": "B3組",
-      "horses": []
-    },
-    {
-      "id": "202554122001",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "1",
-      "name": "2歳ー6",
-      "horses": []
-    },
-    {
-      "id": "202554122002",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "2",
-      "name": "2歳ー5",
-      "horses": []
-    },
-    {
-      "id": "202554122003",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "3",
-      "name": "2歳ー4",
-      "horses": []
-    },
-    {
-      "id": "202554122004",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "4",
-      "name": "皿鉢料理特別(C3)",
-      "horses": []
-    },
-    {
-      "id": "202554122005",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "5",
-      "name": "鏡川特別",
-      "horses": []
-    },
-    {
-      "id": "202554122006",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "6",
-      "name": "C3ー10",
-      "horses": []
-    },
-    {
-      "id": "202554122007",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "7",
-      "name": "C3ー9",
-      "horses": []
-    },
-    {
-      "id": "202554122008",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "8",
-      "name": "C3ー8",
-      "horses": []
-    },
-    {
-      "id": "202554122009",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "9",
-      "name": "C3ー7",
-      "horses": []
-    },
-    {
-      "id": "202554122010",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "10",
-      "name": "Bー3",
-      "horses": []
-    },
-    {
-      "id": "202554122011",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "11",
-      "name": "Bー2",
-      "horses": []
-    },
-    {
-      "id": "202554122012",
-      "date": "2025-12-20",
-      "venue": "高知",
-      "number": "12",
-      "name": "ファイナルレース(C3)",
-      "horses": []
-    },
-    {
-      "id": "202555122001",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "1",
-      "name": "2歳ー6組",
-      "horses": []
-    },
-    {
-      "id": "202555122002",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "2",
-      "name": "2歳ー5組",
-      "horses": []
-    },
-    {
-      "id": "202555122003",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "3",
-      "name": "水仙特別(B)",
-      "horses": []
-    },
-    {
-      "id": "202555122004",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "4",
-      "name": "ひむかのくろうま賞(C2)",
-      "horses": []
-    },
-    {
-      "id": "202555122005",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "5",
-      "name": "クンシラン賞(A2)",
-      "horses": []
-    },
-    {
-      "id": "202555122006",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "6",
-      "name": "C2ー16組",
-      "horses": []
-    },
-    {
-      "id": "202555122007",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "7",
-      "name": "AIパッカル賞(C2)",
-      "horses": []
-    },
-    {
-      "id": "202555122008",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "8",
-      "name": "さがけいば×焼肉ウ...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202555122009",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "9",
-      "name": "ラークスパ―賞(C1)",
-      "horses": []
-    },
-    {
-      "id": "202555122010",
-      "date": "2025-12-20",
-      "venue": "佐賀",
-      "number": "10",
-      "name": "SAGAリベンジャ...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202565122001",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "1",
-      "name": "瑞生綾香さんずっと...",
-      "horses": []
-    },
-    {
-      "id": "202565122002",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "2",
-      "name": "陸別町馬産振興協議...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122003",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "3",
-      "name": "葉竜らぷる活動2周...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122004",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "4",
-      "name": "鳥飼まりあ生誕祭前...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122005",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "5",
-      "name": "第3回 亜央衣記念",
-      "horses": []
-    },
-    {
-      "id": "202565122006",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "6",
-      "name": "誇楠&亜美御結婚奉...",
-      "horses": []
-    },
-    {
-      "id": "202565122007",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "7",
-      "name": "たんぽぽさんお誕生...",
-      "horses": []
-    },
-    {
-      "id": "202565122008",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "8",
-      "name": "第1回南條記念(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122009",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "9",
-      "name": "かすみんお誕生日記...",
-      "horses": []
-    },
-    {
-      "id": "202565122010",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "10",
-      "name": "俳優 石井賢太郎賞",
-      "horses": []
-    },
-    {
-      "id": "202565122011",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "11",
-      "name": "黒千石事業協同組合...",
-      "horses": []
-    },
-    {
-      "id": "202565122012",
-      "date": "2025-12-20",
-      "venue": "帯広(ば)",
-      "number": "12",
-      "name": "オープン(OP)\nOP",
-      "horses": []
-    },
-    {
-      "id": "202536122101",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "1",
-      "name": "C2",
-      "horses": []
-    },
-    {
-      "id": "202536122102",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "2",
-      "name": "C2十一組",
-      "horses": []
-    },
-    {
-      "id": "202536122103",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "3",
-      "name": "C2十組",
-      "horses": []
-    },
-    {
-      "id": "202536122104",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "4",
-      "name": "C2九組",
-      "horses": []
-    },
-    {
-      "id": "202536122105",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "5",
-      "name": "C2八組",
-      "horses": []
-    },
-    {
-      "id": "202536122106",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "6",
-      "name": "2歳",
-      "horses": []
-    },
-    {
-      "id": "202536122107",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "7",
-      "name": "B2",
-      "horses": []
-    },
-    {
-      "id": "202536122108",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "8",
-      "name": "B2",
-      "horses": []
-    },
-    {
-      "id": "202536122109",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "9",
-      "name": "B2",
-      "horses": []
-    },
-    {
-      "id": "202536122110",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "10",
-      "name": "B1",
-      "horses": []
-    },
-    {
-      "id": "202536122111",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "11",
-      "name": "ビッグレッドファー...(B1)",
-      "horses": []
-    },
-    {
-      "id": "202536122112",
-      "date": "2025-12-21",
-      "venue": "水沢",
-      "number": "12",
-      "name": "金杯(2歳)\n重賞",
-      "horses": []
-    },
-    {
-      "id": "202554122101",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "1",
-      "name": "C3ー18",
-      "horses": []
-    },
-    {
-      "id": "202554122102",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "2",
-      "name": "C3ー17",
-      "horses": []
-    },
-    {
-      "id": "202554122103",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "3",
-      "name": "C3ー16",
-      "horses": []
-    },
-    {
-      "id": "202554122104",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "4",
-      "name": "宗石調教師お疲れ様...(C3)",
-      "horses": []
-    },
-    {
-      "id": "202554122105",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "5",
-      "name": "C3ー14",
-      "horses": []
-    },
-    {
-      "id": "202554122106",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "6",
-      "name": "AB混合",
-      "horses": []
-    },
-    {
-      "id": "202554122107",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "7",
-      "name": "C3ー13",
-      "horses": []
-    },
-    {
-      "id": "202554122108",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "8",
-      "name": "C3ー12",
-      "horses": []
-    },
-    {
-      "id": "202554122109",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "9",
-      "name": "Aー2",
-      "horses": []
-    },
-    {
-      "id": "202554122110",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "10",
-      "name": "ターコイズ特別(A)",
-      "horses": []
-    },
-    {
-      "id": "202554122111",
-      "date": "2025-12-21",
-      "venue": "高知",
-      "number": "11",
-      "name": "ファイナルレース(C3)",
-      "horses": []
-    },
-    {
-      "id": "202555122101",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "1",
-      "name": "C2ー14組",
-      "horses": []
-    },
-    {
-      "id": "202555122102",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "2",
-      "name": "C2ー13組",
-      "horses": []
-    },
-    {
-      "id": "202555122103",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "3",
-      "name": "Bー4組",
-      "horses": []
-    },
-    {
-      "id": "202555122104",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "4",
-      "name": "大吉日賞(A2)",
-      "horses": []
-    },
-    {
-      "id": "202555122105",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "5",
-      "name": "アルデバラン特別(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202555122106",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "6",
-      "name": "C2ー12組",
-      "horses": []
-    },
-    {
-      "id": "202555122107",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "7",
-      "name": "さがけいば×焼肉ウ...(C2)",
-      "horses": []
-    },
-    {
-      "id": "202555122108",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "8",
-      "name": "KYUSHU DR...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202555122109",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "9",
-      "name": "ディセンバー特選(C1)",
-      "horses": []
-    },
-    {
-      "id": "202555122110",
-      "date": "2025-12-21",
-      "venue": "佐賀",
-      "number": "10",
-      "name": "SAGAリベンジャ...(C1)",
-      "horses": []
-    },
-    {
-      "id": "202565122101",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "1",
-      "name": "さくらちゃん生誕祭",
-      "horses": []
-    },
-    {
-      "id": "202565122102",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "2",
-      "name": "FMウイングはやさ...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122103",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "3",
-      "name": "今日も綺麗!まぐた...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122104",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "4",
-      "name": "祝古徳鈴星生誕アー...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122105",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "5",
-      "name": "りょうがマッスル2...(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122106",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "6",
-      "name": "ゆうた&りか結婚お...",
-      "horses": []
-    },
-    {
-      "id": "202565122107",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "7",
-      "name": "第12回あれちく記...",
-      "horses": []
-    },
-    {
-      "id": "202565122108",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "8",
-      "name": "第八回岡和田太郎杯(2歳)",
-      "horses": []
-    },
-    {
-      "id": "202565122109",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "9",
-      "name": "やちゅメリアラたく...",
-      "horses": []
-    },
-    {
-      "id": "202565122110",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "10",
-      "name": "愛し愛されサトピー...",
-      "horses": []
-    },
-    {
-      "id": "202565122111",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "11",
-      "name": "ノエル特別",
-      "horses": []
-    },
-    {
-      "id": "202565122112",
-      "date": "2025-12-21",
-      "venue": "帯広(ば)",
-      "number": "12",
-      "name": "B4ー2",
-      "horses": []
-    },
     {
       "id": "202536122201",
       "date": "2025-12-22",
@@ -3138,12 +2218,943 @@
       "horses": []
     },
     {
+      "id": "202536122901",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "1",
+      "name": "C2",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 56.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 9.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 223.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 6.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 7.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 133.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 8.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 31.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 34.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 1.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122902",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "2",
+      "name": "C2十一組",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 10.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 8.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 104.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 15.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 28.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 104.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 5.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 88.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 73.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 6.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122903",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "3",
+      "name": "C2十組",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 16.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 11.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 237.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 2.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 35.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 3.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 14.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 281.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 108.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 4.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 19.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122904",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "4",
+      "name": "C2九組",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 74.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 38.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 8.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 117.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 10.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 54.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 244.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 35.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 8.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122905",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "5",
+      "name": "C2八組",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 57.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 7.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 83.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 7.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 7.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 1.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 34.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 4.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 198.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 325.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 180.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122906",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "6",
+      "name": "2歳",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 68.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 24.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 130.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 2.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 7.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 3.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 384.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 4.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 6.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122907",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "7",
+      "name": "C1",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 9.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 22.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 45.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 2.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 4.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 48.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 91.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 7.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122908",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "8",
+      "name": "C1",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 54.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 9.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 10.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 7.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 1.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 81.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 48.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 11.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 10.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 500.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122909",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "9",
+      "name": "C1",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 48.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 61.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 13.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 63.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 190.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 12.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 19.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 7.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 5.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 8.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122910",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "10",
+      "name": "C1",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 38.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 9.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 11.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 60.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 56.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 11.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 7.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 230.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 16.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 102.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 102.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 1.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122911",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "11",
+      "name": "C1",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 89.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 1.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 13.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 94.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 29.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 17.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 4.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 32.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 161.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 178.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 137.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 80.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536122912",
+      "date": "2025-12-29",
+      "venue": "水沢",
+      "number": "12",
+      "name": "ハヤテ特別(OP)\nOP",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 4.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 7.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 24.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 32.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 10.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 1.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 17.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 0.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
       "id": "202544122901",
       "date": "2025-12-29",
       "venue": "大井",
       "number": "1",
       "name": "3歳五",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 1.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 162.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 17.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 4.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 219.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 143.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 256.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 17.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 336.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 2.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 40.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 81.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122902",
@@ -3151,7 +3162,92 @@
       "venue": "大井",
       "number": "2",
       "name": "2歳三四",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 132.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 1.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 32.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 309.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 22.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 35.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 185.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 218.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 77.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 355.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 3.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 29.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 16.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 14,
+          "odds": 24.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122903",
@@ -3159,7 +3255,80 @@
       "venue": "大井",
       "number": "3",
       "name": "2歳三四",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 57.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 269.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 226.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 7.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 195.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 36.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 4.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 11.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 2.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 22.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 17.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122904",
@@ -3167,7 +3336,80 @@
       "venue": "大井",
       "number": "4",
       "name": "C2九十11(C2十)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 203.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 157.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 1.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 12.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 469.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 19.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 144.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 69.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 270.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 60.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 16.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122905",
@@ -3175,7 +3417,92 @@
       "venue": "大井",
       "number": "5",
       "name": "C2九十11(C2十)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 349.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 178.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 3.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 44.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 15.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 5.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 119.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 31.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 49.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 55.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 80.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 19.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 14,
+          "odds": 4.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122906",
@@ -3183,7 +3510,92 @@
       "venue": "大井",
       "number": "6",
       "name": "C2九十11(C2十)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 9.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 6.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 3.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 51.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 46.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 77.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 150.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 248.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 3.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 391.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 24.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 128.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 14,
+          "odds": 31.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122907",
@@ -3191,7 +3603,104 @@
       "venue": "大井",
       "number": "7",
       "name": "カプリコーン賞(B2)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 81.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 20.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 9.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 16.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 6.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 28.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 35.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 20.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 5.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 110.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 53.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 26.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 368.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 14,
+          "odds": 2.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 15,
+          "odds": 117.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 16,
+          "odds": 290.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122908",
@@ -3199,7 +3708,86 @@
       "venue": "大井",
       "number": "8",
       "name": "ミスアサヒロ賞(B3)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 88.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 115.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 77.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 308.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 8.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 151.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 159.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 4.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 56.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 67.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 408.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 8.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 1.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122909",
@@ -3207,7 +3795,104 @@
       "venue": "大井",
       "number": "9",
       "name": "東京大賞典(3上)\nGI",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 5.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 384.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 5.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 471.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 498.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 407.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 416.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 42.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 0.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 77.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 249.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 16.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 1.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 14,
+          "odds": 293.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 15,
+          "odds": 12.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 16,
+          "odds": 165.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122910",
@@ -3215,7 +3900,86 @@
       "venue": "大井",
       "number": "10",
       "name": "乃木坂賞(B3)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 201.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 48.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 15.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 3.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 19.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 126.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 92.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 7.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 28.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 52.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 9.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 2.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 142.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122911",
@@ -3223,7 +3987,86 @@
       "venue": "大井",
       "number": "11",
       "name": "センリョウ賞(C1)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 32.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 48.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 42.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 214.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 6.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 6.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 94.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 14.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 59.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 183.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 45.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 13,
+          "odds": 9.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202544122912",
@@ -3231,7 +4074,74 @@
       "venue": "大井",
       "number": "12",
       "name": "黎明賞(C1)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 30.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 2.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 2.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 57.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 85.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 145.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 4.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 16.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 43.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 23.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 17.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122901",
@@ -3239,7 +4149,56 @@
       "venue": "笠松",
       "number": "1",
       "name": "笠松デビュー馬未勝...(2歳)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 1.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 5.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 39.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 57.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 2.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 53.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 149.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 62.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122902",
@@ -3247,7 +4206,50 @@
       "venue": "笠松",
       "number": "2",
       "name": "2歳4組牝馬",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 40.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 2.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 10.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 180.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 6.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 156.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122903",
@@ -3255,7 +4257,56 @@
       "venue": "笠松",
       "number": "3",
       "name": "C12・C15組(CC)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 44.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 56.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 75.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 53.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 6.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 2.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 12.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122904",
@@ -3263,7 +4314,56 @@
       "venue": "笠松",
       "number": "4",
       "name": "滋賀の魔術師・辻滉...(C)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 28.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 64.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 215.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 2.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 4.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 104.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 25.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122905",
@@ -3271,7 +4371,56 @@
       "venue": "笠松",
       "number": "5",
       "name": "大石さん家無病息災...(B)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 5.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 3.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 28.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 5.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 2.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 12.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 13.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 0.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122906",
@@ -3279,7 +4428,56 @@
       "venue": "笠松",
       "number": "6",
       "name": "光太郎まりな大結婚...(B)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 73.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 85.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 3.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 19.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 1.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 13.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 3.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 18.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122907",
@@ -3287,7 +4485,56 @@
       "venue": "笠松",
       "number": "7",
       "name": "高木家・岡田家結婚...(B)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 17.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 1.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 48.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 126.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 159.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 20.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 2.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 9.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122908",
@@ -3295,7 +4542,62 @@
       "venue": "笠松",
       "number": "8",
       "name": "イチイの木賞(C)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 17.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 2.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 198.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 13.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 20.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 296.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 288.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 6.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122909",
@@ -3303,7 +4605,62 @@
       "venue": "笠松",
       "number": "9",
       "name": "ライチョウ特別(C)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 15.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 0.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 25.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 91.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 16.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 1.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 26.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 118.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 8.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122910",
@@ -3311,7 +4668,62 @@
       "venue": "笠松",
       "number": "10",
       "name": "岐阜新聞・岐阜放送...(OP)(3歳)\nOP",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 16.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 11.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 1.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 3.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 87.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 7.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 270.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 180.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 58.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202547122911",
@@ -3319,7 +4731,872 @@
       "venue": "笠松",
       "number": "11",
       "name": "C級サバイバル",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 0.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 22.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 4.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 21.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 1.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 19.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 26.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 10.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 7.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122901",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "1",
+      "name": "C3二",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 3.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 62.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 258.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 12.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 175.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 2.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 122.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 100.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 11.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 2.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122902",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "2",
+      "name": "C3一",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 65.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 102.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 60.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 3.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 4.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 9.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 6.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 28.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 3.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 11.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122903",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "3",
+      "name": "NewBeginn...(初出)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 11.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 4.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 39.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 30.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 12.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122904",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "4",
+      "name": "広渡町スプリントC...(C3)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 24.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 106.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 29.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 203.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 9.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 2.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 40.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 3.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 23.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 126.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 121.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122905",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "5",
+      "name": "勝原区丁7ハロン2...(2歳)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 3.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 82.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 21.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 167.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 7.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 314.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 12.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 114.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 14.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 14.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 8.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 2.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122906",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "6",
+      "name": "2歳未勝利一",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 166.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 1.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 9.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 8.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 92.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 37.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 88.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 18.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 58.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 455.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 47.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122907",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "7",
+      "name": "C2三",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 65.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 11.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 9.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 32.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 79.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 24.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122908",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "8",
+      "name": "C2二",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 2.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 20.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 2.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 12.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 36.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 17.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 137.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122909",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "9",
+      "name": "C2一",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 51.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 5.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 225.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 34.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 2.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 34.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 29.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122910",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "10",
+      "name": "能見篤史☆来場記念...(C1)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 125.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 171.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 71.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 20.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 338.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 121.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 16.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 126.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122911",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "11",
+      "name": "オッズパークウイン...(B1)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 6.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 28.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 7.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 146.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 118.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 10.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 1.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 24.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 28.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202550122912",
+      "date": "2025-12-29",
+      "venue": "園田",
+      "number": "12",
+      "name": "C2",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 124.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 28.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 11.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 94.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 38.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 34.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 3.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 234.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 7.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 33.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 67.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122901",
@@ -3327,7 +5604,56 @@
       "venue": "高知",
       "number": "1",
       "name": "2歳新馬",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 9.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 14.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 3.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 31.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 5.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 14.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 27.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 2.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122902",
@@ -3335,7 +5661,50 @@
       "venue": "高知",
       "number": "2",
       "name": "2歳ー7",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 2.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 79.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 23.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 1.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 9.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 141.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 49.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122903",
@@ -3343,7 +5712,50 @@
       "venue": "高知",
       "number": "3",
       "name": "2歳ー6",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 1.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 3.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 21.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 13.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 121.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 75.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 23.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122904",
@@ -3351,7 +5763,74 @@
       "venue": "高知",
       "number": "4",
       "name": "C2C3混合",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 68.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 8.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 13.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 4.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 43.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 2.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 86.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 7.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 106.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 3.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 222.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122905",
@@ -3359,7 +5838,74 @@
       "venue": "高知",
       "number": "5",
       "name": "C1ー6",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 33.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 14.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 4.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 7.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 8.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 84.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 19.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 2.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 82.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 11.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 68.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122906",
@@ -3367,7 +5913,74 @@
       "venue": "高知",
       "number": "6",
       "name": "C1ー5",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 82.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 19.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 2.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 148.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 11.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 28.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 24.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 11.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 3.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 40.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122907",
@@ -3375,7 +5988,68 @@
       "venue": "高知",
       "number": "7",
       "name": "カトレア特別(C3)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 6.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 5.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 1.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 79.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 44.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 89.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 11.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 55.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 38.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122908",
@@ -3383,7 +6057,80 @@
       "venue": "高知",
       "number": "8",
       "name": "C1ー4",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 13.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 3.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 56.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 9.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 91.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 21.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 103.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 168.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 4.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 66.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 5.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122909",
@@ -3391,7 +6138,80 @@
       "venue": "高知",
       "number": "9",
       "name": "C1ー3",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 0.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 22.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 76.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 2.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 26.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 4.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 7.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 6.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 5.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 53.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 17.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 96.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122910",
@@ -3399,7 +6219,68 @@
       "venue": "高知",
       "number": "10",
       "name": "C1ー2",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 16.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 5.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 202.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 97.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 25.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 11.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 72.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 2.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 2.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 33.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122911",
@@ -3407,7 +6288,68 @@
       "venue": "高知",
       "number": "11",
       "name": "地球33番地特別(C1)",
-      "horses": []
+      "horses": [
+        {
+          "number": 1,
+          "odds": 5.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 9.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 7.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 44.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 78.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 21.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 66.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 1.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 14.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 23.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
     },
     {
       "id": "202554122912",
@@ -3415,6 +6357,2087 @@
       "venue": "高知",
       "number": "12",
       "name": "ファイナルレース(C1)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 12.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 3.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 57.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 10.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 15.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 14.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 10.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 31.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 14.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 11,
+          "odds": 11.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 12,
+          "odds": 7.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122901",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "1",
+      "name": "乃木坂矢久保美緒卒...",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 14.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 11.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 25.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 17.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 37.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 90.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 6.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 18.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122902",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "2",
+      "name": "乃木坂松尾美佑卒業...(2歳)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 8.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 8.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 28.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 2.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 4.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 31.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 45.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 6.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122903",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "3",
+      "name": "今年も一年楽しかっ...(2歳)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 6.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 10.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 2.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 6.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 6.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 31.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 11.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 7.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 13.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122904",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "4",
+      "name": "美沙希・梢 帯広上...(2歳)",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 29.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 8.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 9.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 6.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 4.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 3.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 7.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 22.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 14.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 9.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122905",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "5",
+      "name": "矢久保美緒さん卒業...",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 62.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 1.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 11.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 6.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 35.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 37.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 45.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 3.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 101.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 9.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122906",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "6",
+      "name": "松尾美佑さん卒業記...",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 5.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 55.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 35.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 9.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 12.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 16.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 2.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 3.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 9.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 22.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122907",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "7",
+      "name": "小峰憂斗お疲れ様記...",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 10.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 34.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 11.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 3.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 4.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 5.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 51.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 3.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122908",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "8",
+      "name": "第10回もりのたま...",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 29.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 2.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 7.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 3.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 20.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 40.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 27.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 18.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 5.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122909",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "9",
+      "name": "祝!オプチャ3周年",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 21.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 13.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 8.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 4.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 10.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 3.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 12.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 37.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 4.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 10.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122910",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "10",
+      "name": "祝ドリフターズ帯広...",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 9.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 2.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 3.8,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 48.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 17.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 24.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 4.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 10.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 7.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122911",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "11",
+      "name": "ヤングチャンピオン...(2歳)\n重賞",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 26.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 13.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 49.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 8.6,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 2.4,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 2.5,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 52.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 83.1,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 16.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 8.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202565122912",
+      "date": "2025-12-29",
+      "venue": "帯広(ば)",
+      "number": "12",
+      "name": "ばんえい記念まであ...",
+      "horses": [
+        {
+          "number": 1,
+          "odds": 67.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 2,
+          "odds": 10.0,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 3,
+          "odds": 19.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 4,
+          "odds": 2.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 5,
+          "odds": 13.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 6,
+          "odds": 7.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 7,
+          "odds": 3.7,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 8,
+          "odds": 6.2,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 9,
+          "odds": 13.3,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        },
+        {
+          "number": 10,
+          "odds": 27.9,
+          "place_odds_min": 0.0,
+          "place_odds_max": 0.0
+        }
+      ]
+    },
+    {
+      "id": "202536123001",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "1",
+      "name": "2歳",
+      "horses": []
+    },
+    {
+      "id": "202536123002",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "2",
+      "name": "C2七組",
+      "horses": []
+    },
+    {
+      "id": "202536123003",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "3",
+      "name": "C2六組",
+      "horses": []
+    },
+    {
+      "id": "202536123004",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "4",
+      "name": "C2五組",
+      "horses": []
+    },
+    {
+      "id": "202536123005",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "5",
+      "name": "C2",
+      "horses": []
+    },
+    {
+      "id": "202536123006",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "6",
+      "name": "C2",
+      "horses": []
+    },
+    {
+      "id": "202536123007",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "7",
+      "name": "C1五組",
+      "horses": []
+    },
+    {
+      "id": "202536123008",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "8",
+      "name": "C1四組",
+      "horses": []
+    },
+    {
+      "id": "202536123009",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "9",
+      "name": "C1三組",
+      "horses": []
+    },
+    {
+      "id": "202536123010",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "10",
+      "name": "C1二組",
+      "horses": []
+    },
+    {
+      "id": "202536123011",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "11",
+      "name": "C1一組",
+      "horses": []
+    },
+    {
+      "id": "202536123012",
+      "date": "2025-12-30",
+      "venue": "水沢",
+      "number": "12",
+      "name": "スプリント特別(OP)\nOP",
+      "horses": []
+    },
+    {
+      "id": "202544123001",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "1",
+      "name": "3歳三四",
+      "horses": []
+    },
+    {
+      "id": "202544123002",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "2",
+      "name": "3歳三四",
+      "horses": []
+    },
+    {
+      "id": "202544123003",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "3",
+      "name": "2歳一二",
+      "horses": []
+    },
+    {
+      "id": "202544123004",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "4",
+      "name": "白鳥特別(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202544123005",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "5",
+      "name": "C2七八",
+      "horses": []
+    },
+    {
+      "id": "202544123006",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "6",
+      "name": "C2七八",
+      "horses": []
+    },
+    {
+      "id": "202544123007",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "7",
+      "name": "C1七八九(C1八)",
+      "horses": []
+    },
+    {
+      "id": "202544123008",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "8",
+      "name": "C1七八九(C1八)",
+      "horses": []
+    },
+    {
+      "id": "202544123009",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "9",
+      "name": "ベルモントノーヴァ...(C1八)",
+      "horses": []
+    },
+    {
+      "id": "202544123010",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "10",
+      "name": "東京シンデレラマイ...(3上)\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202544123011",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "11",
+      "name": "ウインターテール賞(B1B2)",
+      "horses": []
+    },
+    {
+      "id": "202544123012",
+      "date": "2025-12-30",
+      "venue": "大井",
+      "number": "12",
+      "name": "師走特別(C2)",
+      "horses": []
+    },
+    {
+      "id": "202547123001",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "1",
+      "name": "C18組",
+      "horses": []
+    },
+    {
+      "id": "202547123002",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "2",
+      "name": "C17組",
+      "horses": []
+    },
+    {
+      "id": "202547123003",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "3",
+      "name": "第8回河内一秀記念(C)",
+      "horses": []
+    },
+    {
+      "id": "202547123004",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "4",
+      "name": "片付けしろヒナコ狸...(BC)",
+      "horses": []
+    },
+    {
+      "id": "202547123005",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "5",
+      "name": "B7組",
+      "horses": []
+    },
+    {
+      "id": "202547123006",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "6",
+      "name": "影艶P全競馬場来場...(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202547123007",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "7",
+      "name": "くろすこ生誕祭(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202547123008",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "8",
+      "name": "年の瀬賞(C)",
+      "horses": []
+    },
+    {
+      "id": "202547123009",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "9",
+      "name": "レンゲソウ特別(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202547123010",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "10",
+      "name": "ライデンリーダー記...(2歳)\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202547123011",
+      "date": "2025-12-30",
+      "venue": "笠松",
+      "number": "11",
+      "name": "おトクにPLAYオ...(C)",
+      "horses": []
+    },
+    {
+      "id": "202550123001",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "1",
+      "name": "C3二",
+      "horses": []
+    },
+    {
+      "id": "202550123002",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "2",
+      "name": "C3一",
+      "horses": []
+    },
+    {
+      "id": "202550123003",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "3",
+      "name": "NewBeginn...(初出)",
+      "horses": []
+    },
+    {
+      "id": "202550123004",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "4",
+      "name": "北夢前台7ハロンC...(C2)",
+      "horses": []
+    },
+    {
+      "id": "202550123005",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "5",
+      "name": "香呂ダッシュC3二",
+      "horses": []
+    },
+    {
+      "id": "202550123006",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "6",
+      "name": "C3一",
+      "horses": []
+    },
+    {
+      "id": "202550123007",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "7",
+      "name": "C2",
+      "horses": []
+    },
+    {
+      "id": "202550123008",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "8",
+      "name": "C2一",
+      "horses": []
+    },
+    {
+      "id": "202550123009",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "9",
+      "name": "B2C1",
+      "horses": []
+    },
+    {
+      "id": "202550123010",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "10",
+      "name": "C1",
+      "horses": []
+    },
+    {
+      "id": "202550123011",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "11",
+      "name": "オッズパーク202...(A1A2)",
+      "horses": []
+    },
+    {
+      "id": "202550123012",
+      "date": "2025-12-30",
+      "venue": "園田",
+      "number": "12",
+      "name": "プリンセチア賞B2",
+      "horses": []
+    },
+    {
+      "id": "202565123001",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "1",
+      "name": "JAGA賞",
+      "horses": []
+    },
+    {
+      "id": "202565123002",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "2",
+      "name": "十勝千年の森賞(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202565123003",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "3",
+      "name": "OCTV音更エリア...(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202565123004",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "4",
+      "name": "十勝トテッポ工房杯(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202565123005",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "5",
+      "name": "十勝川温泉第一ホテ...(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202565123006",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "6",
+      "name": "北海道ホテル杯",
+      "horses": []
+    },
+    {
+      "id": "202565123007",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "7",
+      "name": "フリーマガジンCh...",
+      "horses": []
+    },
+    {
+      "id": "202565123008",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "8",
+      "name": "Chai Cros...",
+      "horses": []
+    },
+    {
+      "id": "202565123009",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "9",
+      "name": "かちまい電子版賞",
+      "horses": []
+    },
+    {
+      "id": "202565123010",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "10",
+      "name": "勝毎花火カップ",
+      "horses": []
+    },
+    {
+      "id": "202565123011",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "11",
+      "name": "ばんえいダービー(3歳)\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202565123012",
+      "date": "2025-12-30",
+      "venue": "帯広(ば)",
+      "number": "12",
+      "name": "’25ファイナルカ...",
+      "horses": []
+    },
+    {
+      "id": "202536123101",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "1",
+      "name": "C2四組",
+      "horses": []
+    },
+    {
+      "id": "202536123102",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "2",
+      "name": "C2三組",
+      "horses": []
+    },
+    {
+      "id": "202536123103",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "3",
+      "name": "C2二組",
+      "horses": []
+    },
+    {
+      "id": "202536123104",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "4",
+      "name": "C2一組",
+      "horses": []
+    },
+    {
+      "id": "202536123105",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "5",
+      "name": "C1",
+      "horses": []
+    },
+    {
+      "id": "202536123106",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "6",
+      "name": "C1",
+      "horses": []
+    },
+    {
+      "id": "202536123107",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "7",
+      "name": "C1",
+      "horses": []
+    },
+    {
+      "id": "202536123108",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "8",
+      "name": "C1",
+      "horses": []
+    },
+    {
+      "id": "202536123109",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "9",
+      "name": "paca paca...(C1)",
+      "horses": []
+    },
+    {
+      "id": "202536123110",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "10",
+      "name": "来年もよろしく!東...(C1)",
+      "horses": []
+    },
+    {
+      "id": "202536123111",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "11",
+      "name": "2025ファイナル...(A)",
+      "horses": []
+    },
+    {
+      "id": "202536123112",
+      "date": "2025-12-31",
+      "venue": "水沢",
+      "number": "12",
+      "name": "桐花賞\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202544123101",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "1",
+      "name": "3歳一二",
+      "horses": []
+    },
+    {
+      "id": "202544123102",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "2",
+      "name": "3歳一二",
+      "horses": []
+    },
+    {
+      "id": "202544123103",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "3",
+      "name": "六花賞(2歳)",
+      "horses": []
+    },
+    {
+      "id": "202544123104",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "4",
+      "name": "C2四五六(C2五)",
+      "horses": []
+    },
+    {
+      "id": "202544123105",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "5",
+      "name": "C2四五六(C2五)",
+      "horses": []
+    },
+    {
+      "id": "202544123106",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "6",
+      "name": "C2四五六(C2五)",
+      "horses": []
+    },
+    {
+      "id": "202544123107",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "7",
+      "name": "C1三C2二(C1C2)",
+      "horses": []
+    },
+    {
+      "id": "202544123108",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "8",
+      "name": "C1四五六(C1五)",
+      "horses": []
+    },
+    {
+      "id": "202544123109",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "9",
+      "name": "リマンドタイコウ賞(C1五)",
+      "horses": []
+    },
+    {
+      "id": "202544123110",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "10",
+      "name": "東京2歳優駿牝馬\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202544123111",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "11",
+      "name": "カウントダウン20...(C1五)",
+      "horses": []
+    },
+    {
+      "id": "202544123112",
+      "date": "2025-12-31",
+      "venue": "大井",
+      "number": "12",
+      "name": "おおとり賞(B2)",
+      "horses": []
+    },
+    {
+      "id": "202547123101",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "1",
+      "name": "C10組",
+      "horses": []
+    },
+    {
+      "id": "202547123102",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "2",
+      "name": "C9組",
+      "horses": []
+    },
+    {
+      "id": "202547123103",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "3",
+      "name": "C8組",
+      "horses": []
+    },
+    {
+      "id": "202547123104",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "4",
+      "name": "第10回ウマニティ...(C)",
+      "horses": []
+    },
+    {
+      "id": "202547123105",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "5",
+      "name": "2025年推しごと...(C)",
+      "horses": []
+    },
+    {
+      "id": "202547123106",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "6",
+      "name": "あつまくう記念20...(C)",
+      "horses": []
+    },
+    {
+      "id": "202547123107",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "7",
+      "name": "C4組",
+      "horses": []
+    },
+    {
+      "id": "202547123108",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "8",
+      "name": "年末特別(A)",
+      "horses": []
+    },
+    {
+      "id": "202547123109",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "9",
+      "name": "大晦日特別(A)",
+      "horses": []
+    },
+    {
+      "id": "202547123110",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "10",
+      "name": "オッズパーク202...(A)",
+      "horses": []
+    },
+    {
+      "id": "202547123111",
+      "date": "2025-12-31",
+      "venue": "笠松",
+      "number": "11",
+      "name": "東海ゴールドカップ(3歳以上)\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202550123101",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "1",
+      "name": "C3二",
+      "horses": []
+    },
+    {
+      "id": "202550123102",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "2",
+      "name": "C3一",
+      "horses": []
+    },
+    {
+      "id": "202550123103",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "3",
+      "name": "C2三",
+      "horses": []
+    },
+    {
+      "id": "202550123104",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "4",
+      "name": "太田光代☆来場記念...(C2)",
+      "horses": []
+    },
+    {
+      "id": "202550123105",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "5",
+      "name": "タイタン競馬部☆来...(C2)",
+      "horses": []
+    },
+    {
+      "id": "202550123106",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "6",
+      "name": "C2一",
+      "horses": []
+    },
+    {
+      "id": "202550123107",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "7",
+      "name": "C2一",
+      "horses": []
+    },
+    {
+      "id": "202550123108",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "8",
+      "name": "C1二",
+      "horses": []
+    },
+    {
+      "id": "202550123109",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "9",
+      "name": "C1一",
+      "horses": []
+    },
+    {
+      "id": "202550123110",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "10",
+      "name": "シンビジウム賞B2",
+      "horses": []
+    },
+    {
+      "id": "202550123111",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "11",
+      "name": "園田ジュニアカップ(重賞)\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202550123112",
+      "date": "2025-12-31",
+      "venue": "園田",
+      "number": "12",
+      "name": "2025ファイナル...",
+      "horses": []
+    },
+    {
+      "id": "202554123101",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "1",
+      "name": "C3ー8",
+      "horses": []
+    },
+    {
+      "id": "202554123102",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "2",
+      "name": "C3ー7",
+      "horses": []
+    },
+    {
+      "id": "202554123103",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "3",
+      "name": "C3ー6",
+      "horses": []
+    },
+    {
+      "id": "202554123104",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "4",
+      "name": "C3ー4",
+      "horses": []
+    },
+    {
+      "id": "202554123105",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "5",
+      "name": "C3ー3",
+      "horses": []
+    },
+    {
+      "id": "202554123106",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "6",
+      "name": "C3ー2",
+      "horses": []
+    },
+    {
+      "id": "202554123107",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "7",
+      "name": "高知県知事賞[近畿...\n重賞",
+      "horses": []
+    },
+    {
+      "id": "202554123108",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "8",
+      "name": "竜虎相搏特別(C3)",
+      "horses": []
+    },
+    {
+      "id": "202554123109",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "9",
+      "name": "AB混合",
+      "horses": []
+    },
+    {
+      "id": "202554123110",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "10",
+      "name": "PLAYオッズパー...",
+      "horses": []
+    },
+    {
+      "id": "202554123111",
+      "date": "2025-12-31",
+      "venue": "高知",
+      "number": "11",
+      "name": "2025ファイナル...(C3)",
+      "horses": []
+    },
+    {
+      "id": "202645010101",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "1",
+      "name": "2026幕開け賞(3歳)",
+      "horses": []
+    },
+    {
+      "id": "202645010102",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "2",
+      "name": "お年玉賞(C3)",
+      "horses": []
+    },
+    {
+      "id": "202645010103",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "3",
+      "name": "六座頭賞(3歳)",
+      "horses": []
+    },
+    {
+      "id": "202645010104",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "4",
+      "name": "五煙草賞(C3)",
+      "horses": []
+    },
+    {
+      "id": "202645010105",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "5",
+      "name": "四扇賞(C2)",
+      "horses": []
+    },
+    {
+      "id": "202645010106",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "6",
+      "name": "三茄子賞(C2)",
+      "horses": []
+    },
+    {
+      "id": "202645010107",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "7",
+      "name": "二鷹賞(C2)",
+      "horses": []
+    },
+    {
+      "id": "202645010108",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "8",
+      "name": "一富士賞(B3)",
+      "horses": []
+    },
+    {
+      "id": "202645010109",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "9",
+      "name": "クイック時計修理新...(B1B2)",
+      "horses": []
+    },
+    {
+      "id": "202645010110",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "10",
+      "name": "23rdゴールデン...(C1C2)",
+      "horses": []
+    },
+    {
+      "id": "202645010111",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "11",
+      "name": "初夢賞(3歳)",
+      "horses": []
+    },
+    {
+      "id": "202645010112",
+      "date": "2026-01-01",
+      "venue": "川崎",
+      "number": "12",
+      "name": "初詣賞(C1)",
+      "horses": []
+    },
+    {
+      "id": "202648010101",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "1",
+      "name": "2026 金シャチ...(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010102",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "2",
+      "name": "麗春牝馬(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010103",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "3",
+      "name": "芦毛の陣 新春シル...(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010104",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "4",
+      "name": "丙午記念(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010105",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "5",
+      "name": "びっくり! シャチ...(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010106",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "6",
+      "name": "名古屋で初競馬賞(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010107",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "7",
+      "name": "初参り賞(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010108",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "8",
+      "name": "安全祈願賞(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010109",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "9",
+      "name": "健康祈願賞(C)",
+      "horses": []
+    },
+    {
+      "id": "202648010110",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "10",
+      "name": "幸福祈願賞(B)",
+      "horses": []
+    },
+    {
+      "id": "202648010111",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "11",
+      "name": "午年初駆特別(A)",
+      "horses": []
+    },
+    {
+      "id": "202648010112",
+      "date": "2026-01-01",
+      "venue": "名古屋",
+      "number": "12",
+      "name": "願いを込めた絵馬賞(B)",
+      "horses": []
+    },
+    {
+      "id": "202654010101",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "1",
+      "name": "C3ー15",
+      "horses": []
+    },
+    {
+      "id": "202654010102",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "2",
+      "name": "C3ー14",
+      "horses": []
+    },
+    {
+      "id": "202654010103",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "3",
+      "name": "C3ー13",
+      "horses": []
+    },
+    {
+      "id": "202654010104",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "4",
+      "name": "C3ー12",
+      "horses": []
+    },
+    {
+      "id": "202654010105",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "5",
+      "name": "破魔矢特別(C3)",
+      "horses": []
+    },
+    {
+      "id": "202654010106",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "6",
+      "name": "初夢特別",
+      "horses": []
+    },
+    {
+      "id": "202654010107",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "7",
+      "name": "七福神特別(C3)",
+      "horses": []
+    },
+    {
+      "id": "202654010108",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "8",
+      "name": "C3ー9",
+      "horses": []
+    },
+    {
+      "id": "202654010109",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "9",
+      "name": "Bー3",
+      "horses": []
+    },
+    {
+      "id": "202654010110",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "10",
+      "name": "オッズパーク特別(B)",
+      "horses": []
+    },
+    {
+      "id": "202654010111",
+      "date": "2026-01-01",
+      "venue": "高知",
+      "number": "11",
+      "name": "ファイナルレース(C3)",
       "horses": []
     }
   ]
