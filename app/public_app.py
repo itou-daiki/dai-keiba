@@ -32,7 +32,7 @@ try:
     importlib.reload(feature_engineering)
     importlib.reload(ml.feature_engineering)
     
-    from feature_engineering import process_data
+    from feature_engineering import process_data_v2 as process_data
     from db_helper import KeibaDatabase
 except ImportError as e:
     st.error(f"Import Error: {e}")

@@ -292,7 +292,12 @@ def add_history_features(df):
 
     return df
 
-def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=None, return_stats=False):
+
+def process_data_v2(df, lambda_decay=0.2, use_venue_features=False, input_stats=None, return_stats=False):
+    """
+    Process Data V2 (Force Update)
+    """
+
     # FIRST: Add history features
     df = add_history_features(df)
     
@@ -1738,6 +1743,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
         return df[keep_cols].copy(), stats_data
 
     return df[keep_cols].copy()
+
+# Backward compatibility alias
+process_data = process_data_v2
 
 def calculate_features(input_csv, output_path, lambda_decay=0.5, use_venue_features=False):
     """
