@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import time
 import logging
+from datetime import datetime
 
 # Setup logger
 logger = logging.getLogger(__name__)
