@@ -15,18 +15,98 @@ except ImportError:
     from .jra_scraper import scrape_jra_race, scrape_jra_year
     from .race_scraper import RaceScraper
 
+
 # ==========================================
 # CONSTANTS
 # ==========================================
-print("DEBUG: auto_scraper module loaded (Version: Fix-Meta-Insert)")
+print("DEBUG: auto_scraper module loaded (Version: Fix-Name-Cache)")
 # Root directory (parent of scraper) -> data/raw/database.csv
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CSV_FILE_PATH = os.path.join(PROJECT_ROOT, "data", "raw", "database.csv")
 CSV_FILE_PATH_NAR = os.path.join(PROJECT_ROOT, "data", "raw", "database_nar.csv")
 TARGET_YEARS = [2024, 2025] # Expandable
-TARGET_YEARS = [2024, 2025] # Expandable
 HORSE_HISTORY_CACHE = {} # Cache for horse history DataFrames
 HORSE_PROFILE_CACHE = {} # Cache for horse profile (pedigree)
+
+# Name Resolution Cache (for resolving abbreviated names via ID/URL)
+NAME_CACHE_FILE = os.path.join(PROJECT_ROOT, "data", "name_cache.json")
+NAME_CACHE = {}
+
+def load_name_cache():
+    global NAME_CACHE
+    if os.path.exists(NAME_CACHE_FILE):
+        try:
+            with open(NAME_CACHE_FILE, 'r', encoding='utf-8') as f:
+                NAME_CACHE = json.load(f)
+            print(f"DEBUG: Loaded Name Cache ({len(NAME_CACHE)} entries)")
+        except Exception as e:
+            print(f"DEBUG: Failed to load Name Cache: {e}")
+            NAME_CACHE = {}
+    else:
+        NAME_CACHE = {}
+
+def save_name_cache():
+    try:
+        with open(NAME_CACHE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(NAME_CACHE, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"DEBUG: Failed to save Name Cache: {e}")
+
+def resolve_full_name(url, default_name):
+    """
+    Resolve full name from URL (e.g. jockey/trainer profile) if not in cache.
+    """
+    if not url: return default_name
+    
+    # Normalize URL (remove query params if any, ensure trailing slash?)
+    # Netkeiba URLs are usually clean.
+    if url in NAME_CACHE:
+        return NAME_CACHE[url]
+    
+    # Fetch and Parse
+    try:
+        # Avoid hammering
+        time.sleep(1.0) 
+        
+        headers = { 
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" 
+        }
+        res = requests.get(url, headers=headers, timeout=5)
+        res.encoding = 'EUC-JP'
+        
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.content, 'html.parser')
+            title = soup.title.string if soup.title else ""
+            
+            # Pattern: "Nameの[騎手|調教師][成績|プロフィール]..."
+            # e.g. "松山弘平の騎手成績...", "矢作芳人の調教師成績..."
+            full_name = default_name
+            if "の騎手" in title:
+                full_name = title.split("の騎手")[0]
+            elif "の調教師" in title:
+                full_name = title.split("の調教師")[0]
+            elif "のプロフィール" in title:
+                full_name = title.split("のプロフィール")[0]
+            
+            if full_name and full_name != default_name:
+                print(f"DEBUG: Resolved {default_name} -> {full_name}")
+                NAME_CACHE[url] = full_name
+                save_name_cache()
+                return full_name
+            else:
+                # Cache negative result? Or verify extraction?
+                # If extraction fails, we might just store default to avoid re-fetching
+                NAME_CACHE[url] = default_name
+                save_name_cache()
+                return default_name
+    except Exception as e:
+        print(f"DEBUG: Resolution failed for {url}: {e}")
+    
+    return default_name
+
+# Initialize Cache on Module Load
+json = __import__('json') # Ensure json imported
+load_name_cache()
 
 # ==========================================
 # ユーティリティ関数: 既存race_idの取得
@@ -1044,15 +1124,18 @@ def scrape_shutuba_data(race_id, mode="JRA", history_df=None):
                 if hm: horse_id = hm.group(1)
             
             # Basic info
-            # Basic info
             jockey_elem = row.select_one(".Jockey a")
             jockey = ""
             if jockey_elem:
                 jockey = jockey_elem.get('title', '').strip() or jockey_elem.text.strip()
+                if jockey_elem.get('href'):
+                    jockey = resolve_full_name(jockey_elem.get('href'), jockey)
             else:
                 j_backup = row.select_one("td:nth-child(7) a")
                 if j_backup:
                     jockey = j_backup.get('title', '').strip() or j_backup.text.strip()
+                    if j_backup.get('href'):
+                        jockey = resolve_full_name(j_backup.get('href'), jockey)
             
             weight_elem = row.select_one(".Txt_C")
             weight = weight_elem.text.strip() if weight_elem else (row.select_one("td:nth-child(6)").text.strip() if row.select_one("td:nth-child(6)") else "57.0")
@@ -1061,10 +1144,14 @@ def scrape_shutuba_data(race_id, mode="JRA", history_df=None):
             trainer = ""
             if trainer_elem:
                 trainer = trainer_elem.get('title', '').strip() or trainer_elem.text.strip()
+                if trainer_elem.get('href'):
+                     trainer = resolve_full_name(trainer_elem.get('href'), trainer)
             else:
                 t_backup = row.select_one("td:nth-child(8) a")
                 if t_backup:
                      trainer = t_backup.get('title', '').strip() or t_backup.text.strip()
+                     if t_backup.get('href'):
+                         trainer = resolve_full_name(t_backup.get('href'), trainer)
 
             entry = {
                 "日付": date_text,
