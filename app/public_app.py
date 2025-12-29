@@ -25,7 +25,7 @@ try:
     # -------------------------------------------------------------
     # Custom Modules
     # -------------------------------------------------------------
-    from scraper.auto_scraper import scrape_shutuba_data
+    from scraper import auto_scraper
     from feature_engineering import process_data_v2 as process_data
     from db_helper import KeibaDatabase
 except ImportError as e:
