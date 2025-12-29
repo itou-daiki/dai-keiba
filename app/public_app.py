@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 import time
 import logging
 from datetime import datetime
+import re
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -258,6 +259,9 @@ def predict_race_logic(df, model, model_meta, stats=None):
 
         df['AI_Prob'] = probs
         df['AI_Score'] = (probs * 100).astype(int)
+        
+        # Save X_df to session state for debugging
+        st.session_state['last_features'] = X_df
 
         # Calculate Confidence
         confidences = []
@@ -416,9 +420,6 @@ with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
 
     # Stats Check
     st.write("--- Stats Check ---")
-    stats = load_stats(mode_val) # Need to load locally here to check? No, stats is loaded later in app?
-    # Actually public_app loads stats inside predict_race_logic usually.
-    # But here we want to inspect it globally or re-load it.
     
     # Allow helper function usage
     if 'stats' not in st.session_state:
@@ -428,8 +429,32 @@ with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
     if stats_debug:
         st.success(f"Stats Loaded. Keys: {list(stats_debug.keys())}")
         if 'hj_compatibility' in stats_debug:
-            st.write("hj_compatibility size:", len(stats_debug['hj_compatibility']))
-            st.write("Sample keys:", list(stats_debug['hj_compatibility'].keys())[:5])
+            hj_stats = stats_debug['hj_compatibility']
+            st.write("hj_compatibility size:", len(hj_stats))
+            st.write("Sample keys:", list(hj_stats.keys())[:5])
+            
+            # --- Key Match Test ---
+            st.write("--- Key Match Test (Top 5 Rows) ---")
+            if os.path.exists(csv_path):
+                 try:
+                     df_debug = pd.read_csv(csv_path, nrows=5)
+                     if 'horse_id' in df_debug.columns and '騎手' in df_debug.columns:
+                         for i, row in df_debug.iterrows():
+                             # Simulate cleaning logic exactly
+                             h_id = str(row['horse_id']).replace(".0", "")
+                             try: h_id = str(int(float(h_id)))
+                             except: pass
+                             
+                             j_name = str(row['騎手']) if pd.notna(row['騎手']) else ""
+                             j_name = re.sub(r'[▲△☆◇★\d]', '', j_name).replace(" ", "").replace("　", "").strip()
+                             
+                             gen_key = f"{h_id}_{j_name}"
+                             found = gen_key in hj_stats
+                             match_icon = "✅" if found else "❌"
+                             val_disp = hj_stats[gen_key] if found else "Only Fallback"
+                             st.write(f"{i+1}. Key: `{gen_key}` -> {match_icon} (Val: {val_disp})")
+                 except Exception as ex:
+                     st.error(f"Key Test Error: {ex}")
         else:
             st.error("'hj_compatibility' key MISSING in stats!")
     else:
@@ -442,6 +467,18 @@ with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
          if 'jockey_compatibility' in feat_df.columns:
              st.write("jockey_compatibility head:", feat_df['jockey_compatibility'].head())
              st.write("Stats:", feat_df['jockey_compatibility'].describe())
+             
+             # Check if hj_key persisted (Debug mode)
+             if 'hj_key' in feat_df.columns:
+                 st.write("hj_key head:", feat_df['hj_key'].head())
+                 # Check match against stats here too!
+                 if stats:
+                     hj_stats = stats.get('hj_compatibility', {})
+                     sample_key = feat_df['hj_key'].iloc[0]
+                     st.write(f"Live Key '{sample_key}' in Stats? {'✅' if sample_key in hj_stats else '❌'}")
+             else:
+                 st.warning("hj_key column dropped (normal behavior if not debug)")
+
          else:
              st.error("jockey_compatibility MISSING in features!")
 with st.expander("🛠️ 管理ツール (スケジュール更新など)"):

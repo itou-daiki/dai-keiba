@@ -830,7 +830,9 @@ def process_data(df, lambda_decay=0.2, use_venue_features=False, input_stats=Non
     df['jockey_compatibility'] = df['jockey_compatibility'].fillna(10.0) # Default Average
         
     # Clean temp keys
-    df.drop(columns=['hj_key', 'tj_key', 'trainer_jockey_compatibility'], inplace=True, errors='ignore')
+    # DEBUG: Keep keys for verification
+    # df.drop(columns=['hj_key', 'tj_key', 'trainer_jockey_compatibility'], inplace=True, errors='ignore')
+    df.drop(columns=['trainer_jockey_compatibility'], inplace=True, errors='ignore')
 
 
     # ========== 新規特徴量: レースクラス・条件 ==========
