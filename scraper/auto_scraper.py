@@ -1044,14 +1044,27 @@ def scrape_shutuba_data(race_id, mode="JRA", history_df=None):
                 if hm: horse_id = hm.group(1)
             
             # Basic info
+            # Basic info
             jockey_elem = row.select_one(".Jockey a")
-            jockey = jockey_elem.text.strip() if jockey_elem else (row.select_one("td:nth-child(7) a").text.strip() if row.select_one("td:nth-child(7) a") else "")
+            jockey = ""
+            if jockey_elem:
+                jockey = jockey_elem.get('title', '').strip() or jockey_elem.text.strip()
+            else:
+                j_backup = row.select_one("td:nth-child(7) a")
+                if j_backup:
+                    jockey = j_backup.get('title', '').strip() or j_backup.text.strip()
             
             weight_elem = row.select_one(".Txt_C")
             weight = weight_elem.text.strip() if weight_elem else (row.select_one("td:nth-child(6)").text.strip() if row.select_one("td:nth-child(6)") else "57.0")
 
             trainer_elem = row.select_one(".Trainer a")
-            trainer = trainer_elem.text.strip() if trainer_elem else (row.select_one("td:nth-child(8) a").text.strip() if row.select_one("td:nth-child(8) a") else "")
+            trainer = ""
+            if trainer_elem:
+                trainer = trainer_elem.get('title', '').strip() or trainer_elem.text.strip()
+            else:
+                t_backup = row.select_one("td:nth-child(8) a")
+                if t_backup:
+                     trainer = t_backup.get('title', '').strip() or t_backup.text.strip()
 
             entry = {
                 "日付": date_text,
