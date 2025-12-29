@@ -1840,6 +1840,11 @@ with st.expander("🛠️ デバッグ情報 (Cloud Status)"):
     st.write(f"Mod FE: {feature_engineering.__file__}")
     st.write(f"Mod ML.FE: {ml.feature_engineering.__file__}")
     
+    try:
+        st.write(f"Module Ver Func: {ml.feature_engineering.get_debug_version()}")
+    except Exception as e:
+        st.error(f"Module Ver Func Failed: {e}")
+    
     csv_path = "data/raw/database_nar.csv" if mode_val == "NAR" else "data/raw/database.csv"
     if os.path.exists(csv_path):
         st.success(f"CSV Found: {csv_path}")

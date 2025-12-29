@@ -54,6 +54,9 @@ def clean_id_str(val):
     except:
         return str(val)
 
+def get_debug_version():
+    return "v2_visible_check"
+
 def clean_stable_name(val):
     if not isinstance(val, str): return ""
     # Remove (Western), (Eastern), (Local) etc.
