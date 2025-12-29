@@ -3979,3 +3979,57 @@
 2025-12-29 23:26:45,014 - train_model - INFO - Data sorted by date for TimeSeriesSplit
 2025-12-29 23:26:45,014 - train_model - INFO - Win rate: 7.29%, scale_pos_weight: 12.72
 2025-12-29 23:26:45,014 - train_model - INFO - Starting Optuna optimization...
+2025-12-29 23:40:24,086 - train_model - INFO - 
+=== Optimization Complete ===
+2025-12-29 23:40:24,086 - train_model - INFO - Best AUC: 0.7628
+2025-12-29 23:40:24,086 - train_model - INFO - Best Parameters:
+2025-12-29 23:40:24,087 - train_model - INFO -   num_leaves: 47
+2025-12-29 23:40:24,087 - train_model - INFO -   max_depth: 9
+2025-12-29 23:40:24,087 - train_model - INFO -   learning_rate: 0.037254128792149795
+2025-12-29 23:40:24,087 - train_model - INFO -   feature_fraction: 0.6485808406959871
+2025-12-29 23:40:24,087 - train_model - INFO -   bagging_fraction: 0.7733311829014891
+2025-12-29 23:40:24,087 - train_model - INFO -   bagging_freq: 3
+2025-12-29 23:40:24,087 - train_model - INFO -   min_child_samples: 57
+2025-12-29 23:40:24,087 - train_model - INFO -   min_gain_to_split: 0.46559098930601545
+2025-12-29 23:40:24,087 - train_model - INFO -   lambda_l1: 5.414622781511492
+2025-12-29 23:40:24,087 - train_model - INFO -   lambda_l2: 5.187501068639149e-05
+2025-12-29 23:40:24,087 - train_model - INFO -   scale_pos_weight: 7.790239010856734
+2025-12-29 23:40:24,119 - train_model - INFO - Loading data from /Users/itoudaiki/Program/dai-keiba/ml/processed_data.csv
+2025-12-29 23:40:24,922 - train_model - INFO - === データ品質検証 ===
+2025-12-29 23:40:24,922 - train_model - INFO - Total records: 189570
+2025-12-29 23:40:24,923 - train_model - INFO - Top 3 rate: 7.29% (13814 top3 / 189570 races)
+2025-12-29 23:40:24,923 - train_model - WARNING - ⚠️ Abnormal top3 rate: 7.29% (expected: 20-30%)
+2025-12-29 23:40:24,970 - train_model - INFO - Feature 'race_class' cast to category type
+2025-12-29 23:40:24,972 - train_model - INFO - Feature 'race_type_code' cast to category type
+2025-12-29 23:40:24,974 - train_model - INFO - Feature 'interval_category' cast to category type
+2025-12-29 23:40:24,995 - train_model - INFO - === 外れ値検出（サンプル） ===
+2025-12-29 23:40:25,010 - train_model - INFO -   weighted_avg_last_3f: 2248 outliers (1.2%)
+2025-12-29 23:40:25,014 - train_model - INFO -   weighted_avg_horse_weight: 83455 outliers (44.0%)
+2025-12-29 23:40:25,018 - train_model - INFO -   weighted_avg_odds: 2893 outliers (1.5%)
+2025-12-29 23:40:25,018 - train_model - INFO - Features (47): ['weighted_avg_rank', 'weighted_avg_run_style', 'weighted_avg_last_3f', 'weighted_avg_horse_weight', 'weighted_avg_odds', 'weighted_avg_weather', 'weighted_avg_weight_change', 'weighted_avg_interval', 'weighted_avg_speed', 'turf_compatibility']...
+2025-12-29 23:40:25,018 - train_model - INFO - === TimeSeriesSplit (5-fold) ===
+2025-12-29 23:40:25,129 - train_model - INFO - Data sorted by date for time series split
+2025-12-29 23:40:25,129 - train_model - INFO - 
+--- Fold 1/5 ---
+2025-12-29 23:40:25,135 - train_model - INFO - Train: 31595 samples, Test: 31595 samples
+2025-12-29 23:40:25,135 - train_model - INFO - Train win rate: 7.23%, Test win rate: 7.38%
+2025-12-29 23:40:26,638 - train_model - INFO -   AUC: 0.7468, Accuracy: 0.8455, F1: 0.2733
+2025-12-29 23:40:26,638 - train_model - INFO - 
+--- Fold 2/5 ---
+2025-12-29 23:40:26,647 - train_model - INFO - Train: 63190 samples, Test: 31595 samples
+2025-12-29 23:40:26,648 - train_model - INFO - Train win rate: 7.30%, Test win rate: 7.26%
+2025-12-29 23:40:29,532 - train_model - INFO -   AUC: 0.7736, Accuracy: 0.8158, F1: 0.2768
+2025-12-29 23:40:29,533 - train_model - INFO - 
+--- Fold 3/5 ---
+2025-12-29 23:40:29,543 - train_model - INFO - Train: 94785 samples, Test: 31595 samples
+2025-12-29 23:40:29,543 - train_model - INFO - Train win rate: 7.29%, Test win rate: 7.25%
+2025-12-29 23:40:31,829 - train_model - INFO -   AUC: 0.7672, Accuracy: 0.8184, F1: 0.2773
+2025-12-29 23:40:31,829 - train_model - INFO - 
+--- Fold 4/5 ---
+2025-12-29 23:40:31,849 - train_model - INFO - Train: 126380 samples, Test: 31595 samples
+2025-12-29 23:40:31,849 - train_model - INFO - Train win rate: 7.28%, Test win rate: 7.26%
+2025-12-29 23:40:35,220 - train_model - INFO -   AUC: 0.7707, Accuracy: 0.7943, F1: 0.2785
+2025-12-29 23:40:35,220 - train_model - INFO - 
+--- Fold 5/5 ---
+2025-12-29 23:40:35,244 - train_model - INFO - Train: 157975 samples, Test: 31595 samples
+2025-12-29 23:40:35,245 - train_model - INFO - Train win rate: 7.28%, Test win rate: 7.34%

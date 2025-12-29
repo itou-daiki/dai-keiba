@@ -65,11 +65,19 @@ def load_history_csv(mode):
             # If strictly needed, we could read header first, but that's slow.
             # We'll just try loading.
             
-            return pd.read_csv(
+            df = pd.read_csv(
                 csv_path, 
-                usecols=lambda c: c in usecols, # Lambda handles missing cols gracefully? No, filtering.
+                usecols=lambda c: c in usecols, 
                 dtype={'horse_id': str, 'race_id': str, '着 順': str} 
             )
+            
+            # Key Mismatch Fix: Clean potential float strings (e.g. "2022.0" -> "2022")
+            if 'horse_id' in df.columns:
+                df['horse_id'] = df['horse_id'].astype(str).str.replace(r'\.0$', '', regex=True)
+            if 'race_id' in df.columns:
+                 df['race_id'] = df['race_id'].astype(str).str.replace(r'\.0$', '', regex=True)
+                 
+            return df
         except Exception as e:
             st.warning(f"History load failed: {e}")
             pass
