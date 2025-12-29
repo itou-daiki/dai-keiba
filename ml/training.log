@@ -4033,3 +4033,46 @@
 --- Fold 5/5 ---
 2025-12-29 23:40:35,244 - train_model - INFO - Train: 157975 samples, Test: 31595 samples
 2025-12-29 23:40:35,245 - train_model - INFO - Train win rate: 7.28%, Test win rate: 7.34%
+2025-12-29 23:40:39,814 - train_model - INFO -   AUC: 0.7552, Accuracy: 0.7453, F1: 0.2550
+2025-12-29 23:40:39,814 - train_model - INFO - 
+=== Cross-Validation Results (Mean ± Std) ===
+2025-12-29 23:40:39,814 - train_model - INFO - AUC: 0.7627 ± 0.0101
+2025-12-29 23:40:39,814 - train_model - INFO - ACCURACY: 0.8039 ± 0.0335
+2025-12-29 23:40:39,814 - train_model - INFO - PRECISION: 0.1894 ± 0.0154
+2025-12-29 23:40:39,814 - train_model - INFO - RECALL: 0.5000 ± 0.0676
+2025-12-29 23:40:39,815 - train_model - INFO - F1: 0.2722 ± 0.0088
+2025-12-29 23:40:39,815 - train_model - INFO - BRIER: 0.1394 ± 0.0138
+2025-12-29 23:40:39,815 - train_model - INFO - LOGLOSS: 0.4370 ± 0.0321
+2025-12-29 23:40:39,815 - train_model - INFO - 
+=== Training final model on ALL data ===
+2025-12-29 23:40:39,880 - train_model - INFO - Training final LightGBM model...
+2025-12-29 23:40:47,982 - train_model - INFO - 
+=== Final Model Performance ===
+2025-12-29 23:40:47,982 - train_model - INFO - AUC: 0.8469
+2025-12-29 23:40:47,983 - train_model - INFO - Accuracy: 0.8170
+2025-12-29 23:40:47,983 - train_model - INFO - Precision: 0.2327
+2025-12-29 23:40:47,983 - train_model - INFO - Recall: 0.6645
+2025-12-29 23:40:47,983 - train_model - INFO - F1 Score: 0.3446
+2025-12-29 23:40:47,983 - train_model - INFO - Brier Score: 0.1305
+2025-12-29 23:40:47,983 - train_model - INFO - Log Loss: 0.4127
+2025-12-29 23:40:48,044 - train_model - INFO - 
+=== Finding Optimal Threshold ===
+2025-12-29 23:40:48,091 - train_model - INFO - Optimal threshold: 0.60 (f1=0.3735)
+2025-12-29 23:40:48,094 - train_model - INFO - 
+=== Calibrating Probabilities ===
+2025-12-29 23:40:48,095 - train_model - INFO - Calibrating probabilities with isotonic method...
+2025-12-29 23:40:48,095 - train_model - WARNING - Calibration failed: The 'cv' parameter of CalibratedClassifierCV must be an int in the range [2, inf), an object implementing 'split' and 'get_n_splits', an iterable or None. Got 'prefit' instead.
+2025-12-29 23:40:48,107 - train_model - INFO - Model saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model.pkl
+2025-12-29 23:40:48,120 - train_model - INFO - 
+=== Top 10 Feature Importance ===
+2025-12-29 23:40:48,120 - train_model - INFO -   distance_compatibility: 160625.08
+2025-12-29 23:40:48,120 - train_model - INFO -   weighted_avg_odds: 96695.43
+2025-12-29 23:40:48,120 - train_model - INFO -   jockey_compatibility: 87852.97
+2025-12-29 23:40:48,121 - train_model - INFO -   good_condition_avg: 71190.98
+2025-12-29 23:40:48,121 - train_model - INFO -   dd_run_style_bias: 69184.74
+2025-12-29 23:40:48,121 - train_model - INFO -   last_race_performance: 55578.94
+2025-12-29 23:40:48,121 - train_model - INFO -   jockey_id: 52830.05
+2025-12-29 23:40:48,121 - train_model - INFO -   dirt_compatibility: 39284.42
+2025-12-29 23:40:48,121 - train_model - INFO -   jockey_races_log: 30100.89
+2025-12-29 23:40:48,121 - train_model - INFO -   trainer_id: 25953.34
+2025-12-29 23:40:48,122 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_meta.json
