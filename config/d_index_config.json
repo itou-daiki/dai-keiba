@@ -1,0 +1,12 @@
+{
+    "top_level": {
+        "ai": 0.4,
+        "compat": 0.5,
+        "blood": 0.1
+    },
+    "compat_sub_weights": {
+        "jockey": 0.4,
+        "distance": 0.3,
+        "course": 0.3
+    }
+}

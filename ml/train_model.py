@@ -2,7 +2,6 @@ import pandas as pd
 import lightgbm as lgb
 import pickle
 import os
-import mlflow
 import optuna
 import numpy as np
 import logging
@@ -291,202 +290,168 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
 
     evals_result = {}
 
-    # Start MLflow Run
-    mlflow.set_experiment("keiba_prediction")
+    logger.info("Training final LightGBM model...")
+    bst = lgb.train(
+        lgb_params,
+        train_data,
+        num_boost_round=300,
+        valid_sets=[train_data, test_data],
+        valid_names=['train', 'valid'],
+        callbacks=[
+            lgb.log_evaluation(20),
+            lgb.record_evaluation(evals_result),
+            lgb.early_stopping(stopping_rounds=30)
+        ]
+    )
 
-    run_name = f"timeseries_split_{datetime.now().strftime('%Y%m%d_%H%M%S')}" if use_timeseries_split else "random_split"
+    # Evaluate on test set
+    y_pred = bst.predict(X_test, num_iteration=bst.best_iteration)
+    y_pred_binary = (y_pred > 0.5).astype(int)
 
-    with mlflow.start_run(run_name=run_name):
-        mlflow.log_params(lgb_params)
-        mlflow.log_param("use_timeseries_split", use_timeseries_split)
-        mlflow.log_param("target_variable", target_col)
-        mlflow.log_param("total_samples", len(df))
-        mlflow.log_param("train_samples", len(X_train))
-        mlflow.log_param("test_samples", len(X_test))
+    # Comprehensive metrics
+    acc = accuracy_score(y_test, y_pred_binary)
+    precision = precision_score(y_test, y_pred_binary, zero_division=0)
+    recall = recall_score(y_test, y_pred_binary, zero_division=0)
+    f1 = f1_score(y_test, y_pred_binary, zero_division=0)
 
-        logger.info("Training final LightGBM model...")
-        bst = lgb.train(
-            lgb_params,
-            train_data,
-            num_boost_round=300,
-            valid_sets=[train_data, test_data],
-            valid_names=['train', 'valid'],
-            callbacks=[
-                lgb.log_evaluation(20),
-                lgb.record_evaluation(evals_result),
-                lgb.early_stopping(stopping_rounds=30)
-            ]
-        )
+    try:
+        auc = roc_auc_score(y_test, y_pred)
+        brier = brier_score_loss(y_test, y_pred)
+        logloss = log_loss(y_test, y_pred)
+    except Exception as e:
+        logger.error(f"Metric calculation error: {e}")
+        auc, brier, logloss = 0.0, 1.0, 1.0
 
-        # Evaluate on test set
-        y_pred = bst.predict(X_test, num_iteration=bst.best_iteration)
-        y_pred_binary = (y_pred > 0.5).astype(int)
+    logger.info("\n=== Final Model Performance ===")
+    logger.info(f"AUC: {auc:.4f}")
+    logger.info(f"Accuracy: {acc:.4f}")
+    logger.info(f"Precision: {precision:.4f}")
+    logger.info(f"Recall: {recall:.4f}")
+    logger.info(f"F1 Score: {f1:.4f}")
+    logger.info(f"Brier Score: {brier:.4f}")
+    logger.info(f"Log Loss: {logloss:.4f}")
 
-        # Comprehensive metrics
-        acc = accuracy_score(y_test, y_pred_binary)
-        precision = precision_score(y_test, y_pred_binary, zero_division=0)
-        recall = recall_score(y_test, y_pred_binary, zero_division=0)
-        f1 = f1_score(y_test, y_pred_binary, zero_division=0)
+    # === 最適閾値の探索 ===
+    optimal_threshold = 0.5  # デフォルト
+    if find_threshold:
+        logger.info("\n=== Finding Optimal Threshold ===")
+        optimal_threshold = find_optimal_threshold(y_test, y_pred, metric='f1')
 
+    # === 確率較正 ===
+    calibrated_model = None
+    if calibrate and len(X_test) > 50:  # 較正には十分なデータが必要
+        logger.info("\n=== Calibrating Probabilities ===")
         try:
-            auc = roc_auc_score(y_test, y_pred)
-            brier = brier_score_loss(y_test, y_pred)
-            logloss = log_loss(y_test, y_pred)
+            calibrated_model = calibrate_probabilities(
+                bst, X_test, y_test, method='isotonic'
+            )
+            # 較正後の性能を評価
+            y_pred_cal = calibrated_model.predict_proba(X_test)[:, 1]
+            brier_cal = brier_score_loss(y_test, y_pred_cal)
+            logger.info(f"Brier Score after calibration: {brier_cal:.4f} (before: {brier:.4f})")
         except Exception as e:
-            logger.error(f"Metric calculation error: {e}")
-            auc, brier, logloss = 0.0, 1.0, 1.0
+            logger.warning(f"Calibration failed: {e}")
+            calibrated_model = None
 
-        logger.info("\n=== Final Model Performance ===")
-        logger.info(f"AUC: {auc:.4f}")
-        logger.info(f"Accuracy: {acc:.4f}")
-        logger.info(f"Precision: {precision:.4f}")
-        logger.info(f"Recall: {recall:.4f}")
-        logger.info(f"F1 Score: {f1:.4f}")
-        logger.info(f"Brier Score: {brier:.4f}")
-        logger.info(f"Log Loss: {logloss:.4f}")
+    # Save model
+    os.makedirs(os.path.dirname(model_path), exist_ok=True)
+    with open(model_path, 'wb') as f:
+        pickle.dump(bst, f)
 
-        # Log Metrics to MLflow
-        mlflow.log_metric("accuracy", acc)
-        mlflow.log_metric("auc", auc)
-        mlflow.log_metric("precision", precision)
-        mlflow.log_metric("recall", recall)
-        mlflow.log_metric("f1", f1)
-        mlflow.log_metric("brier_score", brier)
-        mlflow.log_metric("log_loss", logloss)
+    logger.info(f"Model saved to {model_path}")
 
-        if use_timeseries_split and cv_scores:
-            for metric, scores in cv_scores.items():
-                if scores:
-                    mlflow.log_metric(f"cv_mean_{metric}", np.mean(scores))
-                    mlflow.log_metric(f"cv_std_{metric}", np.std(scores))
+    # Feature Importance
+    importance = bst.feature_importance(importance_type='gain')
+    feature_imp = pd.DataFrame({'Feature': feature_names, 'Value': importance})
+    feature_imp_sorted = feature_imp.sort_values(by='Value', ascending=False)
 
-        # === 最適閾値の探索 ===
-        optimal_threshold = 0.5  # デフォルト
-        if find_threshold:
-            logger.info("\n=== Finding Optimal Threshold ===")
-            optimal_threshold = find_optimal_threshold(y_test, y_pred, metric='f1')
-            mlflow.log_metric("optimal_threshold", optimal_threshold)
+    logger.info("\n=== Top 10 Feature Importance ===")
+    for idx, row in feature_imp_sorted.head(10).iterrows():
+        logger.info(f"  {row['Feature']}: {row['Value']:.2f}")
 
-        # === 確率較正 ===
-        calibrated_model = None
-        if calibrate and len(X_test) > 50:  # 較正には十分なデータが必要
-            logger.info("\n=== Calibrating Probabilities ===")
-            try:
-                calibrated_model = calibrate_probabilities(
-                    bst, X_test, y_test, method='isotonic'
-                )
-                # 較正後の性能を評価
-                y_pred_cal = calibrated_model.predict_proba(X_test)[:, 1]
-                brier_cal = brier_score_loss(y_test, y_pred_cal)
-                logger.info(f"Brier Score after calibration: {brier_cal:.4f} (before: {brier:.4f})")
-                mlflow.log_metric("brier_score_calibrated", brier_cal)
-            except Exception as e:
-                logger.warning(f"Calibration failed: {e}")
-                calibrated_model = None
+    # Update model metadata JSON
+    try:
+        import json
+        meta_path = model_path.replace('.pkl', '_meta.json')
 
-        # Save model
-        os.makedirs(os.path.dirname(model_path), exist_ok=True)
-        with open(model_path, 'wb') as f:
-            pickle.dump(bst, f)
-
-        logger.info(f"Model saved to {model_path}")
-
-        # Log Model to MLflow
-        mlflow.log_artifact(model_path)
-
-        # Feature Importance
-        importance = bst.feature_importance(importance_type='gain')
-        feature_imp = pd.DataFrame({'Feature': feature_names, 'Value': importance})
-        feature_imp_sorted = feature_imp.sort_values(by='Value', ascending=False)
-
-        logger.info("\n=== Top 10 Feature Importance ===")
-        for idx, row in feature_imp_sorted.head(10).iterrows():
-            logger.info(f"  {row['Feature']}: {row['Value']:.2f}")
-
-        # Update model metadata JSON
-        try:
-            import json
-            meta_path = model_path.replace('.pkl', '_meta.json')
-
-            metadata = {
-                "model_id": os.path.basename(model_path).replace('.pkl', ''),
-                "model_type": "LightGBM Binary Classification",
-                "target": target_col,
-                "trained_at": datetime.now().isoformat(),
-                "data_source": os.path.basename(data_path),
-                "data_stats": {
-                    "total_records": len(df),
-                    "train_records": len(X_train),
-                    "test_records": len(X_test),
-                    "win_rate": float(win_rate)
-                },
-                "performance": {
-                    "auc": float(auc),
-                    "accuracy": float(acc),
-                    "precision": float(precision),
-                    "recall": float(recall),
-                    "f1": float(f1),
-                    "brier_score": float(brier),
-                    "log_loss": float(logloss)
-                },
-                "cv_results": {metric: {"mean": float(np.mean(scores)), "std": float(np.std(scores))}
-                              for metric, scores in cv_scores.items() if scores} if use_timeseries_split and cv_scores else {},
-                "features": feature_names,
-                "hyperparameters": lgb_params,
-                "training_config": {
-                    "use_timeseries_split": use_timeseries_split,
-                    "n_folds": 5 if use_timeseries_split else None,
-                    "num_boost_round": 300,
-                    "early_stopping_rounds": 30,
-                    "hyperparameter_optimization": optimize_hyperparams,
-                    "n_trials": n_trials if optimize_hyperparams else None,
-                    "optimal_threshold": float(optimal_threshold),
-                    "calibrated": calibrate and calibrated_model is not None,
-                    "trained_on_all_data": use_timeseries_split  # CVで評価後、全データで学習
-                },
-                "warnings": []
-            }
-
-            # Add warnings
-            if len(df) < 1000:
-                metadata["warnings"].append(f"⚠️ データ量が少ない（{len(df)}件）- 推奨は5000件以上")
-            if len(df) < 5000 and not optimize_hyperparams:
-                metadata["warnings"].append("💡 ハイパーパラメータ最適化を推奨（optimize_hyperparams=True）")
-            if not use_timeseries_split:
-                metadata["warnings"].append("⚠️ TimeSeriesSplitを使用していません（Look-ahead biasの可能性）")
-            if target_col == 'target_top3':
-                metadata["warnings"].append("✅ 3着以内（複勝・ワイド）ターゲットで学習済み")
-            elif target_col != 'target_win':
-                metadata["warnings"].append(f"⚠️ 独自ターゲットを使用中: {target_col}")
-            if not calibrate and brier > 0.15:
-                metadata["warnings"].append("💡 Brier Scoreが高い - 確率較正を推奨（calibrate=True）")
-            if optimize_hyperparams:
-                metadata["warnings"].append(f"✅ Optunaで最適化済み（{n_trials}試行、AUC改善の可能性）")
-
-            with open(meta_path, 'w', encoding='utf-8') as f:
-                json.dump(metadata, f, indent=2, ensure_ascii=False)
-
-            logger.info(f"Metadata saved to {meta_path}")
-            mlflow.log_artifact(meta_path)
-
-        except Exception as e:
-            logger.error(f"Failed to save metadata: {e}")
-
-        return {
-            'model': bst,
-            'accuracy': acc,
-            'auc': auc,
-            'precision': precision,
-            'recall': recall,
-            'f1': f1,
-            'brier_score': brier,
-            'log_loss': logloss,
-            'feature_importance': feature_imp_sorted.head(20).to_dict('records'),
-            'evals_result': evals_result,
-            'features': feature_names,
-            'win_rate': win_rate,
-            'cv_scores': cv_scores if use_timeseries_split else None
+        metadata = {
+            "model_id": os.path.basename(model_path).replace('.pkl', ''),
+            "model_type": "LightGBM Binary Classification",
+            "target": target_col,
+            "trained_at": datetime.now().isoformat(),
+            "data_source": os.path.basename(data_path),
+            "data_stats": {
+                "total_records": len(df),
+                "train_records": len(X_train),
+                "test_records": len(X_test),
+                "win_rate": float(win_rate)
+            },
+            "performance": {
+                "auc": float(auc),
+                "accuracy": float(acc),
+                "precision": float(precision),
+                "recall": float(recall),
+                "f1": float(f1),
+                "brier_score": float(brier),
+                "log_loss": float(logloss)
+            },
+            "cv_results": {metric: {"mean": float(np.mean(scores)), "std": float(np.std(scores))}
+                          for metric, scores in cv_scores.items() if scores} if use_timeseries_split and cv_scores else {},
+            "features": feature_names,
+            "hyperparameters": lgb_params,
+            "training_config": {
+                "use_timeseries_split": use_timeseries_split,
+                "n_folds": 5 if use_timeseries_split else None,
+                "num_boost_round": 300,
+                "early_stopping_rounds": 30,
+                "hyperparameter_optimization": optimize_hyperparams,
+                "n_trials": n_trials if optimize_hyperparams else None,
+                "optimal_threshold": float(optimal_threshold),
+                "calibrated": calibrate and calibrated_model is not None,
+                "trained_on_all_data": use_timeseries_split  # CVで評価後、全データで学習
+            },
+            "warnings": []
         }
+
+        # Add warnings
+        if len(df) < 1000:
+            metadata["warnings"].append(f"⚠️ データ量が少ない（{len(df)}件）- 推奨は5000件以上")
+        if len(df) < 5000 and not optimize_hyperparams:
+            metadata["warnings"].append("💡 ハイパーパラメータ最適化を推奨（optimize_hyperparams=True）")
+        if not use_timeseries_split:
+            metadata["warnings"].append("⚠️ TimeSeriesSplitを使用していません（Look-ahead biasの可能性）")
+        if target_col == 'target_top3':
+            metadata["warnings"].append("✅ 3着以内（複勝・ワイド）ターゲットで学習済み")
+        elif target_col != 'target_win':
+            metadata["warnings"].append(f"⚠️ 独自ターゲットを使用中: {target_col}")
+        if not calibrate and brier > 0.15:
+            metadata["warnings"].append("💡 Brier Scoreが高い - 確率較正を推奨（calibrate=True）")
+        if optimize_hyperparams:
+            metadata["warnings"].append(f"✅ Optunaで最適化済み（{n_trials}試行、AUC改善の可能性）")
+
+        with open(meta_path, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, indent=2, ensure_ascii=False)
+
+        logger.info(f"Metadata saved to {meta_path}")
+
+    except Exception as e:
+        logger.error(f"Failed to save metadata: {e}")
+
+    return {
+        'model': bst,
+        'accuracy': acc,
+        'auc': auc,
+        'precision': precision,
+        'recall': recall,
+        'f1': f1,
+        'brier_score': brier,
+        'log_loss': logloss,
+        'feature_importance': feature_imp_sorted.head(20).to_dict('records'),
+        'evals_result': evals_result,
+        'features': feature_names,
+        'win_rate': win_rate,
+        'cv_scores': cv_scores if use_timeseries_split else None
+    }
 
 def optimize_hyperparameters(data_path, n_trials=50, use_timeseries_split=True):
     """
@@ -793,65 +758,52 @@ def train_with_cross_validation(data_path, params=None, n_splits=5):
 
     print(f"Starting {n_splits}-Fold Cross Validation...")
 
-    mlflow.set_experiment("keiba_cross_validation")
+    # MLflow calls removed
+    # Just iterate KFold
 
-    with mlflow.start_run(run_name=f"{n_splits}_fold_cv"):
-        mlflow.log_params(lgb_params)
+    for fold, (train_idx, val_idx) in enumerate(kfold.split(X, y)):
+            X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
+            y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
 
-        for fold, (train_idx, val_idx) in enumerate(kfold.split(X, y), 1):
-            X_train_fold = X.iloc[train_idx]
-            y_train_fold = y.iloc[train_idx]
-            X_val_fold = X.iloc[val_idx]
-            y_val_fold = y.iloc[val_idx]
-
-            train_data = lgb.Dataset(X_train_fold, label=y_train_fold)
-            val_data = lgb.Dataset(X_val_fold, label=y_val_fold, reference=train_data)
+            train_data = lgb.Dataset(X_train, label=y_train)
+            val_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
 
             bst = lgb.train(
                 lgb_params,
                 train_data,
-                num_boost_round=100,
+                num_boost_round=1000,
                 valid_sets=[val_data],
-                callbacks=[lgb.log_evaluation(False)]
+                callbacks=[
+                    lgb.early_stopping(stopping_rounds=20, verbose=False),
+                    lgb.log_evaluation(0)
+                ]
             )
 
             # Evaluate
-            y_pred = bst.predict(X_val_fold)
-            y_pred_binary = [1 if p > 0.5 else 0 for p in y_pred]
+            preds = bst.predict(X_val, num_iteration=bst.best_iteration)
+            preds_binary = (preds > 0.5).astype(int)
 
-            acc = accuracy_score(y_val_fold, y_pred_binary)
-            auc = roc_auc_score(y_val_fold, y_pred)
+            try:
+                auc = roc_auc_score(y_val, preds)
+                acc = accuracy_score(y_val, preds_binary)
+                cv_scores.append(auc)
+                cv_accuracies.append(acc)
+                print(f"  Fold {fold+1}: AUC={auc:.4f}, Acc={acc:.4f}")
+            except:
+                pass
 
-            cv_scores.append(auc)
-            cv_accuracies.append(acc)
+    mean_auc = np.mean(cv_scores)
+    std_auc = np.std(cv_scores)
+    mean_acc = np.mean(cv_accuracies)
 
-            print(f"  Fold {fold}: AUC={auc:.4f}, Accuracy={acc:.4f}")
+    print(f"\nCV Results: AUC={mean_auc:.4f} ± {std_auc:.4f}, Acc={mean_acc:.4f}")
 
-            mlflow.log_metric(f"fold_{fold}_auc", auc)
-            mlflow.log_metric(f"fold_{fold}_accuracy", acc)
-
-        mean_auc = np.mean(cv_scores)
-        std_auc = np.std(cv_scores)
-        mean_acc = np.mean(cv_accuracies)
-        std_acc = np.std(cv_accuracies)
-
-        print(f"\nCross Validation Results:")
-        print(f"  Mean AUC: {mean_auc:.4f} ± {std_auc:.4f}")
-        print(f"  Mean Accuracy: {mean_acc:.4f} ± {std_acc:.4f}")
-
-        mlflow.log_metric("mean_auc", mean_auc)
-        mlflow.log_metric("std_auc", std_auc)
-        mlflow.log_metric("mean_accuracy", mean_acc)
-        mlflow.log_metric("std_accuracy", std_acc)
-
-        return {
-            'mean_auc': mean_auc,
-            'std_auc': std_auc,
-            'mean_accuracy': mean_acc,
-            'std_accuracy': std_acc,
-            'cv_scores': cv_scores,
-            'cv_accuracies': cv_accuracies
-        }
+    return {
+        'mean_auc': mean_auc,
+        'mean_acc': mean_acc,
+        'cv_scores': cv_scores,
+        'cv_accuracies': cv_accuracies
+    }
 
 # [削除済み] train_with_timeseries_split 関数（未使用・target_top3使用のため削除）
 

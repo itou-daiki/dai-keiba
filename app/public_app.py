@@ -405,51 +405,27 @@ def predict_race_logic(df, model, model_meta, stats=None):
             df['course_compatibility'] = df['dirt_compatibility']
         else:
             df['course_compatibility'] = 5.0  # デフォルト値
-        # === Compute D_Index based on Pure Compatibility (not Confidence) ===
-        def calculate_pure_compat(row):
-            scores = []
-            weights = []
-            
-            # Weighted Compatibility Calculation (Optimized)
-            # Jockey (40%), Distance (30%), Course (30%)
-            if pd.notna(row.get('jockey_compatibility')): 
-                scores.append(float(row['jockey_compatibility']) * 0.4)
-                weights.append(0.4)
-            if pd.notna(row.get('distance_compatibility')): 
-                scores.append(float(row['distance_compatibility']) * 0.3)
-                weights.append(0.3)
-            if pd.notna(row.get('course_compatibility')): 
-                scores.append(float(row['course_compatibility']) * 0.3)
-                weights.append(0.3)
-            
-            if not weights: return 50.0
-            
-            # Weighted Average Rank
-            avg_rank = sum(scores) / sum(weights)
-            
-            # Normalize Rank (1.0 - 18.0) to Score (100 - 0)
-            score = (18.0 - avg_rank) / 17.0 * 100
-            return max(0, min(100, score))
-
-        df['Compat_Index'] = df.apply(calculate_pure_compat, axis=1)
-
-        # === Compute Bloodline Index ===
-        def calculate_bloodline_index(row):
-            if pd.isna(row.get('sire_win_rate')): return 50.0 
-            
-            sire = row.get('sire_win_rate', 0.08)
-            bms = row.get('bms_win_rate', 0.07)
-            # Weighted Rate
-            rate = (sire * 0.7) + (bms * 0.3)
-            # Scaling
-            score = rate * 625
-            return max(0, min(100, score))
-
-        df['Bloodline_Index'] = df.apply(calculate_bloodline_index, axis=1)
-
-        # D指数: AI 40% + 適性 50% + 血統 10% (Based on Dec 2025 Optimization: Stability Focus)
-        df['D_Index'] = (df['AI_Score'] * 0.4) + (df['Compat_Index'] * 0.5) + (df['Bloodline_Index'] * 0.1)
-        df['D_Index'] = df['D_Index'].clip(1, 99)
+        # === D-Index Calculation (Refactored) ===
+        import scoring
+        importlib.reload(scoring) # Ensure latest logic
+        
+        # Load Weights
+        d_index_conf_path = os.path.join(PROJECT_ROOT, "config", "d_index_config.json")
+        default_weights = {'ai': 0.4, 'compat': 0.5, 'blood': 0.1}
+        weights = default_weights
+        if os.path.exists(d_index_conf_path):
+            try:
+                with open(d_index_conf_path, 'r') as f:
+                    weights = json.load(f)
+            except:
+                pass
+        
+        df['Compat_Index'] = df.apply(lambda row: scoring.calculate_pure_compat(
+            row, 
+            weights.get('compat_sub_weights', {'jockey': 0.4, 'distance': 0.3, 'course': 0.3})
+        ), axis=1)
+        df['Bloodline_Index'] = df.apply(scoring.calculate_bloodline_index, axis=1)
+        df['D_Index'] = df.apply(lambda row: scoring.calculate_d_index(row, weights), axis=1)
         return df
     except Exception as e:
         import traceback

@@ -5403,3 +5403,21 @@
 2026-01-05 05:55:29,063 - train_model - INFO -   turf_compatibility: 46940.30
 2026-01-05 05:55:29,063 - train_model - INFO -   weighted_avg_odds: 46768.23
 2026-01-05 05:55:29,064 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_meta.json
+2026-01-05 21:21:45,663 - streamlit.runtime.runtime_util - WARNING - Websocket message size limit exceeded. Showing error to the user: **Data of size 243.3 MB exceeds the message size limit of
+200.0 MB.**
+
+This is often caused by a large chart or dataframe. Please decrease the amount of data sent
+to the browser, or increase the limit by setting the config option `server.maxMessageSize`.
+[Click here to learn more about config options](https://docs.streamlit.io/develop/api-reference/configuration/config.toml).
+
+_Note that increasing the limit may lead to long loading times and large memory consumption
+of the client's browser and the Streamlit server._
+2026-01-05 21:32:39,111 - streamlit.runtime.runtime_util - WARNING - Websocket message size limit exceeded. Showing error to the user: **Data of size 243.3 MB exceeds the message size limit of
+200.0 MB.**
+
+This is often caused by a large chart or dataframe. Please decrease the amount of data sent
+to the browser, or increase the limit by setting the config option `server.maxMessageSize`.
+[Click here to learn more about config options](https://docs.streamlit.io/develop/api-reference/configuration/config.toml).
+
+_Note that increasing the limit may lead to long loading times and large memory consumption
+of the client's browser and the Streamlit server._
