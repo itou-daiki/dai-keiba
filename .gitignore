@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# Heavy Data Files
+*.db
+# ml/processed_data_*.csv # Now handled by wildcard below but explicit exclude is fine
+ml/processed_data_*.csv
+data/temp/*.json
+data/raw/database*.csv
+.DS_Store
+data/.DS_Store
+.DS_Store
