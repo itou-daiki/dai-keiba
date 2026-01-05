@@ -9,5 +9,3 @@ ml/processed_data_*.csv
 data/temp/*.json
 data/raw/database*.csv
 .DS_Store
-data/.DS_Store
-.DS_Store
