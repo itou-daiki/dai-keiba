@@ -88,6 +88,160 @@ st.caption("使い方: Colabでデータを取得後、ここでアップロー�
 
 st.markdown("---")
 
+# --- 3. MLOps Section (Training & Deploy) ---
+st.markdown("## 🤖 機械学習モデルの管理 (MLOps)")
+
+st.info("💡 **全自動プロセス**: ボタン一つで「前処理 → 最適化(100回) → 学習 → 較正(Calibration) → Git Push」まで実行します。")
+
+# 2.1 Settings
+st.markdown("### 学習設定")
+# All settings are fixed/default now
+st.markdown("""
+- **最適化 (Optuna)**: ✅ ON (100 trials)
+- **確率較正 (Calibration)**: ✅ ON
+- **前処理**: ✅ 自動実行
+""")
+
+auto_push = st.checkbox("学習完了後、リポジトリを自動更新 (Git Push)", value=True, help="学習成功時に変更を自動的にコミット＆プッシュします")
+
+st.markdown("---")
+
+# 2.2 Action
+st.markdown("### アクション")
+if st.button("🚀 フル学習プロセスを開始 (最適化+較正+デプロイ)", type="primary", use_container_width=True):
+    
+    # Paths
+    db_path = target_parquet
+    data_path = processed_data_path
+    
+    model_dir = os.path.join(project_root, "ml", "models")
+    os.makedirs(model_dir, exist_ok=True)
+    model_path = os.path.join(model_dir, model_name)
+
+    # 1. Preprocess
+    with st.spinner("1/4 データ前処理 & 統計データ作成中..."):
+        if os.path.exists(db_path):
+            # Calculate Features
+            try:
+                feature_engineering.calculate_features(db_path, data_path)
+                
+                # Export Stats
+                import export_stats
+                importlib.reload(export_stats)
+                if export_stats.export_stats(mode=mode_val):
+                    st.success("統計データ(Inference用)のエクスポート完了")
+                else:
+                    st.warning("統計データのエクスポートに失敗 (学習は続行)")
+                    
+                # Save to SQL DB (Optional but good for inspection)
+                try:
+                    import db_helper
+                    importlib.reload(db_helper)
+                    df_proc = pd.read_parquet(data_path)
+                    db_path_sql = os.path.join(project_root, "keiba_data.db")
+                    # Ensure file creation
+                    conn_check = importlib.import_module("sqlite3").connect(db_path_sql)
+                    conn_check.close()
+                    db = db_helper.KeibaDatabase(db_path_sql)
+                    db.save_processed_data(df_proc, mode=mode_val)
+                except Exception as e:
+                    print(f"SQL Save skipped: {e}")
+
+            except Exception as e:
+                st.error(f"前処理エラー: {e}")
+                st.stop()
+        else:
+                st.error(f"{csv_filename} が見つかりません。")
+                st.stop()
+
+    # 2. Optimization
+    n_trials = 100
+    with st.spinner(f"2/4 ハイパーパラメータ最適化中 (Optuna {n_trials} trials)..."):
+        try:
+            opt_res = train_model.optimize_hyperparameters(data_path, n_trials=n_trials)
+            if opt_res:
+                st.success(f"最適化完了: Best AUC {opt_res['best_auc']:.4f}")
+                st.session_state['best_params'] = opt_res['best_params']
+            else:
+                st.warning("最適化スキップ（デフォルト設定を使用）")
+        except Exception as e:
+            st.error(f"最適化エラー: {e}")
+            st.stop()
+    
+    # 3. Training & Calibration
+    with st.spinner("3/4 モデル学習 & 確率較正中..."):
+        params = st.session_state.get('best_params', None)
+        try:
+            # Force calibrate=True
+            results = train_model.train_and_save_model(data_path, model_path, params=params, calibrate=True)
+            if results:
+                st.success("学習完了！")
+                st.session_state['ml_results'] = results
+            else:
+                st.error("学習失敗")
+                st.stop()
+        except Exception as e:
+            st.error(f"学習エラー: {e}")
+            st.stop()
+
+    # 4. Auto Push
+    if auto_push:
+        with st.spinner("4/4 リポジトリ更新中 (Git Push)..."):
+            try:
+                # Relative paths for git
+                if mode_val == "NAR":
+                    model_path_rel = "ml/models/lgbm_model_nar.pkl"
+                else:
+                    model_path_rel = "ml/models/lgbm_model.pkl"
+                
+                meta_path_rel = model_path_rel.replace('.pkl', '_meta.json')
+                stats_path_rel = f"ml/models/feature_stats{'_nar' if mode_val == 'NAR' else ''}.pkl" # Stats file
+
+                commit_msg = f"Auto-update model ({mode_val}): {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+                
+                cmds = [
+                    ["git", "add", model_path_rel, meta_path_rel, stats_path_rel],
+                    ["git", "commit", "-m", commit_msg],
+                    ["git", "push", "origin", "main"]
+                ]
+                
+                for cmd in cmds:
+                    res = subprocess.run(cmd, cwd=project_root, capture_output=True, text=True)
+                    if res.returncode != 0:
+                        if "nothing to commit" not in (res.stdout + res.stderr).lower():
+                            st.warning(f"Git Warning: {res.stderr}")
+                
+                st.success("✅ 全プロセス完了！リポジトリ更新済み")
+            except Exception as e:
+                st.error(f"Git Push Error: {e}")
+
+
+# --- Display Training Results ---
+if 'ml_results' in st.session_state:
+    st.markdown("---")
+    res = st.session_state['ml_results']
+    
+    st.markdown("#### 📊 学習結果レポート")
+    m_col1, m_col2, m_col3 = st.columns(3)
+    m_col1.metric("Accuracy", f"{res['accuracy']:.4f}")
+    m_col2.metric("AUC", f"{res['auc']:.4f}")
+    m_col3.metric("Positive Rate", f"{res.get('win_rate', 0.0):.2%}")
+    
+    # Feature Importance only (Learning Curve requires evals_result which might be bulky or different format now)
+    if 'feature_importance' in res:
+        fi = pd.DataFrame(res['feature_importance'])
+        if not fi.empty:
+            fig_fi = go.Figure(go.Bar(
+                x=fi['Value'], y=fi['Feature'], orientation='h'
+            ))
+            fig_fi.update_layout(
+                title="特徴量重要度 (Top 20)",
+                yaxis=dict(autorange="reversed"),
+                xaxis_title="Importance (Gain)",
+                 height=600
+            )
+            st.plotly_chart(fig_fi, width="stretch")
+
 st.markdown("---")
 
 # --- 2. D-Index Optimization Section ---
@@ -107,7 +261,7 @@ if os.path.exists(d_index_conf_path):
             current_weights = json.load(f)
     except:
         pass
-        
+
 st.markdown("### 現在の重み")
 st.write(current_weights)
 
@@ -263,161 +417,3 @@ if st.button("⚖️ 重みを最適化する (Optimize Weights)", type="primary
             st.error(f"最適化エラー: {e}")
             import traceback
             st.code(traceback.format_exc())
-
-st.markdown("---")
-
-# --- 3. MLOps Section (Training & Deploy) ---
-st.markdown("## 🤖 機械学習モデルの管理 (MLOps)")
-
-st.info("💡 **全自動プロセス**: ボタン一つで「前処理 → 最適化(100回) → 学習 → 較正(Calibration) → Git Push」まで実行します。")
-
-# 2.1 Settings
-st.markdown("### 学習設定")
-# All settings are fixed/default now
-st.markdown("""
-- **最適化 (Optuna)**: ✅ ON (100 trials)
-- **確率較正 (Calibration)**: ✅ ON
-- **前処理**: ✅ 自動実行
-""")
-
-auto_push = st.checkbox("学習完了後、リポジトリを自動更新 (Git Push)", value=True, help="学習成功時に変更を自動的にコミット＆プッシュします")
-
-st.markdown("---")
-
-# 2.2 Action
-st.markdown("### アクション")
-if st.button("🚀 フル学習プロセスを開始 (最適化+較正+デプロイ)", type="primary", use_container_width=True):
-    
-    # Paths
-    db_path = target_parquet
-    data_path = processed_data_path
-    
-    model_dir = os.path.join(project_root, "ml", "models")
-    os.makedirs(model_dir, exist_ok=True)
-    model_path = os.path.join(model_dir, model_name)
-
-    # 1. Preprocess
-    with st.spinner("1/4 データ前処理 & 統計データ作成中..."):
-        if os.path.exists(db_path):
-            # Calculate Features
-            try:
-                feature_engineering.calculate_features(db_path, data_path)
-                
-                # Export Stats
-                import export_stats
-                importlib.reload(export_stats)
-                if export_stats.export_stats(mode=mode_val):
-                    st.success("統計データ(Inference用)のエクスポート完了")
-                else:
-                    st.warning("統計データのエクスポートに失敗 (学習は続行)")
-                    
-                # Save to SQL DB (Optional but good for inspection)
-                try:
-                    import db_helper
-                    importlib.reload(db_helper)
-                    df_proc = pd.read_parquet(data_path)
-                    db_path_sql = os.path.join(project_root, "keiba_data.db")
-                    # Ensure file creation
-                    conn_check = importlib.import_module("sqlite3").connect(db_path_sql)
-                    conn_check.close()
-                    db = db_helper.KeibaDatabase(db_path_sql)
-                    db.save_processed_data(df_proc, mode=mode_val)
-                except Exception as e:
-                    print(f"SQL Save skipped: {e}")
-
-            except Exception as e:
-                st.error(f"前処理エラー: {e}")
-                st.stop()
-        else:
-                st.error(f"{csv_filename} が見つかりません。")
-                st.stop()
-
-    # 2. Optimization
-    n_trials = 100
-    with st.spinner(f"2/4 ハイパーパラメータ最適化中 (Optuna {n_trials} trials)..."):
-        try:
-            opt_res = train_model.optimize_hyperparameters(data_path, n_trials=n_trials)
-            if opt_res:
-                st.success(f"最適化完了: Best AUC {opt_res['best_auc']:.4f}")
-                st.session_state['best_params'] = opt_res['best_params']
-            else:
-                st.warning("最適化スキップ（デフォルト設定を使用）")
-        except Exception as e:
-            st.error(f"最適化エラー: {e}")
-            st.stop()
-    
-    # 3. Training & Calibration
-    with st.spinner("3/4 モデル学習 & 確率較正中..."):
-        params = st.session_state.get('best_params', None)
-        try:
-            # Force calibrate=True
-            results = train_model.train_and_save_model(data_path, model_path, params=params, calibrate=True)
-            if results:
-                st.success("学習完了！")
-                st.session_state['ml_results'] = results
-            else:
-                st.error("学習失敗")
-                st.stop()
-        except Exception as e:
-            st.error(f"学習エラー: {e}")
-            st.stop()
-
-    # 4. Auto Push
-    if auto_push:
-        with st.spinner("4/4 リポジトリ更新中 (Git Push)..."):
-            try:
-                # Relative paths for git
-                if mode_val == "NAR":
-                    model_path_rel = "ml/models/lgbm_model_nar.pkl"
-                else:
-                    model_path_rel = "ml/models/lgbm_model.pkl"
-                
-                meta_path_rel = model_path_rel.replace('.pkl', '_meta.json')
-                stats_path_rel = f"ml/models/feature_stats{'_nar' if mode_val == 'NAR' else ''}.pkl" # Stats file
-
-                commit_msg = f"Auto-update model ({mode_val}): {datetime.now().strftime('%Y-%m-%d %H:%M')}"
-                
-                cmds = [
-                    ["git", "add", model_path_rel, meta_path_rel, stats_path_rel],
-                    ["git", "commit", "-m", commit_msg],
-                    ["git", "push", "origin", "main"]
-                ]
-                
-                for cmd in cmds:
-                    res = subprocess.run(cmd, cwd=project_root, capture_output=True, text=True)
-                    if res.returncode != 0:
-                        if "nothing to commit" not in (res.stdout + res.stderr).lower():
-                            st.warning(f"Git Warning: {res.stderr}")
-                
-                st.success("✅ 全プロセス完了！リポジトリ更新済み")
-            except Exception as e:
-                st.error(f"Git Push Error: {e}")
-
-
-# --- Display Training Results ---
-if 'ml_results' in st.session_state:
-    st.markdown("---")
-    res = st.session_state['ml_results']
-    
-    st.markdown("#### 📊 学習結果レポート")
-    m_col1, m_col2, m_col3 = st.columns(3)
-    m_col1.metric("Accuracy", f"{res['accuracy']:.4f}")
-    m_col2.metric("AUC", f"{res['auc']:.4f}")
-    m_col3.metric("Positive Rate", f"{res.get('win_rate', 0.0):.2%}")
-    
-    # Feature Importance only (Learning Curve requires evals_result which might be bulky or different format now)
-    if 'feature_importance' in res:
-        fi = pd.DataFrame(res['feature_importance'])
-        if not fi.empty:
-            fig_fi = go.Figure(go.Bar(
-                x=fi['Value'], y=fi['Feature'], orientation='h'
-            ))
-            fig_fi.update_layout(
-                title="特徴量重要度 (Top 20)",
-                yaxis=dict(autorange="reversed"),
-                xaxis_title="Importance (Gain)",
-                 height=600
-            )
-            st.plotly_chart(fig_fi, width="stretch")
-
-
