@@ -251,7 +251,7 @@ st.info("💡 過去のレースデータを用いて、D指数の構成要素�
 
 # 2.1 Settings
 st.markdown("### 期間設定")
-period_opt = st.selectbox("検証期間 (Verification Period)", ["直近1年間 (Recommended)", "直近3年間", "全期間"], index=0)
+period_opt = st.selectbox("検証期間 (Verification Period)", ["直近1ヶ月間 (Latest 1 Month)", "直近1年間 (Recommended)", "直近3年間", "全期間"], index=0)
 
 # Load current weights
 current_weights = {'ai': 0.4, 'compat': 0.5, 'blood': 0.1}
@@ -292,7 +292,10 @@ if st.button("⚖️ 重みを最適化する (Optimize Weights)", type="primary
             
             max_date = df_proc['date'].max()
             
-            if "1年間" in period_opt:
+            if "1ヶ月間" in period_opt:
+                start_date = max_date - pd.Timedelta(days=30)
+                df_proc = df_proc[df_proc['date'] >= start_date]
+            elif "1年間" in period_opt:
                 start_date = max_date - pd.Timedelta(days=365)
                 df_proc = df_proc[df_proc['date'] >= start_date]
             elif "3年間" in period_opt:
@@ -551,3 +554,251 @@ if 'optimized_config' in st.session_state:
            st.session_state['current_weights'] = final_config
         except Exception as e:
             st.error(f"保存エラー: {e}")
+
+# --- 5. Recent Race Verification Section ---
+st.markdown("---")
+st.markdown("## 🏁 直近レースの的中確認 (Recent Race Verification)")
+st.info("データ・学習モデル・重み設定を使って、直近開催日のレース結果と予想（D指数上位6頭）を照合します。")
+
+if not os.path.exists(processed_data_path):
+    st.error(f"データが見つかりません: {processed_data_path}")
+else:
+    # 1. Pre-load Dates for Selection (Lightweight)
+    try:
+        # Read only date column
+        df_dates = pd.read_parquet(processed_data_path, columns=['date'])
+        
+        # Robust Date Parsing
+        date_raw_dates = df_dates['date'].copy()
+        df_dates['date'] = pd.to_datetime(df_dates['date'], errors='coerce')
+        if df_dates['date'].isna().sum() > len(df_dates) * 0.5:
+             df_dates['date'] = pd.to_datetime(date_raw_dates, format='%Y年%m月%d日', errors='coerce')
+        
+        df_dates['date_norm'] = df_dates['date'].dt.normalize()
+        unique_dates = sorted(df_dates['date_norm'].dropna().unique(), reverse=True)
+        
+        if not unique_dates:
+            st.warning("利用可能な日付データがありません。")
+            st.stop()
+            
+        # Select Date
+        selected_date_norm = st.selectbox(
+            "対象日を選択 (Verification Date)", 
+            unique_dates, 
+            index=0,
+            format_func=lambda x: x.strftime('%Y-%m-%d')
+        )
+        
+    except Exception as e:
+        st.error(f"日付データの読み込みに失敗: {e}")
+        st.stop()
+
+    if st.button("🚀 レース結果を確認する"):
+        # 2. Load Full Data & Filter
+        df_recent = pd.read_parquet(processed_data_path)
+        
+        # Ensure Date (Repeat robust parsing for full dataframe)
+        date_raw_temp = df_recent['date'].copy()
+        df_recent['date'] = pd.to_datetime(df_recent['date'], errors='coerce')
+        if df_recent['date'].isna().sum() > len(df_recent) * 0.5:
+             df_recent['date'] = pd.to_datetime(date_raw_temp, format='%Y年%m月%d日', errors='coerce')
+        
+        df_recent['date_norm'] = df_recent['date'].dt.normalize()
+        
+        # Filter by Selected Date
+        df_target = df_recent[df_recent['date_norm'] == selected_date_norm].copy()
+        
+        # --- Fix: Merge Race Metadata from Raw Database if missing ---
+        # Processed data often drops non-numeric columns like 'レース名'. 
+        # We recover them from the original 'database.parquet' (target_parquet).
+        meta_cols_needed = ['race_name', 'レース名', '会場', 'レース番号', 'R']
+        missing_meta = [c for c in meta_cols_needed if c not in df_target.columns]
+        
+        if missing_meta and os.path.exists(target_parquet):
+            try:
+                # Load raw data (subset of cols)
+                # We don't know exact col names in raw, so load needed + race_id
+                df_raw = pd.read_parquet(target_parquet)
+                
+                # Select relevant columns that exist in raw
+                raw_cols = [c for c in meta_cols_needed if c in df_raw.columns]
+                if 'race_id' in df_raw.columns and raw_cols:
+                    # Create a metadata map (one row per race_id)
+                    df_meta = df_raw[['race_id'] + raw_cols].drop_duplicates(subset=['race_id'])
+                    
+                    # Check types for merge (race_id often str vs int mismatch)
+                    df_target['race_id'] = df_target['race_id'].astype(str)
+                    df_meta['race_id'] = df_meta['race_id'].astype(str)
+                    
+                    # Merge
+                    df_target = pd.merge(df_target, df_meta, on='race_id', how='left', suffixes=('', '_raw'))
+                    
+                    # Fill missing columns from _raw
+                    for col in raw_cols:
+                        if col not in df_target.columns:
+                            df_target[col] = df_target[f"{col}_raw"]
+                        elif col in df_target.columns and df_target[col].isna().all():
+                             df_target[col] = df_target[f"{col}_raw"].fillna(df_target[col])
+            except Exception as e:
+                st.warning(f"メタデータ結合警告: {e}")
+        # -------------------------------------------------------------
+    
+        st.write(f"対象日: **{selected_date_norm.date()}** (全 {len(df_target['race_id'].unique())} レース)")
+
+        # 3. Load Current Config Weights
+        import scoring
+        importlib.reload(scoring)
+        
+        current_conf = {}
+        if os.path.exists(d_index_conf_path):
+            try:
+                with open(d_index_conf_path, 'r') as f:
+                    current_conf = json.load(f)
+            except:
+                pass
+        
+        # 4. Calculate AI Score (if missing)
+        if 'AI_Score' not in df_target.columns:
+            model_path = os.path.join(project_root, "ml", "models", model_name)
+            if os.path.exists(model_path):
+                try:
+                    import joblib
+                    clf = joblib.load(model_path)
+                    model_features = clf.feature_name()
+                    
+                    # Fill missing
+                    for mf in model_features:
+                        if mf not in df_target.columns:
+                            df_target[mf] = 0
+                    
+                    
+                    # Check if data exists
+                    if df_target.empty:
+                        st.warning("この開催日のデータが見つかりませんでした。")
+                        st.stop()
+                    
+                    # Category Handling
+                    X_pred = df_target[model_features].copy()
+                    for col in X_pred.select_dtypes(include=['object']).columns:
+                         X_pred[col] = X_pred[col].astype('category')
+
+                    # Predict
+                    if hasattr(clf, 'predict_proba'):
+                         y_pred = clf.predict_proba(X_pred)[:, 1]
+                    else:
+                         y_pred = clf.predict(X_pred)
+                    
+                    
+                    df_target['AI_Score'] = y_pred * 100.0
+                except Exception as e:
+                    st.warning(f"AIスコア算出失敗: {e}")
+                    df_target['AI_Score'] = 50.0
+            else:
+                 st.warning("学習済みモデルがないため、AIスコアは仮定値(50)またはオッズから計算されます。")
+                 if 'odds' in df_target.columns:
+                     df_target['AI_Score'] = (100.0 / (df_target['odds'] + 1.0)).clip(0, 100) * 3.0
+                 else:
+                     df_target['AI_Score'] = 50.0
+
+        # 5. Calculate D-Index
+        df_target['Compat_Index'] = df_target.apply(lambda row: scoring.calculate_pure_compat(
+            row, 
+            current_conf.get('compat_sub_weights', {'jockey': 0.4, 'distance': 0.3, 'course': 0.3})
+        ), axis=1)
+        df_target['Bloodline_Index'] = df_target.apply(scoring.calculate_bloodline_index, axis=1)
+        df_target['D_Index'] = df_target.apply(lambda row: scoring.calculate_d_index(row, current_conf), axis=1)
+
+        # 6. Display Results Race by Race
+        race_ids = sorted(df_target['race_id'].unique())
+        
+        for rid in race_ids:
+            df_race = df_target[df_target['race_id'] == rid].copy()        
+            # Prepare Race Info
+            # Prioritize 'レース名' from raw data as 'race_name' might be empty or dash
+            r_name_raw = df_race['レース名'].iloc[0] if 'レース名' in df_race.columns else ""
+            r_name_proc = df_race['race_name'].iloc[0] if 'race_name' in df_race.columns else "-"
+            race_name = r_name_raw if r_name_raw and str(r_name_raw) != "nan" else r_name_proc
+            
+            race_no = df_race['レース番号'].iloc[0] if 'レース番号' in df_race.columns else ""
+            if not race_no and 'R' in df_race.columns:
+                 race_no = df_race['R'].iloc[0]
+            
+            # Remove 'R' if exists to avoid '1RR'
+            race_no = str(race_no).replace('R', '').replace('r', '')
+            
+            venue = df_race['会場'].iloc[0] if '会場' in df_race.columns else ""
+            if not venue and 'venue_id' in df_race.columns:
+                 # Simple mapping fallback or just show ID
+                 venue = str(df_race['venue_id'].iloc[0])
+
+            header_str = f"#### {venue} {race_no}R: {race_name}" if race_no else f"#### {race_name} ({venue})"
+            
+            
+            # Ensure '単勝 オッズ' exists for display
+            if '単勝 オッズ' not in df_race.columns and 'odds' in df_race.columns:
+                df_race['単勝 オッズ'] = df_race['odds']
+            
+            # Sort by D-Index (Prediction)
+            df_pred = df_race.sort_values('D_Index', ascending=False)
+            # Handle cases where '単勝 オッズ' might still be missing (rare)
+            disp_cols = ['馬 番', '馬名', 'D_Index', 'rank']
+            if '単勝 オッズ' in df_pred.columns:
+                disp_cols.append('単勝 オッズ')
+                
+            top6_pred = df_pred.head(6)[disp_cols]
+            
+            # Actual Result (Top 3)
+            df_actual = df_race[df_race['rank'].isin([1, 2, 3])].sort_values('rank')
+            
+            disp_cols_act = ['rank', '馬 番', '馬名', 'D_Index']
+            if '単勝 オッズ' in df_actual.columns:
+                 disp_cols_act.append('単勝 オッズ')
+                 
+            top3_actual = df_actual[disp_cols_act]
+            
+            # Rename for Display
+            rename_map = {'D_Index': 'D指数', 'rank': '着順'}
+            top6_pred = top6_pred.rename(columns=rename_map)
+            top3_actual = top3_actual.rename(columns=rename_map)
+
+            # Integer Cast for Rank (着順)
+            if '着順' in top6_pred.columns:
+                top6_pred['着順'] = top6_pred['着順'].fillna(0).astype(int).astype(str).replace('0', '-')
+            if '着順' in top3_actual.columns:
+                top3_actual['着順'] = top3_actual['着順'].astype(int)
+            
+            with st.container():
+                st.markdown(header_str)
+                c1, c2 = st.columns(2)
+                
+                with c1:
+                    st.markdown("🎯 **D指数 上位6頭 (予想)**")
+                    # Highlight if correct
+                    def highlight_hit(row):
+                        try:
+                            r_val = int(row['着順'])
+                            if r_val <= 3:
+                                return ['background-color: #d4edda'] * len(row)
+                        except:
+                            pass
+                        return [''] * len(row)
+                        
+                    st.dataframe(top6_pred.style.apply(highlight_hit, axis=1), hide_index=True)
+                
+                with c2:
+                    st.markdown("🏆 **結果 (3着以内)**")
+                    st.dataframe(top3_actual, hide_index=True)
+                
+                # Hit Check
+                top6_ids = set(top6_pred['馬 番'])
+                actual_ids = set(top3_actual['馬 番'])
+                hits = top6_ids.intersection(actual_ids)
+                
+                if len(hits) == 3:
+                    st.success(f"🎉 パーフェクト的中! ({len(hits)}/3頭推奨)")
+                elif len(hits) >= 1:
+                    st.info(f"✅ {len(hits)}頭的中 (推奨馬番: {hits})")
+                else:
+                    st.warning("❌ 的中なし")
+                
+                st.markdown("---")

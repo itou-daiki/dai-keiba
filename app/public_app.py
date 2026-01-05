@@ -12,6 +12,7 @@ import logging
 from datetime import datetime
 import re
 import importlib
+import joblib
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -45,10 +46,14 @@ st.set_page_config(page_title="AI Keiba Predictor", layout="wide")
 # --- Utils ---
 @st.cache_resource
 def load_model(mode="JRA"):
+    import joblib  # Ensure import inside function for safety
     model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), f"ml/models/lgbm_model_nar.pkl" if mode == "NAR" else "ml/models/lgbm_model.pkl")
     if os.path.exists(model_path):
-        with open(model_path, 'rb') as f:
-            return pickle.load(f)
+        try:
+            return joblib.load(model_path)
+        except Exception as e:
+            st.error(f"Failed to load model with joblib: {e}")
+            return None
     return None
 
 @st.cache_resource
@@ -316,18 +321,28 @@ def predict_race_logic(df, model, model_meta, stats=None):
                  if len(missing_features) > 10:
                      logger.warning(f"... and {len(missing_features)-10} more missing features")
 
-             X_pred = X_df[model_features].fillna(0)
+             X_pred = X_df[model_features].copy()
+             # Fill NA with 0 (consistent with Admin App)
+             X_pred = X_pred.fillna(0)
+             
+             # Category Handling (Crucial for LightGBM)
+             for col in X_pred.select_dtypes(include=['object']).columns:
+                 X_pred[col] = X_pred[col].astype('category')
+
         else:
              # Fallback for older sklearn models or if feature_name not available
              meta_cols = ['馬名', 'horse_id', '枠', '馬 番', 'race_id', 'date', 'rank', '着 順']
              features = [c for c in X_df.columns if c not in meta_cols and c != 'target_win']
              X_pred = X_df[features].select_dtypes(include=['number']).fillna(0)
 
-        # Predict
-        probs = model.predict(X_pred)
+        # Predict (Robust logic synced with Admin App)
+        if hasattr(model, 'predict_proba'):
+             probs = model.predict_proba(X_pred)[:, 1]
+        else:
+             probs = model.predict(X_pred)
 
         df['AI_Prob'] = probs
-        df['AI_Score'] = (probs * 100).astype(int)
+        df['AI_Score'] = (probs * 100).astype(float) # Ensure float for downstream calcs
         
         # Save X_df to session state for debugging
         st.session_state['last_features'] = X_df
