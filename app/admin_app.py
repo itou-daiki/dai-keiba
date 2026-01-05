@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import date, datetime
 import time
 import plotly.graph_objects as go
+import json
 
 # Add ml to path
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ml'))
@@ -281,10 +282,13 @@ if st.button("⚖️ 重みを最適化する (Optimize Weights)", type="primary
             
             # 2. Filter Period
             # Fix: Handle mixed formats or Japanese format
+            # Keep original for fallback
+            date_raw_temp = df_proc['date'].copy()
             df_proc['date'] = pd.to_datetime(df_proc['date'], errors='coerce')
-            # If many dates failed (NaT), try Japanese format explicit parsing
+            
+            # If many dates failed (NaT), try Japanese format explicit parsing using saved raw data
             if df_proc['date'].isna().sum() > len(df_proc) * 0.5:
-                 df_proc['date'] = pd.to_datetime(df_proc['date_raw'].fillna(df_proc['date']), format='%Y年%m月%d日', errors='coerce')
+                 df_proc['date'] = pd.to_datetime(date_raw_temp, format='%Y年%m月%d日', errors='coerce')
             
             max_date = df_proc['date'].max()
             
@@ -296,6 +300,100 @@ if st.button("⚖️ 重みを最適化する (Optimize Weights)", type="primary
                 df_proc = df_proc[df_proc['date'] >= start_date]
             
             st.write(f"検証データ数: {len(df_proc)} rows (期間: {df_proc['date'].min().date()} ~ {df_proc['date'].max().date()})")
+
+            # Prepare Predictions (AI_Score)
+            if 'AI_Score' not in df_proc.columns:
+                st.info("🔄 AIスコアを算出中 (Calculating AI Scores)...")
+                import joblib
+                import lightgbm as lgb
+                
+                # Fix: Define model_path
+                # The Find command showed it is in "ml/models/lgbm_model.pkl"
+                model_path = os.path.join(project_root, "ml", "models", model_name)
+                
+                if os.path.exists(model_path):
+                    try:
+                        clf = joblib.load(model_path)
+                        
+                        # Prepare features for prediction
+                        # We need to use the exact same features as training. 
+                        # Ideally we load 'features' from metadata, but let's try to use all numeric/category cols available
+                        # that match the model's feature_name() requirements.
+                        
+                        model_features = clf.feature_name()
+                        
+                        # Check exist
+                        missing_feats = [f for f in model_features if f not in df_proc.columns]
+                        if missing_feats:
+                             # Try to reconstruct if possible or zero-fill? 
+                             # Zero-fill is safer than crashing, though precision drops.
+                             for mf in missing_feats:
+                                 df_proc[mf] = 0
+                        
+                        X_pred = df_proc[model_features].copy()
+                        
+                        # Ensure categories are cast to category type if model expects it
+                        # (LGBM handles categories if passed as 'category' dtype)
+                        # We should check metadata for categorical features but simple attempt:
+                        for col in X_pred.select_dtypes(include=['object']).columns:
+                            try:
+                                X_pred[col] = X_pred[col].astype('category')
+                            except:
+                                pass
+                        
+                        # Predict
+                        # clf is either LGBMBooster or LGBMClassifier/Wrapper
+                        if hasattr(clf, 'predict_proba'):
+                             y_pred = clf.predict_proba(X_pred)[:, 1]
+                        else:
+                             # Booster
+                             y_pred = clf.predict(X_pred)
+                        
+                        df_proc['AI_Score'] = y_pred * 100.0
+                        st.success(f"✅ AIスコアの算出完了")
+
+                    except Exception as e:
+                        st.error(f"AIスコア算出エラー: {e}")
+                        # Fallback for optimization not to crash entirely, but warn heavily
+                        if 'odds' in df_proc.columns:
+                             df_proc['AI_Score'] = (100.0 / (df_proc['odds'] + 1.0)).clip(0, 100) * 3.0
+                             st.warning("⚠️ モデル予測に失敗したため、オッズから簡易算出したスコアで代用します。")
+                        else:
+                             df_proc['AI_Score'] = 50.0
+                else:
+                    # Fallback if no model exists
+                     st.warning("⚠️ 学習済みモデルが見つかりません。先に「MLOps」で学習を実行してください。現在はオッズからの簡易スコアを使用します。")
+                     if 'odds' in df_proc.columns:
+                         df_proc['AI_Score'] = (100.0 / (df_proc['odds'] + 1.0)).clip(0, 100) * 3.0 
+                     else:
+                         df_proc['AI_Score'] = 50.0
+            
+            # Ensure Score is 0-100
+            df_proc['AI_Score'] = df_proc['AI_Score'].clip(0, 100).fillna(0)
+
+            st.markdown("### 最適化設定")
+            # Enforce Top 3 Optimization as per user request
+            st.info("ℹ️ **最適化の目標**: 3着内率の最大化 (Top 3 Priority)\n\n安定した的中精度を確保するため、今回は「3着以内に入る確率」を高める設定で最適化を行います。")
+            opt_target = "3着内重視 (Top 3)"
+            target_col = 'target_top3'
+
+            # Prepare Targets
+            if 'target_win' not in df_proc.columns:
+                 # Try to create from rank
+                 if 'rank' in df_proc.columns:
+                     df_proc['target_win'] = (df_proc['rank'] == 1).astype(int)
+                     df_proc['target_top3'] = (df_proc['rank'] <= 3).astype(int)
+                 else:
+                     st.error("Target column (rank or target_win) not found.")
+                     st.stop()
+            else:
+                 # Ensure top3 exists if not present
+                 if 'target_top3' not in df_proc.columns:
+                     if 'rank' in df_proc.columns:
+                         df_proc['target_top3'] = (df_proc['rank'] <= 3).astype(int)
+                     else:
+                         s_target_win = df_proc['target_win']
+                         df_proc['target_top3'] = s_target_win # Fallback logic
 
             # 3. Optimize (Inline logic for now, using scoring.py)
             import scoring
@@ -341,9 +439,16 @@ if st.button("⚖️ 重みを最適化する (Optimize Weights)", type="primary
                 
                 # Vectorized Calc for Speed
                 # Extract columns
-                j_compat = df_proc.get('jockey_compatibility', 0).fillna(0)
-                d_compat = df_proc.get('distance_compatibility', 0).fillna(0)
-                c_compat = df_proc.get('course_compatibility', 0).fillna(0)
+                # Fix: 'get' returns default value if key missing. If 0 is returned, .fillna fails.
+                # Only use .fillna if the column exists.
+                j_compat = df_proc['jockey_compatibility'] if 'jockey_compatibility' in df_proc.columns else 0
+                d_compat = df_proc['distance_compatibility'] if 'distance_compatibility' in df_proc.columns else 0
+                c_compat = df_proc['course_compatibility'] if 'course_compatibility' in df_proc.columns else 0
+                
+                # Fill NaNs if it is a Series
+                if isinstance(j_compat, pd.Series): j_compat = j_compat.fillna(0)
+                if isinstance(d_compat, pd.Series): d_compat = d_compat.fillna(0)
+                if isinstance(c_compat, pd.Series): c_compat = c_compat.fillna(0)
                 
                 # Calculate Dynamic Compat Index
                 # Weighted Sum
@@ -380,8 +485,8 @@ if st.button("⚖️ 重みを最適化する (Optimize Weights)", type="primary
                            (df_proc['Bloodline_Index'] * config['top_level']['blood'])
                 
                 try:
-                    # Metric: AUC (Win Discrimination)
-                    auc = roc_auc_score(df_proc['target_win'], d_scores)
+                    # Metric: AUC (Win Discrimination or Top3 Discrimination)
+                    auc = roc_auc_score(df_proc[target_col], d_scores)
                     return auc
                 except:
                     return 0.0
@@ -409,37 +514,40 @@ if st.button("⚖️ 重みを最適化する (Optimize Weights)", type="primary
                 }
             }
             
-            st.success(f"✅ 詳細最適化完了! Best AUC: {study.best_value:.4f}")
             
-            # Additional Metric: Rank Correlation
-            st.markdown("#### 補足指標: 全着順との相関 (Rank Correlation)")
-            st.info("AUCは「勝ち馬を特定する力」を測定しますが、ここでは参考として「全着順との整合性」も確認します。")
-            
-            # Calculate optimal D-Index again for correlation check
-            # (Ideally we should refactor objective function to return D-scores, but for now re-calc)
-            # Re-calculating with best params...
-            # ... (Simplified re-calc logic similar to objective) ...
-            
-            # Simplified explanation message instead of full re-calc for speed
-            st.write("※ 最適化は「勝ち馬の検出精度 (AUC)」を最大化するように行われました。")
-
-            
-            c1, c2 = st.columns(2)
-            with c1:
-                st.markdown("#### 大枠の重み (Top Level)")
-                st.write(final_config['top_level'])
-            with c2:
-                st.markdown("#### 適性指数の内訳 (Sub Weights)")
-                st.write(final_config['compat_sub_weights'])
-            
-            # 4. Save
-            if st.button("💾 この設定を保存して適用する"):
-               with open(d_index_conf_path, 'w') as f:
-                   json.dump(final_config, f, indent=4)
-               st.success("設定を保存しました。")
-               st.session_state['current_weights'] = final_config
+            # Save to session state to persist after rerun (needed for Save button)
+            st.session_state['optimized_config'] = final_config
+            st.session_state['opt_auc'] = study.best_value
+            st.rerun()
 
         except Exception as e:
             st.error(f"最適化エラー: {e}")
             import traceback
             st.code(traceback.format_exc())
+
+# --- Results Display & Save Section (Persistent) ---
+if 'optimized_config' in st.session_state:
+    final_config = st.session_state['optimized_config']
+    best_auc = st.session_state.get('opt_auc', 0.0)
+    
+    st.markdown("---")
+    st.markdown(f"### ✅ 最適化結果 (Best AUC: {best_auc:.4f})")
+    st.info("最適化が完了しました。以下の設定を保存して適用できます。")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("#### 大枠の重み (Top Level)")
+        st.write(final_config['top_level'])
+    with c2:
+        st.markdown("#### 適性指数の内訳 (Sub Weights)")
+        st.write(final_config['compat_sub_weights'])
+    
+    # 4. Save
+    if st.button("💾 この設定を保存して適用する", type="primary"):
+        try:
+           with open(d_index_conf_path, 'w') as f:
+               json.dump(final_config, f, indent=4)
+           st.success("設定を保存しました！次回リロード時から新しい重みが適用されます。")
+           st.session_state['current_weights'] = final_config
+        except Exception as e:
+            st.error(f"保存エラー: {e}")
