@@ -1,12 +1,12 @@
 {
     "top_level": {
-        "ai": 0.539,
-        "compat": 0.05,
-        "blood": 0.411
+        "ai": 0.913,
+        "compat": 0.084,
+        "blood": 0.003
     },
     "compat_sub_weights": {
-        "jockey": 0.648,
-        "distance": 0.3,
-        "course": 0.052
+        "jockey": 0.037,
+        "distance": 0.507,
+        "course": 0.456
     }
 }
