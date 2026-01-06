@@ -7,5 +7,7 @@ __pycache__/
 # ml/processed_data_*.csv # Now handled by wildcard below but explicit exclude is fine
 ml/processed_data_*.csv
 data/temp/*.json
+!data/temp/todays_data.json
+!data/temp/todays_data_nar.json
 data/raw/database*.csv
 .DS_Store
