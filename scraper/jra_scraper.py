@@ -20,7 +20,10 @@ def scrape_jra_race(url, existing_race_ids=None):
 
     try:
         response = requests.get(url, headers=headers, timeout=10)
-        response.encoding = 'cp932' # JRA uses Shift_JIS
+        # Netkeiba usually uses EUC-JP, JRA uses Shift_JIS. 
+        # Since this function is mostly used for Netkeiba (NAR/JRA-Backfill), default to EUC-JP.
+        # response.encoding = 'cp932' 
+        response.encoding = 'EUC-JP'
         
         if response.status_code != 200:
             print(f"Error: Status code {response.status_code}")
@@ -147,6 +150,7 @@ def scrape_jra_race(url, existing_race_ids=None):
                 break
         
         if not target_table:
+            print(f"Warning: Result table not found in {url} (Encoding: {response.encoding})")
             return None
 
         # Parse Rows
