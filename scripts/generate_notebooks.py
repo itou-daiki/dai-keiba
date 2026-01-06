@@ -36,6 +36,9 @@ def gen_jra_scraping_nb():
             "import calendar\n",
             "\n",
             "if YEAR:\n",
+            "    # Saveディレクトリの作成\n",
+            "    os.makedirs('data/raw', exist_ok=True)\n",
+            "    \n",
             "    s_date = date(int(YEAR), int(START_MONTH), 1)\n",
             "    last_day = calendar.monthrange(int(YEAR), int(END_MONTH))[1]\n",
             "    e_date = date(int(YEAR), int(END_MONTH), last_day)\n",
@@ -170,6 +173,8 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "\n",
              "# 実行ブロック\n",
              "if YEAR:\n",
+             "    # ディレクトリ作成\n",
+             "    os.makedirs('data/raw', exist_ok=True)\n",
              "    run_nar_scraping(YEAR, START_MONTH, END_MONTH)\n"
          ]}
     ]
