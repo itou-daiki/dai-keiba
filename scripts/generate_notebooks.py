@@ -22,13 +22,19 @@ def gen_jra_scraping_nb():
     jra_code = read_file('scraper/jra_scraper.py')
     
     cells = [
-        {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 JRA 全レース取得 (2020-2026)\n", "以下の設定変数を変更して実行してください。指定した期間のデータを取得し、`database.csv` に保存します。"]},
+        {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 JRA 全レース取得 (2020-2026)\n", "以下の設定変数を変更して実行してください。指定した期間のデータを取得し、`SAVE_DIR` に保存します。"]},
+        {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
+            "# Google Driveをマウントする場合のみ実行してください\n",
+            "from google.colab import drive\n",
+            "drive.mount('/content/drive')"
+        ]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": jra_code.splitlines(keepends=True)},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
             "# 設定 (ここを変更してください)\n",
             "YEAR = 2024          # 対象年度 (例: 2024)\n",
             "START_MONTH = 1      # 開始月 (1-12)\n",
             "END_MONTH = 12       # 終了月 (1-12)\n",
+            "SAVE_DIR = '/content/drive/MyDrive/dai-keiba/data/raw' # 保存先フォルダ\n",
             "\n",
             "# 実行ブロック\n",
             "import os\n",
@@ -37,14 +43,16 @@ def gen_jra_scraping_nb():
             "\n",
             "if YEAR:\n",
             "    # Saveディレクトリの作成\n",
-            "    os.makedirs('data/raw', exist_ok=True)\n",
+            "    os.makedirs(SAVE_DIR, exist_ok=True)\n",
             "    \n",
             "    s_date = date(int(YEAR), int(START_MONTH), 1)\n",
             "    last_day = calendar.monthrange(int(YEAR), int(END_MONTH))[1]\n",
             "    e_date = date(int(YEAR), int(END_MONTH), last_day)\n",
             "    \n",
+            "    save_path = os.path.join(SAVE_DIR, 'database.csv')\n",
             "    print(f'{YEAR}年のデータを {s_date} から {e_date} まで取得します...')\n",
-            "    scrape_jra_year(str(YEAR), start_date=s_date, end_date=e_date, save_callback=lambda df: df.to_csv('data/raw/database.csv', mode='a', header=not os.path.exists('data/raw/database.csv'), index=False))\n",
+            "    print(f'保存先: {save_path}')\n",
+            "    scrape_jra_year(str(YEAR), start_date=s_date, end_date=e_date, save_callback=lambda df: df.to_csv(save_path, mode='a', header=not os.path.exists(save_path), index=False))\n",
             "    print('完了しました。')\n",
             "else:\n",
             "    print('年度が設定されていません。')"
@@ -70,15 +78,30 @@ def gen_jra_backfill_nb():
         
     cells = [
         {"cell_type": "markdown", "metadata": {}, "source": ["# 🛠️ JRA データ補完ツール\n", "欠損している血統情報および過去走履歴を補完します。"]},
+        {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
+            "# Google Driveをマウントする場合のみ実行してください\n",
+            "from google.colab import drive\n",
+            "drive.mount('/content/drive')"
+        ]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": race_scraper_code.splitlines(keepends=True)},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [l + "\n" for l in filtered_helper]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
+            "# 設定\n",
+            "DATA_DIR = '/content/drive/MyDrive/dai-keiba/data/raw' # CSVがあるフォルダ\n",
+            "\n",
             "# 実行ブロック\n",
-            "if os.path.exists('data/raw/database.csv'):\n",
-            "    fill_bloodline_data('data/raw/database.csv', mode='JRA')\n",
-            "    fill_history_data('data/raw/database.csv', mode='JRA')\n",
+            "csv_path = os.path.join(DATA_DIR, 'database.csv')\n",
+            "if os.path.exists(csv_path):\n",
+            "    print(f'処理対象: {csv_path}')\n",
+            "    fill_bloodline_data(csv_path, mode='JRA')\n",
+            "    fill_history_data(csv_path, mode='JRA')\n",
             "else:\n",
-            "    print('data/raw/database.csv が見つかりません。')"
+            "    print(f'{csv_path} が見つかりません。')\n",
+            "    print(f'現在のディレクトリ: {os.getcwd()}')\n",
+            "    if os.path.exists(DATA_DIR):\n",
+            "        print(f'{DATA_DIR} の中身: {os.listdir(DATA_DIR)}')\n",
+            "    else:\n",
+            "        print(f'{DATA_DIR} ディレクトリ自体が存在しません。')"
         ]}
     ]
     return create_notebook(cells)
@@ -127,6 +150,11 @@ def run_nar_scraping(year, start_month=1, end_month=12):
     
     cells = [
          {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 NAR 全レース取得\n", "以下の設定変数を変更して実行してください。NAR（地方競馬）のデータを日付順に取得します。"]},
+         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
+             "# Google Driveをマウントする場合のみ実行してください\n",
+             "from google.colab import drive\n",
+             "drive.mount('/content/drive')"
+         ]},
          {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": race_scraper_code.splitlines(keepends=True)},
          {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": jra_code.splitlines(keepends=True)},
          {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
@@ -140,7 +168,7 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "import time\n",
              "import os\n",
              "\n",
-             "def run_nar_scraping(year, start_month=1, end_month=12):\n",
+             "def run_nar_scraping(year, start_month=1, end_month=12, save_dir='data/raw'):\n",
              "    start_date = date(int(year), int(start_month), 1)\n",
              "    last_day = calendar.monthrange(int(year), int(end_month))[1]\n",
              "    end_date = date(int(year), int(end_month), last_day)\n",
@@ -149,6 +177,7 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "    if end_date > today: end_date = today\n",
              "    \n",
              "    print(f'NARデータを {start_date} から {end_date} まで取得します...')\n",
+             "    print(f'保存先: {os.path.join(save_dir, \"database_nar.csv\")}')\n",
              "    \n",
              "    curr = start_date\n",
              "    # scraper = RaceScraper() # Not used directly if we use scrape_jra_race\n",
@@ -180,10 +209,11 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "                         df = scrape_jra_race(full_url, existing_race_ids=None)\n",
              "                         if df is not None and not df.empty:\n",
              "                             # Save immediately\n",
-             "                             os.makedirs('data/raw', exist_ok=True)\n",
+             "                             os.makedirs(save_dir, exist_ok=True)\n",
              "                             mode = 'a'\n",
-             "                             header = not os.path.exists('data/raw/database_nar.csv')\n",
-             "                             df.to_csv('data/raw/database_nar.csv', mode=mode, header=header, index=False)\n",
+             "                             csv_file = os.path.join(save_dir, 'database_nar.csv')\n",
+             "                             header = not os.path.exists(csv_file)\n",
+             "                             df.to_csv(csv_file, mode=mode, header=header, index=False)\n",
              "                         time.sleep(1)\n",
              "                     except Exception as e_race:\n",
              "                         print(f'  Error scraping race {full_url}: {e_race}')\n",
@@ -198,12 +228,13 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "YEAR = 2024          # 対象年度\n",
              "START_MONTH = 1      # 開始月\n",
              "END_MONTH = 12       # 終了月\n",
+             "SAVE_DIR = '/content/drive/MyDrive/dai-keiba/data/raw' # 保存先フォルダ\n",
              "\n",
              "# 実行ブロック\n",
              "if YEAR:\n",
              "    # ディレクトリ作成\n",
-             "    os.makedirs('data/raw', exist_ok=True)\n",
-             "    run_nar_scraping(YEAR, START_MONTH, END_MONTH)\n"
+             "    os.makedirs(SAVE_DIR, exist_ok=True)\n",
+             "    run_nar_scraping(YEAR, START_MONTH, END_MONTH, save_dir=SAVE_DIR)\n"
          ]}
     ]
     return create_notebook(cells)
@@ -224,15 +255,30 @@ def gen_nar_backfill_nb():
         
     cells = [
         {"cell_type": "markdown", "metadata": {}, "source": ["# 🛠️ NAR データ補完ツール"]},
+        {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
+            "# Google Driveをマウントする場合のみ実行してください\n",
+            "from google.colab import drive\n",
+            "drive.mount('/content/drive')"
+        ]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": race_scraper_code.splitlines(keepends=True)},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [l + "\n" for l in filtered_helper]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
+            "# 設定\n",
+            "DATA_DIR = '/content/drive/MyDrive/dai-keiba/data/raw' # CSVがあるフォルダ\n",
+            "\n",
             "# 実行ブロック\n",
-            "if os.path.exists('data/raw/database_nar.csv'):\n",
-            "    fill_bloodline_data('data/raw/database_nar.csv', mode='NAR')\n",
-            "    fill_history_data('data/raw/database_nar.csv', mode='NAR')\n",
+            "csv_path = os.path.join(DATA_DIR, 'database_nar.csv')\n",
+            "if os.path.exists(csv_path):\n",
+            "    print(f'処理対象: {csv_path}')\n",
+            "    fill_bloodline_data(csv_path, mode='NAR')\n",
+            "    fill_history_data(csv_path, mode='NAR')\n",
             "else:\n",
-            "    print('data/raw/database_nar.csv が見つかりません。')"
+            "    print(f'{csv_path} が見つかりません。')\n",
+            "    print(f'現在のディレクトリ: {os.getcwd()}')\n",
+            "    if os.path.exists(DATA_DIR):\n",
+            "        print(f'{DATA_DIR} の中身: {os.listdir(DATA_DIR)}')\n",
+            "    else:\n",
+            "        print(f'{DATA_DIR} ディレクトリ自体が存在しません。')"
         ]}
     ]
     return create_notebook(cells)
