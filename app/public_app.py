@@ -501,6 +501,51 @@ with st.expander("ℹ️ このAI予想のロジックについて (クリック
     - 安全フィルタ: AI確率5%未満は除外
     - 特徴: 波乱が多く、人気薄が勝ちやすい
 
+    #### ⚖️ 現在のD指数 重み設定 (Optimization Weights)
+    """)
+    
+    # Load and Display Weights dynamically
+    try:
+        tab_jra, tab_nar = st.tabs(["JRA (中央)", "NAR (地方)"])
+        
+        for m_lbl, m_code, t_obj in [("JRA", "jra", tab_jra), ("NAR", "nar", tab_nar)]:
+             with t_obj:
+                 c_path = os.path.join(PROJECT_ROOT, "config", f"d_index_config_{m_code}.json")
+                 w_data = {'ai': 0.4, 'compat': 0.5, 'blood': 0.1} # Default
+                 file_exists = False
+                 if os.path.exists(c_path):
+                     try:
+                         with open(c_path, 'r') as f: w_data = json.load(f)
+                         file_exists = True
+                     except: pass
+                 
+                 main_w = w_data.get('top_level', {'ai': 0.4, 'compat': 0.5, 'blood': 0.1})
+                 sub_w = w_data.get('compat_sub_weights', {'jockey': 0.4, 'distance': 0.3, 'course': 0.3})
+                 
+                 if file_exists:
+                     st.caption(f"📂 Loaded from: `{os.path.basename(c_path)}`")
+                 else:
+                     st.warning(f"⚠️ Config not found, using defaults. Expected: `{os.path.basename(c_path)}`")
+
+                 c1, c2 = st.columns(2)
+                 with c1:
+                     st.markdown("**基本構成 (Base)**")
+                     st.write(f"- 🤖 **AI Model**: `{main_w.get('ai', 0)*100:.1f}%`")
+                     st.write(f"- 🧩 **適性 (Compat)**: `{main_w.get('compat', 0)*100:.1f}%`")
+                     st.write(f"- 🩸 **血統 (Blood)**: `{main_w.get('blood', 0)*100:.1f}%`")
+                 with c2:
+                     st.markdown("**適性内訳 (Compat Sub)**")
+                     st.write(f"- 🏇 **騎手**: `{sub_w.get('jockey', 0)*100:.1f}%`")
+                     st.write(f"- 📏 **距離**: `{sub_w.get('distance', 0)*100:.1f}%`")
+                     st.write(f"- 🏟️ **コース**: `{sub_w.get('course', 0)*100:.1f}%`")
+                     
+                 with st.expander("🔍 その他の設定 (Raw JSON)"):
+                     st.json(w_data)
+
+    except Exception as e:
+        st.error(f"Config Load Error: {e}")
+
+    st.markdown("""
     #### 📊 信頼性向上の取り組み
     - **モデルメタデータ**: 訓練日時、性能指標（AUC）、データ量を常時表示
     - **予測信頼度スコア**: 各予測にモデルの信頼性を0-100%で数値化
