@@ -83,6 +83,7 @@ def fill_bloodline_data(df_path, mode="JRA"):
     # Chunking to save progress
     CHUNK_SIZE = 1000
     
+    results = {}
     for i in range(0, total_targets, CHUNK_SIZE):
         chunk = target_ids[i:i+CHUNK_SIZE]
         print(f"  Processing chunk {i}-{i+len(chunk)}...")
@@ -367,12 +368,13 @@ def fill_race_metadata(df_path, mode="JRA"):
     print("✅ Race metadata backfill complete.")
 
 
-if __name__ == "__main__":
-    # Example Usage
-    print("Usage: Select mode to run.")
-    # Uncomment based on need
-    fill_bloodline_data('data/raw/database.csv', mode="JRA")
-    fill_history_data('data/raw/database.csv', mode="JRA")
+# if __name__ == "__main__":
+#     # Example Usage
+#     print("Usage: Select mode to run.")
+#     # Uncomment based on need
+#     # fill_bloodline_data('data/raw/database.csv', mode="JRA")
+#     # fill_history_data('data/raw/database.csv', mode="JRA")
     
-    # fill_bloodline_data('data/raw/database_nar.csv', mode="NAR")
-    # fill_history_data('data/raw/database_nar.csv', mode="NAR")
+#     # fill_bloodline_data('data/raw/database_nar.csv', mode="NAR")
+#     # fill_history_data('data/raw/database_nar.csv', mode="NAR")
+
