@@ -280,6 +280,93 @@ def fill_history_data(df_path, mode="JRA"):
     print("✅ History backfill complete.")
 
 
+def fill_race_metadata(df_path, mode="JRA"):
+    """
+    Backfills missing race metadata (course_type, distance, weather, condition).
+    """
+    print(f"\n🏟️ Starting Race Metadata Backfill for {mode} ({os.path.basename(df_path)})")
+    
+    if not os.path.exists(df_path):
+        print(f"❌ File not found: {df_path}")
+        return
+
+    # Load Data
+    try:
+        if df_path.endswith('.parquet'):
+            df = pd.read_parquet(df_path)
+        else:
+            df = pd.read_csv(df_path, low_memory=False)
+            if 'race_id' in df.columns:
+                df['race_id'] = df['race_id'].astype(str).str.replace(r'\.0$', '', regex=True)
+    except Exception as e:
+        print(f"❌ Error loading file: {e}")
+        return
+
+    # Identify missing rows
+    target_cols = ['コースタイプ', '距離', '天候', '馬場状態']
+    for c in target_cols:
+        if c not in df.columns:
+            df[c] = None
+    
+    missing_mask = (df['コースタイプ'].isna()) | (df['コースタイプ'] == '') | \
+                   (df['距離'].isna()) | (df['距離'] == '') | \
+                   (df['天候'].isna()) | (df['天候'] == '')
+                   
+    target_race_ids = df.loc[missing_mask, 'race_id'].unique()
+    target_race_ids = [rid for rid in target_race_ids if str(rid).isdigit()]
+    
+    total_targets = len(target_race_ids)
+    print(f"🎯 Found {total_targets} races with missing metadata.")
+    
+    if total_targets == 0:
+        print("✅ No missing metadata found.")
+        return
+
+    scraper = RaceScraper()
+    results = {}
+    
+    # Sequential Execution
+    print(f"🚀 Fetching metadata for {total_targets} races (Sequential)...")
+    
+    CHUNK_SIZE = 200
+    for i in range(0, total_targets, CHUNK_SIZE):
+        chunk = target_race_ids[i:i+CHUNK_SIZE]
+        
+        for rid in tqdm(chunk, leave=False):
+            try:
+                time.sleep(0.5)
+                data = scraper.get_race_metadata(rid)
+                if data and data.get('course_type'):
+                    results[rid] = data
+            except:
+                pass
+        
+        # Save Progress
+        if len(results) > 0:
+            print("  Applying metadata updates...")
+            mask = df['race_id'].isin(results.keys())
+            
+            c_map = {rid: d['course_type'] for rid, d in results.items() if d.get('course_type')}
+            d_map = {rid: d['distance'] for rid, d in results.items() if d.get('distance')}
+            w_map = {rid: d['weather'] for rid, d in results.items() if d.get('weather')}
+            cond_map = {rid: d['condition'] for rid, d in results.items() if d.get('condition')}
+            
+            df.loc[mask, 'コースタイプ'] = df.loc[mask, 'race_id'].map(c_map).fillna(df.loc[mask, 'コースタイプ'])
+            df.loc[mask, '距離'] = df.loc[mask, 'race_id'].map(d_map).fillna(df.loc[mask, '距離'])
+            df.loc[mask, '天候'] = df.loc[mask, 'race_id'].map(w_map).fillna(df.loc[mask, '天候'])
+            df.loc[mask, '馬場状態'] = df.loc[mask, 'race_id'].map(cond_map).fillna(df.loc[mask, '馬場状態'])
+            
+            results = {} # Clear buffer
+            
+            print(f"  💾 Saving progress to {df_path}...")
+            if df_path.endswith('.parquet'):
+                df.to_parquet(df_path, index=False)
+            else:
+                df.to_csv(df_path, index=False)
+
+    print("✅ Race metadata backfill complete.")
+
+
 if __name__ == "__main__":
     # Example Usage
     print("Usage: Select mode to run.")
