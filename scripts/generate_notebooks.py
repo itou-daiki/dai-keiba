@@ -62,7 +62,9 @@ def gen_jra_backfill_nb():
     helper_lines = cleanup_code.splitlines()
     filtered_helper = []
     for line in helper_lines:
-        if "from scraper.race_scraper import RaceScraper" in line: continue
+        if "from scraper.race_scraper import RaceScraper" in line:
+            filtered_helper.append("    pass # Replaced import")
+            continue
         if "sys.path.append" in line: continue
         filtered_helper.append(line)
         
@@ -214,7 +216,9 @@ def gen_nar_backfill_nb():
     helper_lines = cleanup_code.splitlines()
     filtered_helper = []
     for line in helper_lines:
-        if "from scraper.race_scraper import RaceScraper" in line: continue
+        if "from scraper.race_scraper import RaceScraper" in line:
+            filtered_helper.append("    pass # Replaced import")
+            continue
         if "sys.path.append" in line: continue
         filtered_helper.append(line)
         
