@@ -20,9 +20,9 @@ except ImportError:
     st.error("Failed to import train_model. Make sure ml/train_model.py exists.")
 
 # Set page config
-st.set_page_config(page_title="JRA データ管理パネル", layout="wide")
+st.set_page_config(page_title="競馬AIデータ管理パネル", layout="wide")
 
-st.title("🏇 JRA スクレイピング管理パネル")
+st.title("競馬AIデータ管理パネル")
 
 # --- UI Layout ---
 st.markdown("### ⚙️ 設定")

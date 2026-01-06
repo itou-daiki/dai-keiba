@@ -324,8 +324,26 @@ def scrape_jra_year(year_str, start_date=None, end_date=None, save_callback=None
         start_m = start_date.month
     if end_date:
         end_m = end_date.month
+    
+    # Cap at Today to prevent future scraping
+    from datetime import date
+    today = date.today()
+    
+    # If explicit end_date is used, respect it, but also respect today if it is earlier?
+    # Usually for results, we never want future.
+    if end_date:
+        actual_end_date = min(end_date, today)
+    else:
+        actual_end_date = today
         
-    print(f"=== Starting JRA Bulk Scraping for {year_str} (Period: {start_date} - {end_date}) ===")
+    print(f"=== Starting JRA Bulk Scraping for {year_str} (Period: {start_date or 'Start'} - {actual_end_date}) ===")
+
+    # Adjust end_m based on today if we are in target year
+    if int(year_str) == today.year:
+        end_m = min(end_m, today.month)
+    elif int(year_str) > today.year:
+        print(f"Year {year_str} is in the future. Stopping.")
+        return
     
     for m in range(start_m, end_m + 1):
         month = f"{m:02}"
