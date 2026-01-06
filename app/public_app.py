@@ -296,10 +296,11 @@ def calculate_confidence_score(row, ai_prob, model_meta, jockey_compat=None, cou
     # 範囲を拡大: 20-95（より差別化）
     return int(max(20, min(95, confidence)))
 
-def predict_race_logic(df, model, model_meta, stats=None):
+def predict_race_logic(df, model, model_meta, stats=None, mode="JRA"):
     """
     データフレームに対してAI予測と信頼度計算を行う
     stats: 統計情報の辞書（inference用）
+    mode: "JRA" or "NAR" (Default: "JRA")
     """
     try:
         # 特徴量エンジニアリング（会場特性あり）
@@ -424,8 +425,8 @@ def predict_race_logic(df, model, model_meta, stats=None):
         import scoring
         importlib.reload(scoring) # Ensure latest logic
         
-        # Load Weights
-        d_index_conf_path = os.path.join(PROJECT_ROOT, "config", "d_index_config.json")
+        # Load Weights (Mode Specific)
+        d_index_conf_path = os.path.join(PROJECT_ROOT, "config", f"d_index_config_{mode.lower()}.json")
         default_weights = {'ai': 0.4, 'compat': 0.5, 'blood': 0.1}
         weights = default_weights
         if os.path.exists(d_index_conf_path):
@@ -433,6 +434,13 @@ def predict_race_logic(df, model, model_meta, stats=None):
                 with open(d_index_conf_path, 'r') as f:
                     weights = json.load(f)
             except:
+                pass
+        # Fallback
+        elif os.path.exists(os.path.join(PROJECT_ROOT, "config", "d_index_config.json")):
+             try:
+                with open(os.path.join(PROJECT_ROOT, "config", "d_index_config.json"), 'r') as f:
+                    weights = json.load(f)
+             except:
                 pass
         
         df['Compat_Index'] = df.apply(lambda row: scoring.calculate_pure_compat(
@@ -606,7 +614,7 @@ def render_triple_umatan_section(target_races, mode_val):
                         st.error(f"データの取得に失敗: {race['id']}")
                         return
 
-                    processed_df = predict_race_logic(df_race, model, model_meta, stats=stats)
+                    processed_df = predict_race_logic(df_race, model, model_meta, stats=stats, mode=mode_val)
                      # Odds Bias (Simple apply for Triple Umatan)
                     if processed_df is not None:
                         # 1. Restore AI Score
@@ -939,7 +947,7 @@ def render_win5_section(target_races, mode_val):
                         st.error(f"データの取得に失敗: {race['id']}")
                         return
 
-                    processed_df = predict_race_logic(df_race, model, model_meta, stats=stats)
+                    processed_df = predict_race_logic(df_race, model, model_meta, stats=stats, mode=mode_val)
                     
                     if processed_df is not None:
                         # 1. Restore AI Score
@@ -1311,7 +1319,7 @@ if schedule_data and "races" in schedule_data:
                                  if df_race is not None and not df_race.empty:
                                      # 2. Predict
 
-                                     processed_df = predict_race_logic(df_race, model, model_meta, stats=stats)
+                                     processed_df = predict_race_logic(df_race, model, model_meta, stats=stats, mode=mode_val)
                                     
                                      # Odds Bias (Batch Mode)
                                      if use_odds_bias_batch and processed_df is not None and '単勝' in processed_df.columns:
@@ -1824,7 +1832,7 @@ if race_id:
                 
                 if model:
 
-                    processed_df = predict_race_logic(df, model, model_meta, stats=stats)
+                    processed_df = predict_race_logic(df, model, model_meta, stats=stats, mode=mode_val)
                     
                     if processed_df is not None:
                          df = processed_df

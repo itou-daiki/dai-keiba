@@ -255,12 +255,20 @@ period_opt = st.selectbox("検証期間 (Verification Period)", ["直近1ヶ月�
 
 # Load current weights
 current_weights = {'ai': 0.4, 'compat': 0.5, 'blood': 0.1}
-d_index_conf_path = os.path.join(project_root, "config", "d_index_config.json")
+d_index_conf_path = os.path.join(project_root, "config", f"d_index_config_{mode_val.lower()}.json")
+
 if os.path.exists(d_index_conf_path):
     try:
         with open(d_index_conf_path, 'r') as f:
             current_weights = json.load(f)
     except:
+        pass
+# Fallback to default if specific doesn't exist but generic does (migration)
+elif os.path.exists(os.path.join(project_root, "config", "d_index_config.json")):
+     try:
+        with open(os.path.join(project_root, "config", "d_index_config.json"), 'r') as f:
+            current_weights = json.load(f)
+     except:
         pass
 
 st.markdown("### 現在の重み")

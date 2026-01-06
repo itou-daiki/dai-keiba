@@ -5625,3 +5625,7 @@ of the client's browser and the Streamlit server._
 2026-01-06 07:16:56,160 - train_model - INFO -   dd_run_style_bias: 24259.00
 2026-01-06 07:16:56,160 - train_model - INFO -   jockey_id: 23919.10
 2026-01-06 07:16:56,162 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_nar_meta.json
+2026-01-07 04:19:11,774 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2026-01-07 04:19:12,227 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2026-01-07 04:19:12,228 - train_model - INFO - Win rate: 7.27%, scale_pos_weight: 12.76
+2026-01-07 04:19:12,228 - train_model - INFO - Starting Optuna optimization...
