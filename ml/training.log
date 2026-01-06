@@ -5726,3 +5726,7 @@ of the client's browser and the Streamlit server._
 2026-01-07 04:36:03,478 - train_model - INFO -   age: 19291.04
 2026-01-07 04:36:03,478 - train_model - INFO -   turf_compatibility: 18832.07
 2026-01-07 04:36:03,479 - train_model - INFO - Metadata saved to /Users/itoudaiki/Program/dai-keiba/ml/models/lgbm_model_meta.json
+2026-01-07 05:26:23,787 - train_model - INFO - === Optuna Hyperparameter Optimization (n_trials=100) ===
+2026-01-07 05:26:24,026 - train_model - INFO - Data sorted by date for TimeSeriesSplit
+2026-01-07 05:26:24,026 - train_model - INFO - Win rate: 9.86%, scale_pos_weight: 9.14
+2026-01-07 05:26:24,026 - train_model - INFO - Starting Optuna optimization...

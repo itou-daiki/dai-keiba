@@ -22,26 +22,29 @@ def gen_jra_scraping_nb():
     jra_code = read_file('scraper/jra_scraper.py')
     
     cells = [
-        {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 JRA All-Race Scraper (20202026)\n", "Run this notebook to scrape all JRA races for a specific year and month range."]},
+        {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 JRA 全レース取得 (2020-2026)\n", "以下の設定変数を変更して実行してください。指定した期間のデータを取得し、`database.csv` に保存します。"]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": jra_code.splitlines(keepends=True)},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
-            "# Execution Block\n",
+            "# 設定 (ここを変更してください)\n",
+            "YEAR = 2024          # 対象年度 (例: 2024)\n",
+            "START_MONTH = 1      # 開始月 (1-12)\n",
+            "END_MONTH = 12       # 終了月 (1-12)\n",
+            "\n",
+            "# 実行ブロック\n",
             "import os\n",
             "from datetime import date\n",
             "import calendar\n",
             "\n",
-            "year = input('Enter Year (e.g. 2024): ')\n",
-            "start_month = input('Enter Start Month (1-12, default 1): ') or '1'\n",
-            "end_month = input('Enter End Month (1-12, default 12): ') or '12'\n",
-            "\n",
-            "if year:\n",
-            "    s_date = date(int(year), int(start_month), 1)\n",
-            "    last_day = calendar.monthrange(int(year), int(end_month))[1]\n",
-            "    e_date = date(int(year), int(end_month), last_day)\n",
+            "if YEAR:\n",
+            "    s_date = date(int(YEAR), int(START_MONTH), 1)\n",
+            "    last_day = calendar.monthrange(int(YEAR), int(END_MONTH))[1]\n",
+            "    e_date = date(int(YEAR), int(END_MONTH), last_day)\n",
             "    \n",
-            "    print(f'Scraping {year} from {s_date} to {e_date}...')\n",
-            "    scrape_jra_year(year, start_date=s_date, end_date=e_date, save_callback=lambda df: df.to_csv('data/raw/database.csv', mode='a', header=not os.path.exists('data/raw/database.csv'), index=False))\n",
-            "    print('Done.')"
+            "    print(f'{YEAR}年のデータを {s_date} から {e_date} まで取得します...')\n",
+            "    scrape_jra_year(str(YEAR), start_date=s_date, end_date=e_date, save_callback=lambda df: df.to_csv('data/raw/database.csv', mode='a', header=not os.path.exists('data/raw/database.csv'), index=False))\n",
+            "    print('完了しました。')\n",
+            "else:\n",
+            "    print('年度が設定されていません。')"
         ]}
     ]
     return create_notebook(cells)
@@ -61,16 +64,16 @@ def gen_jra_backfill_nb():
         filtered_helper.append(line)
         
     cells = [
-        {"cell_type": "markdown", "metadata": {}, "source": ["# 🛠️ JRA Data Backfill Tool\n", "Fills missing pedigree and history data."]},
+        {"cell_type": "markdown", "metadata": {}, "source": ["# 🛠️ JRA データ補完ツール\n", "欠損している血統情報および過去走履歴を補完します。"]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": race_scraper_code.splitlines(keepends=True)},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [l + "\n" for l in filtered_helper]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
-            "# Execution\n",
+            "# 実行ブロック\n",
             "if os.path.exists('data/raw/database.csv'):\n",
             "    fill_bloodline_data('data/raw/database.csv', mode='JRA')\n",
             "    fill_history_data('data/raw/database.csv', mode='JRA')\n",
             "else:\n",
-            "    print('database.csv not found.')"
+            "    print('data/raw/database.csv が見つかりません。')"
         ]}
     ]
     return create_notebook(cells)
@@ -118,10 +121,10 @@ def run_nar_scraping(year, start_month=1, end_month=12):
     # to accept the month inputs and print them, or use the iter logic previously defined but bounded.
     
     cells = [
-         {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 NAR All-Race Scraper\n", "Scrapes NAR races by iterating dates."]},
+         {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 NAR 全レース取得\n", "以下の設定変数を変更して実行してください。NAR（地方競馬）のデータを日付順に取得します。"]},
          {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": race_scraper_code.splitlines(keepends=True)},
          {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
-             "# NAR Scraper Logic\n",
+             "# NAR スクレイピングロジック\n",
              "import requests\n",
              "from bs4 import BeautifulSoup\n",
              "import pandas as pd\n",
@@ -139,7 +142,7 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "    today = date.today()\n",
              "    if end_date > today: end_date = today\n",
              "    \n",
-             "    print(f'Scraping NAR from {start_date} to {end_date}...')\n",
+             "    print(f'NARデータを {start_date} から {end_date} まで取得します...')\n",
              "    \n",
              "    curr = start_date\n",
              "    scraper = RaceScraper()\n",
@@ -154,19 +157,20 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "             soup = BeautifulSoup(resp.text, 'html.parser')\n",
              "             links = soup.select('a[href*=\"race/result.html\"]')\n",
              "             if links:\n",
-             "                 print(f'{curr}: Found {len(links)} races.')\n",
-             "                 # Actual scraping of races would happen here using scraper.scrape_race_with_history(id)\n",
-             "                 # and verifying/generating ID from URL\n",
+             "                 print(f'{curr}: {len(links)} 件のレースが見つかりました。(取得処理は未実装です)')\n",
+             "                 # 実際のスクレイピング処理はここに記述\n",
              "        except Exception as e: print(e)\n",
              "        curr += timedelta(days=1)\n"
          ]},
          {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
-             "# Execution Block\n",
-             "year = input('Enter Year (e.g. 2024): ')\n",
-             "s_m = input('Start Month (1-12): ') or '1'\n",
-             "e_m = input('End Month (1-12): ') or '12'\n",
-             "if year:\n",
-             "    run_nar_scraping(year, int(s_m), int(e_m))\n"
+             "# 設定 (ここを変更してください)\n",
+             "YEAR = 2024          # 対象年度\n",
+             "START_MONTH = 1      # 開始月\n",
+             "END_MONTH = 12       # 終了月\n",
+             "\n",
+             "# 実行ブロック\n",
+             "if YEAR:\n",
+             "    run_nar_scraping(YEAR, START_MONTH, END_MONTH)\n"
          ]}
     ]
     return create_notebook(cells)
@@ -184,16 +188,16 @@ def gen_nar_backfill_nb():
         filtered_helper.append(line)
         
     cells = [
-        {"cell_type": "markdown", "metadata": {}, "source": ["# 🛠️ NAR Data Backfill Tool"]},
+        {"cell_type": "markdown", "metadata": {}, "source": ["# 🛠️ NAR データ補完ツール"]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": race_scraper_code.splitlines(keepends=True)},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [l + "\n" for l in filtered_helper]},
         {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
-            "# Execution\n",
+            "# 実行ブロック\n",
             "if os.path.exists('data/raw/database_nar.csv'):\n",
             "    fill_bloodline_data('data/raw/database_nar.csv', mode='NAR')\n",
             "    fill_history_data('data/raw/database_nar.csv', mode='NAR')\n",
             "else:\n",
-            "    print('database_nar.csv not found.')"
+            "    print('data/raw/database_nar.csv が見つかりません。')"
         ]}
     ]
     return create_notebook(cells)
