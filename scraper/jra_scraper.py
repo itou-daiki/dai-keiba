@@ -13,7 +13,7 @@ def scrape_jra_race(url, existing_race_ids=None):
     Returns a pandas DataFrame matching the schema of database.csv.
     If existing_race_ids is provided and the race ID is found, returns None (skip).
     """
-    print(f"Accessing JRA URL: {url}...")
+    print(f"Accessing URL: {url}...")
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" 
     }
