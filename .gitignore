@@ -10,4 +10,5 @@ data/temp/*.json
 !data/temp/todays_data.json
 !data/temp/todays_data_nar.json
 data/raw/database*.csv
+*.bak*
 .DS_Store

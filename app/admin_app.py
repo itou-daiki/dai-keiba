@@ -77,6 +77,13 @@ st.markdown("### 📊 データベースプレビュー")
 if os.path.exists(target_parquet):
     try:
         df = pd.read_parquet(target_parquet)
+        
+        # Reorder columns for better visibility (Date, Venue, Race Name first)
+        priority_cols = ['date', '日付', 'venue', '開催地', 'race_name', 'レース名', 'race_id', 'horse_name', '馬名', 'rank', '着 順']
+        existing_priority = [c for c in priority_cols if c in df.columns]
+        other_cols = [c for c in df.columns if c not in existing_priority]
+        df = df[existing_priority + other_cols]
+        
         st.metric("総データ数 (行)", len(df))
         st.caption("※データ量が多いため、最新の1000件のみ表示しています。")
         st.dataframe(df.tail(1000), width='stretch')
