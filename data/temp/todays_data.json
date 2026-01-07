@@ -1,5 +1,5 @@
 {
-  "date": "2026-01-07",
+  "date": "2026-01-08",
   "races": [
     {
       "id": "202606010101",
@@ -482,6 +482,86 @@
       "horses": []
     },
     {
+      "id": "202606010301",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010302",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010303",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010304",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "4",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010305",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010306",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "6",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010307",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "7",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010308",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "8",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
       "id": "202606010309",
       "date": "2026-01-10",
       "venue": "中山",
@@ -507,6 +587,86 @@
       "venue": "中山",
       "number": "11",
       "name": "迎春S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010312",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010301",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010302",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010303",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010304",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "4",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010305",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010306",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010307",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
       "is_win5": false,
       "is_triple": false,
       "horses": []
@@ -552,6 +712,96 @@
       "horses": []
     },
     {
+      "id": "202608010312",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010401",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010402",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010403",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010404",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "4",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010405",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010406",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010407",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010408",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "8",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
       "id": "202606010409",
       "date": "2026-01-11",
       "venue": "中山",
@@ -577,6 +827,96 @@
       "venue": "中山",
       "number": "11",
       "name": "フェアリーS",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010412",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010401",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010402",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010403",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010404",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "4",
+      "name": "4歳以上障害未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010405",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010406",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "6",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010407",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010408",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "8",
+      "name": "4歳以上2勝クラス",
       "is_win5": false,
       "is_triple": false,
       "horses": []
@@ -612,6 +952,96 @@
       "horses": []
     },
     {
+      "id": "202608010412",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "12",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010501",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010502",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010503",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010504",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "4",
+      "name": "4歳以上障害未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010505",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010506",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010507",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010508",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "8",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
       "id": "202606010509",
       "date": "2026-01-12",
       "venue": "中山",
@@ -642,6 +1072,96 @@
       "horses": []
     },
     {
+      "id": "202606010512",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010501",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010502",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010503",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010504",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "4",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010505",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010506",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "6",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010507",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010508",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "8",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
       "id": "202608010509",
       "date": "2026-01-12",
       "venue": "京都",
@@ -667,6 +1187,16 @@
       "venue": "京都",
       "number": "11",
       "name": "シンザン記念",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010512",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "12",
+      "name": "3歳未勝利",
       "is_win5": false,
       "is_triple": false,
       "horses": []

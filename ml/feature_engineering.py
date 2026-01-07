@@ -1873,8 +1873,9 @@ def calculate_features(input_csv, output_path, lambda_decay=0.5, use_venue_featu
     # Clean NaNs in features?
     processed = processed.fillna(0) # Simple imputation
     
-    # Ensure ID columns are strings to prevent Parquet mixed type errors
-    for col in ['horse_id', 'race_id']:
+    # Ensure ID/Text columns are strings to prevent Parquet mixed type errors
+    # '馬名' often causes "Conversion failed for column with type object" if mixed with numbers
+    for col in ['horse_id', 'race_id', '馬名', '騎手', 'レース名', '開催地']:
         if col in processed.columns:
             processed[col] = processed[col].astype(str)
 

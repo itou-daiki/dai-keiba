@@ -172,6 +172,31 @@ def get_data_freshness(mode="JRA"):
             return "不明", -1
     return "データなし", -1
 
+def get_default_date_index(date_list):
+    """
+    日付リストの中から、本日または本日に最も近い過去の日付のインデックスを返す
+    Args:
+        date_list: YYYY-MM-DD形式の文字列リスト（昇順ソート済みを想定）
+    """
+    if not date_list:
+        return 0
+        
+    today = datetime.now().strftime('%Y-%m-%d')
+    
+    # 1. 完全一致を探す
+    if today in date_list:
+        return date_list.index(today)
+        
+    # 2. 過去の日付の中で最も新しいものを探す
+    # date_listは昇順と仮定 -> 後ろから見ていって、today以下の最初のもの
+    for i in range(len(date_list) - 1, -1, -1):
+        d = date_list[i]
+        if d != 'Unknown' and d <= today:
+            return i
+            
+    # 3. 過去がなければ、リストの最初（最も古い未来の日付）または0を返す
+    return 0
+
 def calculate_confidence_score(row, ai_prob, model_meta, jockey_compat=None, course_compat=None, distance_compat=None, is_rest_comeback=0, has_history=True):
     """
     予測の信頼度スコアを計算（0-100）
@@ -1223,7 +1248,7 @@ if schedule_data and "races" in schedule_data:
         col_date, col_venue, col_race = st.columns(3)
         
         with col_date:
-             selected_date = st.selectbox("1. 日付を選択", dates)
+             selected_date = st.selectbox("1. 日付を選択", dates, index=get_default_date_index(dates))
         
         # Filter races by date
         todays_races = [r for r in races if r.get('date') == selected_date]
@@ -1254,7 +1279,7 @@ if schedule_data and "races" in schedule_data:
     elif analysis_mode == "🎯 SP: トリプル馬単 (NAR)":
         col_date, col_venue_tu = st.columns([1, 2])
         with col_date:
-             selected_date = st.selectbox("1. 日付を選択", dates)
+             selected_date = st.selectbox("1. 日付を選択", dates, index=get_default_date_index(dates))
         
         todays_races = [r for r in races if r.get('date') == selected_date]
         
@@ -1282,7 +1307,7 @@ if schedule_data and "races" in schedule_data:
         st.info("💡 **WIN5**: JRAの指定5レースを予想します。")
         col_date, col_venue_multi = st.columns([1, 2])
         with col_date:
-             selected_date = st.selectbox("1. 日付を選択", dates)
+             selected_date = st.selectbox("1. 日付を選択", dates, index=get_default_date_index(dates))
         
         # JRA Venues
         jra_venues = ['東京', '中山', '京都', '阪神', '新潟', '福島', '中京', '小倉', '札幌', '函館']
@@ -1314,7 +1339,7 @@ if schedule_data and "races" in schedule_data:
         
         col_date, col_venue_multi = st.columns([1, 2])
         with col_date:
-             selected_date = st.selectbox("1. 日付を選択", dates)
+             selected_date = st.selectbox("1. 日付を選択", dates, index=get_default_date_index(dates))
         
         todays_races = [r for r in races if r.get('date') == selected_date]
         if todays_races:
