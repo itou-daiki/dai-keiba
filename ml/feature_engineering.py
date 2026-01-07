@@ -1875,7 +1875,13 @@ def calculate_features(input_csv, output_path, lambda_decay=0.5, use_venue_featu
     
     # Ensure ID/Text columns are strings to prevent Parquet mixed type errors
     # '馬名' often causes "Conversion failed for column with type object" if mixed with numbers
-    for col in ['horse_id', 'race_id', '馬名', '騎手', 'レース名', '開催地', '馬 番', '枠']:
+    # Comprehensive list of columns that should be treated as strings to avoid PyArrow mixed type errors
+    str_cols = [
+        'horse_id', 'race_id', '馬名', '騎手', 'レース名', '開催地', '馬 番', '枠', 'date', '日付',
+        '着 順', '性齢', 'father', 'mother', 'bms', '調教師', '馬主', '生産者', '通過', '上り',
+        'corner', 'course_bias'
+    ]
+    for col in str_cols:
         if col in processed.columns:
             processed[col] = processed[col].astype(str)
 
