@@ -467,17 +467,23 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
 
                 unique_races = sorted(list(set(race_list_items)))
 
+                daily_data = []
+
                 for r_link in unique_races:
                     # Fetch with Rich Scraper
                     df = scrape_race_rich(r_link, existing_race_ids=existing_race_ids)
 
                     if df is not None and not df.empty:
-                        if save_callback:
-                            save_callback(df)
+                        daily_data.append(df)
                         total_processed += 1
                     
                     # Rate limiting
                     time.sleep(1.0) 
+                
+                # Save daily batch
+                if daily_data and save_callback:
+                    df_day = pd.concat(daily_data, ignore_index=True)
+                    save_callback(df_day) 
 
         except Exception as e:
             print(f"❌ {month}月の処理中にエラーが発生しました: {e}")
