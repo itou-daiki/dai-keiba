@@ -362,9 +362,7 @@ def run_nar_scraping(year, start_month=1, end_month=12, save_dir='data/raw', tar
              "            except Exception as e_day:\n",
              "                print(f'  日付処理エラー {d}: {e_day}')\n",
              "    \n",
-             "    print('完了しました。')\n",
-             "else:\n",
-             "    print('年度が設定されていません。')\n"
+             "    print('完了しました。')\n"
          ]},
          {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": [
              "# 実行ブロック\n",
