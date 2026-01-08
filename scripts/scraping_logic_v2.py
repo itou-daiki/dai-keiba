@@ -163,7 +163,7 @@ def scrape_race_rich(url, existing_race_ids=None, max_retries=3):
     """
     Scrapes Race + History + Pedigree in one go.
     """
-    print(f"  Analysing Race: {url}")
+    print(f"  レース解析中: {url}")
     headers = {"User-Agent": "Mozilla/5.0"}
     
     # 1. Fetch Race Page
@@ -311,7 +311,7 @@ def scrape_race_rich(url, existing_race_ids=None, max_retries=3):
             
             # Combine
             row_dict = {
-                "日付": date_text, "会場": venue_text, "レース番号": f"{r_num}R", "レース名": race_name, "重賞": "", # Grade logic omitted for brevity but should exist
+                "日付": date_text, "会場": venue_text, "レース番号": f"{r_num}R", "レース名": race_name, "重賞": "",
                 "コースタイプ": course_type, "距離": distance, "回り": rotation, "天候": weather, "馬場状態": condition,
                 "着順": rank, "枠": waku, "馬番": umaban, "馬名": horse_name, 
                 "性齢": cells[4].text.strip(), "斤量": cells[5].text.strip(), "騎手": jockey, 
@@ -325,7 +325,29 @@ def scrape_race_rich(url, existing_race_ids=None, max_retries=3):
             }
             data_list.append(row_dict)
             
-        return pd.DataFrame(data_list)
+        df = pd.DataFrame(data_list)
+        
+        # Enforce User-Specified Column Order
+        ordered_columns = [
+            "日付", "会場", "レース番号", "レース名", "重賞", "コースタイプ", "距離", "回り", "天候", "馬場状態",
+            "着順", "枠", "馬番", "馬名", "性齢", "斤量", "騎手", "タイム", "着差", "人気", "単勝オッズ",
+            "後3F", "厩舎", "馬体重(増減)", "race_id", "horse_id"
+        ]
+        # rich data columns
+        for i in range(1, 6):
+            p = f"past_{i}"
+            ordered_columns.extend([
+                f"{p}_date", f"{p}_rank", f"{p}_time", f"{p}_run_style", f"{p}_race_name",
+                f"{p}_last_3f", f"{p}_horse_weight", f"{p}_jockey", f"{p}_condition",
+                f"{p}_odds", f"{p}_weather", f"{p}_distance", f"{p}_course_type"
+            ])
+        ordered_columns.extend(["father", "mother", "bms"])
+        
+        # Add missing cols with empty string, remove extras (if any/optional)
+        # reindex handles this safely
+        df_ordered = df.reindex(columns=ordered_columns, fill_value="")
+        
+        return df_ordered
 
     except Exception as e:
         print(f"Error scraping race {url}: {e}")
@@ -345,7 +367,7 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
     }
     
     if year_str not in JRA_MONTH_PARAMS:
-        print(f"Year {year_str} not supported in parameter map.")
+        print(f"年度 {year_str} はサポートされていません。")
         return
 
     params = JRA_MONTH_PARAMS[year_str]
@@ -369,8 +391,8 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
     else:
         actual_end_date = today
 
-    print(f"=== Starting JRA Bulk Scraping for {year_str} (Rich Data) ===")
-    print(f"Period: {start_date or 'Start'} - {actual_end_date}")
+    print(f"=== JRA 一括スクレイピング開始 {year_str} (リッチモード) ===")
+    print(f"期間: {start_date or 'Start'} - {actual_end_date}")
     
     if int(year_str) == today.year:
         end_m = min(end_m, today.month)
@@ -391,7 +413,7 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
 
         cname = f"{prefix}{year_str}{month}/{suffix}"
 
-        print(f"\\n📅 Fetching {year_str}/{month}...")
+        print(f"\n📅 {year_str}/{month} を取得中...")
 
         try:
             headers = {
@@ -401,7 +423,7 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
             response.encoding = 'cp932'
 
             if response.status_code != 200:
-                print(f"❌ Failed to fetch {cname} (Status {response.status_code})")
+                print(f"❌ {cname} の取得に失敗しました (Status {response.status_code})")
                 continue
 
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -410,8 +432,6 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
             links = soup.find_all('a')
             for link in links:
                 onclick = link.get('onclick', '')
-                # FIX: simplified regex to avoid escaping hell. Using raw string with minimal escaping.
-                # Expected pattern: doAction('...', 'pw01srl...')
                 match = re.search(r"doAction\('[^']+',\s*'([^']+)'\)", onclick)
                 if match:
                     c = match.group(1)
@@ -419,7 +439,7 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
                         race_cnames.append(c)
 
             race_cnames = sorted(list(set(race_cnames)))
-            print(f"  Found {len(race_cnames)} race days")
+            print(f"  {len(race_cnames)} 開催日が見つかりました")
 
             for day_cname in tqdm(race_cnames, desc=f"  {year_str}/{month}", leave=False):
                 resp_day = requests.post(base_url, data={"cname": day_cname}, headers=headers, timeout=15)
@@ -430,11 +450,7 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
                 all_anchors = soup_day.find_all('a')
                 for a in all_anchors:
                     onclick = a.get('onclick', '')
-                    # FIX: simplified regex here too.
-                    # Expected pattern: doAction('...', 'pw01sde...')
-                    # OR: doAction('...', 'pw01sde...') with different spacing
                     match_sde = re.search(r"doAction\s*\(\s*['\"][^'\"]+['\"]\s*,\s*['\"](pw01sde[^'\"]+)['\"]\s*\)", onclick)
-                    
                     href = a.get('href', '')
 
                     final_url = ""
@@ -464,6 +480,6 @@ def scrape_jra_year_rich(year_str, start_date=None, end_date=None, save_callback
                     time.sleep(1.0) 
 
         except Exception as e:
-            print(f"❌ Error processing month {month}: {e}")
+            print(f"❌ {month}月の処理中にエラーが発生しました: {e}")
             
-    print("Completed.")
+    print("完了しました。")
