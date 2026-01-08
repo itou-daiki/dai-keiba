@@ -23,9 +23,10 @@ class RaceScraper:
             print(f"Error fetching {url}: {e}")
         return None
 
-    def get_past_races(self, horse_id, n_samples=5):
+    def get_past_races(self, horse_id, target_date=None, n_samples=5):
         """
         Fetches past n_samples race results for a given horse_id from netkeiba db.
+        If target_date is provided, filters for races STRICTLY BEFORE that date.
         Returns a DataFrame of past races.
         """
         url = f"https://db.netkeiba.com/horse/result/{horse_id}/"
@@ -47,18 +48,11 @@ class RaceScraper:
             return pd.DataFrame()
 
         # Parse table
-        # We need to manually parse to get clean data and handle links if needed (though for past data, text is mostly fine)
-        # pd.read_html is easier for the table
         try:
             df = pd.read_html(io.StringIO(str(table)))[0]
             
             # Basic cleaning
             df = df.dropna(how='all')
-            
-            # The columns in db.netkeiba are roughly:
-            # 日付, 開催, 天気, R, レース名, 映像, 頭数, 枠番, ... 着順, ... 通過, ...
-            
-            # We want to keep: Date, Race Name, Course info, Rank, Time, Passing (Style)
             
             # Normalize column names (remove spaces/newlines)
             df.columns = df.columns.astype(str).str.replace(r'\s+', '', regex=True)
@@ -67,6 +61,18 @@ class RaceScraper:
             if '日付' in df.columns:
                 df['date_obj'] = pd.to_datetime(df['日付'], format='%Y/%m/%d', errors='coerce')
                 df = df.dropna(subset=['date_obj'])
+                
+                # Leakage Prevention: Filter races strictly before target_date
+                if target_date:
+                    if isinstance(target_date, str):
+                        target_dt = pd.to_datetime(target_date, errors='coerce')
+                    else:
+                        target_dt = pd.to_datetime(target_date) # handle date/datetime
+                        
+                    if target_dt is not None:
+                         # Use strictly less than (<) to exclude future and current race (if in DB)
+                         df = df[df['date_obj'] < target_dt]
+
                 df = df.sort_values('date_obj', ascending=False)
                 
             # Take top N
@@ -200,19 +206,46 @@ class RaceScraper:
         if not soup:
             return None
             
-        # 1. Parse Main Result Table to get Horse IDs and basic result
-        # Note: auto_scraper already does some of this, but we need Horse IDs specifically.
-        # "All_Result_Table"
-        
+        # 0. Extract Race Date for Leakage Prevention
+        race_date = None
+        try:
+            # Try to find date in .RaceData01 or similar
+            # Example text: "10:10曇良2021年1月5日..."
+            # Netkeiba often puts date in the title tag too like "2021年1月5日..."
+            
+            # Strategy 1: Title
+            if soup.title:
+                title_text = soup.title.text
+                match = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', title_text)
+                if match:
+                    y, m, d = match.groups()
+                    race_date = datetime(int(y), int(m), int(d))
+            
+            # Strategy 2: .RaceData01 (Common in Result page)
+            if not race_date:
+                rd1 = soup.find("div", class_="RaceData01")
+                if rd1:
+                    match = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', rd1.text)
+                    if match:
+                        y, m, d = match.groups()
+                        race_date = datetime(int(y), int(m), int(d))
+            
+            # Strategy 3: URL (kaisai_date=YYYYMMDD) - Though URL input is race_id, result page might link to kaisai
+            if not race_date:
+                # Some list links contain kaisai_date, but here we only have race_id
+                pass
+
+        except Exception as e:
+            print(f"Warning: Could not extract race date: {e}")
+
+        # 1. Parse Main Result Table
         result_data = []
-        
         table = soup.find("table", id="All_Result_Table")
         if not table:
             return None
             
         rows = table.find_all("tr", class_="HorseList")
-        
-        print(f"Found {len(rows)} horses in race {race_id}. Fetching histories...")
+        print(f"Found {len(rows)} horses in race {race_id} ({race_date.date() if race_date else 'Unknown Date'}). Fetching histories...")
         
         for row in rows:
             # Extract basic info
@@ -224,7 +257,6 @@ class RaceScraper:
             horse_url = horse_name_elem.get("href") if horse_name_elem else ""
             
             # Extract ID from URL
-            # https://db.netkeiba.com/horse/2018105027
             horse_id = None
             if horse_url:
                 match = re.search(r'/horse/(\d+)', horse_url)
@@ -235,10 +267,10 @@ class RaceScraper:
                 print(f"  Skipping {horse_name} (No ID)")
                 continue
 
-            print(f"  Fetching history for {horse_name} ({horse_id})...")
+            # print(f"  Fetching history for {horse_name} ({horse_id})...")
             
-            # 2. Get Past History
-            df_past = self.get_past_races(horse_id, n_samples=5)
+            # 2. Get Past History (with Leakage Prevention)
+            df_past = self.get_past_races(horse_id, target_date=race_date, n_samples=5)
             
             # 3. Structure Data
             # converting df_past to a list of dicts or flattened fields

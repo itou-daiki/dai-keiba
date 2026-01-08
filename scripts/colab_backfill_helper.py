@@ -180,7 +180,7 @@ def fill_history_data(df_path, mode="JRA"):
     def fetch_history(hid):
         time.sleep(0.1)
         try:
-            return (hid, scraper.get_past_races(hid))
+            return (hid, scraper.get_past_races(hid, n_samples=None))
         except:
             return (hid, None)
             
@@ -195,7 +195,7 @@ def fill_history_data(df_path, mode="JRA"):
         for hid in tqdm(chunk_ids, leave=False, desc=f"Chunk {i//CHUNK_SIZE+1}"):
              try:
                  time.sleep(0.5)
-                 hist_df = scraper.get_past_races(hid)
+                 hist_df = scraper.get_past_races(hid, n_samples=None)
                  if hist_df is not None and not hist_df.empty:
                      if 'date' in hist_df.columns:
                          hist_df['date_dt'] = pd.to_datetime(hist_df['date'], format='%Y/%m/%d', errors='coerce')
