@@ -58,7 +58,7 @@ if uploaded_file is not None:
     if st.button("変換して保存 (CSV -> Parquet)", type="primary"):
         with st.spinner("CSVを読み込み、Parquetに変換中..."):
             try:
-                df_upload = pd.read_csv(uploaded_file, low_memory=False, dtype={'horse_id': str, 'race_id': str})
+                df_upload = pd.read_csv(uploaded_file, dtype={'horse_id': str, 'race_id': str})
                 
                 # Save as CSV (Raw)
                 df_upload.to_csv(target_csv, index=False)

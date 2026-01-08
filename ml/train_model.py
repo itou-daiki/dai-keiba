@@ -453,6 +453,8 @@ def train_and_save_model(data_path, model_path, params=None, use_timeseries_spli
         'cv_scores': cv_scores if use_timeseries_split else None
     }
 
+import gc
+
 def optimize_hyperparameters(data_path, n_trials=50, use_timeseries_split=True):
     """
     Optunaによるハイパーパラメータ最適化（TimeSeriesSplit対応）
@@ -538,6 +540,7 @@ def optimize_hyperparameters(data_path, n_trials=50, use_timeseries_split=True):
             'boosting_type': 'gbdt',
             'verbose': -1,
             'is_unbalance': False,  # scale_pos_weightと併用しない
+            'num_threads': 2,       # CPU負荷制限 (Exit Code 146対策)
 
             # === 最適化するパラメータ ===
             'num_leaves': trial.suggest_int('num_leaves', 20, 150),
@@ -593,6 +596,10 @@ def optimize_hyperparameters(data_path, n_trials=50, use_timeseries_split=True):
             cv_aucs.append(auc)
 
         mean_auc = np.mean(cv_aucs)
+        
+        # メモリ解放 (Exit Code 146対策)
+        gc.collect()
+        
         return mean_auc
 
     # Optuna最適化実行
