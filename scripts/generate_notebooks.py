@@ -19,7 +19,7 @@ def create_notebook(cells):
     }, indent=1, ensure_ascii=False)
 
 def gen_jra_scraping_nb():
-    jra_code = read_file('scraper/jra_scraper.py')
+    jra_code = read_file('scripts/scraping_logic_v2.py')
     
     cells = [
         {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 JRA 全レース取得 (2020-2026)\n", "以下の設定変数を変更して実行してください。指定した期間のデータを取得し、`SAVE_DIR` に保存します。"]},
@@ -76,7 +76,7 @@ def gen_jra_scraping_nb():
             "                print(f\"Save Error: {e}\")\n",
             "                # 万が一の場合はバックアップして新規作成するなどの分岐も可だが、ここではエラー表示のみ\n",
             "\n",
-            "    scrape_jra_year(str(YEAR), start_date=s_date, end_date=e_date, save_callback=lambda df: safe_append_csv(df, save_path))\n",
+            "    scrape_jra_year_rich(str(YEAR), start_date=s_date, end_date=e_date, save_callback=lambda df: safe_append_csv(df, save_path), existing_race_ids=existing_race_ids)\n",
             "    print('完了しました。')\n",
             "else:\n",
             "    print('年度が設定されていません。')\n"
@@ -135,7 +135,7 @@ def gen_nar_scraping_nb():
     # ... (omitted)
     
     race_scraper_code = read_file('scraper/race_scraper.py')
-    jra_code = read_file('scraper/jra_scraper.py')
+    jra_code = read_file('scripts/scraping_logic_v2.py') # Use V2 for NAR too
     
     # We define run_nar_scraping with month support
     nar_execution_logic = """
@@ -229,9 +229,9 @@ def run_nar_scraping(year, start_month=1, end_month=12):
              "                     else:\n",
              "                         full_url = f'https://nar.netkeiba.com{href}'\n",
              "                     \n",
-             "                     # scrape_jra_race is compatible with netkeiba structure\n",
+             "                     # scrape_race_rich handles netkeiba structure\n",
              "                     try:\n",
-             "                         df = scrape_jra_race(full_url, existing_race_ids=None)\n",
+             "                         df = scrape_race_rich(full_url, existing_race_ids=None)\n",
              "                         if df is not None and not df.empty:\n",
              "                             # Save immediately (Safe Append)\n",
              "                             os.makedirs(save_dir, exist_ok=True)\n",
