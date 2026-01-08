@@ -38,6 +38,7 @@ def gen_jra_scraping_nb():
             "\n",
             "# 実行ブロック\n",
             "import os\n",
+            "import pandas as pd\n",
             "from datetime import date\n",
             "import calendar\n",
             "\n",
