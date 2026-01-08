@@ -52,9 +52,11 @@ def check_notebook(path):
         return False
 
 if __name__ == "__main__":
-    files = [
-        'notebooks/Colab_JRA_Scraping.ipynb',
-        'notebooks/Colab_NAR_Scraping.ipynb'
-    ]
-    for f in files:
-        check_notebook(f)
+    import glob
+    import os
+    files = glob.glob('notebooks/*.ipynb')
+    if not files:
+        print("No notebooks found.")
+    else:
+        for f in sorted(files):
+            check_notebook(f)
