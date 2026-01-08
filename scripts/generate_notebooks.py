@@ -220,22 +220,8 @@ def gen_jra_backfill_nb():
     return create_notebook(cells)
 
 def gen_nar_scraping_nb():
-    # Similar to JRA, but using NAR logic and separate saving logic
-    # We will reuse the code style
-    
     race_scraper_code = read_file('scraper/race_scraper.py')
     jra_code = read_file('scripts/scraping_logic_v2.py') # Use V2 for NAR too
-    
-    # We define run_nar_scraping with month support
-    nar_execution_logic = """
-def run_nar_scraping(year, start_month=1, end_month=12, save_dir='data/raw', target_csv='database_nar.csv'):
-    # This function is now embedded in the notebook directly in the NAR execution cell below
-    pass
-""" 
-
-    # Since we can't easily inline the full logic without a clean file, 
-    # and previous step used a placeholder, I will update the placeholder 
-    # to accept the month inputs and print them, or use the iter logic previously defined but bounded.
     
     cells = [
          {"cell_type": "markdown", "metadata": {}, "source": ["# 🏇 NAR 全レース取得\n", "以下の設定変数を変更して実行してください。NAR（地方競馬）のデータを日付順に取得します。"]},
@@ -275,9 +261,21 @@ def run_nar_scraping(year, start_month=1, end_month=12, save_dir='data/raw', tar
              "    today = date.today()\n",
              "    if e_date > today: e_date = today\n",
              "    \n",
-             "    print(f'NARデータを {s_date} から {e_date} まで取得します...')\n",
+             "    print(f'{year}年のNARデータを {s_date} から {e_date} まで取得します...')\n",
              "    print(f'保存先: {os.path.join(save_dir, target_csv)}')\n",
              "    \n",
+             "    # 安全な追記関数\n",
+             "    def safe_append_csv(df_chunk, path):\n",
+             "        if not os.path.exists(path):\n",
+             "            df_chunk.to_csv(path, index=False)\n",
+             "        else:\n",
+             "            try:\n",
+             "                existing_cols = pd.read_csv(path, nrows=0).columns.tolist()\n",
+             "                df_aligned = df_chunk.reindex(columns=existing_cols)\n",
+             "                df_aligned.to_csv(path, mode='a', header=False, index=False)\n",
+             "            except Exception as e:\n",
+             "                print(f\"Save Error: {e}\")\n",
+             "\n",
              "    # 月ごとにループ\n",
              "    for m in range(int(start_month), int(end_month) + 1):\n",
              "        # その月の日付範囲を決定\n",
@@ -320,7 +318,6 @@ def run_nar_scraping(year, start_month=1, end_month=12, save_dir='data/raw', tar
              "                 links = soup.select('a[href*=\"race/result.html\"]')\n",
              "                 \n",
              "                 if links:\n",
-             "                     # print(f'  {d}: {len(links)} レース') # ログ過多防止のためコメントアウト\n",
              "                     for link in links:\n",
              "                         href = link.get('href')\n",
              "                         if href.startswith('../'):\n",
@@ -340,19 +337,9 @@ def run_nar_scraping(year, start_month=1, end_month=12, save_dir='data/raw', tar
              "                 \n",
              "                 # 1日分のループ終了後、まとめて保存\n",
              "                 if daily_data:\n",
-             "                     os.makedirs(save_dir, exist_ok=True)\n",
+             "                     df_day = pd.concat(daily_data, ignore_index=True)\n",
              "                     csv_file = os.path.join(save_dir, target_csv)\n",
-             "                     try:\n",
-             "                         df_day = pd.concat(daily_data, ignore_index=True)\n",
-             "                         \n",
-             "                         if not os.path.exists(csv_file):\n",
-             "                             df_day.to_csv(csv_file, index=False)\n",
-             "                         else:\n",
-             "                             existing_cols = pd.read_csv(csv_file, nrows=0).columns.tolist()\n",
-             "                             df_aligned = df_day.reindex(columns=existing_cols)\n",
-             "                             df_aligned.to_csv(csv_file, mode='a', header=False, index=False)\n",
-             "                     except Exception as e_save:\n",
-             "                          print(f\"  保存エラー ({d}): {e_save}\")\n",
+             "                     safe_append_csv(df_day, csv_file)\n",
              "                     \n",
              "                     # メモリ解放\n",
              "                     del daily_data\n",
