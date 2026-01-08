@@ -159,7 +159,7 @@ class RaceScraper:
             return pd.DataFrame()
 
 # --- Main Rich Scraper Function ---
-def scrape_race_rich(url, existing_race_ids=None, max_retries=3):
+def scrape_race_rich(url, existing_race_ids=None, max_retries=3, force_race_id=None):
     """
     Scrapes Race + History + Pedigree in one go.
     """
@@ -181,24 +181,28 @@ def scrape_race_rich(url, existing_race_ids=None, max_retries=3):
         match_date = re.search(r'(\d{4}年\d{1,2}月\d{1,2}日)', full_text)
         if match_date: date_text = match_date.group(1)
         
-        venues_str = "札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉"
-        match_meta = re.search(rf'(\d+)回({venues_str})(\\d+)日', full_text)
-        if match_meta:
-            kai = f"{int(match_meta.group(1)):02}"
-            venue_text = match_meta.group(2)
-            day = f"{int(match_meta.group(3)):02}"
+        # Parse logic is mainly for JRA. For NAR (or simple forced ID), we skip if force_race_id is present.
+        if force_race_id:
+             race_id = str(force_race_id)
+        else:
+            venues_str = "札幌|函館|福島|新潟|東京|中山|中京|京都|阪神|小倉"
+            match_meta = re.search(rf'(\d+)回({venues_str})(\\d+)日', full_text)
+            if match_meta:
+                kai = f"{int(match_meta.group(1)):02}"
+                venue_text = match_meta.group(2)
+                day = f"{int(match_meta.group(3)):02}"
+                
+            match_race = re.search(r'(\d+)レース', full_text)
+            if match_race: r_num = f"{int(match_race.group(1)):02}"
             
-        match_race = re.search(r'(\d+)レース', full_text)
-        if match_race: r_num = f"{int(match_race.group(1)):02}"
-        
-        place_map = {
-            "札幌": "01", "函館": "02", "福島": "03", "新潟": "04", "東京": "05",
-            "中山": "06", "中京": "07", "京都": "08", "阪神": "09", "小倉": "10"
-        }
-        p_code = place_map.get(venue_text, "00")
-        year = date_text[:4] if date_text else "2025"
-        
-        race_id = f"{year}{p_code}{kai}{day}{r_num}"
+            place_map = {
+                "札幌": "01", "函館": "02", "福島": "03", "新潟": "04", "東京": "05",
+                "中山": "06", "中京": "07", "京都": "08", "阪神": "09", "小倉": "10"
+            }
+            p_code = place_map.get(venue_text, "00")
+            year = date_text[:4] if date_text else "2025"
+            
+            race_id = f"{year}{p_code}{kai}{day}{r_num}"
         
         # SKIP Check
         if existing_race_ids and race_id in existing_race_ids:
