@@ -444,6 +444,60 @@ def scrape_race_data(race_id, mode="JRA"):
             df["mother"] = ""
             df["bms"] = ""
             
+            # Split Stable and Trainer
+            # 厩舎 column in read_html result often contains mixed content like "北海道田中淳司"
+            # We need to separate them.
+            
+            # First, check if '厩舎' exists in columns
+            if '厩舎' in df.columns:
+                # Apply separation logic
+                # Regex to split known stable names vs trainer names
+                # NAR Stables: 北海道, 岩手, 浦和, 船橋, 大井, 川崎, 金沢, 笠松, 愛知, 兵庫, 高知, 佐賀
+                # Also: JRA (during exchange races) -> 美浦, 栗東
+                
+                def split_stable_trainer(text):
+                    if not isinstance(text, str): return text, ""
+                    text = text.strip()
+                    # Common affiliates
+                    affiliates = ["北海道", "岩手", "水沢", "盛岡", "浦和", "船橋", "大井", "川崎", 
+                                  "金沢", "笠松", "愛知", "名古屋", "兵庫", "園田", "姫路", "高知", "佐賀",
+                                  "美浦", "栗東", "JRA", "地方", "海外"]
+                    
+                    stable_part = ""
+                    trainer_part = text
+                    
+                    # Try to match start
+                    for aff in affiliates:
+                        if text.startswith(aff):
+                            stable_part = aff
+                            trainer_part = text[len(aff):].strip()
+                            return stable_part, trainer_part
+                            
+                    # If no match but text exists, maybe it's just trainer name (rare) 
+                    # or stable name is unknown.
+                    # Fallback: Assume no stable prefix if not found? 
+                    # Or heuristic: first 2-3 chars?
+                    # Let's keep it as is if no match found, put all in Trainer?
+                    # Or put all in Stable? 
+                    # Usually "北海道田中" -> Stable=北海道, Trainer=田中
+                    return "", text
+
+                # Apply
+                def apply_split(row):
+                    s, t = split_stable_trainer(row['厩舎'])
+                    return pd.Series([s, t])
+
+                df[['厩舎', '調教師']] = df.apply(apply_split, axis=1)
+            else:
+                # '厩舎' column might be named differently ('調教師'?) in source table?
+                # If '調教師' exists but '厩舎' doesn't, maybe it's already separated or just trainer?
+                if '調教師' in df.columns:
+                     # Copy to trainer, leave stable empty?
+                     pass
+                else:
+                     df['厩舎'] = ""
+                     df['調教師'] = ""
+            
             df["race_id"] = race_id # IDも保存 (末尾に追加されることが多いが明示的に)
             
             # 不要な列が含まれることがあるので整理しても良いが、

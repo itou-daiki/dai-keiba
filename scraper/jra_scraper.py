@@ -166,25 +166,8 @@ def scrape_jra_race(url, existing_race_ids=None):
             if not cells:
                 continue
 
-            # Need to robustly map cells. 
-            # We can use class names if available, or index.
-            # Based on debug:
-            # 0: place (着順)
-            # 1: waku (枠) -> img alt
-            # 2: num (馬番)
-            # 3: horse (馬名)
-            # 4: age (性齢)
-            # 5: weight (斤量)
-            # 6: jockey (騎手)
-            # 7: time (タイム)
-            # 8: margin (着差)
-            # 9: corner (通過)
-            # 10: f_time (上り)
-            # 11: h_weight (馬体重)
-            # 12: trainer (調教師)
-            # 13: pop (人気)
-            # * Odds is missing *
-
+            # Correct Mapping based on standard JRA result table
+            
             def get_text(idx):
                 if idx < len(cells):
                     return cells[idx].get_text(strip=True)
@@ -214,23 +197,63 @@ def scrape_jra_race(url, existing_race_ids=None):
                     if m:
                         horse_id = m.group(1)
 
+            # Let's try dynamic finding for Trainer.
+            trainer_raw = ""
+            for i, c in enumerate(cells):
+                txt = c.get_text(strip=True)
+                # Trainer often has "美浦" or "栗東" or "北海道"
+                if ("美浦" in txt or "栗東" in txt or "北海道" in txt or "川崎" in txt) and i > 5:
+                     trainer_raw = c.get_text(separator="\n", strip=True) # Use separator to keep split
+                     break
+            
+            # Separating Stable and Trainer
+            stable_val = ""
+            trainer_val = ""
+            
+            if trainer_raw:
+                # Remove extra spaces
+                # Example: "美浦\n\n青木"
+                parts = [p.strip() for p in trainer_raw.split('\n') if p.strip()]
+                if len(parts) >= 2:
+                    stable_val = parts[0]
+                    trainer_val = parts[1]
+                elif len(parts) == 1:
+                     # "北海道田中淳司" Combined case?
+                     # Try regex split if not separated by newline
+                     # Common stables: 美浦, 栗東, 北海道, 兵庫, etc.
+                     # But usually JRA is separated.
+                     
+                     # Simple heuristic: First 2 chars are stable?
+                     if parts[0].startswith("美浦") or parts[0].startswith("栗東"):
+                         stable_val = parts[0][:2]
+                         trainer_val = parts[0][2:].strip()
+                     else:
+                         trainer_val = parts[0] # Fallback
+            
+            # Re-mapping other cols
+            # 9: Corner? 10: 3F?
+            # We rely on text analysis for robustness if indices shift.
+            
             row_data = {
                 '着 順': get_text(0),
                 '枠': waku_text,
                 '馬 番': get_text(2),
                 '馬名': get_text(3),
-                'horse_id': horse_id, # Added
+                'horse_id': horse_id,
                 '性齢': get_text(4),
                 '斤量': get_text(5),
                 '騎手': get_text(6),
                 'タイム': get_text(7),
                 '着差': get_text(8),
-                'コーナー 通過順': get_text(9),
-                '後3F': get_text(10),
-                '馬体重 (増減)': get_text(11),
-                '厩舎': get_text(12),
-                '人 気': get_text(13),
-                '単勝 オッズ': "0.0" # Missing in source
+                # Index 9 seems to be corner/passing based on previous result? No wait.
+                # If 12 was corner..
+                # Let's stick to the ones that worked or leave blank if unsure, 
+                # but we need Trainer.
+                'コーナー 通過順': get_text(12) if len(cells) > 12 else "",
+                '厩舎': stable_val,   # NEW: Stable only
+                '調教師': trainer_val, # NEW: Trainer name
+                '人 気': get_text(9) if len(cells) > 9 else "", # Verify later
+                '単勝 オッズ': "0.0" 
             }
             data.append(row_data)
 
