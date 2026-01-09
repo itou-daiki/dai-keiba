@@ -192,8 +192,17 @@ def verify_jra_basic(namespace, race_ids):
                             print(f"  ❌ Trainer name contains suffix: {t}")
                         if "のプロフィール" in t:
                             print(f"  ❌ Trainer name contains suffix: {t}")
+
+                # 2. Check Jockey Name
+                if '騎手' in df.columns:
+                    jockeys = df['騎手'].dropna().tolist()
+                    for j in jockeys:
+                         if "の騎手成績" in j:
+                             print(f"  ❌ Jockey name contains suffix: {j}")
+                         if "のプロフィール" in j:
+                             print(f"  ❌ Jockey name contains suffix: {j}")
                 
-                # 2. Check Weight Change
+                 # 3. Check Weight Change
                 if '増減' in df.columns: # Assuming '増減' is the column for weight change
                     changes = df['増減'].dropna().tolist()
                     for c in changes:
