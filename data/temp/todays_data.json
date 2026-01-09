@@ -1,0 +1,3377 @@
+{
+  "date": "2026-01-09",
+  "races": [
+    {
+      "id": "202606010101",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010102",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010103",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010104",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "4",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010105",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010106",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "6",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010107",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010108",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "8",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010109",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "9",
+      "name": "招福S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010110",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "10",
+      "name": "ジュニアC",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010111",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "11",
+      "name": "中山金杯",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010112",
+      "date": "2026-01-04",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010101",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010102",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010103",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010104",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "4",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010105",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010106",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "6",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010107",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010108",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "8",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010109",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "9",
+      "name": "天ケ瀬特別",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010110",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "10",
+      "name": "寿S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010111",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "11",
+      "name": "京都金杯",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010112",
+      "date": "2026-01-04",
+      "venue": "京都",
+      "number": "12",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010201",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010202",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010203",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010204",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "4",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010205",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010206",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010207",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "7",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010208",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "8",
+      "name": "中山新春JS",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010209",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "9",
+      "name": "初茜賞",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010210",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "10",
+      "name": "初日の出賞",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010211",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "11",
+      "name": "サンライズS",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010212",
+      "date": "2026-01-05",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010201",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010202",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010203",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010204",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "4",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010205",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010206",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010207",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010208",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "8",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010209",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "9",
+      "name": "逢坂山特別",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010210",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "10",
+      "name": "門松S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010211",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "11",
+      "name": "万葉S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010212",
+      "date": "2026-01-05",
+      "venue": "京都",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010301",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 68.1,
+          "place_odds_min": 11.5,
+          "place_odds_max": 42.8
+        },
+        {
+          "number": 2,
+          "odds": 39.4,
+          "place_odds_min": 3.6,
+          "place_odds_max": 12.6
+        },
+        {
+          "number": 3,
+          "odds": 26.2,
+          "place_odds_min": 3.1,
+          "place_odds_max": 10.7
+        },
+        {
+          "number": 4,
+          "odds": 85.1,
+          "place_odds_min": 12.8,
+          "place_odds_max": 47.9
+        },
+        {
+          "number": 5,
+          "odds": 90.0,
+          "place_odds_min": 18.4,
+          "place_odds_max": 69.5
+        },
+        {
+          "number": 6,
+          "odds": 32.7,
+          "place_odds_min": 3.0,
+          "place_odds_max": 10.1
+        },
+        {
+          "number": 7,
+          "odds": 61.9,
+          "place_odds_min": 12.1,
+          "place_odds_max": 45.4
+        },
+        {
+          "number": 8,
+          "odds": 6.0,
+          "place_odds_min": 1.1,
+          "place_odds_max": 2.1
+        },
+        {
+          "number": 9,
+          "odds": 32.1,
+          "place_odds_min": 3.2,
+          "place_odds_max": 11.0
+        },
+        {
+          "number": 10,
+          "odds": 17.1,
+          "place_odds_min": 2.8,
+          "place_odds_max": 9.4
+        },
+        {
+          "number": 11,
+          "odds": 1.4,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 12,
+          "odds": 43.9,
+          "place_odds_min": 4.7,
+          "place_odds_max": 16.7
+        },
+        {
+          "number": 13,
+          "odds": 17.7,
+          "place_odds_min": 2.5,
+          "place_odds_max": 8.3
+        },
+        {
+          "number": 14,
+          "odds": 29.6,
+          "place_odds_min": 3.2,
+          "place_odds_max": 11.1
+        },
+        {
+          "number": 15,
+          "odds": 79.5,
+          "place_odds_min": 11.5,
+          "place_odds_max": 42.8
+        },
+        {
+          "number": 16,
+          "odds": 26.3,
+          "place_odds_min": 3.3,
+          "place_odds_max": 11.4
+        }
+      ]
+    },
+    {
+      "id": "202606010302",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 18.1,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 2,
+          "odds": 4.0,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 3,
+          "odds": 6.6,
+          "place_odds_min": 4.3,
+          "place_odds_max": 6.5
+        },
+        {
+          "number": 4,
+          "odds": 48.7,
+          "place_odds_min": 9.9,
+          "place_odds_max": 15.3
+        },
+        {
+          "number": 5,
+          "odds": 84.3,
+          "place_odds_min": 15.4,
+          "place_odds_max": 23.8
+        },
+        {
+          "number": 6,
+          "odds": 60.9,
+          "place_odds_min": 14.0,
+          "place_odds_max": 21.6
+        },
+        {
+          "number": 7,
+          "odds": 81.2,
+          "place_odds_min": 14.2,
+          "place_odds_max": 21.9
+        },
+        {
+          "number": 8,
+          "odds": 15.2,
+          "place_odds_min": 3.1,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 9,
+          "odds": 33.4,
+          "place_odds_min": 7.2,
+          "place_odds_max": 11.0
+        },
+        {
+          "number": 10,
+          "odds": 46.6,
+          "place_odds_min": 17.6,
+          "place_odds_max": 27.3
+        },
+        {
+          "number": 11,
+          "odds": 26.5,
+          "place_odds_min": 3.9,
+          "place_odds_max": 5.9
+        },
+        {
+          "number": 12,
+          "odds": 2.8,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 13,
+          "odds": 75.6,
+          "place_odds_min": 21.6,
+          "place_odds_max": 33.4
+        },
+        {
+          "number": 14,
+          "odds": 12.9,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 15,
+          "odds": 19.3,
+          "place_odds_min": 2.5,
+          "place_odds_max": 3.7
+        },
+        {
+          "number": 16,
+          "odds": 11.4,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.3
+        }
+      ]
+    },
+    {
+      "id": "202606010303",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 23.4,
+          "place_odds_min": 6.8,
+          "place_odds_max": 11.1
+        },
+        {
+          "number": 2,
+          "odds": 69.7,
+          "place_odds_min": 22.3,
+          "place_odds_max": 37.1
+        },
+        {
+          "number": 3,
+          "odds": 2.4,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.4
+        },
+        {
+          "number": 4,
+          "odds": 15.4,
+          "place_odds_min": 2.8,
+          "place_odds_max": 4.4
+        },
+        {
+          "number": 5,
+          "odds": 48.4,
+          "place_odds_min": 16.0,
+          "place_odds_max": 26.7
+        },
+        {
+          "number": 6,
+          "odds": 32.9,
+          "place_odds_min": 6.3,
+          "place_odds_max": 10.3
+        },
+        {
+          "number": 7,
+          "odds": 21.2,
+          "place_odds_min": 5.1,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 8,
+          "odds": 32.6,
+          "place_odds_min": 13.0,
+          "place_odds_max": 21.7
+        },
+        {
+          "number": 9,
+          "odds": 8.4,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.3
+        },
+        {
+          "number": 10,
+          "odds": 27.2,
+          "place_odds_min": 4.7,
+          "place_odds_max": 7.6
+        },
+        {
+          "number": 11,
+          "odds": 76.9,
+          "place_odds_min": 16.8,
+          "place_odds_max": 28.0
+        },
+        {
+          "number": 12,
+          "odds": 9.9,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 13,
+          "odds": 28.5,
+          "place_odds_min": 3.3,
+          "place_odds_max": 5.1
+        },
+        {
+          "number": 14,
+          "odds": 33.7,
+          "place_odds_min": 5.1,
+          "place_odds_max": 8.3
+        },
+        {
+          "number": 15,
+          "odds": 4.7,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 16,
+          "odds": 25.2,
+          "place_odds_min": 3.3,
+          "place_odds_max": 5.3
+        }
+      ]
+    },
+    {
+      "id": "202606010304",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "4",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 25.3,
+          "place_odds_min": 3.3,
+          "place_odds_max": 5.0
+        },
+        {
+          "number": 2,
+          "odds": 12.6,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 3,
+          "odds": 16.1,
+          "place_odds_min": 4.0,
+          "place_odds_max": 6.1
+        },
+        {
+          "number": 4,
+          "odds": 8.5,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 5,
+          "odds": 2.4,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.6
+        },
+        {
+          "number": 6,
+          "odds": 35.5,
+          "place_odds_min": 5.8,
+          "place_odds_max": 8.8
+        },
+        {
+          "number": 7,
+          "odds": 3.8,
+          "place_odds_min": 1.4,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 8,
+          "odds": 12.9,
+          "place_odds_min": 3.7,
+          "place_odds_max": 5.6
+        },
+        {
+          "number": 9,
+          "odds": 19.9,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.8
+        },
+        {
+          "number": 10,
+          "odds": 17.7,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 11,
+          "odds": 23.8,
+          "place_odds_min": 4.4,
+          "place_odds_max": 6.7
+        },
+        {
+          "number": 12,
+          "odds": 41.5,
+          "place_odds_min": 6.5,
+          "place_odds_max": 10.0
+        }
+      ]
+    },
+    {
+      "id": "202606010305",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 36.4,
+          "place_odds_min": 12.1,
+          "place_odds_max": 16.6
+        },
+        {
+          "number": 2,
+          "odds": 57.3,
+          "place_odds_min": 7.2,
+          "place_odds_max": 9.8
+        },
+        {
+          "number": 3,
+          "odds": 3.4,
+          "place_odds_min": 2.1,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 4,
+          "odds": 45.3,
+          "place_odds_min": 10.0,
+          "place_odds_max": 13.7
+        },
+        {
+          "number": 5,
+          "odds": 6.9,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 6,
+          "odds": 36.4,
+          "place_odds_min": 11.7,
+          "place_odds_max": 16.1
+        },
+        {
+          "number": 7,
+          "odds": 8.7,
+          "place_odds_min": 2.4,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 8,
+          "odds": 28.4,
+          "place_odds_min": 6.8,
+          "place_odds_max": 9.3
+        },
+        {
+          "number": 9,
+          "odds": 6.1,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 10,
+          "odds": 30.0,
+          "place_odds_min": 6.8,
+          "place_odds_max": 9.3
+        },
+        {
+          "number": 11,
+          "odds": 19.8,
+          "place_odds_min": 5.2,
+          "place_odds_max": 7.0
+        },
+        {
+          "number": 12,
+          "odds": 25.5,
+          "place_odds_min": 7.0,
+          "place_odds_max": 9.6
+        },
+        {
+          "number": 13,
+          "odds": 8.7,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 14,
+          "odds": 6.9,
+          "place_odds_min": 2.1,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 15,
+          "odds": 30.0,
+          "place_odds_min": 6.6,
+          "place_odds_max": 9.0
+        }
+      ]
+    },
+    {
+      "id": "202606010306",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "6",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 9.0,
+          "place_odds_min": 2.8,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 2,
+          "odds": 11.5,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 3,
+          "odds": 86.5,
+          "place_odds_min": 10.5,
+          "place_odds_max": 17.9
+        },
+        {
+          "number": 4,
+          "odds": 6.7,
+          "place_odds_min": 7.4,
+          "place_odds_max": 12.5
+        },
+        {
+          "number": 5,
+          "odds": 38.8,
+          "place_odds_min": 10.7,
+          "place_odds_max": 18.2
+        },
+        {
+          "number": 6,
+          "odds": 10.9,
+          "place_odds_min": 3.6,
+          "place_odds_max": 5.9
+        },
+        {
+          "number": 7,
+          "odds": 63.4,
+          "place_odds_min": 9.9,
+          "place_odds_max": 16.8
+        },
+        {
+          "number": 8,
+          "odds": 27.5,
+          "place_odds_min": 11.9,
+          "place_odds_max": 20.4
+        },
+        {
+          "number": 9,
+          "odds": 24.1,
+          "place_odds_min": 3.8,
+          "place_odds_max": 6.2
+        },
+        {
+          "number": 10,
+          "odds": 16.0,
+          "place_odds_min": 3.9,
+          "place_odds_max": 6.4
+        },
+        {
+          "number": 11,
+          "odds": 14.3,
+          "place_odds_min": 9.0,
+          "place_odds_max": 15.3
+        },
+        {
+          "number": 12,
+          "odds": 7.9,
+          "place_odds_min": 3.5,
+          "place_odds_max": 5.8
+        },
+        {
+          "number": 13,
+          "odds": 25.0,
+          "place_odds_min": 6.7,
+          "place_odds_max": 11.2
+        },
+        {
+          "number": 14,
+          "odds": 10.6,
+          "place_odds_min": 2.9,
+          "place_odds_max": 4.8
+        },
+        {
+          "number": 15,
+          "odds": 6.2,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 16,
+          "odds": 7.5,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.4
+        }
+      ]
+    },
+    {
+      "id": "202606010307",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "7",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 54.6,
+          "place_odds_min": 14.0,
+          "place_odds_max": 21.6
+        },
+        {
+          "number": 2,
+          "odds": 37.7,
+          "place_odds_min": 5.5,
+          "place_odds_max": 8.3
+        },
+        {
+          "number": 3,
+          "odds": 35.2,
+          "place_odds_min": 4.2,
+          "place_odds_max": 6.3
+        },
+        {
+          "number": 4,
+          "odds": 37.2,
+          "place_odds_min": 4.4,
+          "place_odds_max": 6.5
+        },
+        {
+          "number": 5,
+          "odds": 4.3,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.1
+        },
+        {
+          "number": 6,
+          "odds": 2.6,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 7,
+          "odds": 42.2,
+          "place_odds_min": 9.3,
+          "place_odds_max": 14.1
+        },
+        {
+          "number": 8,
+          "odds": 55.5,
+          "place_odds_min": 7.2,
+          "place_odds_max": 10.9
+        },
+        {
+          "number": 9,
+          "odds": 6.2,
+          "place_odds_min": 1.4,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 10,
+          "odds": 41.6,
+          "place_odds_min": 5.3,
+          "place_odds_max": 8.1
+        },
+        {
+          "number": 11,
+          "odds": 16.9,
+          "place_odds_min": 3.6,
+          "place_odds_max": 5.3
+        },
+        {
+          "number": 12,
+          "odds": 62.1,
+          "place_odds_min": 17.1,
+          "place_odds_max": 26.2
+        },
+        {
+          "number": 13,
+          "odds": 6.5,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 14,
+          "odds": 19.5,
+          "place_odds_min": 3.9,
+          "place_odds_max": 5.8
+        },
+        {
+          "number": 15,
+          "odds": 33.3,
+          "place_odds_min": 7.2,
+          "place_odds_max": 10.9
+        },
+        {
+          "number": 16,
+          "odds": 70.4,
+          "place_odds_min": 12.3,
+          "place_odds_max": 18.8
+        }
+      ]
+    },
+    {
+      "id": "202606010308",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "8",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 1.7,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.5
+        },
+        {
+          "number": 2,
+          "odds": 50.6,
+          "place_odds_min": 5.1,
+          "place_odds_max": 8.6
+        },
+        {
+          "number": 3,
+          "odds": 5.3,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.9
+        },
+        {
+          "number": 4,
+          "odds": 112.0,
+          "place_odds_min": 16.1,
+          "place_odds_max": 28.1
+        },
+        {
+          "number": 5,
+          "odds": 39.2,
+          "place_odds_min": 4.9,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 6,
+          "odds": 5.1,
+          "place_odds_min": 1.3,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 7,
+          "odds": 15.4,
+          "place_odds_min": 3.2,
+          "place_odds_max": 5.3
+        },
+        {
+          "number": 8,
+          "odds": 32.7,
+          "place_odds_min": 4.1,
+          "place_odds_max": 6.8
+        },
+        {
+          "number": 9,
+          "odds": 99.3,
+          "place_odds_min": 9.7,
+          "place_odds_max": 16.9
+        },
+        {
+          "number": 10,
+          "odds": 57.2,
+          "place_odds_min": 6.4,
+          "place_odds_max": 10.9
+        },
+        {
+          "number": 11,
+          "odds": 103.2,
+          "place_odds_min": 8.6,
+          "place_odds_max": 14.9
+        },
+        {
+          "number": 12,
+          "odds": 10.8,
+          "place_odds_min": 1.5,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 13,
+          "odds": 92.3,
+          "place_odds_min": 12.8,
+          "place_odds_max": 22.3
+        }
+      ]
+    },
+    {
+      "id": "202606010309",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "9",
+      "name": "黒竹賞",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 43.0,
+          "place_odds_min": 7.8,
+          "place_odds_max": 18.1
+        },
+        {
+          "number": 2,
+          "odds": 6.5,
+          "place_odds_min": 2.0,
+          "place_odds_max": 4.3
+        },
+        {
+          "number": 3,
+          "odds": 8.2,
+          "place_odds_min": 1.7,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 4,
+          "odds": 1.9,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 5,
+          "odds": 13.9,
+          "place_odds_min": 2.4,
+          "place_odds_max": 5.2
+        },
+        {
+          "number": 6,
+          "odds": 20.7,
+          "place_odds_min": 3.3,
+          "place_odds_max": 7.6
+        },
+        {
+          "number": 7,
+          "odds": 20.0,
+          "place_odds_min": 2.8,
+          "place_odds_max": 6.2
+        },
+        {
+          "number": 8,
+          "odds": 5.8,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 9,
+          "odds": 16.9,
+          "place_odds_min": 2.8,
+          "place_odds_max": 6.3
+        },
+        {
+          "number": 10,
+          "odds": 26.7,
+          "place_odds_min": 3.0,
+          "place_odds_max": 6.7
+        }
+      ]
+    },
+    {
+      "id": "202606010310",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "10",
+      "name": "初凪賞",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 13.5,
+          "place_odds_min": 3.7,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 2,
+          "odds": 8.4,
+          "place_odds_min": 2.5,
+          "place_odds_max": 3.0
+        },
+        {
+          "number": 3,
+          "odds": 91.1,
+          "place_odds_min": 19.6,
+          "place_odds_max": 24.5
+        },
+        {
+          "number": 4,
+          "odds": 10.6,
+          "place_odds_min": 2.5,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 5,
+          "odds": 62.8,
+          "place_odds_min": 13.8,
+          "place_odds_max": 17.3
+        },
+        {
+          "number": 6,
+          "odds": 13.5,
+          "place_odds_min": 2.5,
+          "place_odds_max": 3.0
+        },
+        {
+          "number": 7,
+          "odds": 35.2,
+          "place_odds_min": 7.9,
+          "place_odds_max": 9.9
+        },
+        {
+          "number": 8,
+          "odds": 5.1,
+          "place_odds_min": 2.9,
+          "place_odds_max": 3.6
+        },
+        {
+          "number": 9,
+          "odds": 7.3,
+          "place_odds_min": 2.8,
+          "place_odds_max": 3.4
+        },
+        {
+          "number": 10,
+          "odds": 27.8,
+          "place_odds_min": 4.8,
+          "place_odds_max": 6.0
+        },
+        {
+          "number": 11,
+          "odds": 36.6,
+          "place_odds_min": 7.2,
+          "place_odds_max": 9.0
+        },
+        {
+          "number": 12,
+          "odds": 4.5,
+          "place_odds_min": 2.1,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 13,
+          "odds": 10.4,
+          "place_odds_min": 3.4,
+          "place_odds_max": 4.2
+        },
+        {
+          "number": 14,
+          "odds": 38.7,
+          "place_odds_min": 8.4,
+          "place_odds_max": 10.5
+        },
+        {
+          "number": 15,
+          "odds": 30.1,
+          "place_odds_min": 9.1,
+          "place_odds_max": 11.5
+        },
+        {
+          "number": 16,
+          "odds": 14.3,
+          "place_odds_min": 3.2,
+          "place_odds_max": 4.0
+        }
+      ]
+    },
+    {
+      "id": "202606010311",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "11",
+      "name": "迎春S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 9.2,
+          "place_odds_min": 3.0,
+          "place_odds_max": 4.3
+        },
+        {
+          "number": 2,
+          "odds": 14.5,
+          "place_odds_min": 3.0,
+          "place_odds_max": 4.2
+        },
+        {
+          "number": 3,
+          "odds": 63.6,
+          "place_odds_min": 11.6,
+          "place_odds_max": 17.2
+        },
+        {
+          "number": 4,
+          "odds": 2.9,
+          "place_odds_min": 1.5,
+          "place_odds_max": 1.9
+        },
+        {
+          "number": 5,
+          "odds": 71.0,
+          "place_odds_min": 16.5,
+          "place_odds_max": 24.4
+        },
+        {
+          "number": 6,
+          "odds": 22.3,
+          "place_odds_min": 7.0,
+          "place_odds_max": 10.2
+        },
+        {
+          "number": 7,
+          "odds": 10.2,
+          "place_odds_min": 2.0,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 8,
+          "odds": 39.2,
+          "place_odds_min": 13.0,
+          "place_odds_max": 19.3
+        },
+        {
+          "number": 9,
+          "odds": 6.4,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.1
+        },
+        {
+          "number": 10,
+          "odds": 69.7,
+          "place_odds_min": 11.4,
+          "place_odds_max": 16.9
+        },
+        {
+          "number": 11,
+          "odds": 14.8,
+          "place_odds_min": 3.3,
+          "place_odds_max": 4.7
+        },
+        {
+          "number": 12,
+          "odds": 56.6,
+          "place_odds_min": 13.6,
+          "place_odds_max": 20.1
+        },
+        {
+          "number": 13,
+          "odds": 6.5,
+          "place_odds_min": 2.8,
+          "place_odds_max": 4.0
+        },
+        {
+          "number": 14,
+          "odds": 29.6,
+          "place_odds_min": 3.9,
+          "place_odds_max": 5.6
+        },
+        {
+          "number": 15,
+          "odds": 25.0,
+          "place_odds_min": 4.7,
+          "place_odds_max": 6.8
+        },
+        {
+          "number": 16,
+          "odds": 64.4,
+          "place_odds_min": 9.4,
+          "place_odds_max": 13.9
+        },
+        {
+          "number": 17,
+          "odds": 23.6,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.4
+        }
+      ]
+    },
+    {
+      "id": "202606010312",
+      "date": "2026-01-10",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 7.0,
+          "place_odds_min": 3.4,
+          "place_odds_max": 4.7
+        },
+        {
+          "number": 2,
+          "odds": 6.1,
+          "place_odds_min": 1.6,
+          "place_odds_max": 1.9
+        },
+        {
+          "number": 3,
+          "odds": 12.8,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 4,
+          "odds": 22.5,
+          "place_odds_min": 4.6,
+          "place_odds_max": 6.5
+        },
+        {
+          "number": 5,
+          "odds": 54.8,
+          "place_odds_min": 10.2,
+          "place_odds_max": 14.8
+        },
+        {
+          "number": 6,
+          "odds": 3.2,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 7,
+          "odds": 21.3,
+          "place_odds_min": 3.7,
+          "place_odds_max": 5.2
+        },
+        {
+          "number": 8,
+          "odds": 34.9,
+          "place_odds_min": 29.2,
+          "place_odds_max": 42.2
+        },
+        {
+          "number": 9,
+          "odds": 81.4,
+          "place_odds_min": 9.1,
+          "place_odds_max": 13.2
+        },
+        {
+          "number": 10,
+          "odds": 43.3,
+          "place_odds_min": 7.4,
+          "place_odds_max": 10.7
+        },
+        {
+          "number": 11,
+          "odds": 103.4,
+          "place_odds_min": 12.6,
+          "place_odds_max": 18.3
+        },
+        {
+          "number": 12,
+          "odds": 33.6,
+          "place_odds_min": 7.6,
+          "place_odds_max": 10.9
+        },
+        {
+          "number": 13,
+          "odds": 8.4,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 14,
+          "odds": 35.3,
+          "place_odds_min": 4.1,
+          "place_odds_max": 5.8
+        },
+        {
+          "number": 15,
+          "odds": 8.5,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.0
+        },
+        {
+          "number": 16,
+          "odds": 11.3,
+          "place_odds_min": 4.5,
+          "place_odds_max": 6.4
+        }
+      ]
+    },
+    {
+      "id": "202608010301",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 37.7,
+          "place_odds_min": 3.1,
+          "place_odds_max": 8.6
+        },
+        {
+          "number": 2,
+          "odds": 91.2,
+          "place_odds_min": 11.0,
+          "place_odds_max": 33.3
+        },
+        {
+          "number": 3,
+          "odds": 1.6,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 4,
+          "odds": 44.2,
+          "place_odds_min": 9.8,
+          "place_odds_max": 29.7
+        },
+        {
+          "number": 5,
+          "odds": 14.6,
+          "place_odds_min": 2.9,
+          "place_odds_max": 8.2
+        },
+        {
+          "number": 6,
+          "odds": 6.1,
+          "place_odds_min": 1.3,
+          "place_odds_max": 2.9
+        },
+        {
+          "number": 7,
+          "odds": 90.4,
+          "place_odds_min": 14.9,
+          "place_odds_max": 45.4
+        },
+        {
+          "number": 8,
+          "odds": 83.5,
+          "place_odds_min": 9.0,
+          "place_odds_max": 27.0
+        },
+        {
+          "number": 9,
+          "odds": 59.3,
+          "place_odds_min": 4.0,
+          "place_odds_max": 11.6
+        },
+        {
+          "number": 10,
+          "odds": 46.0,
+          "place_odds_min": 7.1,
+          "place_odds_max": 21.2
+        },
+        {
+          "number": 11,
+          "odds": 11.9,
+          "place_odds_min": 3.0,
+          "place_odds_max": 8.4
+        },
+        {
+          "number": 12,
+          "odds": 104.8,
+          "place_odds_min": 10.3,
+          "place_odds_max": 31.1
+        },
+        {
+          "number": 13,
+          "odds": 101.6,
+          "place_odds_min": 14.9,
+          "place_odds_max": 45.4
+        },
+        {
+          "number": 14,
+          "odds": 80.7,
+          "place_odds_min": 6.6,
+          "place_odds_max": 19.6
+        },
+        {
+          "number": 15,
+          "odds": 13.4,
+          "place_odds_min": 2.2,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 16,
+          "odds": 10.1,
+          "place_odds_min": 1.7,
+          "place_odds_max": 4.3
+        }
+      ]
+    },
+    {
+      "id": "202608010302",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 12.6,
+          "place_odds_min": 3.2,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 2,
+          "odds": 5.0,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 3,
+          "odds": 45.9,
+          "place_odds_min": 4.7,
+          "place_odds_max": 6.6
+        },
+        {
+          "number": 4,
+          "odds": 29.0,
+          "place_odds_min": 4.5,
+          "place_odds_max": 6.4
+        },
+        {
+          "number": 5,
+          "odds": 6.5,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 6,
+          "odds": 10.0,
+          "place_odds_min": 5.8,
+          "place_odds_max": 8.3
+        },
+        {
+          "number": 7,
+          "odds": 22.6,
+          "place_odds_min": 7.8,
+          "place_odds_max": 11.2
+        },
+        {
+          "number": 8,
+          "odds": 76.9,
+          "place_odds_min": 23.1,
+          "place_odds_max": 33.1
+        },
+        {
+          "number": 9,
+          "odds": 11.3,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.3
+        },
+        {
+          "number": 10,
+          "odds": 17.7,
+          "place_odds_min": 2.5,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 11,
+          "odds": 39.3,
+          "place_odds_min": 9.9,
+          "place_odds_max": 14.3
+        },
+        {
+          "number": 12,
+          "odds": 4.6,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 13,
+          "odds": 25.1,
+          "place_odds_min": 3.2,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 14,
+          "odds": 5.4,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.0
+        }
+      ]
+    },
+    {
+      "id": "202608010303",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 3.0,
+          "place_odds_min": 1.5,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 2,
+          "odds": 3.6,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 3,
+          "odds": 60.4,
+          "place_odds_min": 8.8,
+          "place_odds_max": 12.9
+        },
+        {
+          "number": 4,
+          "odds": 10.0,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 5,
+          "odds": 23.2,
+          "place_odds_min": 4.4,
+          "place_odds_max": 6.3
+        },
+        {
+          "number": 6,
+          "odds": 22.7,
+          "place_odds_min": 4.0,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 7,
+          "odds": 7.3,
+          "place_odds_min": 2.6,
+          "place_odds_max": 3.6
+        },
+        {
+          "number": 8,
+          "odds": 30.0,
+          "place_odds_min": 9.2,
+          "place_odds_max": 13.6
+        },
+        {
+          "number": 9,
+          "odds": 43.7,
+          "place_odds_min": 10.9,
+          "place_odds_max": 16.1
+        },
+        {
+          "number": 10,
+          "odds": 36.5,
+          "place_odds_min": 11.1,
+          "place_odds_max": 16.3
+        },
+        {
+          "number": 11,
+          "odds": 36.5,
+          "place_odds_min": 7.4,
+          "place_odds_max": 10.9
+        },
+        {
+          "number": 12,
+          "odds": 36.8,
+          "place_odds_min": 6.5,
+          "place_odds_max": 9.4
+        },
+        {
+          "number": 13,
+          "odds": 24.9,
+          "place_odds_min": 3.5,
+          "place_odds_max": 5.1
+        },
+        {
+          "number": 14,
+          "odds": 15.4,
+          "place_odds_min": 3.4,
+          "place_odds_max": 4.9
+        },
+        {
+          "number": 15,
+          "odds": 34.4,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.4
+        },
+        {
+          "number": 16,
+          "odds": 27.3,
+          "place_odds_min": 4.6,
+          "place_odds_max": 6.6
+        }
+      ]
+    },
+    {
+      "id": "202608010304",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "4",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 6.7,
+          "place_odds_min": 1.7,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 2,
+          "odds": 19.5,
+          "place_odds_min": 2.1,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 3,
+          "odds": 5.9,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.9
+        },
+        {
+          "number": 4,
+          "odds": 72.2,
+          "place_odds_min": 10.1,
+          "place_odds_max": 24.1
+        },
+        {
+          "number": 5,
+          "odds": 6.8,
+          "place_odds_min": 1.8,
+          "place_odds_max": 3.7
+        },
+        {
+          "number": 6,
+          "odds": 1.8,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 7,
+          "odds": 25.5,
+          "place_odds_min": 4.5,
+          "place_odds_max": 10.5
+        },
+        {
+          "number": 8,
+          "odds": 11.5,
+          "place_odds_min": 2.8,
+          "place_odds_max": 6.2
+        },
+        {
+          "number": 9,
+          "odds": 39.1,
+          "place_odds_min": 3.0,
+          "place_odds_max": 6.8
+        },
+        {
+          "number": 10,
+          "odds": 51.7,
+          "place_odds_min": 4.6,
+          "place_odds_max": 10.9
+        },
+        {
+          "number": 11,
+          "odds": 44.0,
+          "place_odds_min": 9.6,
+          "place_odds_max": 22.9
+        }
+      ]
+    },
+    {
+      "id": "202608010305",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 2.2,
+          "place_odds_min": 1.4,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 2,
+          "odds": 4.5,
+          "place_odds_min": 1.4,
+          "place_odds_max": 1.7
+        },
+        {
+          "number": 3,
+          "odds": 34.3,
+          "place_odds_min": 6.8,
+          "place_odds_max": 11.0
+        },
+        {
+          "number": 4,
+          "odds": 94.2,
+          "place_odds_min": 15.6,
+          "place_odds_max": 25.8
+        },
+        {
+          "number": 5,
+          "odds": 13.4,
+          "place_odds_min": 2.5,
+          "place_odds_max": 3.8
+        },
+        {
+          "number": 6,
+          "odds": 56.3,
+          "place_odds_min": 8.0,
+          "place_odds_max": 13.0
+        },
+        {
+          "number": 7,
+          "odds": 63.2,
+          "place_odds_min": 6.4,
+          "place_odds_max": 10.4
+        },
+        {
+          "number": 8,
+          "odds": 148.1,
+          "place_odds_min": 15.3,
+          "place_odds_max": 25.3
+        },
+        {
+          "number": 9,
+          "odds": 13.3,
+          "place_odds_min": 2.1,
+          "place_odds_max": 3.2
+        },
+        {
+          "number": 10,
+          "odds": 8.5,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.6
+        },
+        {
+          "number": 11,
+          "odds": 19.4,
+          "place_odds_min": 3.9,
+          "place_odds_max": 6.3
+        },
+        {
+          "number": 12,
+          "odds": 11.8,
+          "place_odds_min": 3.4,
+          "place_odds_max": 5.4
+        },
+        {
+          "number": 13,
+          "odds": 33.0,
+          "place_odds_min": 6.5,
+          "place_odds_max": 10.6
+        },
+        {
+          "number": 14,
+          "odds": 77.3,
+          "place_odds_min": 6.6,
+          "place_odds_max": 10.7
+        },
+        {
+          "number": 15,
+          "odds": 28.1,
+          "place_odds_min": 4.3,
+          "place_odds_max": 6.9
+        },
+        {
+          "number": 16,
+          "odds": 192.0,
+          "place_odds_min": 21.3,
+          "place_odds_max": 35.2
+        },
+        {
+          "number": 17,
+          "odds": 101.6,
+          "place_odds_min": 15.1,
+          "place_odds_max": 24.9
+        },
+        {
+          "number": 18,
+          "odds": 56.3,
+          "place_odds_min": 6.9,
+          "place_odds_max": 11.3
+        }
+      ]
+    },
+    {
+      "id": "202608010306",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 35.7,
+          "place_odds_min": 16.9,
+          "place_odds_max": 22.0
+        },
+        {
+          "number": 2,
+          "odds": 22.7,
+          "place_odds_min": 6.3,
+          "place_odds_max": 8.1
+        },
+        {
+          "number": 3,
+          "odds": 16.6,
+          "place_odds_min": 3.2,
+          "place_odds_max": 4.1
+        },
+        {
+          "number": 4,
+          "odds": 19.5,
+          "place_odds_min": 4.7,
+          "place_odds_max": 6.1
+        },
+        {
+          "number": 5,
+          "odds": 50.3,
+          "place_odds_min": 13.7,
+          "place_odds_max": 17.9
+        },
+        {
+          "number": 6,
+          "odds": 14.6,
+          "place_odds_min": 2.7,
+          "place_odds_max": 3.4
+        },
+        {
+          "number": 7,
+          "odds": 4.4,
+          "place_odds_min": 3.9,
+          "place_odds_max": 5.0
+        },
+        {
+          "number": 8,
+          "odds": 18.9,
+          "place_odds_min": 2.2,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 9,
+          "odds": 57.5,
+          "place_odds_min": 10.2,
+          "place_odds_max": 13.2
+        },
+        {
+          "number": 10,
+          "odds": 7.4,
+          "place_odds_min": 2.6,
+          "place_odds_max": 3.3
+        },
+        {
+          "number": 11,
+          "odds": 7.4,
+          "place_odds_min": 2.1,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 12,
+          "odds": 50.3,
+          "place_odds_min": 8.7,
+          "place_odds_max": 11.3
+        },
+        {
+          "number": 13,
+          "odds": 9.4,
+          "place_odds_min": 3.6,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 14,
+          "odds": 5.6,
+          "place_odds_min": 2.1,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 15,
+          "odds": 119.8,
+          "place_odds_min": 23.3,
+          "place_odds_max": 30.3
+        },
+        {
+          "number": 16,
+          "odds": 57.5,
+          "place_odds_min": 10.2,
+          "place_odds_max": 13.2
+        },
+        {
+          "number": 17,
+          "odds": 27.8,
+          "place_odds_min": 9.4,
+          "place_odds_max": 12.2
+        },
+        {
+          "number": 18,
+          "odds": 19.5,
+          "place_odds_min": 4.6,
+          "place_odds_max": 5.8
+        }
+      ]
+    },
+    {
+      "id": "202608010307",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 6.9,
+          "place_odds_min": 2.2,
+          "place_odds_max": 2.8
+        },
+        {
+          "number": 2,
+          "odds": 17.1,
+          "place_odds_min": 2.8,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 3,
+          "odds": 32.4,
+          "place_odds_min": 12.0,
+          "place_odds_max": 15.3
+        },
+        {
+          "number": 4,
+          "odds": 50.9,
+          "place_odds_min": 5.6,
+          "place_odds_max": 7.1
+        },
+        {
+          "number": 5,
+          "odds": 28.7,
+          "place_odds_min": 25.0,
+          "place_odds_max": 31.7
+        },
+        {
+          "number": 6,
+          "odds": 29.7,
+          "place_odds_min": 6.7,
+          "place_odds_max": 8.6
+        },
+        {
+          "number": 7,
+          "odds": 6.4,
+          "place_odds_min": 2.1,
+          "place_odds_max": 2.6
+        },
+        {
+          "number": 8,
+          "odds": 17.3,
+          "place_odds_min": 3.6,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 9,
+          "odds": 10.6,
+          "place_odds_min": 3.7,
+          "place_odds_max": 4.6
+        },
+        {
+          "number": 10,
+          "odds": 6.6,
+          "place_odds_min": 4.4,
+          "place_odds_max": 5.5
+        },
+        {
+          "number": 11,
+          "odds": 29.3,
+          "place_odds_min": 4.8,
+          "place_odds_max": 6.1
+        },
+        {
+          "number": 12,
+          "odds": 7.6,
+          "place_odds_min": 2.8,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 13,
+          "odds": 6.7,
+          "place_odds_min": 2.0,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 14,
+          "odds": 18.2,
+          "place_odds_min": 3.2,
+          "place_odds_max": 4.1
+        },
+        {
+          "number": 15,
+          "odds": 9.6,
+          "place_odds_min": 3.3,
+          "place_odds_max": 4.2
+        }
+      ]
+    },
+    {
+      "id": "202608010308",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "8",
+      "name": "牛若丸JS",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 3.5,
+          "place_odds_min": 1.4,
+          "place_odds_max": 2.1
+        },
+        {
+          "number": 2,
+          "odds": 4.3,
+          "place_odds_min": 1.2,
+          "place_odds_max": 1.5
+        },
+        {
+          "number": 3,
+          "odds": 16.1,
+          "place_odds_min": 2.9,
+          "place_odds_max": 4.7
+        },
+        {
+          "number": 4,
+          "odds": 5.5,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.8
+        },
+        {
+          "number": 5,
+          "odds": 6.5,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 6,
+          "odds": 39.5,
+          "place_odds_min": 5.8,
+          "place_odds_max": 9.5
+        },
+        {
+          "number": 7,
+          "odds": 32.9,
+          "place_odds_min": 4.1,
+          "place_odds_max": 6.6
+        },
+        {
+          "number": 8,
+          "odds": 7.0,
+          "place_odds_min": 2.2,
+          "place_odds_max": 3.5
+        },
+        {
+          "number": 9,
+          "odds": 11.0,
+          "place_odds_min": 3.3,
+          "place_odds_max": 5.2
+        },
+        {
+          "number": 10,
+          "odds": 24.7,
+          "place_odds_min": 5.9,
+          "place_odds_max": 9.7
+        },
+        {
+          "number": 11,
+          "odds": 61.2,
+          "place_odds_min": 7.1,
+          "place_odds_max": 11.7
+        }
+      ]
+    },
+    {
+      "id": "202608010309",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "9",
+      "name": "出町特別",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 8.4,
+          "place_odds_min": 1.8,
+          "place_odds_max": 5.1
+        },
+        {
+          "number": 2,
+          "odds": 30.1,
+          "place_odds_min": 4.5,
+          "place_odds_max": 14.2
+        },
+        {
+          "number": 3,
+          "odds": 11.5,
+          "place_odds_min": 2.5,
+          "place_odds_max": 7.5
+        },
+        {
+          "number": 4,
+          "odds": 1.8,
+          "place_odds_min": 1.1,
+          "place_odds_max": 1.1
+        },
+        {
+          "number": 5,
+          "odds": 9.3,
+          "place_odds_min": 2.0,
+          "place_odds_max": 5.7
+        },
+        {
+          "number": 6,
+          "odds": 7.3,
+          "place_odds_min": 1.3,
+          "place_odds_max": 3.3
+        },
+        {
+          "number": 7,
+          "odds": 17.9,
+          "place_odds_min": 3.3,
+          "place_odds_max": 10.3
+        },
+        {
+          "number": 8,
+          "odds": 6.2,
+          "place_odds_min": 1.3,
+          "place_odds_max": 3.2
+        }
+      ]
+    },
+    {
+      "id": "202608010310",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "10",
+      "name": "鹿ケ谷特別",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 21.6,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.9
+        },
+        {
+          "number": 2,
+          "odds": 32.3,
+          "place_odds_min": 5.4,
+          "place_odds_max": 8.4
+        },
+        {
+          "number": 3,
+          "odds": 13.1,
+          "place_odds_min": 4.1,
+          "place_odds_max": 6.3
+        },
+        {
+          "number": 4,
+          "odds": 14.5,
+          "place_odds_min": 3.8,
+          "place_odds_max": 5.8
+        },
+        {
+          "number": 5,
+          "odds": 5.6,
+          "place_odds_min": 2.0,
+          "place_odds_max": 2.9
+        },
+        {
+          "number": 6,
+          "odds": 66.2,
+          "place_odds_min": 9.5,
+          "place_odds_max": 15.0
+        },
+        {
+          "number": 7,
+          "odds": 41.4,
+          "place_odds_min": 7.2,
+          "place_odds_max": 11.3
+        },
+        {
+          "number": 8,
+          "odds": 25.4,
+          "place_odds_min": 11.9,
+          "place_odds_max": 18.8
+        },
+        {
+          "number": 9,
+          "odds": 92.5,
+          "place_odds_min": 14.8,
+          "place_odds_max": 23.4
+        },
+        {
+          "number": 10,
+          "odds": 3.7,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.5
+        },
+        {
+          "number": 11,
+          "odds": 29.6,
+          "place_odds_min": 3.9,
+          "place_odds_max": 5.9
+        },
+        {
+          "number": 12,
+          "odds": 22.2,
+          "place_odds_min": 5.4,
+          "place_odds_max": 8.4
+        },
+        {
+          "number": 13,
+          "odds": 33.1,
+          "place_odds_min": 5.7,
+          "place_odds_max": 8.8
+        },
+        {
+          "number": 14,
+          "odds": 12.7,
+          "place_odds_min": 6.2,
+          "place_odds_max": 9.7
+        },
+        {
+          "number": 15,
+          "odds": 44.6,
+          "place_odds_min": 9.5,
+          "place_odds_max": 15.0
+        },
+        {
+          "number": 16,
+          "odds": 35.2,
+          "place_odds_min": 3.0,
+          "place_odds_max": 4.5
+        },
+        {
+          "number": 17,
+          "odds": 4.2,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.4
+        },
+        {
+          "number": 18,
+          "odds": 43.2,
+          "place_odds_min": 5.2,
+          "place_odds_max": 8.1
+        }
+      ]
+    },
+    {
+      "id": "202608010311",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "11",
+      "name": "すばるS",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 17.8,
+          "place_odds_min": 4.6,
+          "place_odds_max": 6.9
+        },
+        {
+          "number": 2,
+          "odds": 13.2,
+          "place_odds_min": 2.7,
+          "place_odds_max": 3.9
+        },
+        {
+          "number": 3,
+          "odds": 19.3,
+          "place_odds_min": 2.7,
+          "place_odds_max": 3.9
+        },
+        {
+          "number": 4,
+          "odds": 27.0,
+          "place_odds_min": 3.3,
+          "place_odds_max": 4.9
+        },
+        {
+          "number": 5,
+          "odds": 64.5,
+          "place_odds_min": 9.9,
+          "place_odds_max": 15.1
+        },
+        {
+          "number": 6,
+          "odds": 104.3,
+          "place_odds_min": 12.5,
+          "place_odds_max": 19.2
+        },
+        {
+          "number": 7,
+          "odds": 43.6,
+          "place_odds_min": 3.3,
+          "place_odds_max": 4.9
+        },
+        {
+          "number": 8,
+          "odds": 1.8,
+          "place_odds_min": 1.3,
+          "place_odds_max": 1.6
+        },
+        {
+          "number": 9,
+          "odds": 89.6,
+          "place_odds_min": 18.8,
+          "place_odds_max": 28.9
+        },
+        {
+          "number": 10,
+          "odds": 64.7,
+          "place_odds_min": 9.4,
+          "place_odds_max": 14.5
+        },
+        {
+          "number": 11,
+          "odds": 42.4,
+          "place_odds_min": 5.2,
+          "place_odds_max": 7.8
+        },
+        {
+          "number": 12,
+          "odds": 24.1,
+          "place_odds_min": 2.9,
+          "place_odds_max": 4.3
+        },
+        {
+          "number": 13,
+          "odds": 78.2,
+          "place_odds_min": 13.3,
+          "place_odds_max": 20.5
+        },
+        {
+          "number": 14,
+          "odds": 5.1,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.7
+        },
+        {
+          "number": 15,
+          "odds": 7.4,
+          "place_odds_min": 1.8,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 16,
+          "odds": 55.1,
+          "place_odds_min": 8.9,
+          "place_odds_max": 13.6
+        }
+      ]
+    },
+    {
+      "id": "202608010312",
+      "date": "2026-01-10",
+      "venue": "京都",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": [
+        {
+          "number": 1,
+          "odds": 11.9,
+          "place_odds_min": 3.4,
+          "place_odds_max": 4.7
+        },
+        {
+          "number": 2,
+          "odds": 76.8,
+          "place_odds_min": 12.3,
+          "place_odds_max": 17.5
+        },
+        {
+          "number": 3,
+          "odds": 57.6,
+          "place_odds_min": 14.1,
+          "place_odds_max": 20.0
+        },
+        {
+          "number": 4,
+          "odds": 19.2,
+          "place_odds_min": 2.8,
+          "place_odds_max": 3.9
+        },
+        {
+          "number": 5,
+          "odds": 30.1,
+          "place_odds_min": 4.3,
+          "place_odds_max": 6.0
+        },
+        {
+          "number": 6,
+          "odds": 8.8,
+          "place_odds_min": 2.3,
+          "place_odds_max": 3.1
+        },
+        {
+          "number": 7,
+          "odds": 39.5,
+          "place_odds_min": 9.8,
+          "place_odds_max": 13.9
+        },
+        {
+          "number": 8,
+          "odds": 4.7,
+          "place_odds_min": 1.7,
+          "place_odds_max": 2.2
+        },
+        {
+          "number": 9,
+          "odds": 3.0,
+          "place_odds_min": 1.6,
+          "place_odds_max": 2.0
+        },
+        {
+          "number": 10,
+          "odds": 25.7,
+          "place_odds_min": 5.9,
+          "place_odds_max": 8.3
+        },
+        {
+          "number": 11,
+          "odds": 49.5,
+          "place_odds_min": 6.2,
+          "place_odds_max": 8.7
+        },
+        {
+          "number": 12,
+          "odds": 25.7,
+          "place_odds_min": 6.3,
+          "place_odds_max": 8.9
+        },
+        {
+          "number": 13,
+          "odds": 20.2,
+          "place_odds_min": 4.5,
+          "place_odds_max": 6.2
+        },
+        {
+          "number": 14,
+          "odds": 7.2,
+          "place_odds_min": 1.9,
+          "place_odds_max": 2.5
+        },
+        {
+          "number": 15,
+          "odds": 38.4,
+          "place_odds_min": 9.9,
+          "place_odds_max": 14.1
+        },
+        {
+          "number": 16,
+          "odds": 36.2,
+          "place_odds_min": 8.1,
+          "place_odds_max": 11.5
+        },
+        {
+          "number": 17,
+          "odds": 58.4,
+          "place_odds_min": 10.4,
+          "place_odds_max": 14.7
+        },
+        {
+          "number": 18,
+          "odds": 81.6,
+          "place_odds_min": 17.2,
+          "place_odds_max": 24.4
+        }
+      ]
+    },
+    {
+      "id": "202606010401",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010402",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010403",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010404",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "4",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010405",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010406",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010407",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010408",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "8",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010409",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "9",
+      "name": "初咲賞",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010410",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "10",
+      "name": "ポルックスS",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010411",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "11",
+      "name": "フェアリーS",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010412",
+      "date": "2026-01-11",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010401",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010402",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010403",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010404",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "4",
+      "name": "4歳以上障害未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010405",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010406",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "6",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010407",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010408",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "8",
+      "name": "4歳以上2勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010409",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "9",
+      "name": "五条坂特別",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010410",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "10",
+      "name": "新春S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010411",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "11",
+      "name": "淀短距離S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010412",
+      "date": "2026-01-11",
+      "venue": "京都",
+      "number": "12",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010501",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010502",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010503",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010504",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "4",
+      "name": "4歳以上障害未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010505",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010506",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "6",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010507",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010508",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "8",
+      "name": "3歳1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010509",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "9",
+      "name": "成田特別",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010510",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "10",
+      "name": "初春S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010511",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "11",
+      "name": "ニューイヤー",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202606010512",
+      "date": "2026-01-12",
+      "venue": "中山",
+      "number": "12",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010501",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "1",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010502",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "2",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010503",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "3",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010504",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "4",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010505",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "5",
+      "name": "3歳新馬",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010506",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "6",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010507",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "7",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010508",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "8",
+      "name": "4歳以上1勝クラス",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010509",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "9",
+      "name": "琵琶湖特別",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010510",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "10",
+      "name": "雅S",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010511",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "11",
+      "name": "シンザン記念",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    },
+    {
+      "id": "202608010512",
+      "date": "2026-01-12",
+      "venue": "京都",
+      "number": "12",
+      "name": "3歳未勝利",
+      "is_win5": false,
+      "is_triple": false,
+      "horses": []
+    }
+  ]
+}
