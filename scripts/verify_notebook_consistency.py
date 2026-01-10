@@ -119,39 +119,38 @@ import io
         print(f"⚠️ Setup failed: {e}")
         return None
 
-def get_sampled_race_ids(is_nar=False):
-    """Gets random race IDs from CSV."""
-    filename = 'race_ids_nar.csv' if is_nar else 'race_ids.csv'
-    filepath = os.path.join(DATA_DIR, filename)
-    
-    if not os.path.exists(filepath):
-        print(f"❌ File not found: {filepath}")
-        return []
-        
+def get_random_race_ids(csv_path, samples_per_year=10):
+    """
+    Simulates loading race IDs and sampling verification targets.
+    FORCE: 2025 ONLY as per user request.
+    """
     try:
-        df = pd.read_csv(filepath, dtype=str)
-        col = 'race_id'
-        if col not in df.columns:
-            print(f"❌ Column 'race_id' not found in {filename}")
+        if not os.path.exists(csv_path):
+            print(f"⚠️ CSV not found: {csv_path}")
             return []
-            
-        df = df[df[col].notna()]
         
-        sampled_ids = []
-        for year in YEARS:
-            year_str = str(year)
-            year_df = df[df[col].str.startswith(year_str)]
+        # Simple read for simulation
+        with open(csv_path, 'r') as f:
+            lines = f.readlines()[1:] # Skip header
             
-            if len(year_df) >= SAMPLES_PER_YEAR:
-                sampled = year_df.sample(n=SAMPLES_PER_YEAR, random_state=42)[col].tolist()
-            else:
-                sampled = year_df[col].tolist()
-            
-            sampled_ids.extend(sampled)
-            
-        return sampled_ids
+        ids = [l.strip() for l in lines if l.strip()]
+        
+        # Filter for 2025
+        ids_2025 = [rid for rid in ids if rid.startswith('2025')]
+        
+        selected_ids = []
+        if ids_2025:
+            # Take up to 20 samples for 2025
+            k = min(len(ids_2025), 20)
+            selected = random.sample(ids_2025, k)
+            selected_ids.extend(selected)
+            print(f"  📌 Selected {len(selected)} races from 2025")
+        else:
+             print("  ⚠️ No 2025 races found in CSV.")
+             
+        return selected_ids
     except Exception as e:
-        print(f"❌ Error reading {filename}: {e}")
+        print(f"Error sampling IDs: {e}")
         return []
 
 def verify_jra_basic(namespace, race_ids):
@@ -305,11 +304,19 @@ def main():
     nar_basic_ns = extract_functions(nar_basic_code)
     
     # 4. Basic CSV Columns Verification
-    jra_ids = get_sampled_race_ids(is_nar=False)
-    nar_ids = get_sampled_race_ids(is_nar=True)
+    print(f"\n🔍 Verifying JRA Basic... (20 samples from 2025)")
+    jra_ids = get_random_race_ids(os.path.join(DATA_DIR, 'race_ids.csv'), samples_per_year=20)
     
-    jra_cols, jra_samples = verify_jra_basic(jra_basic_ns, jra_ids)
-    nar_cols, nar_samples = verify_nar_basic(nar_basic_ns, nar_ids)
+    jra_samples = []
+    if jra_ids:
+        jra_cols, jra_samples = verify_jra_basic(jra_basic_ns, jra_ids)
+    
+    print(f"\n🔍 Verifying NAR Basic... (20 samples from 2025)")
+    nar_ids = get_random_race_ids(os.path.join(DATA_DIR, 'race_ids_nar.csv'), samples_per_year=20)
+    
+    nar_samples = []
+    if nar_ids:
+        nar_cols, nar_samples = verify_nar_basic(nar_basic_ns, nar_ids)
     
     print("\n--- BASIC COLUMNS COMPARISON ---")
     if jra_cols and nar_cols:
