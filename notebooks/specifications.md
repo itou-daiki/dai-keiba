@@ -4,18 +4,62 @@
 
 ---
 
+## 🚀 実行順序
+
+### JRA用パイプライン
+```
+Step 1: Colab_ID_Fetcher.ipynb
+        → race_ids.csv (レースID一覧)
+
+Step 2: Colab_JRA_Basic_v2.ipynb
+        → database_jra_basic.csv (基本レース結果)
+
+Step 3: Colab_History_Generator.ipynb (MODE = 'JRA')
+        → database_jra_with_history.csv (過去5走付き)
+        ※ JRA + NAR 両方のデータから過去走を検索（クロスドメイン対応）
+
+Step 4: Colab_Pedigree_Scraper.ipynb (MODE = 'JRA')
+        → database_jra_pedigree.csv (血統データ)
+```
+
+### NAR用パイプライン
+```
+Step 1: Colab_ID_Fetcher.ipynb
+        → race_ids_nar.csv (レースID一覧)
+
+Step 2: Colab_NAR_Basic_v2.ipynb
+        → database_nar_basic.csv (基本レース結果)
+
+Step 3: Colab_History_Generator.ipynb (MODE = 'NAR')
+        → database_nar_with_history.csv (過去5走付き)
+        ※ JRA + NAR 両方のデータから過去走を検索（クロスドメイン対応）
+
+Step 4: Colab_Pedigree_Scraper.ipynb (MODE = 'NAR')
+        → database_nar_pedigree.csv (血統データ)
+```
+
+> [!IMPORTANT]
+> **Step 3 (History Generator)** は HTTPリクエスト不要。数分で完了し、IP制限の心配なし。
+> 交流競走・転籍馬の履歴も正しく取得されます。
+
+---
+
 ## 🏗️ 全体構成
 
 ### ファイル構成
-| 種類 | JRA | NAR | 役割 |
-|---|---|---|---|
-| **基本情報 (Basic)** | `Colab_JRA_Basic_v2.ipynb` | `Colab_NAR_Basic_v2.ipynb` | レースごとの全馬の基本結果を取得 |
-| **詳細情報 (Details)** | `Colab_JRA_Details_v2.ipynb` | `Colab_NAR_Details_v2.ipynb` | 馬ごとの過去5走履歴・血統情報を取得 |
+| 種類 | ファイル名 | 役割 |
+|---|---|---|
+| **ID取得** | `Colab_ID_Fetcher.ipynb` | レースID一覧を取得 |
+| **基本情報 (JRA)** | `Colab_JRA_Basic_v2.ipynb` | JRAレースの基本結果を取得 |
+| **基本情報 (NAR)** | `Colab_NAR_Basic_v2.ipynb` | NARレースの基本結果を取得 |
+| **過去走生成** | `Colab_History_Generator.ipynb` | 自己結合で過去5走を生成（HTTPリクエスト不要） |
+| **血統取得** | `Colab_Pedigree_Scraper.ipynb` | 血統データのみを軽量取得 |
 
-### データフロー
-1.  **ID Fetcher** (`Colab_ID_Fetcher.ipynb`) -> `data/raw/race_ids.csv` 等を作成
-2.  **Basic Scraper** -> `race_ids.csv` を読み込み -> `database_basic.csv` を出力
-3.  **Details Scraper** -> `database_basic.csv` を読み込み -> `datebase_details.csv` を出力
+### 旧ファイル（参考用・非推奨）
+| ファイル名 | 状態 |
+|---|---|
+| `Colab_JRA_Details_v2.ipynb` | ⚠️ 非推奨: History Generator + Pedigree Scraperに置き換え |
+| `Colab_NAR_Details_v2.ipynb` | ⚠️ 非推奨: History Generator + Pedigree Scraperに置き換え |
 
 ---
 
@@ -26,88 +70,94 @@
 - **NAR**: `data/raw/race_ids_nar.csv`
 
 ### 📤 出力
-- **JRA**: `data/raw/database_basic.csv`
+- **JRA**: `data/raw/database_jra_basic.csv`
 - **NAR**: `data/raw/database_nar_basic.csv`
 
 ### 📊 カラム仕様 (計32カラム)
 JRA・NAR共通で以下のカラム構成を持つ（**全32カラム**）。
-`コーナー通過順` は廃止・分割され、`corner_1`~`corner_4` となった。
 
 | No. | カラム名 | 説明 |
 |---|---|---|
 | 1-10 | `日付`, `会場`, `レース番号`, `レース名`, `重賞`, `コースタイプ`, `距離`, `回り`, `天候`, `馬場状態` | メタデータ |
 | 11-16 | `着順`, `枠`, `馬番`, `馬名`, `性齢`, `斤量` | 基本情報 |
-| 17 | `騎手` | **騎手フルネーム** (処理ロジック参照) |
+| 17 | `騎手` | **騎手フルネーム** |
 | 18-22 | `タイム`, `着差`, `人気`, `単勝オッズ`, `後3F` | 成績 |
 | 23-26 | `corner_1`, `corner_2`, `corner_3`, `corner_4` | **コーナー通過順** (分割済み) |
 | 27 | `厩舎` | 所属 |
-| 28 | `調教師` | **調教師フルネーム** (処理ロジック参照) |
+| 28 | `調教師` | **調教師フルネーム** |
 | 29 | `馬体重` | 馬体重 (数値部分) |
 | 30 | `増減` | 体重増減 (数値部分, `+`除去) |
 | 31-32 | `race_id`, `horse_id` | ID |
 
-### 🛠️ スクレイピングロジック詳細
+---
 
-#### 1. 調教師名 (Trainer Name)
-JRA等のサイトでは「〇〇の調教師成績」などのサフィックスが付く場合があるため、以下の処理を行う。
-- **取得**: リンクの `title` 属性、またはリンク先ページから取得。
-- **整形**: 正規表現 `re.search(r'^(.+?)(?:のプロフィール|の騎手成績|の調教師成績|｜)', title)` を使用し、名前部分のみを抽出。
+## 2. 過去走生成 (History Generator)
 
-#### 2. 騎手名 (Jockey Name)
-パフォーマンス向上のため、以下の優先順位で取得する。
-1.  `<a>` タグの `title` 属性が存在すれば、そこから取得 (HTTPリクエスト省略)。
-2.  存在しない場合、リンク先プロフィールページへ遷移し、調教師名と同様のロジックで抽出。
-3.  キャッシュ (`JOCKEY_CACHE`) を利用し、重複リクエストを防止。
+### 📥 入力
+- `database_jra_basic.csv` + `database_nar_basic.csv` (両方を参照)
 
-#### 3. 馬体重・増減 (Weight & Change)
-元の文字列 `480(+2)` や `480(0)` から数値のみを取り出す。
-- **Regex**: `r'(\d+)\(([\+\-\d]+)\)'`
-- **馬体重**: `480`
-- **増減**: `+2` -> `+` を除去して `2` とする (負の数は `-2` のまま維持)。
+### 📤 出力
+- **JRA**: `database_jra_with_history.csv`
+- **NAR**: `database_nar_with_history.csv`
 
-#### 4. コーナー通過順 (Corner Positions)
-一つの文字列（例: `1-1-1-1`）を分割し、独立した4つのカラムに格納する。
-- `-` で分割し、前から順に `corner_1`, `corner_2`... に代入。
-- 4つ未満の場合は空文字で埋める。
-- 元の `コーナー通過順` カラムは出力データには含めない。
+### 🔄 クロスドメイン対応
+JRA馬がNARで走った履歴、NAR馬がJRAで走った履歴も正しく取得。
+- 交流重賞（フェブラリーS、チャンピオンズCなど）
+- 地方遠征
+- JRA↔NAR転籍馬
+
+### 📊 過去走カラム (13項目 × 5走 = 65カラム)
+| 項目 | カラム名 |
+|---|---|
+| 日付 | `past_N_date` |
+| 着順 | `past_N_rank` |
+| タイム | `past_N_time` |
+| 騎手 | `past_N_jockey` |
+| 馬体重 | `past_N_horse_weight` |
+| 増減 | `past_N_weight_change` |
+| 天候 | `past_N_weather` |
+| 馬場 | `past_N_condition` |
+| 距離 | `past_N_distance` |
+| コース | `past_N_course_type` |
+| 上り | `past_N_last_3f` |
+| オッズ | `past_N_odds` |
+| レース名 | `past_N_race_name` |
+| 会場 | `past_N_venue` |
 
 ---
 
-## 2. 詳細情報スクレイピング (Details)
+## 3. 血統取得 (Pedigree Scraper)
 
 ### 📥 入力
-- **JRA**: `data/raw/database_basic.csv`
-- **NAR**: `data/raw/database_nar_basic.csv`
-    - **最適化**: `pd.read_csv(..., usecols=['race_id', 'horse_id', '日付'])` を使用し、必要なカラムのみを読み込むことでメモリ不足 (OOM) を回避。
+- **JRA**: `database_jra_basic.csv` (horse_id のユニーク値)
+- **NAR**: `database_nar_basic.csv` (horse_id のユニーク値)
 
 ### 📤 出力
-- **JRA**: `data/raw/database_details.csv`
-- **NAR**: `data/raw/database_nar_details.csv`
+- **JRA**: `database_jra_pedigree.csv`
+- **NAR**: `database_nar_pedigree.csv`
 
-### 📊 カラム仕様 (計70カラム)
-| グループ | 構成 | カラム数 | 備考 |
-|---|---|---|---|
-| **ID** | `race_id`, `horse_id` | 2 | キー情報 |
-| **過去5走** | `past_{1-5}_{field}` | 13 × 5 = 65 | 各走につき13項目 |
-| **血統** | `father`, `mother`, `bms` | 3 | |
-| **合計** | | **70** | |
+### 📊 カラム仕様 (4カラム)
+| カラム名 | 説明 |
+|---|---|
+| `horse_id` | 馬ID |
+| `father` | 父 |
+| `mother` | 母 |
+| `bms` | 母の父 (Broodmare Sire) |
 
-#### 過去走 (`past_N_`) 除外ロジック
-各馬の全レース履歴を取得した後、**「今回のレース日付より前」** のレースのみをフィルタリングして採用する。
-- 未来のレースデータ（リーク）を含まないようにするため。
-- 開催日が新しい順にソートし、直近5走 (`past_1` ~ `past_5`) を抽出。
+### ⚡ 効率化
+- 同一horse_idは1回のみスクレイピング
+- Basicデータから過去走は取らない（History Generatorで生成済み）
+- **サーキットブレイカー**: 成功率20%未満で自動停止（IP制限対策）
 
-#### 取得項目 (13項目)
-1.  `date` (日付)
-2.  `rank` (着順)
-3.  `time` (タイム)
-4.  `run_style` (通過順)
-5.  `race_name` (レース名)
-6.  `last_3f` (上り)
-7.  `horse_weight` (馬体重)
-8.  `jockey` (騎手)
-9.  `condition` (馬場)
-10. `odds` (オッズ)
-11. `weather` (天候)
-12. `distance` (距離)
-13. `course_type` (コースタイプ)
+---
+
+## 🛡️ 安全機能
+
+### Smart Skip
+既存データで `father` が入力済みの馬はスキップ。
+途中停止からの再開時に重複スクレイピングを防止。
+
+### Circuit Breaker
+直近20件の成功率が20%未満の場合、IP制限と判断して自動停止。
+空データの大量蓄積を防止。
+
