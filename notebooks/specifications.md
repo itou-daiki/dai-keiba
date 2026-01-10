@@ -55,12 +55,6 @@ Step 4: Colab_Pedigree_Scraper.ipynb (MODE = 'NAR')
 | **過去走生成** | `Colab_History_Generator.ipynb` | 自己結合で過去5走を生成（HTTPリクエスト不要） |
 | **血統取得** | `Colab_Pedigree_Scraper.ipynb` | 血統データのみを軽量取得 |
 
-### 旧ファイル（参考用・非推奨）
-| ファイル名 | 状態 |
-|---|---|
-| `Colab_JRA_Details_v2.ipynb` | ⚠️ 非推奨: History Generator + Pedigree Scraperに置き換え |
-| `Colab_NAR_Details_v2.ipynb` | ⚠️ 非推奨: History Generator + Pedigree Scraperに置き換え |
-
 ---
 
 ## 1. 基本情報スクレイピング (Basic)
