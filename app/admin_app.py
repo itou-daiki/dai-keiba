@@ -72,6 +72,86 @@ if uploaded_file is not None:
 
 st.markdown("---")
 
+# --- 1.2 Data Merging & Analysis (🧩 データ結合・分析) ---
+st.markdown("### 🧩 データ結合・分析 (Merge & Analyze)")
+st.info("💡 `database_basic.csv` (Basic) と `database_details.csv` (Details) を結合し、学習用データセットを作成します。")
+
+# Define Paths for Merge
+path_basic = os.path.join(project_root, "data", "raw", "database_basic.csv")
+path_details = os.path.join(project_root, "data", "raw", "database_details.csv")
+
+# Check existence
+exists_basic = os.path.exists(path_basic)
+exists_details = os.path.exists(path_details)
+
+if exists_basic and exists_details:
+    st.success("✅ BasicファイルとDetailsファイルの両方が見つかりました。")
+    
+    # 1.2.1 Analyze Button
+    if st.button("📂 ファイルを読み込んで分析 (Load & Analyze)"):
+        with st.spinner("データを分析中..."):
+            try:
+                df_b = pd.read_csv(path_basic, dtype=str) # Read as str for safety calc
+                df_d = pd.read_csv(path_details, dtype=str)
+                
+                st.markdown("#### 📊 データ品質レポート")
+                
+                col1, col2 = st.columns(2)
+                
+                def make_stats_df(df, name):
+                    # Calculate Null stats
+                    total = len(df)
+                    nulls = df.isnull().sum()
+                    null_pct = (nulls / total * 100).round(1)
+                    stats = pd.DataFrame({
+                        'Null Count': nulls,
+                        'Null %': null_pct
+                    })
+                    # Add Type info (from object)
+                    # stats['Type'] = df.dtypes
+                    return stats
+
+                with col1:
+                    st.write(f"**Basic Data** ({len(df_b)} rows, {len(df_b.columns)} cols)")
+                    st.dataframe(make_stats_df(df_b, "Basic"), height=300, use_container_width=True)
+                
+                with col2:
+                    st.write(f"**Details Data** ({len(df_d)} rows, {len(df_d.columns)} cols)")
+                    st.dataframe(make_stats_df(df_d, "Details"), height=300, use_container_width=True)
+                    
+            except Exception as e:
+                st.error(f"分析エラー: {e}")
+
+    # 1.2.2 Merge Button
+    if st.button("🔗 結合して保存 (Merge & Save)", type="primary"):
+        with st.spinner("結合処理を実行中..."):
+            try:
+                # Load with correct types for key columns
+                df_b = pd.read_csv(path_basic, dtype={'race_id': str, 'horse_id': str})
+                df_d = pd.read_csv(path_details, dtype={'race_id': str, 'horse_id': str})
+                
+                # Merge (Left Join to keep all Race Results)
+                # details might have duplicates? ensure uniqueness
+                df_d = df_d.drop_duplicates(subset=['race_id', 'horse_id'])
+                
+                merged = pd.merge(df_b, df_d, on=['race_id', 'horse_id'], how='left')
+                
+                # Save
+                merged.to_csv(target_csv, index=False)
+                merged.to_parquet(target_parquet, compression='snappy', index=False)
+                
+                st.success(f"✅ 結合完了！保存しました。\n- CSV: {target_csv}\n- Parquet: {target_parquet}")
+                st.metric("結合後のデータ数", len(merged))
+                st.metric("結合後のカラム数", len(merged.columns))
+                
+            except Exception as e:
+                st.error(f"結合エラー: {e}")
+
+else:
+    st.warning("⚠️ 結合を行うには `database_basic.csv` と `database_details.csv` の両方が必要です。")
+    if not exists_basic: st.error(f"Missing: {path_basic}")
+    if not exists_details: st.error(f"Missing: {path_details}")
+
 # 1.2 Preview
 st.markdown("### 📊 データベースプレビュー")
 if os.path.exists(target_parquet):
@@ -252,9 +332,9 @@ if 'ml_results' in st.session_state:
 
 st.markdown("---")
 
-# --- 2. D-Index Optimization Section ---
-st.markdown("## ⚖️ D指数 重み最適化 (D-Index Optimization)")
-st.info("💡 過去のレースデータを用いて、D指数の構成要素（AI指数、適性指数、血統指数）の最適な重み配分を算出します。")
+# --- 3. D-Index & Verification ---
+st.markdown("## Step 3: ⚖️ 指数調整 & 検証 (Optimization & Verify)")
+st.info("💡 モデルの予測値（AIスコア）と回収率シミュレーションを元に、D指数の重みを最終調整します。")
 
 # 2.1 Settings
 st.markdown("### 期間設定")
