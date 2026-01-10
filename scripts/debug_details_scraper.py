@@ -15,8 +15,8 @@ def debug_jra_details_real():
     print(f"\n🔍 DEBUGGING JRA DETAILS (REAL REQUEST)")
     print(f"  Target: Horse {JRA_HORSE_ID} (Equinox), Race Date {JRA_RACE_DATE}")
     
-    # Testing potential "Result" specific URL
-    url = f"https://db.netkeiba.com/horse/result/{JRA_HORSE_ID}/"
+    # Testing Pedigree URL
+    url = f"https://db.netkeiba.com/horse/ped/{JRA_HORSE_ID}/"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Referer': 'https://db.netkeiba.com/',
@@ -86,6 +86,59 @@ def debug_jra_details_real():
         # 3. Clean Columns
         df.columns = df.columns.astype(str).str.replace(r'\s+', '', regex=True)
         print(f"  Columns: {df.columns.tolist()}")
+        
+        # --- JOCKEY INSPECTION ---
+        print("\n  --- Checking Jockey Column HTML ---")
+        # Find the header index for Jockey
+        headers_list = [th.text.strip() for th in table.find_all('th')]
+        try:
+            j_idx = -1
+            w_idx = -1
+            for idx, h in enumerate(headers_list):
+                 if '騎手' in h: j_idx = idx
+                 if '体重' in h: w_idx = idx
+            
+            print(f"  Jockey Index: {j_idx}, Weight Index: {w_idx}")
+            
+            # Check first data row
+            rows = table.find_all('tr')
+            if len(rows) > 1: # Row 0 is header
+                cols = rows[1].find_all('td')
+                if len(cols) > j_idx and j_idx != -1:
+                    j_col = cols[j_idx]
+                    j_link = j_col.find('a')
+                    print(f"  Jockey Text: '{j_col.text.strip()}'")
+                    if j_link:
+                        print(f"  Link Href: {j_link.get('href')}")
+                        print(f"  Link Title: {j_link.get('title')}")
+                
+                if len(cols) > w_idx and w_idx != -1:
+                     w_col = cols[w_idx]
+                     print(f"  Weight Text: '{w_col.text.strip()}'")
+                    
+        except Exception as e:
+            print(f"  Inspection Error: {e}")
+        # --- PEDIGREE INSPECTION ---
+        print("\n  --- Checking Pedigree Table ---")
+        blood_table = soup.select_one('table.blood_table')
+        if blood_table:
+            print("  ✅ Pedigree Table FOUND on this page.")
+            # Extract Father (Father is usually top left or specific cell)
+            # <th>父</th><td>...</td> ? 
+            # Usually strict structure.
+            # Father: 0,0 used in notebook? details['father'] = soup.select('table.blood_table td')[0].text
+            try:
+                tds = blood_table.find_all('td')
+                if len(tds) > 0:
+                    print(f"  Father (approx): {tds[0].text.strip()}")
+                if len(tds) > 1:
+                    print(f"  Mother (approx): {tds[1].text.strip()}") # structure varies
+            except: pass
+        else:
+             print("  ❌ Pedigree Table NOT FOUND on this page (URL: /horse/result/...).")
+             print("     -> Hypothesis: Result page does NOT contain pedigree.")
+             
+        # ---------------------------
 
         # 4. Date Parsing (Robust)
         # Using the logic inserted into the notebook
